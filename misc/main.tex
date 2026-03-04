@@ -1,0 +1,372 @@
+%========================
+% File: main.tex
+%========================
+\documentclass[11pt]{article}
+
+\usepackage[backend=biber, style=authoryear]{biblatex}
+\addbibresource{references.bib} % The file must match
+
+% ---------- Page + typography ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{adjustbox}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+
+% ---------- Math ----------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{bm}
+
+% ---------- Graphics / figures ----------
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, shapes.symbols, shadows.blur, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ---------- Tables / lists ----------
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+% ---------- Links + colors ----------
+\usepackage{xcolor}
+\definecolor{ASUMaroon}{HTML}{8C1D40}
+\definecolor{ASUGold}{HTML}{FFC627}
+\definecolor{LinkBlue}{HTML}{1A4B8C}
+\usepackage[colorlinks=true, linkcolor=LinkBlue, citecolor=LinkBlue, urlcolor=LinkBlue]{hyperref}
+
+% ---------- Header / footer ----------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small Recursive Methods \& Cultural Alignment}
+\rhead{\small \thepage}
+
+% ---------- Section styling ----------
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection.}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.1em}{0.6em}
+\titlespacing*{\subsection}{0pt}{0.8em}{0.4em}
+
+% ---------- Theorem environments ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% ---------- Macros ----------
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\sigmoid}{\sigma}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\given}{\,\middle|\,}
+\newcommand{\refpol}{\pi_{\mathrm{ref}}}
+\newcommand{\poltheta}{\pi_{\theta}}
+
+% ---------- Title metadata ----------
+\newcommand{\papertitle}{Recursive Cognition and Revealed Preferences:\\
+A Structural Estimator for Synthetic Cultural Agents}
+\newcommand{\paperauthor}{Augusto Gonzalez-Bonorino, Gemini 3 Pro, \& ChatGPT 5.2 Pro}
+\newcommand{\paperaffil}{EconLLM Lab \& Arizona State University}
+\newcommand{\paperdate}{\today}
+
+\begin{document}
+\nocite{*}
+
+%========================
+% Stylish cover page
+%========================
+\begin{titlepage}
+  \centering
+  \vspace*{1.2cm}
+
+  % Header band (ASU Colors)
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[ASUMaroon] (current page.north west) rectangle ([yshift=-3.1cm]current page.north east);
+    \fill[ASUGold] (current page.north west) rectangle ([yshift=-3.25cm]current page.north east);
+  \end{tikzpicture}
+
+  \vspace*{1.1cm}
+  {\Large\color{white}\bfseries \paperaffil\par}
+  \vspace{0.2cm}
+  {\small\color{white}Quantitative Macroeconomics $\times$ AI Alignment\par}
+
+  \vspace{2.2cm}
+  {\Huge\bfseries \papertitle\par}
+  \vspace{1.0cm}
+
+  {\Large \paperauthor\par}
+  \vspace{0.2cm}
+  {\normalsize \paperdate\par}
+
+  \vfill
+  \begin{minipage}{0.92\textwidth}
+  \noindent\textbf{Abstract.}
+  We bridge the gap between AI alignment and structural economics by demonstrating that Direct Preference Optimization (DPO) is isomorphic to Maximum Likelihood Estimation of a Bradley-Terry model with KL-regularized control costs. We leverage this isomorphism to formalize the "Synthetic Cultural Agent" (SCA). Instead of treating SCAs as black-box persona prompts, we define them structurally as policies maximizing a culture-specific reward function defined by the Global Preferences Survey (GPS) vector. We propose a "Synthetic Ethnography" pipeline—a teacher-student distillation process—to calibrate these agents for non-WEIRD populations where digital trace data is scarce. This framework allows computational economists to rigorously simulate heterogeneous agent behavior using the machinery of recursive methods.
+  \end{minipage}
+
+  \vspace*{0.8cm}
+\end{titlepage}
+
+%========================
+% Outline page
+%========================
+\clearpage
+\thispagestyle{empty}
+\begin{center}
+  {\Large\bfseries Reader's Outline (Two-Track Navigation)}
+\end{center}
+\vspace{0.5em}
+
+\noindent\textbf{Main Text: The Economic Argument.}
+\begin{enumerate}[leftmargin=1.2cm, itemsep=0.2em]
+  \item Section \ref{app:TLDR}: The key idea \textbf{DPO \iff BT model MLE estimator}
+  \item Section \ref{sec:claim}: The structural claim: Alignment is Discrete Choice Estimation.
+  \item Section \ref{sec:theory}: The DPO-BT Isomorphism and the Hotz-Miller Inversion.
+  \item Section \ref{sec:culture}: \textbf{Application:} Defining the Cultural State Vector ($z$) and the SCA.
+  \item Section \ref{sec:extension}: Sequential extension: Soft Bellman equations and Process Supervision.
+\end{enumerate}
+
+\vspace{0.6em}
+\noindent\textbf{Appendix (self-contained primer + proofs).}
+\begin{enumerate}[leftmargin=1.2cm, itemsep=0.2em]
+  \item Appendix \ref{app:gemini}: Applied example demonstrating methodology.
+  \item Appendix \ref{app:rum}: Random utility $\Rightarrow$ logit/BT; likelihood and identification.
+  \item Appendix \ref{app:kl}: KL-regularized optimization: existence, uniqueness, closed form.
+  \item Appendix \ref{app:dpo}: The DPO loss as BT MLE after reparameterization (full derivation).
+  \item Appendix \ref{app:softbellman}: Soft Bellman equation, contraction, and ``inclusive value'' intuition.
+  \item Appendix \ref{app:ddc}: Connection to structural dynamic discrete choice (Hotz--Miller-style inversion).
+  \item Appendix \ref{app:examples}: Worked examples, sanity checks, and diagnostic edge cases.
+\end{enumerate}
+
+\vspace{1.0em}
+\noindent\textbf{How to read (recommended).} Read the main once. Then, as soon as a symbol feels ``hand-wavy,'' jump to the Appendix subsection with the same label.
+
+\clearpage
+
+%========================
+% Table of contents
+%========================
+\tableofcontents
+\clearpage
+
+%========================
+% Main content
+%========================
+
+\section{TLDR}\label{sec:TLDR}
+
+\begin{enumerate}
+    \item Key idea: DPO fine-tuned LLMs can be represented as economic agents with a Bradley-Terry Random Utility Model (BT-RUM); essentially a functional form that lets us extract a distribution of likelihoods.
+
+    \item Assumptions:
+        \begin{itemize}
+            \item A) [Behavioral] The evaluator (human or AI teacher) chooses between $y_w$ and $y_l$ according to a \textbf{Bradley-Terry (Logit)} model driven by $r^*$.
+            \item B) [Optimality] The ``ideal" agent we want to build ($\pi^*$) is the solution to a \textbf{KL-regularized maximization} problem of that \textit{same} reward $r^*$.
+        \end{itemize}
+
+    \item Key findings: Modern fine-tuning methods like Direct Preference Optimization (DPO) employ value-function (aka model-based) methods, instead of pure reward-function (aka reinforcement learning) ones, so the recursive language is already being used; When modeled as KL-constrained maximization, there exists a closed form solution to DPO fine-tuning that depends on the reward function, $\pi^*(r^*(x,y))$; We can apply Hotz-Miller Inversion technique to recover $r^*(log \frac{\pi^*}{\pi_{\text{base}}})$; We can use $r^*$ as the score function in the BT model and derive the log-likelihood function; The estimator solves the dual problem of the DPO training algorithm; We can train/tune $\pi_{\text{SCA}}$ to mimic the optimal policy $\pi^*$ without having to model the reward (utility) function. 
+
+    \item Method sketch: 
+        \begin{align}
+            &\pi^* = \max_{\pi} \mathbb{E}_{x \sim \mathcal{D}} [\mathbb{E}_{y \sim \pi(\cdot \mid x)} [r^*(x,y)] - \beta D_{KL} (\pi(\cdot \mid x) || \pi_{\text{base}}(\cdot \mid x))], \hspace{0.5cm} \text{(Str. Concave Obj.)}
+            \\
+            &\pi^*(y \mid x) = \frac{1}{\sum_{y'} \pi_{\text{base}}(y' \mid x) e^{\frac{r(x,y')}{\beta}}} \pi_{\text{base}}(y \mid x) e^{\frac{r(x,y)}{\beta}}, \hspace{1.25cm} \text{(Tilted Gibbs distribution)}  
+            \\
+            &r^*(x,y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{base}}(y \mid x)} + \beta \log Z(x), \hspace{3.5cm} \text{(Latent reward/utility)}
+            \\
+            &r^*(x_i, y_i^{(w)}) - r^*(x_i, y_i^{(l)}) = \beta \log \frac{\pi^*(y_w \mid x)}{\pi_{\text{base}}(y_w \mid x)} - \beta \log \frac{\pi^*(y_l \mid x)}{\pi_{\text{base}}(y_l \mid x)} \hspace{1.25cm} \text{(Hotz-Miller)} 
+            \\
+            &l(r; \mathcal{D}) = \sum_{i=1}^N \log \sigma (r(x_i, y_i^{(w)}) - r(x_i, y_i^{(l)})), \hspace{0.5cm} \sigma(u) = (1 + e^{-u})^{-1} \hspace{1cm} \text{(BT log-l)}
+            \\
+            &\mathcal{L}_{\text{DPO}}(\theta) = - \mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} [\log \sigma (\beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{base}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{base}}(y_l \mid x)})] = -l(r; \mathcal{D}) \\
+            &\text{BT-RUM MLE} \iff \text{DPO Policy}
+        \end{align}
+\end{enumerate}
+
+\clearpage
+
+\section{Introduction: The Structural Claim}\label{sec:claim}
+
+The rapid ascent of Large Language Models (LLMs) presents a paradox for the structural economist. These models appear to be atheoretical "black boxes," yet they exhibit sophisticated reasoning capabilities. This paper argues that the current frontier of AI alignment—specifically Direct Preference Optimization (DPO) \cite{rafailov2023dpo} —is not an ad-hoc engineering heuristic, but a rigorous application of \textbf{Revealed Preference Theory} and \textbf{Stochastic Control}.
+
+We evaluate the following precise statement:
+\begin{quote}
+\emph{Direct Preference Optimization (DPO) is equivalent to maximum-likelihood estimation in a Bradley--Terry random utility model, where the latent utility is structurally identified as the log-probability ratio relative to a reference policy.}
+\end{quote}
+
+We apply this framework to solve a specific problem in development economics: the modeling of non-WEIRD (Western, Educated, Industrialized, Rich, Democratic) populations using \textbf{Synthetic Cultural Agents (SCAs)}.
+\\
+\\
+\noindent ``Equivalent'' here means: the DPO training objective \emph{is} the Bradley--Terry log-likelihood for a particular score function.
+It does \emph{not} mean that all RLHF variants reduce to BT, nor that BT perfectly models human judgment noise.
+The point is methodological: it is legitimate to import structural-econometric language (utility, revealed preference, likelihood, identification) into preference tuning with minimal translation costs.
+
+\section{The Structural Framework}\label{sec:theory}
+
+\subsection{Preference Data and the Bradley-Terry Model}
+Let $x\in\mathcal{X}$ denote a context (prompt, task, environment). We observe preference comparisons
+\[
+\mathcal{D}=\{(x_i, y^{(w)}_i, y^{(\ell)}_i)\}_{i=1}^N,
+\]
+where $y^{(w)}_i$ is judged preferred to $y^{(\ell)}_i$ given $x_i$.
+
+A Bradley-Terry (BT) model postulates a latent utility/reward $r^\star(x,y)$ such that
+\begin{equation}\label{eq:BT}
+\mathbb{P}\!\left(y_1 \succ y_2 \mid x\right) \;=\; \sigmoid\!\left(r^\star(x,y_1)-r^\star(x,y_2)\right).
+\end{equation}
+
+This is the paired-comparison specialization of the logit random utility model (Appendix \ref{app:rum}).
+
+\subsection{The Planner's Problem (RLHF-KL)}
+The alignment problem is a KL-regularized control problem. We seek a policy $\pi$ that maximizes expected reward while remaining close to a reference policy $\refpol$ (the pre-trained LLM).
+\begin{equation}\label{eq:RLHF-KL}
+\max_{\pi(\cdot\mid x)}\;\E_{y\sim \pi(\cdot\mid x)}[r^\star(x,y)] \;-\; \beta\,\KL\big(\pi(\cdot\mid x)\,\|\,\refpol(\cdot\mid x)\big).
+\end{equation}
+As proven in Appendix \ref{app:kl}, the unique optimal policy is the tilted Gibbs distribution:
+\begin{equation}\label{eq:softmax}
+\pi^\star(y\mid x) = \frac{1}{Z(x)} \refpol(y\mid x)\exp\left(\frac{r^\star(x,y)}{\beta}\right).
+\end{equation}
+
+\subsection{The Hotz-Miller Inversion (DPO)}
+
+A key insight from structural econometrics (Hotz \& Miller, 1993) is that we can invert the choice probabilities to recover value differences.
+By inverting \eqref{eq:softmax}, we obtain the \textbf{Log-Ratio Identity}:
+\begin{equation}\label{eq:ratio-identity}
+r^\star(x,y_1)-r^\star(x,y_2) = \beta \left[ \log\frac{\pi^\star(y_1\mid x)}{\refpol(y_1\mid x)} - \log\frac{\pi^\star(y_2\mid x)}{\refpol(y_2\mid x)} \right].
+\end{equation}
+This allows us to estimate the optimal policy $\pi^\star$ directly from preference data without ever explicitly modeling the reward function $r^\star$.
+
+\subsection{Main Result}\label{sec:result}
+
+\begin{proposition}[DPO objective equals BT log-likelihood for log-ratio scores]\label{prop:dpo-bt}
+Assume the BT preference model \eqref{eq:BT} and the KL-optimality relation \eqref{eq:softmax}.
+Define a parametric policy $\pi_\theta(\cdot\mid x)$. Then the BT log-likelihood implied by \eqref{eq:BT}--\eqref{eq:ratio-identity}
+can be written as
+\[
+\ell(\theta;\mathcal{D})
+=
+\sum_{i=1}^N
+\log \sigmoid\!\left(
+\beta\left[
+\log\frac{\pi_\theta(y^{(w)}_i\mid x_i)}{\refpol(y^{(w)}_i\mid x_i)}
+-
+\log\frac{\pi_\theta(y^{(\ell)}_i\mid x_i)}{\refpol(y^{(\ell)}_i\mid x_i)}
+\right]\right),
+\]
+which (up to sign convention) is exactly the DPO loss used for direct preference optimization.
+\end{proposition}
+
+\noindent Appendix \ref{app:dpo} gives a line-by-line derivation and discusses what is (and is not) identified.
+
+\subsection{Economic interpretation}
+Equation \eqref{eq:softmax} is the discrete-choice formula with an outside option: the reference policy $\refpol$ plays the role of a baseline availability/attention weight, and $\beta$ is a ``noise'' or rational-inattention scale. Equation \eqref{eq:ratio-identity} is the structural inversion: rewards are CCP log-ratios up to an additive normalizing constant. DPO exploits this inversion to avoid explicit reward-model fitting.
+
+\section{Sequential extension: soft Bellman equations and process supervision}\label{sec:extension}
+
+If actions are tokens and state includes the text history, the same KL-regularized logic yields a \emph{soft} Bellman operator.
+Let $s$ be a state (history) and $a$ an action (token). With reward $r(s,a)$ and reference policy $\refpol(a\mid s)$, the optimal value satisfies the log-sum-exp Bellman equation (Appendix \ref{app:softbellman}):
+\[
+V^\star(s)
+=
+\beta \log \sum_{a}\refpol(a\mid s)\exp\Big(\tfrac{1}{\beta}\big[r(s,a)+\gamma \E[V^\star(s')\mid s,a]\big]\Big).
+\]
+This is the precise sense in which ``chain-of-thought is a recursive decision problem'': the continuation value is a log-partition function, mirroring the inclusive value in multinomial logit.
+
+\section{Application: Synthetic Cultural Agents (SCA)}\label{sec:culture}
+
+We now apply this machinery to the problem of \textbf{Cultural Alignment}.
+
+\subsection{The Cultural State Vector ($z$)}
+Standard LLMs are implicitly aligned to a "WEIRD" prior ($\refpol$). To model a specific population (e.g., Pakistani urban citizens), we condition the policy on a cultural state vector $z$.
+
+We reject ad-hoc definitions of culture in favor of the \textbf{Global Preferences Survey (GPS)} framework (Falk et al., QJE 2018). We define the cultural state vector $z \in [0,1]^6$ as:
+\begin{equation}
+    z = \begin{bmatrix} 
+    \text{Time Preference} (\delta) \\ 
+    \text{Risk Aversion} (\gamma) \\ 
+    \text{Pos. Reciprocity} (\xi^+) \\ 
+    \text{Neg. Reciprocity} (\xi^-) \\ 
+    \text{Altruism} (\alpha) \\ 
+    \text{Trust} (\tau)
+    \end{bmatrix}
+\end{equation}
+The vector $z$ parameterizes a \textit{reward function} $R(x,y;z)$ (or a social utility $U(\cdot;z)$) defined over \textbf{allocations + social context}, where the GPS moments discipline the implied choice probabilities in benchmark tasks.
+\[
+R(x,y;z) = r_{\text{task}} (x,y) + \phi(z)^T m(x,y)
+\],
+
+where $m(x,y)$ are measurable ``behavioral moments/features" (eg, offers, punishments, promises kept, etc). Then, GPS enters by restricting $\phi(z)$ or specific target moments. An SCA is defined as a policy $\pi(\cdot|s; z)$ conditioned on this vector.
+
+\subsection{The Calibration Problem}
+The goal is to find a policy $\pi_{SCA}(\cdot | x, z)$ that maximizes the ``Cultural Reward" $R(x, y; z)$. Since we often lack sufficient digital trace data for specific populations, we define a \textbf{Synthetic Ethnography} pipeline (detailed in Appendix \ref{sec:algo}).
+
+We generate synthetic preference pairs using a "Teacher" model conditioned on ethnographic profiles, and use DPO to distill these preferences into the ``Student" SCA.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    node distance=1.5cm,
+    >={Latex[length=3mm,width=2mm]},
+    line/.style={draw, thick, -{Latex}},
+    block/.style={
+        rectangle, rounded corners=2pt,
+        draw=black!60, fill=black!2,
+        minimum height=1.25cm,
+        text width=2.8cm, align=center,
+        blur shadow={shadow blur steps=5, shadow blur extra rounding=1.5pt, shadow opacity=15}
+    },
+    data/.style={
+        cylinder, shape border rotate=90, aspect=0.28,
+        draw=black!60, fill=ASUGold!15,
+        minimum height=1.25cm,
+        text width=2.8cm, align=center,
+        blur shadow={shadow blur steps=5, shadow blur extra rounding=1.5pt, shadow opacity=15}
+    },
+    emph/.style={fill=ASUMaroon!7, draw=ASUMaroon!70},
+    ok/.style={fill=green!10, draw=green!40!black},
+    note/.style={font=\scriptsize, text=black!70}
+]
+    % Nodes (horizontal)
+    \node[block, emph] (profile) {Cultural Profile $z$\\ \& Retrieved Ethnography};
+    \node[block] (teacher) [right=of profile] {\textbf{Teacher Model}\\(e.g.\ GPT-4 / Claude)};
+    \node[data] (syn) [right=of teacher] {Synthetic Preference Pairs\\$\mathcal{D}_{\mathrm{syn}}$};
+    \node[block, ok] (student) [below=of syn] {\textbf{Student SCA}\\(Llama-3 + LoRA)};
+    \node[block] (eval) [left=of student] {Validation\\(e.g.\ WVS moments, eval prompts, counterfactuals)};
+
+    % Arrows + labels
+    \path[line] (profile) -- (teacher);
+    \path[line] (teacher) -- node[note, above] {generate} (syn);
+    \path[line] (syn) -- node[note, above] {DPO} (student);
+    \path[line] (student) -- node[note, above] {compare} (eval);
+
+\end{tikzpicture}
+\caption{SCA 2.0 pipeline (high-level): culture-conditioned synthetic preference data from a teacher model is used to DPO-tune a student SCA; outputs are validated against external benchmarks (e.g., WVS).}
+\label{fig:sca2-pipeline}
+\end{figure}
+
+\clearpage
+
+%========================
+% Appendix
+%========================
+\appendix
+\input{appendix}
+
+\clearpage
+\printbibliography
+\end{document}

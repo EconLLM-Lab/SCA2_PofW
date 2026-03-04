@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# datasets
+data/GPS/GPS_dataset_country_level/
+data/GPS/GPS_dataset_individual_level/
+data/WVS/WVS_wave7.dta
+
 # Distribution / packaging
 .Python
 build/

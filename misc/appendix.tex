@@ -1,0 +1,518 @@
+% --- Appendix Setup ---
+\section*{Appendix: Mathematical Foundations and Derivations}
+
+\noindent This appendix provides the formal derivations linking Reinforcement Learning from Human Feedback (RLHF) to Structural Microeconometrics, defines the state space for Cultural Agents, and details the synthetic data generation pipeline.
+
+% --- SECTION A: PRELIMINARIES ---
+\section{Preliminaries: The Language Model as a Policy}
+\label{app:gemini}
+
+\renewcommand{\thesubsection}{\Alph{section}.\arabic{subsection}}
+\setcounter{section}{1} % Start A, B, C...
+
+We define a Large Language Model (LLM) as a stochastic policy $\pi_\theta(y|x)$ parameterized by weights $\theta$.
+\begin{itemize}
+    \item \textbf{State space ($S$):} The set of all possible prompt histories $x$.
+    \item \textbf{Action space ($A$):} The vocabulary set $V$ (tokens).
+    \item \textbf{Trajectory ($y$):} A sequence of actions (completion) given context $x$.
+\end{itemize}
+The "Reference Policy" $\pi_{\text{ref}}$ denotes the pre-trained model (e.g., Llama-3), representing the prior distribution over language learned from the internet corpus.
+
+% --- SECTION B: THEOREM 1 ---
+\subsection{Theorem 1: The DPO-RUM Isomorphism}
+\label{proof:dpo_rum}
+
+We formally prove that the Direct Preference Optimization (DPO) objective is mathematically equivalent to the Maximum Likelihood Estimation (MLE) of a specific Random Utility Model (RUM).
+
+\subsubsection{The Planner's Problem (RLHF)}
+The alignment problem is formulated as a KL-constrained maximization of expected reward. The optimal policy $\pi^*$ solves:
+\begin{equation}
+    \max_{\pi} \mathbb{E}_{x \sim \mathcal{D}} \left[ \mathbb{E}_{y \sim \pi(\cdot|x)} [r^*(x, y)] - \beta D_{KL}(\pi(\cdot|x) || \pi_{\text{ref}}(\cdot|x)) \right]
+    \label{eq:objective}
+\end{equation}
+where $r^*(x,y)$ is the latent utility function (unobserved) and $\beta > 0$ is the regularization parameter (temperature).
+
+\textbf{Lemma 1 (Analytical Solution):} The closed-form solution to optimization problem (\ref{eq:objective}) is given by the tilted Gibbs distribution:
+\begin{equation}
+    \pi^*(y|x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y|x) \exp\left( \frac{r^*(x, y)}{\beta} \right)
+    \label{eq:optimal_policy}
+\end{equation}
+where $Z(x) = \sum_y \pi_{\text{ref}}(y|x) \exp(r^*(x, y)/\beta)$ is the partition function.
+
+\begin{proof}
+    This is a standard result in convex duality. The functional derivative of the Lagrangian with respect to $\pi$ yields the first-order condition $\log \pi(y|x) = \frac{1}{\beta} r^*(x,y) + \log \pi_{\text{ref}}(y|x) - 1 - \mu$, which rearranges to (\ref{eq:optimal_policy}).
+\end{proof}
+
+\subsubsection{The Inversion}
+We invert Eq. (\ref{eq:optimal_policy}) to express the latent reward $r^*$ as a function of the optimal policy and the reference policy:
+\begin{equation}
+    r^*(x, y) = \beta \log \frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta \log Z(x)
+    \label{eq:inverted_reward}
+\end{equation}
+
+\subsubsection{The Discrete Choice Model (Bradley-Terry)}
+Assume the human evaluator's preferences follow a Bradley-Terry (Luce) model, which corresponds to a Random Utility Model with i.i.d. Gumbel error terms. The probability that completion $y_w$ is preferred to $y_l$ is:
+\begin{equation}
+    P(y_w \succ y_l | x) = \sigma(r^*(x, y_w) - r^*(x, y_l))
+    \label{eq:bradley_terry}
+\end{equation}
+where $\sigma(u) = (1 + e^{-u})^{-1}$ is the logistic sigmoid function.
+
+\subsubsection{The Substitution (The Isomorphism)}
+Substitute the policy-defined reward (\ref{eq:inverted_reward}) into the preference model (\ref{eq:bradley_terry}). The difference in rewards is:
+\begin{align*}
+    r^*(x, y_w) - r^*(x, y_l) &= \left( \beta \log \frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)} + \beta \log Z(x) \right) - \left( \beta \log \frac{\pi^*(y_l|x)}{\pi_{\text{ref}}(y_l|x)} + \beta \log Z(x) \right) \\
+    &= \beta \log \frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi^*(y_l|x)}{\pi_{\text{ref}}(y_l|x)}
+\end{align*}
+\textbf{Result:} The partition function term $\beta \log Z(x)$ cancels out. The likelihood of the preference data depends \textit{only} on the policies.
+
+\subsubsection{The Structural Estimator}
+The DPO loss function is the negative log-likelihood of this derived probability model:
+\begin{equation}
+    \mathcal{L}_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} \right) \right]
+\end{equation}
+\textit{Economic Interpretation:} We are estimating the parameters of the policy function $\pi_\theta$ directly from revealed preference data, treating the log-ratio of the reference policy as a "price" or "base rate."
+
+% --- SECTION C: CULTURAL STATE ---
+\subsection{Modeling Culture: The State Vector $z$}
+We reject ad-hoc definitions of culture in favor of the \textbf{Global Preferences Survey (GPS)} framework (Falk et al., QJE 2018). We define the cultural state vector $z \in [0,1]^6$ as:
+\begin{equation}
+    z = \begin{bmatrix} 
+    \text{Time Preference} (\delta) \\ 
+    \text{Risk Aversion} (\gamma) \\ 
+    \text{Pos. Reciprocity} (\xi^+) \\ 
+    \text{Neg. Reciprocity} (\xi^-) \\ 
+    \text{Altruism} (\alpha) \\ 
+    \text{Trust} (\tau)
+    \end{bmatrix}
+\end{equation}
+These parameters map directly to the primitives of a standard utility function $U(c_t; z)$. An SCA is defined as a policy $\pi(\cdot|s; z)$ conditioned on this vector.
+
+% --- SECTION D: ALGORITHM ---
+\subsection{Algorithm 1: Synthetic Ethnography (Teacher-Student Distillation)}\label{sec:algo}
+To calibrate SCAs for populations with scarce digital traces (e.g., non-WEIRD populations), we employ a two-step distillation process.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+        \begin{tikzpicture}[
+            font=\small,
+            node distance=1.6cm and 1.9cm,
+            >={Latex[length=3mm,width=2mm]},
+            line/.style={draw, thick, -{Latex}},
+            dashedline/.style={draw, thick, -{Latex}, dashed},
+            block/.style={
+                rectangle, rounded corners=2pt,
+                draw=black!60, fill=black!2,
+                minimum height=1.15cm,
+                text width=3.35cm, align=center,
+                blur shadow={shadow blur steps=5, shadow blur extra rounding=1.5pt, shadow opacity=15}
+            },
+            data/.style={
+                cylinder, shape border rotate=90, aspect=0.28,
+                draw=black!60, fill=ASUGold!15,
+                minimum height=1.15cm,
+                text width=3.35cm, align=center,
+                blur shadow={shadow blur steps=5, shadow blur extra rounding=1.5pt, shadow opacity=15}
+            },
+            emph/.style={fill=ASUMaroon!7, draw=ASUMaroon!70},
+            ok/.style={fill=green!10, draw=green!40!black},
+            note/.style={font=\scriptsize, text=black!70},
+            smallnote/.style={font=\scriptsize\itshape, text=black!60}
+        ]
+        
+        % --- Top row: inputs / benchmarks ---
+        \node[data] (wvs) {Benchmark Data\\(e.g.\ WVS / GPS)};
+        \node[block, emph] (state) [right=of wvs] {Cultural State\\$z_c$ (factor scores)\\\& Profile/RAG};
+        \node[block] (teacher) [right=of state] {\textbf{Teacher Model}\\(closed or ensemble)};
+        \node[data] (syn) [right=of teacher] {Synthetic Preference Pairs\\$\mathcal{D}_{\mathrm{syn}}$};
+        
+        % --- Bottom row: training / evaluation ---
+        \node[block, ok] (student) [below=1.6cm of syn] {\textbf{Student SCA}\\(open model + LoRA)};
+        \node[block] (eval) [left=of student] {Validation Suite\\(held-out prompts,\\moments, treatments)};
+        \node[data] (human) [left=of eval] {Small Human Labels\\$\mathcal{D}_{\mathrm{H}}$ (optional)};
+        
+        % --- Flows ---
+        \path[line] (wvs) -- node[note, above] {calibrate / target moments} (state);
+        \path[line] (state) -- (teacher);
+        \path[line] (teacher) -- node[note, above] {generate} (syn);
+        \path[line] (syn) -- node[note, right] {DPO / SFT prior} (student);
+        
+        \path[line] (student) -- node[note, above] {evaluate} (eval);
+        
+        % --- Optional correction loop (dashed) ---
+        \path[dashedline] (human) -- node[note, above] {preference labels} (student);
+        \path[dashedline] (eval.west) to[out=180,in=-45] node[smallnote, left] {active learning: query hard cases} (human.south);
+        
+        % --- Subtle grouping labels ---
+        \node[smallnote, above=0.25cm of wvs] {Inputs / Benchmarks};
+        \node[smallnote, below=0.25cm of eval] {Training \& Validation};
+        
+        \end{tikzpicture}
+    \end{adjustbox}
+    \caption{SCA 2.0 pipeline with explicit separation between (i) benchmark data used to calibrate cultural state and evaluation targets, (ii) synthetic preference generation, and (iii) student tuning with an optional human-correction loop.}
+    \label{fig:sca2-pipeline-extended}
+\end{figure}
+
+\begin{enumerate}
+    \item \textbf{Teacher Phase (Data Generation):}
+    \begin{itemize}
+        \item \textbf{Input:} Cultural Profile $P_c$ (Ethnographic text + GPS moments).
+        \item \textbf{Model:} Large Frontier Model (e.g., Claude 3.5 Sonnet).
+        \item \textbf{Action:} Generate $N=10,000$ synthetic survey responses and economic decisions.
+        \item \textbf{Output:} Synthetic Dataset $\mathcal{D}_{\text{syn}} = \{(x, y_w, y_l)\}$.
+    \end{itemize}
+    
+    \item \textbf{Student Phase (Structural Estimation):}
+    \begin{itemize}
+        \item \textbf{Input:} Base Model $\pi_{\text{ref}}$ (Llama-3-8B).
+        \item \textbf{Objective:} Minimize $\mathcal{L}_{\text{DPO}}(\theta)$ on $\mathcal{D}_{\text{syn}}$.
+        \item \textbf{Result:} A calibrated SCA $\pi_{\text{SCA}}$ that internalizes the cultural priors into its weights.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Remark on Reasoning (Group Relative Policy Optimization)}
+Recent advances, such as DeepSeek-R1's GRPO, extend this framework to sequential reasoning. GRPO replaces the pairwise loss with a group-based advantage estimator:
+$$ A_i = \frac{r_i - \text{mean}(\{r_1, \dots, r_G\})}{\text{std}(\{r_1, \dots, r_G\})} $$
+This can be interpreted as a non-parametric approximation of the Value Function $V(s)$, allowing the SCA to "reason" about cultural norms over multiple steps without a trained critic network.
+
+\section{Random utility, logit, and Bradley--Terry}\label{app:rum}
+
+This appendix is written as a self-contained primer for readers with first-year PhD economics probability and optimization.
+
+\subsection{Notation and measurability (minimal)}
+Let $(\Omega,\mathcal{F},\mathcal{P})$ be a probability space. For each context $x\in\mathcal{X}$, let $\mathcal{Y}(x)$ denote the set of feasible responses
+(e.g., all token sequences up to length $T$, or a finite candidate set produced by sampling).
+A (stochastic) policy $\pi(\cdot\mid x)$ is a probability measure on $\mathcal{Y}(x)$.
+When $\mathcal{Y}(x)$ is countable, sums are literal; otherwise interpret $\sum_y$ as $\int \dd y$.
+
+\subsection{Bradley--Terry as logistic regression on utility differences}
+\begin{definition}[Bradley--Terry model]
+Given a real-valued score $r(x,y)$, the BT model specifies paired-comparison probabilities as
+\[
+\mathcal{P}(y_1 \succ y_2 \mid x)
+=
+\frac{\exp(r(x,y_1))}{\exp(r(x,y_1))+\exp(r(x,y_2))}
+=
+\sigmoid(r(x,y_1)-r(x,y_2)).
+\]
+\end{definition}
+
+Given labeled pairs $\{(x_i,y_i^{(w)},y_i^{(\ell)})\}$, the BT log-likelihood is
+\begin{equation}\label{eq:bt-ll}
+\ell(r;\mathcal{D})
+=
+\sum_{i=1}^N \log \sigmoid\!\Big(r(x_i,y_i^{(w)})-r(x_i,y_i^{(\ell)})\Big).
+\end{equation}
+\textbf{Identification.} For each fixed $x$, $r(x,\cdot)$ is identified only up to an additive constant $c(x)$,
+since differences $r(x,y_1)-r(x,y_2)$ are invariant to $r(x,\cdot)\mapsto r(x,\cdot)+c(x)$.
+
+\subsection{Microfoundation: random utility with Type-I EV shocks}
+Let latent utility be
+\[
+U(x,y)=r(x,y)+\varepsilon_y,
+\]
+with $(\varepsilon_y)_{y\in\mathcal{Y}(x)}$ i.i.d. Type-I extreme value (Gumbel).
+Then for two alternatives $y_1,y_2$,
+\[
+\mathcal{P}(y_1 \succ y_2 \mid x)
+=
+\mathcal{P}\big(U(x,y_1)\ge U(x,y_2)\big)
+=
+\sigmoid\!\big(r(x,y_1)-r(x,y_2)\big).
+\]
+This yields BT/logit. For more than two alternatives, the same assumption yields multinomial logit with the IIA property.
+
+\begin{remark}[Why Gumbel matters]
+The Gumbel assumption is the reason log-sum-exp and softmax appear everywhere:
+\[
+\E\left[\max_{y}\{r(x,y)+\varepsilon_y\}\right]
+=
+\beta \log \sum_y \exp(r(x,y)/\beta) + \text{const}.
+\]
+This is the ``inclusive value'' interpretation in discrete choice and it reappears as the value function in soft RL (Appendix \ref{app:softbellman}).
+\end{remark}
+
+\section{KL-regularized optimization and the softmax policy}\label{app:kl}
+
+This section proves the closed-form optimizer used in RLHF-KL objectives and establishes the key log-ratio identity.
+
+\subsection{Problem}
+Fix a context $x$ and consider
+\begin{equation}\label{eq:inner}
+\max_{\pi(\cdot\mid x)}\;
+\sum_{y}\pi(y\mid x)\,r(x,y)
+-
+\beta\sum_{y}\pi(y\mid x)\log\frac{\pi(y\mid x)}{\refpol(y\mid x)}
+\quad\text{s.t.}\quad
+\sum_y \pi(y\mid x)=1,\;\pi\ge 0.
+\end{equation}
+Assume $r(x,\cdot)$ is bounded above (or integrable) and $\refpol(y\mid x)>0$ on the support of interest.
+
+\subsection{Existence and uniqueness}
+\begin{lemma}[Concavity and existence]
+The objective in \eqref{eq:inner} is strictly concave in $\pi(\cdot\mid x)$ and attains a unique maximizer $\pi^\star(\cdot\mid x)$.
+\end{lemma}
+\begin{proof}
+Strict concavity follows because $-\KL(\pi\|\refpol)$ is strictly concave in $\pi$ on the simplex when $\refpol$ is strictly positive on support.
+The feasible set is compact (simplex) and the objective is upper semicontinuous under mild integrability; hence a maximizer exists, and strict concavity yields uniqueness.
+\end{proof}
+
+\subsection{Closed form via Lagrange multipliers}
+\begin{lemma}[Softmax around the reference]\label{lem:softmax}
+The unique optimizer of \eqref{eq:inner} satisfies
+\[
+\pi^\star(y\mid x)
+=
+\frac{\refpol(y\mid x)\exp(r(x,y)/\beta)}{Z(x)},
+\qquad
+Z(x)=\sum_{y'} \refpol(y'\mid x)\exp(r(x,y')/\beta).
+\]
+\end{lemma}
+\begin{proof}
+Form the Lagrangian
+\[
+\mathcal{L}(\pi,\lambda)
+=
+\sum_y \pi(y\mid x)r(x,y)
+-
+\beta\sum_y \pi(y\mid x)\log\frac{\pi(y\mid x)}{\refpol(y\mid x)}
++
+\lambda\Big(\sum_y \pi(y\mid x)-1\Big).
+\]
+For any $y$ with $\pi(y\mid x)>0$, the stationarity condition is
+\[
+0=\frac{\partial\mathcal{L}}{\partial \pi(y\mid x)}
+=
+r(x,y) -\beta\Big(\log\frac{\pi(y\mid x)}{\refpol(y\mid x)}+1\Big)+\lambda.
+\]
+Rearrange:
+\[
+\log\frac{\pi(y\mid x)}{\refpol(y\mid x)}=\frac{r(x,y)+\lambda-\beta}{\beta}.
+\]
+Exponentiate and normalize to satisfy $\sum_y \pi(y\mid x)=1$, yielding the stated form with a partition function $Z(x)$.
+\end{proof}
+
+\subsection{Key inversion: rewards as log probability ratios}
+\begin{corollary}[Log-ratio identity]\label{cor:logratio}
+Let $\pi^\star$ satisfy Lemma \ref{lem:softmax}. Then for any $y$,
+\[
+r(x,y)
+=
+\beta\log\frac{\pi^\star(y\mid x)}{\refpol(y\mid x)} + \beta\log Z(x).
+\]
+Hence for any $y_1,y_2$,
+\[
+r(x,y_1)-r(x,y_2)
+=
+\beta\left[
+\log\frac{\pi^\star(y_1\mid x)}{\refpol(y_1\mid x)}-\log\frac{\pi^\star(y_2\mid x)}{\refpol(y_2\mid x)}
+\right].
+\]
+\end{corollary}
+\begin{proof}
+Take logs of Lemma \ref{lem:softmax} and rearrange; the $Z(x)$ term cancels in differences.
+\end{proof}
+
+\section{Deriving the DPO objective from BT + KL-regularized optimality}\label{app:dpo}
+
+This section gives the derivation in referee-proof detail.
+
+\subsection{Assumptions}
+\begin{enumerate}[leftmargin=1.2cm, itemsep=0.2em]
+\item \textbf{BT preference model.} Human labels are generated by \eqref{eq:BT} with some latent reward $r^\star(x,y)$.
+\item \textbf{KL-optimality.} The (unknown) optimal policy $\pi^\star$ for reward $r^\star$ satisfies Lemma \ref{lem:softmax} with reference $\refpol$ and temperature $\beta$.
+\end{enumerate}
+
+\subsection{From BT to log-ratio scores}
+Start from BT:
+\[
+\mathcal{P}(y_w \succ y_\ell\mid x)=\sigmoid(r^\star(x,y_w)-r^\star(x,y_\ell)).
+\]
+By Corollary \ref{cor:logratio},
+\[
+r^\star(x,y_w)-r^\star(x,y_\ell)
+=
+\beta\left[
+\log\frac{\pi^\star(y_w\mid x)}{\refpol(y_w\mid x)}
+-
+\log\frac{\pi^\star(y_\ell\mid x)}{\refpol(y_\ell\mid x)}
+\right].
+\]
+Thus the BT probability can be written as
+\begin{equation}\label{eq:bt-logratio}
+\mathcal{P}(y_w \succ y_\ell\mid x)=
+\sigmoid\!\left(
+\beta\left[
+\log\frac{\pi^\star(y_w\mid x)}{\refpol(y_w\mid x)}
+-
+\log\frac{\pi^\star(y_\ell\mid x)}{\refpol(y_\ell\mid x)}
+\right]\right).
+\end{equation}
+
+\subsection{Likelihood for a parametric policy}
+We do not observe $\pi^\star$. We posit a parametric family $\{\pi_\theta\}$ and fit it by maximum likelihood under the model \eqref{eq:bt-logratio}.
+Given $\mathcal{D}$,
+\[
+\ell(\theta;\mathcal{D})
+=
+\sum_{i=1}^N
+\log
+\sigmoid\!\left(
+\beta\left[
+\log\frac{\pi_\theta(y_i^{(w)}\mid x_i)}{\refpol(y_i^{(w)}\mid x_i)}
+-
+\log\frac{\pi_\theta(y_i^{(\ell)}\mid x_i)}{\refpol(y_i^{(\ell)}\mid x_i)}
+\right]\right).
+\]
+Define the \emph{DPO loss} as $\mathcal{L}_{\mathrm{DPO}}(\theta)=-\ell(\theta;\mathcal{D})$.
+This is the standard objective used in DPO implementations.
+
+\subsection{Interpretation: what is being estimated?}
+It is tempting to say we are ``estimating $r^\star$,'' but DPO avoids an explicit reward model.
+Instead, it estimates the \emph{policy} whose log-ratio scores explain preference labels under BT.
+Reward differences are implicitly represented by policy log-ratio differences.
+
+\begin{remark}[Temperature / scale]
+The parameter $\beta$ is a scale normalization that controls how sharply preferences respond to score differences.
+In structural choice models, it plays the role of a shock scale (variance) parameter.
+In RLHF, it controls how far the learned policy can move from $\refpol$ before KL costs dominate.
+\end{remark}
+
+\begin{remark}[Misspecification]
+If BT is misspecified (e.g., preferences violate IIA-like properties across candidate sets, raters are inconsistent, context effects),
+DPO remains a valid M-estimator for the best-fitting logit model, but the interpretation of $r^\star$ as ``true utility'' becomes approximate.
+\end{remark}
+
+\section{Soft Bellman equations and process supervision}\label{app:softbellman}
+
+This section extends the one-step analysis to sequential decision-making over tokens or reasoning steps.
+
+\subsection{MDP setup}
+Let $(\mathcal{S},\mathcal{A},P,r,\gamma)$ be an MDP:
+\begin{itemize}
+    \item $s\in\mathcal{S}$ is a state (e.g., prompt + partial transcript),
+    \item $a\in\mathcal{A}(s)$ an action (token),
+    \item $P(\cdot\mid s,a)$ a transition kernel,
+    \item $r(s,a)$ a bounded reward, and $\gamma\in(0,1)$ a discount factor.
+\end{itemize}
+Let $\refpol(a\mid s)$ be a reference policy.
+
+Consider the maximum-entropy / KL-regularized objective:
+\begin{equation}\label{eq:entrl}
+\max_{\pi}\;
+\E^\pi\left[\sum_{t\ge 0}\gamma^t \Big(r(s_t,a_t) - \beta\log\frac{\pi(a_t\mid s_t)}{\refpol(a_t\mid s_t)}\Big)\right].
+\end{equation}
+
+\subsection{Soft Bellman operator}
+Define the soft Q-function:
+\[
+Q(s,a)= r(s,a) + \gamma \E[V(s')\mid s,a].
+\]
+Then the optimal value satisfies
+\begin{equation}\label{eq:softV}
+V^\star(s)
+=
+\beta\log\sum_{a}\refpol(a\mid s)\exp\Big(\tfrac{1}{\beta}Q^\star(s,a)\Big),
+\end{equation}
+and the optimal policy is
+\begin{equation}\label{eq:softpi}
+\pi^\star(a\mid s)
+=
+\frac{\refpol(a\mid s)\exp(\tfrac{1}{\beta}Q^\star(s,a))}{\sum_{a'}\refpol(a'\mid s)\exp(\tfrac{1}{\beta}Q^\star(s,a'))}.
+\end{equation}
+
+\begin{theorem}[Contraction and existence]\label{thm:contraction}
+Assume $|r(s,a)|\le R_{\max}<\infty$ and $\gamma\in(0,1)$. Define the soft Bellman operator $(\mathcal{T}V)(s)$ by
+\[
+(\mathcal{T}V)(s)
+=
+\beta\log\sum_{a}\refpol(a\mid s)\exp\Big(\tfrac{1}{\beta}\big[r(s,a)+\gamma \E[V(s')\mid s,a]\big]\Big).
+\]
+Then $\mathcal{T}$ is a contraction on bounded functions under the sup norm, hence has a unique fixed point $V^\star$.
+\end{theorem}
+\begin{proof}
+Use the standard DP argument plus Lipschitzness of log-sum-exp: for any vectors $u,v$, $|\mathrm{LSE}(u)-\mathrm{LSE}(v)|\le \|u-v\|_\infty$.
+Then $|(\mathcal{T}V)(s)-(\mathcal{T}W)(s)|\le \gamma\|V-W\|_\infty$. Take sup over $s$.
+\end{proof}
+
+\subsection{Graphical intuition: log-sum-exp as ``soft max''}
+For scalars $z_1,z_2$,
+\[
+\beta\log\big(e^{z_1/\beta}+e^{z_2/\beta}\big)
+\approx \max\{z_1,z_2\} \quad\text{as }\beta\to 0,
+\]
+and becomes smoother as $\beta$ grows. This is why entropy regularization makes optimization stable and why the value is an ``inclusive value.''
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.82\textwidth,
+  height=5.2cm,
+  xlabel={$z$},
+  ylabel={$\sigmoid(z)$},
+  grid=major,
+  xmin=-6, xmax=6,
+  ymin=0, ymax=1,
+  ticks=both
+]
+\addplot[domain=-6:6,samples=300,thick] {1/(1+exp(-x))};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\noindent The logistic function appears in BT probabilities and, via log-ratio scores, in DPO training.
+
+\section{Structural dynamic discrete choice: the econometric mirror}\label{app:ddc}
+
+In structural dynamic discrete choice (DDC) models with Type-I EV shocks, the probability of choosing action $a$ in state $s$ takes a logit form in choice-specific value functions.
+Hotz--Miller (1993) shows that \emph{conditional choice probabilities} (CCPs) can be inverted to recover differences in choice-specific value functions up to constants.
+
+\subsection{Why this matters here}
+The DPO derivation uses the same algebraic structure:
+\begin{itemize}[leftmargin=1.2cm, itemsep=0.2em]
+\item DDC: estimate CCPs from data, invert to get value differences, avoid repeated solution of the DP.
+\item DPO: parameterize $\pi_\theta$, use BT likelihood on preference pairs, and via log-ratio identities interpret score differences as reward/value differences (relative to $\refpol$), avoiding explicit reward-model estimation.
+\end{itemize}
+
+This provides an economist-native narrative: DPO is an inversion-based estimator for a regularized discrete-choice control problem.
+
+\section{Worked examples and diagnostics}\label{app:examples}
+
+\subsection{Example 1: Finite candidate set}
+Let $\mathcal{Y}(x)=\{y^{(1)},\dots,y^{(K)}\}$ be a finite set of candidate responses produced by sampling.
+Then BT probabilities are well-defined on the finite set and the partition function $Z(x)$ in \eqref{eq:softmax} is a finite sum.
+This is the cleanest setting for proofs and intuition.
+
+\subsection{Example 2: Continuous outputs (measure-theoretic note)}
+If $\mathcal{Y}(x)$ is uncountable (all token sequences), replace sums with integrals w.r.t. a base measure.
+In practice, both preference labeling and DPO training operate on \emph{finite sampled sets} of responses,
+so the finite-candidate analysis captures the implemented estimand.
+
+\subsection{Diagnostic: invariances and failure modes}
+\begin{enumerate}[leftmargin=1.2cm, itemsep=0.2em]
+\item \textbf{Additive constants.} $r(x,\cdot)$ is identified up to $c(x)$. DPO implicitly absorbs this into $Z(x)$.
+\item \textbf{Support mismatch.} If $\refpol(y\mid x)=0$ but $\pi_\theta(y\mid x)>0$, log ratios blow up. In practice, models share support.
+\item \textbf{Label noise / context effects.} BT assumes a single latent $r^\star$ with logistic noise. If preferences depend on the presented pair set,
+or are non-transitive, BT is misspecified; DPO remains an M-estimator but the ``utility'' interpretation weakens.
+\end{enumerate}
+
+\subsection{A small ``dictionary'' for later specialization}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Structural economics & Preference-based fine-tuning \\
+\midrule
+Context / environment $x$ & Prompt / task $x$ \\
+Alternative $y$ & Candidate completion $y$ \\
+Utility $u(x,y)$ & Reward / score $r(x,y)$ \\
+Random utility shocks & Rater noise / preference randomness \\
+Logit/BT likelihood & Pairwise preference loss (DPO) \\
+CCP inversion (Hotz--Miller) & Log-ratio identity (Cor. \ref{cor:logratio}) \\
+Entropy / info cost & KL to reference policy \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent This dictionary is the backbone for specializing to cultural alignment later: ``culture'' becomes either a parameter in $r(x,y;c)$ or a shifter of the state distribution.
+
