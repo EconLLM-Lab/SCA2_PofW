@@ -119,9 +119,15 @@ WVS_ITEM_MAP = {
 
 
 MODEL_PRICING = {
-    "anthropic/claude-3-5-sonnet-latest": {"input_per_1m": 3.00, "output_per_1m": 15.00},
-    "deepseek/deepseek-chat": {"input_per_1m": 0.27, "output_per_1m": 1.10},
+    "anthropic/claude-sonnet-4-6": {"input_per_1m": 3.00, "output_per_1m": 15.00},
+    "anthropic/claude-opus-4-6": {"input_per_1m": 5.00, "output_per_1m": 25.00},
+    "anthropic/claude-haiku-4-5": {"input_per_1m": 1.00, "output_per_1m": 5.00},
+    "deepseek/deepseek-chat": {"input_per_1m": 0.28, "output_per_1m": 0.42},
+    "deepseek/deepseek-chat-v4": {"input_per_1m": 0.30, "output_per_1m": 0.50},
+    "deepseek/deepseek-reasoner": {"input_per_1m": 0.55, "output_per_1m": 2.19},
     "mistral/mistral-small-latest": {"input_per_1m": 0.20, "output_per_1m": 0.60},
+    "gemini/gemini-2.5-flash": {"input_per_1m": 0.30, "output_per_1m": 2.50},
+    "gemini/gemini-2.5-flash-lite": {"input_per_1m": 0.10, "output_per_1m": 0.40},
     "openai/gpt-4o-mini": {"input_per_1m": 0.15, "output_per_1m": 0.60},
 }
 
@@ -146,7 +152,7 @@ class EstimateAssumptions:
 class PipelineConfig:
     """Runtime configuration for the pipeline."""
 
-    teacher_model: str = "anthropic/claude-3-5-sonnet-latest"
+    teacher_model: str = "anthropic/claude-sonnet-4-6"
     generator_model: str = "deepseek/deepseek-chat"
     scorer_model: str = "mistral/mistral-small-latest"
     scenarios_per_dim: int = 20
