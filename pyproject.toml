@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sca2-datagen"
+version = "0.1.0"
+description = "Synthetic cultural preference data generation pipeline for SCA 2.0"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.2",
+  "pyreadstat>=1.2",
+  "litellm>=1.81",
+  "datasets>=2.19",
+  "tqdm>=4.66",
+  "tenacity>=9.0",
+  "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["sca2_datagen*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
