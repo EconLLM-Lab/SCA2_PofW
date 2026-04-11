@@ -1,0 +1,8 @@
+pandas>=2.2
+pyreadstat>=1.2
+litellm>=1.81
+datasets>=2.19
+tqdm>=4.66
+tenacity>=9.0
+python-dotenv>=1.0
+pytest>=8.0
