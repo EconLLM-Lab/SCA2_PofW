@@ -1,0 +1,185 @@
+{
+  "timestamp": "2026-04-12T17:23:39.839117+00:00",
+  "sample_size": 10,
+  "raw_pair_count": 120,
+  "config": {
+    "teacher_model": "anthropic/claude-sonnet-4-6",
+    "generator_model": "mistral/mistral-large-latest",
+    "scorer_model": "gemini/gemini-2.5-flash",
+    "scenarios_per_dim": 10,
+    "qc_distance_thresh": 0.2,
+    "concurrency": 2,
+    "teacher_temperature": 0.7,
+    "generator_temperature": 0.8,
+    "scorer_temperature": 0.1,
+    "seed": 42,
+    "default_countries": [
+      "MEX",
+      "USA"
+    ],
+    "gps_path_candidates": [
+      "../data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "../data/country_gps.dta",
+      "../country_gps.dta",
+      "data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "data/country_gps.dta",
+      "country_gps.dta"
+    ],
+    "wvs_path_candidates": [
+      "../data/WVS/WVS_wave7.dta",
+      "../data/wvs_wave7.dta",
+      "../WVS_wave7.dta",
+      "data/WVS/WVS_wave7.dta",
+      "data/wvs_wave7.dta",
+      "WVS_wave7.dta"
+    ],
+    "estimate": {
+      "estimated_qc_pass_rate": 0.65,
+      "estimated_facets_per_dimension": 5,
+      "facet_prompt_input_tokens": 450,
+      "facet_prompt_output_tokens": 150,
+      "scenario_prompt_input_tokens": 600,
+      "scenario_prompt_output_tokens": 350,
+      "pair_prompt_input_tokens": 950,
+      "pair_prompt_output_tokens": 450,
+      "scoring_prompt_input_tokens": 1200,
+      "scoring_prompt_output_tokens": 250
+    }
+  },
+  "countries": {
+    "MEX": {
+      "trust": -0.3570720851421356,
+      "risktaking": -0.13891679048538208,
+      "patience": -0.10842810571193695,
+      "altruism": -0.8130887150764465,
+      "posrecip": -1.0379811525344849,
+      "negrecip": -0.1146494597196579
+    },
+    "ARG": {
+      "trust": -0.2067333310842514,
+      "risktaking": 0.041503168642520905,
+      "patience": -0.22930797934532166,
+      "altruism": 0.02734668180346489,
+      "posrecip": 0.15967930853366852,
+      "negrecip": -0.14045727252960205
+    }
+  },
+  "wvs_item_map_n": 30,
+  "tier_2_items": [
+    "Q57",
+    "Q59",
+    "Q61",
+    "Q62",
+    "Q63",
+    "Q64",
+    "Q69",
+    "Q70",
+    "Q71",
+    "Q13",
+    "Q14",
+    "Q43",
+    "Q106",
+    "Q107",
+    "Q109",
+    "Q12",
+    "Q174",
+    "Q176",
+    "Q177",
+    "Q179",
+    "Q101",
+    "Q99"
+  ],
+  "tier_3_items": [
+    "Q58",
+    "Q60",
+    "Q73",
+    "Q50",
+    "Q178",
+    "Q81",
+    "Q195",
+    "Q103"
+  ],
+  "qc_stats": {
+    "total": 120,
+    "score_fail": 0,
+    "mono_fail": 10,
+    "dist_fail": 3,
+    "pass": 107
+  },
+  "per_dim_counts": {
+    "negrecip": 4,
+    "risktaking": 4,
+    "patience": 3,
+    "posrecip": 3,
+    "trust": 3,
+    "altruism": 3
+  },
+  "per_country_counts": {
+    "ARG": 10,
+    "MEX": 10
+  },
+  "mean_feature_distance": 0.785,
+  "mean_contamination_ratio": 1.8027,
+  "per_dim_contamination": {
+    "trust": 2.0298,
+    "risktaking": 1.3161,
+    "patience": 1.5,
+    "altruism": 1.244,
+    "posrecip": 2.3167,
+    "negrecip": 2.3795
+  },
+  "cost_breakdown": {
+    "created_at": "2026-04-12T17:06:26.928102+00:00",
+    "models": {
+      "anthropic/claude-sonnet-4-6": {
+        "blocks": {
+          "C:facets": {
+            "input": 600,
+            "output": 686,
+            "calls": 6,
+            "cost_usd": 0.01209
+          },
+          "C:scenarios": {
+            "input": 5366,
+            "output": 3887,
+            "calls": 36,
+            "cost_usd": 0.074403
+          }
+        },
+        "total_cost_usd": 0.086493
+      },
+      "mistral/mistral-large-latest": {
+        "blocks": {
+          "C:pairs": {
+            "input": 70498,
+            "output": 25560,
+            "calls": 120,
+            "cost_usd": 0.073589
+          }
+        },
+        "total_cost_usd": 0.073589
+      },
+      "gemini/gemini-2.5-flash": {
+        "blocks": {
+          "D:scoring": {
+            "input": 65429,
+            "output": 214625,
+            "calls": 120,
+            "cost_usd": 0.556191
+          }
+        },
+        "total_cost_usd": 0.556191
+      }
+    },
+    "total_cost_usd": 0.716273
+  },
+  "git_hash": "72e2376",
+  "scenario_bank_counts": {
+    "trust": 10,
+    "risktaking": 10,
+    "patience": 10,
+    "altruism": 10,
+    "posrecip": 10,
+    "negrecip": 10
+  }
+}
