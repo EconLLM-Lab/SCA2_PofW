@@ -126,6 +126,7 @@ MODEL_PRICING = {
     "deepseek/deepseek-chat-v4": {"input_per_1m": 0.30, "output_per_1m": 0.50},
     "deepseek/deepseek-reasoner": {"input_per_1m": 0.55, "output_per_1m": 2.19},
     "mistral/mistral-small-latest": {"input_per_1m": 0.20, "output_per_1m": 0.60},
+    "mistral/mistral-large-latest": {"input_per_1m": 0.50, "output_per_1m": 1.50},
     "gemini/gemini-2.5-flash": {"input_per_1m": 0.30, "output_per_1m": 2.50},
     "gemini/gemini-2.5-flash-lite": {"input_per_1m": 0.10, "output_per_1m": 0.40},
     "openai/gpt-4o-mini": {"input_per_1m": 0.15, "output_per_1m": 0.60},
@@ -153,7 +154,7 @@ class PipelineConfig:
     """Runtime configuration for the pipeline."""
 
     teacher_model: str = "anthropic/claude-sonnet-4-6"
-    generator_model: str = "deepseek/deepseek-chat"
+    generator_model: str = "mistral/mistral-large-latest"
     scorer_model: str = "mistral/mistral-small-latest"
     scenarios_per_dim: int = 20
     qc_distance_thresh: float = 0.20
