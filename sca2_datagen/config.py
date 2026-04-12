@@ -155,7 +155,7 @@ class PipelineConfig:
 
     teacher_model: str = "anthropic/claude-sonnet-4-6"
     generator_model: str = "mistral/mistral-large-latest"
-    scorer_model: str = "mistral/mistral-small-latest"
+    scorer_model: str = "gemini/gemini-2.5-flash"
     scenarios_per_dim: int = 20
     qc_distance_thresh: float = 0.20
     concurrency: int = 2
