@@ -11,6 +11,10 @@ data/GPS/GPS_dataset_country_level/
 data/GPS/GPS_dataset_individual_level/
 data/WVS/WVS_wave7.dta
 
+# agents
+synthetic_generation/.claude/
+.vscode/
+
 # Distribution / packaging
 .Python
 build/
@@ -140,6 +144,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+sca2poc_venv/
 
 # Spyder project settings
 .spyderproject
