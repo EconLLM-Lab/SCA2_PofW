@@ -22,8 +22,8 @@ This folder contains the data generation pipeline for **SCA 2.0** (Synthetic Cul
 If you're new to the lab, start by reading:
 - The [lab mission document](https://www.econllm-lab.com/) for context on what we do and why
 - Falk et al. (2018), "Global Evidence on Economic Preferences," *QJE* — the GPS paper
-- Capra, Gonzalez-Bonorino & Pantoja (2024), "LLMs Model Non-WEIRD Populations" — SCA 1.0
-- The SCA 2.0 project proposal (in the `/docs` folder)
+- Capra, Gonzalez-Bonorino & Pantoja (2025), "LLMs Model Non-WEIRD Populations" — SCA 1.0
+- The SCA 2.0 project proposal (in [`context/SCA2_ProjectProposal.pdf`](./context/SCA2_ProjectProposal.pdf))
 
 ---
 
@@ -41,7 +41,7 @@ The pipeline has five blocks that run sequentially. Each block is a self-contain
 ### Block A — Configuration
 Defines target countries, GPS dimensions, model choices, hyperparameters, WVS item mappings, and cost tracking. This is where you set `scenarios_per_dim`, choose the teacher and scorer models, and configure quality control thresholds.
 
-**Key design decision:** We use a tiered model strategy. A frontier model generates scenarios (only 6 API calls total), a cost-effective model generates paired responses (the bulk of the cost), and a *different* model family scores them (to avoid self-preference bias).
+**Key design decision:** We use a tiered model strategy. A frontier model handles facet and scenario generation, a cost-effective model handles paired responses (the bulk of the cost), and a *different* model family scores them (to reduce self-preference bias).
 
 ### Block B — Data ingestion and profile construction
 Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile becomes the system prompt for the teacher model.
@@ -49,9 +49,10 @@ Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural s
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
 
 ### Block C — Teacher generation engine
-Two-stage architecture:
-1. **Scenario generation** (Stage 1): For each of the 6 GPS dimensions, the model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
-2. **Paired generation** (Stage 2): For each scenario × country, a single API call produces both an "aligned" response (matches the country's GPS disposition) and a "contrasting" response (opposite disposition). This contrastive approach avoids the "strawman" problem.
+Three-step architecture:
+1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into 4–6 concrete sub-dimensions.
+2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
+3. **Paired generation** (Stage 2): For each scenario × country, a single API call produces both an "aligned" response (matches the country's GPS disposition) and a "contrasting" response (opposite disposition). This contrastive approach avoids the "strawman" problem.
 
 ### Block D — Scoring and quality control
 Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters are applied on the target dimension:
@@ -61,7 +62,7 @@ Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters
 A contamination ratio diagnostic tracks how much non-target dimensions bleed into the scoring.
 
 ### Block E — Export and cost summary
-Exports the filtered dataset as `.jsonl` files (one per country) and a consolidated HuggingFace Dataset. Generates a `manifest.json` with full metadata: GPS scores, hyperparameters, QC statistics, and cost breakdown.
+Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, runtime/cost summary, and git hash.
 
 ---
 
@@ -69,7 +70,8 @@ Exports the filtered dataset as `.jsonl` files (one per country) and a consolida
 
 ### Prerequisites
 - Python 3.10+
-- API keys for at least one LLM provider (Anthropic, DeepSeek, or OpenAI)
+- API keys for the providers you plan to use
+  With the current defaults, that means Anthropic, Mistral, and Gemini.
 - The GPS dataset (`country_gps.dta`)
 
 ### Setup
@@ -85,6 +87,14 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your keys
 ```
+
+### Before you run anything expensive
+
+Always do these in order:
+
+1. Run `--estimate-only` first.
+2. Run a tiny pilot (for example `--scenarios-per-dim 2` and one or two countries).
+3. Only then run larger sample sizes such as `100,350,500`.
 
 ### Running a pilot
 
@@ -106,6 +116,37 @@ Before committing to a large run, always estimate costs first:
 ```bash
 python run.py --estimate-only --scenarios-per-dim 170 --countries MEX USA ARG SWE
 ```
+
+### Using the CLI
+
+The CLI has grown enough that it now deserves its own guide:
+
+- Read [CLI_GUIDE.md](./CLI_GUIDE.md) for the full command reference
+- Use `--resume` if generation already finished and you want to restart from scoring
+- Use `--teacher-model`, `--generator-model`, and `--scorer-model` if you want to override the defaults without editing `config.py`
+
+The most common commands are:
+
+```bash
+# Estimate money and runtime only (no API calls)
+python run.py --estimate-only --scenarios-per-dim 130 --countries MEX USA --sample-sizes 100,350,500
+
+# Run a small real pilot
+python run.py --scenarios-per-dim 5 --countries MEX ARG --sample-sizes 10 --output-dir ./outputs
+
+# Resume from a saved raw-pair checkpoint and skip generation
+python run.py --resume ./outputs/checkpoint_raw_pairs.jsonl --countries MEX ARG --sample-sizes 10 --output-dir ./outputs
+```
+
+### Long-running runs and GitHub Codespaces
+
+If your laptop is unreliable for multi-hour generations, GitHub Codespaces is a reasonable fallback.
+
+- Codespaces stop after inactivity. GitHub’s current default idle timeout is 30 minutes, and personal settings can raise it up to 240 minutes for new codespaces.
+- Codespaces also auto-delete stopped environments after a retention period, so keep outputs you care about inside the repository workspace and push them or download them when needed.
+- The safest pattern is: estimate first, run a tiny pilot second, then launch the large run in a Codespace terminal.
+- If you expect to disconnect from the browser, use a terminal multiplexer such as `tmux` inside the Codespace so you can reconnect cleanly.
+- This pipeline now writes `checkpoint_raw_pairs.jsonl` and `checkpoint_scenario_bank.json` after generation. If scoring fails later, you can restart from `--resume` instead of paying to regenerate the raw pairs.
 
 ---
 
@@ -134,6 +175,7 @@ Our main validation tool. After fine-tuning, we check whether the model's behavi
 ```
 synthetic_generation/
 ├── README.md                    ← You are here
+├── CLI_GUIDE.md                 ← Operational guide for the command-line interface
 ├── run.py                       ← CLI entrypoint
 ├── pyproject.toml               ← Package metadata
 ├── requirements.txt             ← Python dependencies
@@ -146,6 +188,7 @@ synthetic_generation/
 │   ├── export.py                ← Block E: export + manifest
 │   └── utils.py                 ← Shared utilities
 ├── tests/                       ← Unit and integration tests (mocked APIs)
+├── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
 ├── sample_output/               ← Example outputs
 └── SCA2_SyntheticDataGeneration_v3.ipynb
 ```
@@ -166,6 +209,7 @@ synthetic_generation/
 - Test with a small pilot run before pushing
 - Document any prompt changes in the commit message — prompt wording matters significantly for output quality
 - If using a coding agent (Claude Code, Codex), provide it with this README and the relevant module file
+- If you are editing CLI behavior, also update `CLI_GUIDE.md`
 
 ### What NOT to do
 - Do not modify the WVS item map (`WVS_ITEM_MAP` in config.py) after a training run has started — this is a pre-registration decision
@@ -179,21 +223,24 @@ synthetic_generation/
 These are documented here so new members understand *why* things are the way they are:
 
 1. **English-only generation:** Confirmed that cross-language behavior shifts are minimal for our purposes. Keeps the pipeline simpler and cheaper.
-2. **Contrastive pair generation:** Both responses generated in a single API call. This avoids the "strawman" problem and costs half as much as generating separately.
-3. **Multi-model scoring:** Using a different model family for scoring than for generation reduces self-preference bias (a known limitation of v3).
-4. **No nationality references:** Responses should NOT contain phrases like "As a Mexican..." — we express cultural dispositions through behavioral choices, not identity labels. This distinguishes SCA 2.0 (structural) from SCA 1.0 (persona prompting).
-5. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked but not filtered on.
+2. **Facet-first scenario generation:** Each GPS dimension is first decomposed into 4–6 facets before scenario generation. This raises scenario diversity compared with the original notebook.
+3. **Contrastive pair generation:** Both responses are generated in a single API call. This avoids the "strawman" problem and is cheaper than generating each side independently.
+4. **Multi-model scoring:** Using a different model family for scoring than for generation reduces self-preference bias relative to a single-model pipeline.
+5. **No nationality references:** Responses should not contain phrases like "As a Mexican..." or "As an American...". We express cultural dispositions through behavioral choices, not identity labels.
+6. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked diagnostically but not filtered on.
+7. **Checkpoint after generation:** The pipeline writes raw pairs and a scenario bank checkpoint before scoring so long runs can be resumed without paying for generation twice.
 
 **Known limitations:**
 - Positive reciprocity has only 3 WVS proxy items — J-test power will be low on this dimension
 - No human validation yet (Krippendorff's α ≥ 0.7 target is a planned follow-up)
 - Patience and risk-taking WVS proxies have questionable face validity (flagged for review)
+- The pipeline retries transient API failures, but it does **not** automatically fall back to another provider if your selected provider is down. See [CLI_GUIDE.md](./CLI_GUIDE.md) for the exact failure behavior.
 
 ---
 
 ## References
 
-- Falk, A., Becker, A., Dohmen, T., Enke, B., Huffman, D., & Sunde, U. (2018). Global evidence on economic preferences. *The Quarterly Journal of Economics*, 133(4), 1645–1692.
-- Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., & Finn, C. (2023). Direct Preference Optimization: Your language model is secretly a reward model. *NeurIPS 2023*.
-- Capra, C. M., Gonzalez-Bonorino, A., & Pantoja, E. (2024). LLMs model non-WEIRD populations: Experiments with Synthetic Cultural Agents. *SSRN Working Paper No. 5082714*.
+- Falk, A., Becker, A., Dohmen, T., Enke, B., Huffman, D., & Sunde, U. (2018). [Global Evidence on Economic Preferences](https://doi.org/10.1093/qje/qjy013). *The Quarterly Journal of Economics*, 133(4), 1645–1692.
+- Rafailov, R., Sharma, A., Mitchell, E., Manning, C. D., Ermon, S., & Finn, C. (2023). [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://openreview.net/forum?id=HPuSIXJaa9). *Advances in Neural Information Processing Systems 36*.
+- Capra, C. M., Gonzalez-Bonorino, A., & Pantoja, E. (2025). [LLMs Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5082714). *SSRN Working Paper No. 5082714*.
 - Gonzalez-Bonorino, A. (2026). Synthetic Cultural Agents via Structural Preference Estimation: DPO as Bradley-Terry MLE. *Working paper, EconLLM Lab, ASU*.
