@@ -166,6 +166,9 @@ class PipelineConfig:
     default_countries: list[str] = field(default_factory=lambda: ["MEX", "USA"])
     gps_path_candidates: list[str] = field(
         default_factory=lambda: [
+            "../data/GPS/GPS_dataset_country_level/country_gps.dta",
+            "../data/country_gps.dta",
+            "../country_gps.dta",
             "data/GPS/GPS_dataset_country_level/country_gps.dta",
             "data/country_gps.dta",
             "country_gps.dta",
@@ -173,6 +176,9 @@ class PipelineConfig:
     )
     wvs_path_candidates: list[str] = field(
         default_factory=lambda: [
+            "../data/WVS/WVS_wave7.dta",
+            "../data/wvs_wave7.dta",
+            "../WVS_wave7.dta",
             "data/WVS/WVS_wave7.dta",
             "data/wvs_wave7.dta",
             "WVS_wave7.dta",

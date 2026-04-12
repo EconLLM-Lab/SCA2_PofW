@@ -1,234 +1,199 @@
 # SCA 2.0 — Synthetic Data Generation Pipeline
 
-## Overview
+> **EconLLM Lab** · Arizona State University
+> Part of the [Synthetic Cultural Agents](https://www.econllm-lab.com/) research project
 
-This pipeline generates culturally-conditioned synthetic preference pairs for DPO (Direct Preference Optimization) fine-tuning of language models. It conditions a teacher LLM on the Global Preferences Survey (GPS) cultural state vector $z_c \in \mathbb{R}^6$ to produce aligned/contrasting response pairs, scores them on all six GPS dimensions, applies quality control filters, and exports the dataset in formats ready for HuggingFace TRL's `DPOTrainer`.
+## What is this project?
 
-The pipeline is part of the **Synthetic Cultural Agents (SCA) 2.0** project, which aims to train LLMs that exhibit culturally calibrated behavioral preferences, validated against the World Values Survey (WVS) via a structural econometric framework (Simulated Method of Moments / J-test).
+This folder contains the data generation pipeline for **SCA 2.0** (Synthetic Cultural Agents, second generation). The goal is to create synthetic preference datasets that can be used to fine-tune open-source language models so they behave in ways that reflect the cultural preferences of specific populations — not just WEIRD (Western, Educated, Industrialized, Rich, Democratic) ones.
 
-## Quick Start
+**The big idea:** The Global Preferences Survey (GPS) by Falk et al. (2018) measured six economic preferences — trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity — across 76 countries. We use these measurements as a "cultural state vector" to condition a large language model to generate training data. A student model is then fine-tuned on this data using Direct Preference Optimization (DPO), which is mathematically equivalent to maximum likelihood estimation under the Bradley-Terry paired comparison model. This equivalence allows us to import structural econometrics tools (identification, overidentification testing, counterfactual analysis) into the fine-tuning process.
 
-1. Open `SCA2_SyntheticDataGeneration_v3.ipynb` in Google Colab.
-2. Upload the required datasets to the Colab file panel:
-   - `country_gps.dta` — GPS country-level preference scores (from [GPS data](https://gps.econ.uni-bonn.de/downloads))
-   - `WVS_wave7.dta` — WVS Wave 7 individual-level responses (from [WVS data](https://www.worldvaluessurvey.org/WVSDocumentationWV7.jsp))
-3. Set your Anthropic API key in Colab Secrets (key icon in sidebar), named `ANTHROPIC_API_KEY`.
-4. **Runtime → Run all**.
+**Where this fits in the research agenda:**
 
-The demo run generates ~120 raw pairs (5 scenarios × 6 dimensions × 4 countries), with ~100 passing QC (~84% pass rate).
+| Paper | Focus | Status |
+|-------|-------|--------|
+| Paper 1 | DPO as BT MLE (theory) | Working paper complete |
+| **Paper 2** | **Empirical validation (this pipeline)** | **Active development** |
+| Paper 3 | Teacher bias bounds | Planned |
+| Paper 4 | Counterfactual analysis | Planned |
+| Paper 5 | Sequential extension (Soft Bellman) | Planned |
 
-## Pipeline Architecture
+If you're new to the lab, start by reading:
+- The [lab mission document](https://www.econllm-lab.com/) for context on what we do and why
+- Falk et al. (2018), "Global Evidence on Economic Preferences," *QJE* — the GPS paper
+- Capra, Gonzalez-Bonorino & Pantoja (2024), "LLMs Model Non-WEIRD Populations" — SCA 1.0
+- The SCA 2.0 project proposal (in the `/docs` folder)
 
-The notebook is organized into six sequential blocks:
+---
 
-### Block A — Master Configuration (Cell 3)
-- Imports and shared utilities
-- `TARGET_COUNTRIES`: ISO3 codes for target cultures (default: ARG, MEX, USA, PAK)
-- `GPS_DIMENSIONS`: Six behavioral dimensions with descriptions and scoring rubrics
-- `CONFIG`: Hyperparameters (model, scenarios per dimension, temperature, QC thresholds)
-- `WVS_ITEM_MAP`: 30 WVS items mapped to GPS dimensions across three tiers
-- `MODEL_PRICING`: Per-token costs for supported models (Claude, Mistral)
-- `CostTracker`: Async-safe cost logging with pilot-to-production cost estimation
-- `tracked_call()`: LiteLLM wrapper with automatic cost tracking and retry logic
+## Pipeline architecture
 
-### Block B — Data Ingestion & Profile Construction (Cell 5)
-- `extract_gps_vector()`: Loads z_c from GPS .dta file
-- `gps_to_profile()`: Converts z_c to an ethnographic system prompt for the teacher
-- `extract_wvs_anchors()`: Loads WVS behavioral anchors for contextual grounding
+The pipeline has five blocks that run sequentially. Each block is a self-contained module.
 
-### Block C — Teacher Generation Engine (Cell 7)
-- **Stage 1**: Generates N scenarios per GPS dimension (country-independent, 6 API calls)
-- **Stage 2**: For each scenario × country, generates aligned + contrasting response pairs
-
-### Block D — 6D Scoring & Quality Control (Cell 10)
-- `score_pair()`: Scores both responses on all 6 GPS dimensions in a single API call
-- Returns per-dimension score dicts + scorer reasoning
-- `run_scoring_qc_export()`: Applies QC filters on the target dimension:
-  - **Monotonicity filter**: `(m_diff × sign(z)) > 0` (aligned scores must be directionally correct)
-  - **Distance filter**: `|Δm| ≥ 0.20` (minimum separation for structural signal)
-- Computes contamination ratio $C_k$ as a diagnostic (not a filter)
-
-### Block E — QC Report, Export, and Cost Summary (Cell 12)
-- Per-country and per-dimension QC breakdown with contamination ratios
-- Exports per-country JSONL files and combined HuggingFace Dataset
-- Generates `manifest.json` with metadata and hyperparameters
-
-### Block F — Pipeline Logic Validation (Cell 13)
-- Self-contained mock tests (no API calls)
-- Validates score clamping, error handling, QC filters, contamination ratio, and column schema
-
-## Output Format
-
-### JSONL / HuggingFace Dataset Columns
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `prompt` | str | Scenario text (the decision situation) |
-| `chosen` | str | Culturally aligned response (what the student should prefer) |
-| `rejected` | str | Opposite-disposition response |
-| `gps_dimension` | str | Target GPS dimension for this pair |
-| `country` | str | ISO3 country code |
-| `m_chosen` | float | Target dimension score for chosen response |
-| `m_rejected` | float | Target dimension score for rejected response |
-| `m_diff_signed` | float | `m_chosen - m_rejected` (positive if alignment is correct) |
-| `m_diff_abs` | float | `|m_chosen - m_rejected|` |
-| `z_value` | float | GPS z-score for this country × dimension |
-| `contamination_ratio` | float | $C_k$: ratio of non-target dimension movement to target |
-| `reasoning` | str | Scorer's justification for the target dimension scores |
-| `m_chosen_{dim}` | float | Per-dimension chosen scores (6 columns) |
-| `m_rejected_{dim}` | float | Per-dimension rejected scores (6 columns) |
-
-Total: 25 columns (13 core + 12 per-dimension scores).
-
-### manifest.json
-
-Contains run metadata including:
-- `config`: All hyperparameters used
-- `countries`: GPS z-vectors for each target country
-- `qc_stats`: Pass/fail counts by filter type
-- `mean_feature_distance`: Mean |Δm| across passing pairs
-- `mean_contamination_ratio`: Mean $C_k$ across passing pairs
-- `per_dim_contamination`: Mean $C_k$ broken down by GPS dimension
-- `tier_2_items` / `tier_3_items`: WVS item codes used for validation
-
-## For the DPO Fine-Tuning Step
-
-### Loading the Dataset
-
-```python
-from datasets import load_from_disk, Dataset
-
-# Option 1: Combined dataset
-ds = load_from_disk("D_syn_combined_hf")
-
-# Option 2: Per-country JSONL
-ds = Dataset.from_json("D_syn_ARG.jsonl")
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   Block A    │───▶│   Block B    │───▶│   Block C    │───▶│   Block D    │───▶│   Block E    │
+│   Config     │    │  Profiles    │    │  Generation  │    │ Scoring / QC │    │   Export     │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
 ```
 
-### Key Fields for DPOTrainer
+### Block A — Configuration
+Defines target countries, GPS dimensions, model choices, hyperparameters, WVS item mappings, and cost tracking. This is where you set `scenarios_per_dim`, choose the teacher and scorer models, and configure quality control thresholds.
 
-```python
-from trl import DPOTrainer, DPOConfig
+**Key design decision:** We use a tiered model strategy. A frontier model generates scenarios (only 6 API calls total), a cost-effective model generates paired responses (the bulk of the cost), and a *different* model family scores them (to avoid self-preference bias).
 
-config = DPOConfig(
-    beta=0.1,
-    per_device_train_batch_size=16,
-    learning_rate=5e-5,
-    num_train_epochs=3,
-)
+### Block B — Data ingestion and profile construction
+Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile becomes the system prompt for the teacher model.
 
-trainer = DPOTrainer(
-    model=model,
-    ref_model=ref_model,
-    train_dataset=ds,
-    tokenizer=tokenizer,
-    args=config,
-)
+**Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
+
+### Block C — Teacher generation engine
+Two-stage architecture:
+1. **Scenario generation** (Stage 1): For each of the 6 GPS dimensions, the model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
+2. **Paired generation** (Stage 2): For each scenario × country, a single API call produces both an "aligned" response (matches the country's GPS disposition) and a "contrasting" response (opposite disposition). This contrastive approach avoids the "strawman" problem.
+
+### Block D — Scoring and quality control
+Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters are applied on the target dimension:
+- **Monotonicity:** The score difference must point in the correct GPS direction.
+- **Feature distance:** The absolute score difference must exceed a minimum threshold (default: 0.20).
+
+A contamination ratio diagnostic tracks how much non-target dimensions bleed into the scoring.
+
+### Block E — Export and cost summary
+Exports the filtered dataset as `.jsonl` files (one per country) and a consolidated HuggingFace Dataset. Generates a `manifest.json` with full metadata: GPS scores, hyperparameters, QC statistics, and cost breakdown.
+
+---
+
+## Getting started
+
+### Prerequisites
+- Python 3.10+
+- API keys for at least one LLM provider (Anthropic, DeepSeek, or OpenAI)
+- The GPS dataset (`country_gps.dta`)
+
+### Setup
+
+```bash
+# From the monorepo root
+cd synthetic_generation
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy the environment template and add your API keys
+cp .env.example .env
+# Edit .env with your keys
 ```
 
-The three required fields are `prompt`, `chosen`, and `rejected`. The `manifest.json` file contains suggested hyperparameters.
+### Running a pilot
 
-## Configuration
+```bash
+# Small pilot run (20 scenarios per dimension, 2 countries)
+python run.py --scenarios-per-dim 20 --countries MEX USA
 
-### Key Parameters in `CONFIG`
+# Incremental sample sizes for comparison
+python run.py --sample-sizes 100,350,500 --countries MEX USA
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `teacher_model` | `"claude-sonnet-4-6"` | Model for generation and scoring |
-| `scenarios_per_dim` | `5` | Scenarios per GPS dimension (demo; use 170 for full run) |
-| `qc_distance_thresh` | `0.20` | Minimum |Δm| for structural signal |
-| `concurrency` | `2` | Async semaphore limit |
-| `temperature_gen` | `0.8` | Temperature for paired generation |
-| `temperature_score` | `0.1` | Temperature for scoring (low = consistent) |
-
-### Changing Target Countries
-
-Edit `TARGET_COUNTRIES` in Block A. Countries must exist in `country_gps.dta`.
-
-### Cost Estimation
-
-After a pilot run, use the cost estimation module to project full-run costs:
-
-```python
-# Project costs for 170 scenarios/dim × 4 countries using default model
-cost_tracker.estimate_full_run(170, 4)
-
-# What-if: project using Mistral Large instead
-cost_tracker.estimate_full_run(170, 4, model="mistral-large-latest")
+# Full production run (use with caution — costs real money)
+python run.py --scenarios-per-dim 170 --countries MEX USA ARG SWE
 ```
 
-### Supported Models and Pricing
+### Cost estimation
 
-| Model | API Name | Input ($/MTok) | Output ($/MTok) |
-|-------|----------|----------------|-----------------|
-| Claude Opus 4.6 | `claude-opus-4-6` | $5.00 | $25.00 |
-| Claude Sonnet 4.6 | `claude-sonnet-4-6` | $3.00 | $15.00 |
-| Mistral Large 3 | `mistral-large-latest` | $0.50 | $1.50 |
-| Mistral Medium 3 | `mistral-medium-latest` | $0.40 | $2.00 |
-| Magistral Medium | `magistral-medium-latest` | $2.00 | $5.00 |
+Before committing to a large run, always estimate costs first:
 
-### Scale Estimates
+```bash
+python run.py --estimate-only --scenarios-per-dim 170 --countries MEX USA ARG SWE
+```
 
-| Scale | scenarios_per_dim | Countries | Raw Pairs | API Calls | Est. Cost (Sonnet) |
-|-------|-------------------|-----------|-----------|-----------|-------------------|
-| Demo | 5 | 4 | 120 | 246 | ~$0.50 |
-| Pilot | 20 | 4 | 480 | 966 | ~$2.00 |
-| Full | 170 | 4 | 4,080 | 8,166 | ~$15-20 |
+---
 
-## Quality Control
+## Key concepts you should understand
 
-### Monotonicity Filter
+### GPS dimensions
+| Symbol | Dimension | What it measures |
+|--------|-----------|------------------|
+| τ | Trust | Belief that others have good intentions |
+| γ | Risk-taking | Willingness to take risks |
+| δ | Patience | Willingness to defer gratification |
+| α | Altruism | Willingness to give to good causes |
+| ξ+ | Positive reciprocity | Willingness to return a favor |
+| ξ- | Negative reciprocity | Willingness to punish unfair behavior |
 
-The core QC check ensures directional consistency: for a pair targeting dimension $k$ in country $c$:
+### DPO (Direct Preference Optimization)
+The fine-tuning method we use. It takes pairs of (preferred, dispreferred) responses and adjusts model weights so the preferred response becomes more likely. The key insight of this project is that DPO's training objective is mathematically identical to the Bradley-Terry log-likelihood — which means we can use econometric tools to validate the trained model.
 
-$$(\text{m\_chosen}_k - \text{m\_rejected}_k) \times \text{sign}(z_{c,k}) > 0$$
+### The J-test
+Our main validation tool. After fine-tuning, we check whether the model's behavior matches out-of-sample moments from the World Values Survey (WVS Wave 7). The J-statistic tells us whether our structural model is overidentified — i.e., whether 6 GPS parameters are enough to explain 30+ behavioral moments.
 
-This means: if the culture scores positively on a dimension, the chosen response must score higher than the rejected response on that dimension (and vice versa for negative z-values).
+---
 
-### Distance Filter
+## Repository structure
 
-Pairs must have sufficient separation on the target dimension:
+```
+synthetic_generation/
+├── README.md                    ← You are here
+├── run.py                       ← CLI entrypoint
+├── pyproject.toml               ← Package metadata
+├── requirements.txt             ← Python dependencies
+├── .env.example                 ← API key template
+├── sca2_datagen/
+│   ├── config.py                ← Block A: constants and runtime config
+│   ├── profiles.py              ← Block B: GPS ingestion and profiles
+│   ├── generate.py              ← Block C: scenario + pair generation
+│   ├── score.py                 ← Block D: scoring and QC
+│   ├── export.py                ← Block E: export + manifest
+│   └── utils.py                 ← Shared utilities
+├── tests/                       ← Unit and integration tests (mocked APIs)
+├── sample_output/               ← Example outputs
+└── SCA2_SyntheticDataGeneration_v3.ipynb
+```
 
-$$|\text{m\_chosen}_k - \text{m\_rejected}_k| \geq 0.20$$
+---
 
-This threshold ensures the training signal is strong enough for DPO to learn from.
+## Contributing
 
-### Contamination Ratio ($C_k$)
+### For undergraduates joining the project
 
-The contamination ratio measures how much non-target dimensions move relative to the target:
+1. **Read the project proposal** (`../SCA2_ProjectProposal.pdf`) — understand the hypotheses (H1–H4) and where your work fits.
+2. **Run a small pilot** (20 scenarios/dim, 2 countries) to see how the pipeline works end-to-end.
+3. **Look at the output** — open the `.jsonl` files and examine the generated pairs. Do the "chosen" responses feel culturally aligned? Do the "rejected" responses feel like genuine alternatives?
+4. **Check the QC report** — what are the monotonicity pass rates? Which dimensions have the highest contamination ratios?
 
-$$C_k = \frac{\sum_{j \neq k} |m_j(\text{chosen}) - m_j(\text{rejected})|}{|m_k(\text{chosen}) - m_k(\text{rejected})|}$$
+### Development workflow
+- Create a branch for your changes
+- Test with a small pilot run before pushing
+- Document any prompt changes in the commit message — prompt wording matters significantly for output quality
+- If using a coding agent (Claude Code, Codex), provide it with this README and the relevant module file
 
-- **Low $C_k$ (< 1.0)**: The pair cleanly varies only the target dimension. Ideal.
-- **Moderate $C_k$ (1.0-3.0)**: Some cross-dimension movement. Expected for correlated dimensions.
-- **High $C_k$ (> 3.0)**: Non-target dimensions move more than the target. Investigate.
+### What NOT to do
+- Do not modify the WVS item map (`WVS_ITEM_MAP` in config.py) after a training run has started — this is a pre-registration decision
+- Do not commit API keys to the repository
+- Do not run production-scale generation without first running `--estimate-only`
 
-$C_k$ is reported as a **diagnostic only** — it does not filter pairs from the dataset.
+---
 
-## Known Limitations
+## Design decisions and known limitations
 
-1. **Weak WVS proxies for patience and positive reciprocity**: These dimensions have only 3-4 WVS items each, with non-significant correlations for patience ($\rho = 0.09$, $p = .52$ for the best proxy). J-test power on these dimensions will be limited.
+These are documented here so new members understand *why* things are the way they are:
 
-2. **Same-model scoring**: Using the same model family (Claude Sonnet) for both generation and scoring creates a self-preference bias risk. Human validation benchmarking (Krippendorff's $\alpha \geq 0.7$) is a planned follow-up.
+1. **English-only generation:** Confirmed that cross-language behavior shifts are minimal for our purposes. Keeps the pipeline simpler and cheaper.
+2. **Contrastive pair generation:** Both responses generated in a single API call. This avoids the "strawman" problem and costs half as much as generating separately.
+3. **Multi-model scoring:** Using a different model family for scoring than for generation reduces self-preference bias (a known limitation of v3).
+4. **No nationality references:** Responses should NOT contain phrases like "As a Mexican..." — we express cultural dispositions through behavioral choices, not identity labels. This distinguishes SCA 2.0 (structural) from SCA 1.0 (persona prompting).
+5. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked but not filtered on.
 
-3. **No human validation yet**: The scorer has not been benchmarked against human raters.
+**Known limitations:**
+- Positive reciprocity has only 3 WVS proxy items — J-test power will be low on this dimension
+- No human validation yet (Krippendorff's α ≥ 0.7 target is a planned follow-up)
+- Patience and risk-taking WVS proxies have questionable face validity (flagged for review)
 
-4. **Score polarization**: Training-data scores are bimodal by design (the teacher generates maximally contrastive pairs). This does not affect DPO training (ordinal labels only) but means these scores are not suitable for continuous structural estimation. Validation-stage scores will be computed separately on student model outputs.
+---
 
-5. **Scale inversion**: WVS items marked "inv" have raw scales where higher = less of the trait. Currently computed as raw means (fine for contextual anchors) but must be inverted for J-test moment computation.
+## References
 
-## File Manifest
-
-| File | Description |
-|------|-------------|
-| `SCA2_SyntheticDataGeneration_v2.ipynb` | Main pipeline notebook (v3) |
-| `CLAUDE_CODE_INSTRUCTIONS.md` | Task specification for notebook updates |
-| `README.md` | This file |
-| `context/audit_condensed.md` | Condensed audit findings with code changes |
-| `context/SCA2_ProjectProposal.pdf` | Project proposal with pipeline specification |
-| `raw_data/country.dta` | GPS country-level preference scores |
-| `raw_data/WVS_Cross-National_Wave_7_stata_v6_0.dta` | WVS Wave 7 data |
-| `D_syn_{COUNTRY}.jsonl` | Per-country preference pair exports (generated) |
-| `D_syn_combined_hf/` | Combined HuggingFace Dataset (generated) |
-| `manifest.json` | Run metadata and hyperparameters (generated) |
-| `checkpoint_raw_pairs.jsonl` | Raw pairs before QC (generated) |
+- Falk, A., Becker, A., Dohmen, T., Enke, B., Huffman, D., & Sunde, U. (2018). Global evidence on economic preferences. *The Quarterly Journal of Economics*, 133(4), 1645–1692.
+- Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., & Finn, C. (2023). Direct Preference Optimization: Your language model is secretly a reward model. *NeurIPS 2023*.
+- Capra, C. M., Gonzalez-Bonorino, A., & Pantoja, E. (2024). LLMs model non-WEIRD populations: Experiments with Synthetic Cultural Agents. *SSRN Working Paper No. 5082714*.
+- Gonzalez-Bonorino, A. (2026). Synthetic Cultural Agents via Structural Preference Estimation: DPO as Bradley-Terry MLE. *Working paper, EconLLM Lab, ASU*.
