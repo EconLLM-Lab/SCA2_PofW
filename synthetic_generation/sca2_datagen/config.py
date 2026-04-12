@@ -297,6 +297,13 @@ class CostTracker:
             6,
         )
 
+        total_pairs = raw_per_country * len(countries)
+        effective_concurrency = max(config.concurrency, 1)
+        adjusted_seconds_per_pair = 5.6 / (effective_concurrency / 2)
+        total_seconds = int(round(adjusted_seconds_per_pair * total_pairs + 30))
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+
         return {
             "countries": countries,
             "scenarios_per_dim": config.scenarios_per_dim,
@@ -307,6 +314,15 @@ class CostTracker:
             "estimated_facets_per_dimension": estimated_facets,
             "breakdown": breakdown,
             "total_cost_usd": total_cost,
+            "estimated_runtime": {
+                "seconds": total_seconds,
+                "human_readable": f"{hours}h {minutes}m",
+                "concurrency": config.concurrency,
+                "note": (
+                    "Based on 5.6s/pair at concurrency=2. Actual time depends on API latency "
+                    "and rate limits."
+                ),
+            },
         }
 
 

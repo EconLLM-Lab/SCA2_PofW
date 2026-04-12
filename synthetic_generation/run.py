@@ -9,6 +9,7 @@ import logging
 from pathlib import Path
 from typing import Sequence
 
+import pandas as pd
 from dotenv import load_dotenv
 
 from sca2_datagen.config import CONFIG, CostTracker
@@ -32,6 +33,30 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     parser.add_argument("--gps-path", type=Path, default=None)
     parser.add_argument("--wvs-path", type=Path, default=None)
+    parser.add_argument(
+        "--resume",
+        type=Path,
+        default=None,
+        help="Path to checkpoint_raw_pairs.jsonl to skip generation and resume from scoring",
+    )
+    parser.add_argument(
+        "--teacher-model",
+        type=str,
+        default=None,
+        help="Model for scenario/facet generation (default: from config)",
+    )
+    parser.add_argument(
+        "--generator-model",
+        type=str,
+        default=None,
+        help="Model for paired response generation (default: from config)",
+    )
+    parser.add_argument(
+        "--scorer-model",
+        type=str,
+        default=None,
+        help="Model for scoring (default: from config)",
+    )
     return parser
 
 
@@ -50,7 +75,14 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     setup_logging()
     args = build_parser().parse_args(argv)
 
-    config = CONFIG.with_overrides(scenarios_per_dim=args.scenarios_per_dim)
+    overrides = {"scenarios_per_dim": args.scenarios_per_dim}
+    if args.teacher_model:
+        overrides["teacher_model"] = args.teacher_model
+    if args.generator_model:
+        overrides["generator_model"] = args.generator_model
+    if args.scorer_model:
+        overrides["scorer_model"] = args.scorer_model
+    config = CONFIG.with_overrides(**overrides)
     countries = list(dict.fromkeys(args.countries))
     sample_sizes = sorted(parse_sample_sizes(args.sample_sizes))
     tracker = CostTracker()
@@ -72,13 +104,33 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         wvs_path=args.wvs_path,
     )
 
-    df_raw, scenario_bank = await generate.run_teacher_pipeline(
-        cultural_profiles,
-        countries,
-        config=config,
-        tracker=tracker,
-    )
-    LOGGER.info("Generated %s raw pairs", len(df_raw))
+    checkpoint_path = args.output_dir / "checkpoint_raw_pairs.jsonl"
+    scenario_bank_path = args.output_dir / "checkpoint_scenario_bank.json"
+    scenario_bank: dict[str, list[dict[str, str]]]
+
+    if args.resume:
+        df_raw = pd.read_json(args.resume, orient="records", lines=True)
+        if scenario_bank_path.exists():
+            scenario_bank = json.loads(scenario_bank_path.read_text())
+        else:
+            sibling_scenario_bank = args.resume.with_name("checkpoint_scenario_bank.json")
+            scenario_bank = (
+                json.loads(sibling_scenario_bank.read_text()) if sibling_scenario_bank.exists() else {}
+            )
+        LOGGER.info("Resumed from checkpoint: %s (%d pairs)", args.resume, len(df_raw))
+    else:
+        df_raw, scenario_bank = await generate.run_teacher_pipeline(
+            cultural_profiles,
+            countries,
+            config=config,
+            tracker=tracker,
+        )
+        LOGGER.info("Generated %s raw pairs", len(df_raw))
+        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        df_raw.to_json(checkpoint_path, orient="records", lines=True)
+        LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
+        scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
+        LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
 
     df_final, qc_stats = await score.run_scoring_qc_export(
         df_raw,
