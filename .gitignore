@@ -184,3 +184,5 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+.vscode/mcp.json
+synthetic_generation/AGENTS.md
