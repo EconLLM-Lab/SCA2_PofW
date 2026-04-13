@@ -86,6 +86,16 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     countries = list(dict.fromkeys(args.countries))
     sample_sizes = sorted(parse_sample_sizes(args.sample_sizes))
     tracker = CostTracker()
+    LOGGER.info(
+        "Run configuration: countries=%s scenarios_per_dim=%d sample_sizes=%s concurrency=%d teacher=%s generator=%s scorer=%s",
+        countries,
+        config.scenarios_per_dim,
+        sample_sizes or "auto",
+        config.concurrency,
+        config.teacher_model,
+        config.generator_model,
+        config.scorer_model,
+    )
 
     if args.estimate_only:
         estimate = tracker.estimate_run(config, countries, sample_sizes=sample_sizes or None)
@@ -116,7 +126,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
             sibling_scenario_bank = args.resume.with_name("checkpoint_scenario_bank.json")
             scenario_bank = (
                 json.loads(sibling_scenario_bank.read_text()) if sibling_scenario_bank.exists() else {}
-            )
+        )
         LOGGER.info("Resumed from checkpoint: %s (%d pairs)", args.resume, len(df_raw))
     else:
         df_raw, scenario_bank = await generate.run_teacher_pipeline(
@@ -144,6 +154,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         raise SystemExit("No QC-passed rows were generated.")
 
     export_sizes = sample_sizes or [min(df_final["country"].value_counts())]
+    LOGGER.info("Exporting final datasets for sample_sizes=%s", export_sizes)
     export_sample_runs(
         df_final=df_final,
         sample_sizes=export_sizes,

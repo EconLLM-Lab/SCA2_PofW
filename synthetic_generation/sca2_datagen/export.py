@@ -89,6 +89,12 @@ def export_sample_runs(
         subset = ranked[ranked["_sample_rank"] <= sample_size].drop(
             columns=["_sample_rank", "_country_key"], errors="ignore"
         )
+        LOGGER.info(
+            "Exporting sample size %d with %d rows (%s)",
+            sample_size,
+            len(subset),
+            subset["country"].value_counts().to_dict() if not subset.empty else {},
+        )
         for country, group in subset.groupby("country", sort=True):
             jsonl_path = output_root / f"D_syn_{country}_{sample_size}.jsonl"
             group.to_json(jsonl_path, orient="records", lines=True)
