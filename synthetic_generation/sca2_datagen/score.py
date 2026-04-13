@@ -78,6 +78,18 @@ async def score_pair(
     return scores_a, scores_b, str(payload.get("reasoning", ""))
 
 
+async def safe_score_pair(
+    *args: Any, **kwargs: Any
+) -> tuple[dict[str, float] | None, dict[str, float] | None, str, str | None]:
+    """Score a pair and return an error message instead of raising."""
+
+    try:
+        scores_a, scores_b, reasoning = await score_pair(*args, **kwargs)
+        return scores_a, scores_b, reasoning, None
+    except Exception as exc:  # pragma: no cover - exercised indirectly
+        return None, None, "", utils.compact_error_message(exc)
+
+
 def _clip_score(value: Any) -> float:
     return max(0.0, min(1.0, float(value)))
 
@@ -97,7 +109,7 @@ async def run_scoring_qc_export(
     df["rejected_text"] = df["rejected"].apply(unwrap)
 
     tasks = [
-        score_pair(
+        safe_score_pair(
             row["prompt"],
             row["chosen_text"],
             row["rejected_text"],
@@ -124,6 +136,14 @@ async def run_scoring_qc_export(
     df["scores_a"] = [result[0] for result in results]
     df["scores_b"] = [result[1] for result in results]
     df["score_reasoning"] = [result[2] for result in results]
+    score_errors = [result[3] for result in results if result[3]]
+    if score_errors:
+        error_summary = utils.summarize_error_messages(score_errors, top_n=3)
+        LOGGER.warning(
+            "Scoring had %d failed calls. Top errors: %s",
+            len(score_errors),
+            "; ".join(error_summary),
+        )
 
     stats = {"total": len(df), "score_fail": 0, "mono_fail": 0, "dist_fail": 0, "pass": 0}
     rows: list[dict[str, Any]] = []
