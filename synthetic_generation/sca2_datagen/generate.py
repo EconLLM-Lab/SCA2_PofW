@@ -151,7 +151,7 @@ async def safe_generate_pair(*args: Any, **kwargs: Any) -> dict[str, Any]:
     try:
         return await generate_pair(*args, **kwargs)
     except Exception as exc:  # pragma: no cover - exercised indirectly
-        return {"error": str(exc)}
+        return {"error": utils.compact_error_message(exc)}
 
 
 async def run_teacher_pipeline(
@@ -213,8 +213,10 @@ async def run_teacher_pipeline(
             logger=LOGGER,
             batch_size=10,
         )
+        failed_messages: list[str] = []
         for (dim_key, facet, prompt), result in zip(task_meta, results):
             if "response_a" not in result:
+                failed_messages.append(result.get("error", "unknown_generation_error"))
                 continue
             all_rows.append(
                 {
@@ -227,6 +229,20 @@ async def run_teacher_pipeline(
                     "reasoning": result.get("reasoning", ""),
                 }
             )
-        LOGGER.info("Finished country=%s with %d successful pairs", country, sum(1 for result in results if "response_a" in result))
+        success_count = sum(1 for result in results if "response_a" in result)
+        LOGGER.info(
+            "Finished country=%s with %d/%d successful pairs",
+            country,
+            success_count,
+            len(results),
+        )
+        if failed_messages:
+            error_summary = utils.summarize_error_messages(failed_messages, top_n=3)
+            LOGGER.warning(
+                "Country=%s had %d failed generations. Top errors: %s",
+                country,
+                len(failed_messages),
+                "; ".join(error_summary),
+            )
 
     return pd.DataFrame(all_rows), scenario_bank

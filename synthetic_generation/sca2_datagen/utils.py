@@ -7,6 +7,7 @@ import json
 import logging
 import subprocess
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ from tqdm.auto import tqdm
 from .config import CostTracker
 
 litellm.drop_params = True
+litellm.suppress_debug_info = True
 
 
 def setup_logging(level: int = logging.INFO) -> logging.Logger:
@@ -36,6 +38,28 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
     logging.getLogger("httpcore").setLevel(logging.WARNING)
     logging.getLogger("aiohttp").setLevel(logging.WARNING)
     return logger
+
+
+def compact_error_message(error: Any) -> str:
+    """Return a short, single-line error summary."""
+
+    if isinstance(error, Exception):
+        text = f"{type(error).__name__}: {error}"
+    else:
+        text = str(error)
+    text = " ".join(text.split())
+    if len(text) > 220:
+        return f"{text[:217]}..."
+    return text
+
+
+def summarize_error_messages(messages: list[str], top_n: int = 3) -> list[str]:
+    """Return most frequent error summaries with counts."""
+
+    if not messages:
+        return []
+    counts = Counter(messages)
+    return [f"{message} (x{count})" for message, count in counts.most_common(top_n)]
 
 
 def clean_json(content: str) -> str:
