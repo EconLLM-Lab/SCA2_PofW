@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any
 
 import numpy as np
@@ -10,6 +11,9 @@ import pandas as pd
 
 from . import utils
 from .config import CONFIG, CostTracker, GPS_DIMENSIONS, PipelineConfig
+
+
+LOGGER = logging.getLogger("sca2_datagen.score")
 
 
 def unwrap(response_obj: Any) -> str:
@@ -93,21 +97,29 @@ async def run_scoring_qc_export(
     df["rejected_text"] = df["rejected"].apply(unwrap)
 
     tasks = [
-        asyncio.create_task(
-            score_pair(
-                row["prompt"],
-                row["chosen_text"],
-                row["rejected_text"],
-                row["gps_dimension"],
-                GPS_DIMENSIONS[row["gps_dimension"]],
-                sem,
-                config=config,
-                tracker=tracker,
-            )
+        score_pair(
+            row["prompt"],
+            row["chosen_text"],
+            row["rejected_text"],
+            row["gps_dimension"],
+            GPS_DIMENSIONS[row["gps_dimension"]],
+            sem,
+            config=config,
+            tracker=tracker,
         )
         for _, row in df.iterrows()
     ]
-    results = await asyncio.gather(*tasks)
+    LOGGER.info(
+        "Stage 3/3: scoring %d raw pairs across countries=%s",
+        len(df),
+        sorted(df["country"].unique().tolist()) if not df.empty else [],
+    )
+    results = await utils.gather_with_progress(
+        tasks,
+        description="Score pairs",
+        logger=LOGGER,
+        batch_size=10,
+    )
 
     df["scores_a"] = [result[0] for result in results]
     df["scores_b"] = [result[1] for result in results]

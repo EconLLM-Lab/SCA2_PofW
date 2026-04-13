@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any
 
 import pandas as pd
 
 from .config import CONFIG, CostTracker, GPS_DIMENSIONS, PipelineConfig
 from . import utils
+
+
+LOGGER = logging.getLogger("sca2_datagen.generate")
 
 
 def _allocate_counts(total: int, buckets: int) -> list[int]:
@@ -163,7 +167,9 @@ async def run_teacher_pipeline(
     all_rows: list[dict[str, Any]] = []
     scenario_bank: dict[str, list[dict[str, str]]] = {}
 
+    LOGGER.info("Stage 1/3: generating facets and scenarios for %d GPS dimensions", len(GPS_DIMENSIONS))
     for dim_key, dim_info in GPS_DIMENSIONS.items():
+        LOGGER.info("Generating facet/scenario bank for dimension=%s", dim_key)
         scenario_bank[dim_key] = await generate_scenarios(
             dim_key,
             dim_info,
@@ -171,46 +177,56 @@ async def run_teacher_pipeline(
             config=config,
             tracker=tracker,
         )
+        LOGGER.info(
+            "Scenario bank ready for %s: %d scenarios",
+            dim_key,
+            len(scenario_bank[dim_key]),
+        )
 
-    tasks: list[asyncio.Task[dict[str, Any]]] = []
-    task_meta: list[tuple[str, str, str, str]] = []
-
+    LOGGER.info("Stage 2/3: generating paired responses for countries=%s", countries)
     for country in countries:
         profile = cultural_profiles[country]
+        coroutines: list[Any] = []
+        task_meta: list[tuple[str, str, str]] = []
         for dim_key, scenario_rows in scenario_bank.items():
             for scenario_row in scenario_rows:
-                tasks.append(
-                    asyncio.create_task(
-                        safe_generate_pair(
-                            scenario_row["prompt"],
-                            scenario_row["facet"],
-                            dim_key,
-                            GPS_DIMENSIONS[dim_key],
-                            country,
-                            profile["profile_text"],
-                            profile["z_c"],
-                            sem,
-                            config=config,
-                            tracker=tracker,
-                        )
+                coroutines.append(
+                    safe_generate_pair(
+                        scenario_row["prompt"],
+                        scenario_row["facet"],
+                        dim_key,
+                        GPS_DIMENSIONS[dim_key],
+                        country,
+                        profile["profile_text"],
+                        profile["z_c"],
+                        sem,
+                        config=config,
+                        tracker=tracker,
                     )
                 )
-                task_meta.append((country, dim_key, scenario_row["facet"], scenario_row["prompt"]))
+                task_meta.append((dim_key, scenario_row["facet"], scenario_row["prompt"]))
 
-    results = await asyncio.gather(*tasks)
-    for (country, dim_key, facet, prompt), result in zip(task_meta, results):
-        if "response_a" not in result:
-            continue
-        all_rows.append(
-            {
-                "prompt": prompt,
-                "facet": facet,
-                "gps_dimension": dim_key,
-                "country": country,
-                "chosen": result["response_a"],
-                "rejected": result["response_b"],
-                "reasoning": result.get("reasoning", ""),
-            }
+        LOGGER.info("Generating %d paired responses for country=%s", len(coroutines), country)
+        results = await utils.gather_with_progress(
+            coroutines,
+            description=f"Generate {country}",
+            logger=LOGGER,
+            batch_size=10,
         )
+        for (dim_key, facet, prompt), result in zip(task_meta, results):
+            if "response_a" not in result:
+                continue
+            all_rows.append(
+                {
+                    "prompt": prompt,
+                    "facet": facet,
+                    "gps_dimension": dim_key,
+                    "country": country,
+                    "chosen": result["response_a"],
+                    "rejected": result["response_b"],
+                    "reasoning": result.get("reasoning", ""),
+                }
+            )
+        LOGGER.info("Finished country=%s with %d successful pairs", country, sum(1 for result in results if "response_a" in result))
 
     return pd.DataFrame(all_rows), scenario_bank

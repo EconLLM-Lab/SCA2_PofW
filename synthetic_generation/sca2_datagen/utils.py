@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
 import litellm
 from litellm import acompletion
 from tenacity import retry, stop_after_attempt, wait_exponential
+from tqdm.auto import tqdm
 
 from .config import CostTracker
 
@@ -25,8 +28,13 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
         logging.basicConfig(
             level=level,
             format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+            datefmt="%H:%M:%S",
         )
     logger.setLevel(level)
+    logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+    logging.getLogger("aiohttp").setLevel(logging.WARNING)
     return logger
 
 
@@ -90,3 +98,46 @@ def json_dumps_pretty(payload: dict[str, Any]) -> str:
     """Serialize a payload with deterministic formatting."""
 
     return json.dumps(payload, indent=2, sort_keys=True)
+
+
+async def gather_with_progress(
+    coroutines: list[Any],
+    *,
+    description: str,
+    logger: logging.Logger,
+    batch_size: int = 10,
+) -> list[Any]:
+    """Await coroutines with a progress bar and batched log updates."""
+
+    if not coroutines:
+        return []
+
+    tasks = [asyncio.create_task(coroutine) for coroutine in coroutines]
+    indexed_tasks = [_wrap_index(index, task) for index, task in enumerate(tasks)]
+    results: list[Any] = [None] * len(tasks)
+    completed = 0
+    progress_bar = tqdm(
+        total=len(tasks),
+        desc=description,
+        unit="task",
+        leave=False,
+        disable=not sys.stderr.isatty(),
+    )
+    try:
+        for wrapped_task in asyncio.as_completed(indexed_tasks):
+            index, result = await wrapped_task
+            results[index] = result
+            completed += 1
+            progress_bar.update(1)
+            if completed % batch_size == 0 or completed == len(tasks):
+                logger.info("%s progress: %d/%d", description, completed, len(tasks))
+    finally:
+        progress_bar.close()
+
+    return results
+
+
+async def _wrap_index(index: int, task: asyncio.Task[Any]) -> tuple[int, Any]:
+    """Return the original index alongside the awaited task result."""
+
+    return index, await task
