@@ -1,0 +1,157 @@
+{
+  "timestamp": "2026-04-13T06:08:22.917113+00:00",
+  "sample_size": 350,
+  "raw_pair_count": 1143,
+  "config": {
+    "teacher_model": "anthropic/claude-sonnet-4-6",
+    "generator_model": "mistral/mistral-large-latest",
+    "scorer_model": "gemini/gemini-2.5-flash",
+    "scenarios_per_dim": 20,
+    "qc_distance_thresh": 0.2,
+    "concurrency": 2,
+    "teacher_temperature": 0.7,
+    "generator_temperature": 0.8,
+    "scorer_temperature": 0.1,
+    "seed": 42,
+    "default_countries": [
+      "MEX",
+      "USA"
+    ],
+    "gps_path_candidates": [
+      "../data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "../data/country_gps.dta",
+      "../country_gps.dta",
+      "data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "data/country_gps.dta",
+      "country_gps.dta"
+    ],
+    "wvs_path_candidates": [
+      "../data/WVS/WVS_wave7.dta",
+      "../data/wvs_wave7.dta",
+      "../WVS_wave7.dta",
+      "data/WVS/WVS_wave7.dta",
+      "data/wvs_wave7.dta",
+      "WVS_wave7.dta"
+    ],
+    "estimate": {
+      "estimated_qc_pass_rate": 0.65,
+      "estimated_facets_per_dimension": 5,
+      "facet_prompt_input_tokens": 450,
+      "facet_prompt_output_tokens": 150,
+      "scenario_prompt_input_tokens": 600,
+      "scenario_prompt_output_tokens": 350,
+      "pair_prompt_input_tokens": 950,
+      "pair_prompt_output_tokens": 450,
+      "scoring_prompt_input_tokens": 1200,
+      "scoring_prompt_output_tokens": 250
+    }
+  },
+  "countries": {
+    "MEX": {
+      "trust": -0.3570720851421356,
+      "risktaking": -0.13891679048538208,
+      "patience": -0.10842810571193695,
+      "altruism": -0.8130887150764465,
+      "posrecip": -1.0379811525344849,
+      "negrecip": -0.1146494597196579
+    },
+    "USA": {
+      "trust": 0.15036696195602417,
+      "risktaking": 0.11658679693937302,
+      "patience": 0.8112621307373047,
+      "altruism": 0.40642887353897095,
+      "posrecip": 0.20365002751350403,
+      "negrecip": 0.011553643271327019
+    }
+  },
+  "wvs_item_map_n": 30,
+  "tier_2_items": [
+    "Q57",
+    "Q59",
+    "Q61",
+    "Q62",
+    "Q63",
+    "Q64",
+    "Q69",
+    "Q70",
+    "Q71",
+    "Q13",
+    "Q14",
+    "Q43",
+    "Q106",
+    "Q107",
+    "Q109",
+    "Q12",
+    "Q174",
+    "Q176",
+    "Q177",
+    "Q179",
+    "Q101",
+    "Q99"
+  ],
+  "tier_3_items": [
+    "Q58",
+    "Q60",
+    "Q73",
+    "Q50",
+    "Q178",
+    "Q81",
+    "Q195",
+    "Q103"
+  ],
+  "qc_stats": {
+    "total": 1143,
+    "score_fail": 0,
+    "mono_fail": 111,
+    "dist_fail": 14,
+    "pass": 1018
+  },
+  "per_dim_counts": {
+    "risktaking": 149,
+    "patience": 143,
+    "altruism": 132,
+    "trust": 122,
+    "posrecip": 89,
+    "negrecip": 65
+  },
+  "per_country_counts": {
+    "MEX": 350,
+    "USA": 350
+  },
+  "mean_feature_distance": 0.7868,
+  "mean_contamination_ratio": 1.8248,
+  "per_dim_contamination": {
+    "trust": 2.4441,
+    "risktaking": 1.0585,
+    "patience": 1.152,
+    "altruism": 1.9825,
+    "posrecip": 2.233,
+    "negrecip": 3.0202
+  },
+  "cost_breakdown": {
+    "created_at": "2026-04-13T04:40:51.757846+00:00",
+    "models": {
+      "gemini/gemini-2.5-flash": {
+        "blocks": {
+          "D:scoring": {
+            "input": 606358,
+            "output": 2057832,
+            "calls": 1143,
+            "cost_usd": 5.326487
+          }
+        },
+        "total_cost_usd": 5.326487
+      }
+    },
+    "total_cost_usd": 5.326487
+  },
+  "git_hash": "d6e683f",
+  "scenario_bank_counts": {
+    "trust": 110,
+    "risktaking": 110,
+    "patience": 110,
+    "altruism": 110,
+    "posrecip": 110,
+    "negrecip": 110
+  }
+}
