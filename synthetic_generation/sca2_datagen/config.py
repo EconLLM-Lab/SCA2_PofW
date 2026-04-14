@@ -159,6 +159,15 @@ class PipelineConfig:
     scenarios_per_dim: int = 20
     qc_distance_thresh: float = 0.20
     concurrency: int = 2
+    max_retries: int = 5
+    retry_backoff_min_s: float = 1.0
+    retry_backoff_max_s: float = 20.0
+    retry_jitter_s: float = 0.75
+    request_timeout_s: float = 90.0
+    rate_limit_cooldown_s: float = 30.0
+    error_rate_window: int = 50
+    max_error_rate_for_continue: float = 0.75
+    sample_size_policy: str = "skip_unavailable"
     teacher_temperature: float = 0.7
     generator_temperature: float = 0.8
     scorer_temperature: float = 0.1

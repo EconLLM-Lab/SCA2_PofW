@@ -37,6 +37,7 @@ async def _generate_facets(
     response = await utils.tracked_completion(
         "C:facets",
         tracker,
+        config=config,
         model=config.teacher_model,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
@@ -80,6 +81,7 @@ async def generate_scenarios(
         response = await utils.tracked_completion(
             "C:scenarios",
             tracker,
+            config=config,
             model=config.teacher_model,
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
@@ -129,6 +131,7 @@ async def generate_pair(
         response = await utils.tracked_completion(
             "C:pairs",
             tracker,
+            config=config,
             model=config.generator_model,
             messages=[
                 {"role": "system", "content": profile_text},
@@ -186,35 +189,54 @@ async def run_teacher_pipeline(
     LOGGER.info("Stage 2/3: generating paired responses for countries=%s", countries)
     for country in countries:
         profile = cultural_profiles[country]
-        coroutines: list[Any] = []
-        task_meta: list[tuple[str, str, str]] = []
+        task_specs: list[tuple[str, str, str]] = []
         for dim_key, scenario_rows in scenario_bank.items():
             for scenario_row in scenario_rows:
-                coroutines.append(
-                    safe_generate_pair(
-                        scenario_row["prompt"],
-                        scenario_row["facet"],
-                        dim_key,
-                        GPS_DIMENSIONS[dim_key],
-                        country,
-                        profile["profile_text"],
-                        profile["z_c"],
-                        sem,
-                        config=config,
-                        tracker=tracker,
-                    )
-                )
-                task_meta.append((dim_key, scenario_row["facet"], scenario_row["prompt"]))
+                task_specs.append((dim_key, scenario_row["facet"], scenario_row["prompt"]))
 
-        LOGGER.info("Generating %d paired responses for country=%s", len(coroutines), country)
-        results = await utils.gather_with_progress(
-            coroutines,
-            description=f"Generate {country}",
-            logger=LOGGER,
-            batch_size=10,
-        )
+        LOGGER.info("Generating %d paired responses for country=%s", len(task_specs), country)
+        window = max(1, config.error_rate_window)
+        all_results: list[dict[str, Any]] = []
+        failures_in_window: list[bool] = []
+        for offset in range(0, len(task_specs), window):
+            chunk_specs = task_specs[offset : offset + window]
+            chunk_coroutines = [
+                safe_generate_pair(
+                    prompt,
+                    facet,
+                    dim_key,
+                    GPS_DIMENSIONS[dim_key],
+                    country,
+                    profile["profile_text"],
+                    profile["z_c"],
+                    sem,
+                    config=config,
+                    tracker=tracker,
+                )
+                for dim_key, facet, prompt in chunk_specs
+            ]
+            chunk_results = await utils.gather_with_progress(
+                chunk_coroutines,
+                description=f"Generate {country}",
+                logger=LOGGER,
+                batch_size=10,
+            )
+            all_results.extend(chunk_results)
+            failures_in_window.extend("response_a" not in result for result in chunk_results)
+            failures_in_window = failures_in_window[-window:]
+
+            if len(failures_in_window) == window:
+                fail_rate = sum(failures_in_window) / window
+                if fail_rate > config.max_error_rate_for_continue:
+                    raise RuntimeError(
+                        "Early stop triggered: sustained generation failure rate exceeded threshold "
+                        f"for country={country} fail_rate={fail_rate:.2%} "
+                        f"window={window} threshold={config.max_error_rate_for_continue:.2%}"
+                    )
+
+        results = all_results
         failed_messages: list[str] = []
-        for (dim_key, facet, prompt), result in zip(task_meta, results):
+        for (dim_key, facet, prompt), result in zip(task_specs, results):
             if "response_a" not in result:
                 failed_messages.append(result.get("error", "unknown_generation_error"))
                 continue
