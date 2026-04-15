@@ -229,12 +229,14 @@ These are documented here so new members understand *why* things are the way the
 5. **No nationality references:** Responses should not contain phrases like "As a Mexican..." or "As an American...". We express cultural dispositions through behavioral choices, not identity labels.
 6. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked diagnostically but not filtered on.
 7. **Checkpoint after generation:** The pipeline writes raw pairs and a scenario bank checkpoint before scoring so long runs can be resumed without paying for generation twice.
+8. **Policy-based sample-size export:** When requested sample sizes exceed QC-passed rows, behavior is policy-controlled (`fail_fast`, `skip_unavailable`, `degrade_to_feasible`).
+9. **Early-stop reliability guard:** Stage 2 can stop early on sustained generation failure rates to avoid wasting long runs under heavy provider throttling.
 
 **Known limitations:**
 - Positive reciprocity has only 3 WVS proxy items — J-test power will be low on this dimension
 - No human validation yet (Krippendorff's α ≥ 0.7 target is a planned follow-up)
 - Patience and risk-taking WVS proxies have questionable face validity (flagged for review)
-- The pipeline retries transient API failures, but it does **not** automatically fall back to another provider if your selected provider is down. See [CLI_GUIDE.md](./CLI_GUIDE.md) for the exact failure behavior.
+- The pipeline retries transient API failures and can stop early when failure rates remain too high, but it still does **not** automatically fall back to another provider by default. See [CLI_GUIDE.md](./CLI_GUIDE.md) for exact behavior.
 
 ---
 

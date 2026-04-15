@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import random
 import subprocess
 import sys
 from collections import Counter
@@ -13,10 +14,9 @@ from typing import Any
 
 import litellm
 from litellm import acompletion
-from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm.auto import tqdm
 
-from .config import CostTracker
+from .config import CostTracker, PipelineConfig
 
 litellm.drop_params = True
 litellm.suppress_debug_info = True
@@ -92,14 +92,104 @@ def parse_json_response(response: Any) -> dict[str, Any]:
     return json.loads(clean_json(extract_message_content(response)))
 
 
-@retry(wait=wait_exponential(multiplier=1, min=1, max=20), stop=stop_after_attempt(5), reraise=True)
-async def tracked_completion(block: str, tracker: CostTracker, **kwargs: Any) -> Any:
+async def tracked_completion(
+    block: str,
+    tracker: CostTracker,
+    *,
+    config: PipelineConfig | None = None,
+    **kwargs: Any,
+) -> Any:
     """Call LiteLLM asynchronously with retries and cost tracking."""
 
-    response = await acompletion(**kwargs)
-    if tracker is not None and getattr(response, "usage", None):
-        await tracker.log(kwargs.get("model", "unknown"), block, response.usage)
-    return response
+    if config is not None:
+        kwargs.setdefault("request_timeout", config.request_timeout_s)
+
+    max_retries = max(0, int(config.max_retries)) if config is not None else 5
+    min_backoff = float(config.retry_backoff_min_s) if config is not None else 1.0
+    max_backoff = float(config.retry_backoff_max_s) if config is not None else 20.0
+    jitter = float(config.retry_jitter_s) if config is not None else 0.75
+    model_name = kwargs.get("model", "unknown")
+
+    for attempt in range(max_retries + 1):
+        try:
+            response = await acompletion(**kwargs)
+            if tracker is not None and getattr(response, "usage", None):
+                await tracker.log(model_name, block, response.usage)
+            return response
+        except Exception as exc:
+            if attempt >= max_retries or not _is_retryable_error(exc):
+                raise
+
+            retry_after_s = _extract_retry_after_seconds(exc)
+            backoff = min(max_backoff, min_backoff * (2**attempt))
+            wait_s = max(backoff + random.uniform(0, jitter), retry_after_s)
+            logging.getLogger("sca2_datagen.reliability").warning(
+                "Retrying model call block=%s model=%s attempt=%d/%d wait_s=%.2f error_class=%s",
+                block,
+                model_name,
+                attempt + 1,
+                max_retries,
+                wait_s,
+                type(exc).__name__,
+            )
+            await asyncio.sleep(wait_s)
+
+    raise RuntimeError("tracked_completion retry loop exited unexpectedly")
+
+
+def _is_retryable_error(exc: Exception) -> bool:
+    """Classify transient provider errors that should be retried."""
+
+    transient_classes = {
+        "RateLimitError",
+        "Timeout",
+        "TimeoutError",
+        "APITimeoutError",
+        "APIConnectionError",
+        "ServiceUnavailableError",
+        "InternalServerError",
+    }
+    if type(exc).__name__ in transient_classes:
+        return True
+
+    text = compact_error_message(exc).lower()
+    transient_markers = [
+        "429",
+        "rate limit",
+        "rate_limited",
+        "timeout",
+        "connection timed out",
+        "cannot connect",
+        "temporary",
+        "service unavailable",
+        "internal server error",
+    ]
+    return any(marker in text for marker in transient_markers)
+
+
+def _extract_retry_after_seconds(exc: Exception) -> float:
+    """Best-effort parse of provider retry-after hints from exception payloads."""
+
+    for attr in ("retry_after", "retry_after_seconds"):
+        value = getattr(exc, attr, None)
+        if value is not None:
+            try:
+                return max(0.0, float(value))
+            except (TypeError, ValueError):
+                pass
+
+    response = getattr(exc, "response", None)
+    headers = getattr(response, "headers", None) if response is not None else None
+    if isinstance(headers, dict):
+        for key in ("retry-after", "Retry-After"):
+            value = headers.get(key)
+            if value is not None:
+                try:
+                    return max(0.0, float(value))
+                except (TypeError, ValueError):
+                    continue
+
+    return 0.0
 
 
 def get_git_hash(cwd: str | Path | None = None) -> str | None:
@@ -155,6 +245,12 @@ async def gather_with_progress(
             progress_bar.update(1)
             if completed % batch_size == 0 or completed == len(tasks):
                 logger.info("%s progress: %d/%d", description, completed, len(tasks))
+    except Exception:
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        raise
     finally:
         progress_bar.close()
 

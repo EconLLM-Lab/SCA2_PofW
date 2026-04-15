@@ -63,6 +63,7 @@ async def score_pair(
         response = await utils.tracked_completion(
             "D:scoring",
             tracker,
+            config=config,
             model=config.scorer_model,
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},

@@ -100,6 +100,9 @@ What `--resume` does **not** do:
   - Space-separated ISO3 country codes.
 - `--sample-sizes 100,350,500`
   - Final QC-passed rows per country to export. The pipeline runs once, then writes nested subsets.
+- `--sample-size-policy {fail_fast,skip_unavailable,degrade_to_feasible}`
+  - Controls behavior when requested sample sizes exceed QC-passed rows.
+  - Default is `skip_unavailable` (export feasible sizes and record skipped sizes in the manifest).
 
 ### Model selection
 
@@ -119,6 +122,19 @@ Current defaults in code are:
 - teacher: `anthropic/claude-sonnet-4-6`
 - generator: `mistral/mistral-large-latest`
 - scorer: `gemini/gemini-2.5-flash`
+
+### Reliability and throughput controls
+
+- `--concurrency`
+  - Max in-flight generation/scoring requests.
+- `--max-retries`
+  - Max retry attempts for transient API failures (429/timeout/network).
+- `--request-timeout-s`
+  - Request timeout passed to LiteLLM calls.
+- `--retry-backoff-min-s`, `--retry-backoff-max-s`, `--retry-jitter-s`
+  - Exponential backoff and jitter controls between retries.
+- `--error-rate-window`, `--max-error-rate-for-continue`
+  - Early-stop guard for Stage 2 generation when sustained failures indicate the run is unlikely to succeed.
 
 ### Paths
 
@@ -178,12 +194,16 @@ This section is intentionally precise, because people often assume the pipeline 
 
 2. **Retry logic for provider API calls**
    - All model calls go through `tracked_completion()` in `sca2_datagen/utils.py`.
-   - That wrapper retries up to 5 times.
-   - Backoff is exponential, with waits between 1 and 20 seconds.
+  - Retries are configurable from the CLI (`--max-retries`, backoff and timeout flags).
+  - If providers return retry hints (for example `retry-after`), the wrapper respects them.
 
 3. **Pair-level failure isolation**
    - Pair generation calls are wrapped by `safe_generate_pair()`.
    - If one pair keeps failing after retries, that pair is dropped and the batch continues.
+
+4. **Sustained-failure early stop**
+  - Stage 2 generation tracks rolling failure rates.
+  - If the failure rate exceeds configured thresholds for a full window, the run aborts early with an actionable error.
 
 ### What the pipeline does not do
 

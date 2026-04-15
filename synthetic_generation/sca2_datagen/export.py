@@ -30,18 +30,65 @@ def prepare_ranked_subsets(df_final: pd.DataFrame, seed: int) -> pd.DataFrame:
     return pd.concat(ranked_frames, ignore_index=True) if ranked_frames else df_final.copy()
 
 
-def validate_sample_sizes(df_final: pd.DataFrame, sample_sizes: list[int]) -> None:
-    """Raise if any requested sample size exceeds available country counts."""
+def validate_sample_sizes(
+    df_final: pd.DataFrame,
+    sample_sizes: list[int],
+    sample_size_policy: str,
+) -> tuple[list[int], list[dict[str, Any]]]:
+    """Resolve sample sizes according to policy and return (effective_sizes, skipped)."""
 
     counts = df_final["country"].value_counts().to_dict()
     errors = [f"{country}: {count} available" for country, count in sorted(counts.items())]
+    min_available = min(counts.values()) if counts else 0
+    resolved: list[int] = []
+    skipped: list[dict[str, Any]] = []
+
     for sample_size in sample_sizes:
         missing = [country for country, count in counts.items() if count < sample_size]
-        if missing:
+        if not missing:
+            resolved.append(sample_size)
+            continue
+
+        if sample_size_policy == "fail_fast":
             raise ValueError(
                 f"Requested sample size {sample_size} exceeds available QC-passed rows. "
                 f"Available counts: {', '.join(errors)}"
             )
+
+        if sample_size_policy == "skip_unavailable":
+            skipped.append(
+                {
+                    "requested": sample_size,
+                    "applied": None,
+                    "reason": f"insufficient rows for countries: {', '.join(sorted(missing))}",
+                }
+            )
+            continue
+
+        if sample_size_policy == "degrade_to_feasible":
+            if min_available <= 0:
+                skipped.append(
+                    {
+                        "requested": sample_size,
+                        "applied": None,
+                        "reason": "no QC-passed rows available",
+                    }
+                )
+                continue
+            if min_available not in resolved:
+                resolved.append(min_available)
+            skipped.append(
+                {
+                    "requested": sample_size,
+                    "applied": min_available,
+                    "reason": "degraded to max feasible per-country size",
+                }
+            )
+            continue
+
+        raise ValueError(f"Unknown sample_size_policy={sample_size_policy}")
+
+    return sorted(set(resolved)), skipped
 
 
 def summarize_qc(df_final: pd.DataFrame, qc_stats: dict[str, Any]) -> None:
@@ -79,8 +126,13 @@ def export_sample_runs(
     output_root.mkdir(parents=True, exist_ok=True)
 
     ranked = prepare_ranked_subsets(df_final, config.seed)
+    skipped_sizes: list[dict[str, Any]] = []
     if sample_sizes:
-        validate_sample_sizes(ranked, sample_sizes)
+        sample_sizes, skipped_sizes = validate_sample_sizes(
+            ranked,
+            sample_sizes,
+            config.sample_size_policy,
+        )
     else:
         sample_sizes = [min(group_size for group_size in ranked["country"].value_counts())] if not ranked.empty else []
 
@@ -105,6 +157,8 @@ def export_sample_runs(
         manifest = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "sample_size": sample_size,
+            "sample_size_policy": config.sample_size_policy,
+            "skipped_sample_sizes": skipped_sizes,
             "raw_pair_count": raw_pair_count,
             "config": config.snapshot(),
             "countries": {country: cultural_profiles[country]["z_c"] for country in cultural_profiles},

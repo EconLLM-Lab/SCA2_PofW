@@ -27,6 +27,23 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(description="SCA 2.0 synthetic data generation pipeline")
     parser.add_argument("--scenarios-per-dim", type=int, default=CONFIG.scenarios_per_dim)
+    parser.add_argument("--concurrency", type=int, default=CONFIG.concurrency)
+    parser.add_argument("--max-retries", type=int, default=CONFIG.max_retries)
+    parser.add_argument("--retry-backoff-min-s", type=float, default=CONFIG.retry_backoff_min_s)
+    parser.add_argument("--retry-backoff-max-s", type=float, default=CONFIG.retry_backoff_max_s)
+    parser.add_argument("--retry-jitter-s", type=float, default=CONFIG.retry_jitter_s)
+    parser.add_argument("--request-timeout-s", type=float, default=CONFIG.request_timeout_s)
+    parser.add_argument("--error-rate-window", type=int, default=CONFIG.error_rate_window)
+    parser.add_argument(
+        "--max-error-rate-for-continue",
+        type=float,
+        default=CONFIG.max_error_rate_for_continue,
+    )
+    parser.add_argument(
+        "--sample-size-policy",
+        choices=["fail_fast", "skip_unavailable", "degrade_to_feasible"],
+        default=CONFIG.sample_size_policy,
+    )
     parser.add_argument("--countries", nargs="+", default=CONFIG.default_countries)
     parser.add_argument("--sample-sizes", type=str, default="")
     parser.add_argument("--estimate-only", action="store_true")
@@ -75,7 +92,18 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     setup_logging()
     args = build_parser().parse_args(argv)
 
-    overrides = {"scenarios_per_dim": args.scenarios_per_dim}
+    overrides = {
+        "scenarios_per_dim": args.scenarios_per_dim,
+        "concurrency": args.concurrency,
+        "max_retries": args.max_retries,
+        "retry_backoff_min_s": args.retry_backoff_min_s,
+        "retry_backoff_max_s": args.retry_backoff_max_s,
+        "retry_jitter_s": args.retry_jitter_s,
+        "request_timeout_s": args.request_timeout_s,
+        "error_rate_window": args.error_rate_window,
+        "max_error_rate_for_continue": args.max_error_rate_for_continue,
+        "sample_size_policy": args.sample_size_policy,
+    }
     if args.teacher_model:
         overrides["teacher_model"] = args.teacher_model
     if args.generator_model:
@@ -155,7 +183,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
 
     export_sizes = sample_sizes or [min(df_final["country"].value_counts())]
     LOGGER.info("Exporting final datasets for sample_sizes=%s", export_sizes)
-    export_sample_runs(
+    exports = export_sample_runs(
         df_final=df_final,
         sample_sizes=export_sizes,
         cultural_profiles=cultural_profiles,
@@ -167,7 +195,16 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         raw_pair_count=len(df_raw),
         git_cwd=Path.cwd(),
     )
-    LOGGER.info("Exported sample sizes: %s", export_sizes)
+    if not exports:
+        LOGGER.warning(
+            "No datasets were exported. Requested sizes may have been skipped under sample_size_policy=%s.",
+            config.sample_size_policy,
+        )
+    else:
+        exported_sizes = sorted(
+            int(entry["manifest"].stem.split("_")[-1]) for entry in exports
+        )
+        LOGGER.info("Exported sample sizes: %s", exported_sizes)
     return 0
 
 

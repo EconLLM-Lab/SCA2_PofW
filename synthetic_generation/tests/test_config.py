@@ -15,3 +15,15 @@ def test_config_has_three_model_fields() -> None:
     assert CONFIG.teacher_model
     assert CONFIG.generator_model
     assert CONFIG.scorer_model
+
+
+def test_config_has_reliability_defaults() -> None:
+    assert CONFIG.max_retries >= 0
+    assert CONFIG.retry_backoff_min_s > 0
+    assert CONFIG.retry_backoff_max_s >= CONFIG.retry_backoff_min_s
+    assert CONFIG.request_timeout_s > 0
+    assert 0.0 <= CONFIG.max_error_rate_for_continue <= 1.0
+
+
+def test_config_has_supported_sample_size_policy() -> None:
+    assert CONFIG.sample_size_policy in {"fail_fast", "skip_unavailable", "degrade_to_feasible"}
