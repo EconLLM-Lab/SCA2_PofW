@@ -148,11 +148,132 @@ async def generate_pair(
         }
 
 
+async def generate_triplet(
+    scenario: str,
+    facet: str,
+    dim_key: str,
+    dim_info: dict[str, str],
+    sem: asyncio.Semaphore,
+    config: PipelineConfig = CONFIG,
+    tracker: CostTracker | None = None,
+) -> dict[str, Any]:
+    """Generate a country-independent scenario and two opposing response options."""
+
+    tracker = tracker or CostTracker()
+    async with sem:
+        user_prompt = (
+            f"Scenario: {scenario}\n"
+            f"Target sub-dimension: {facet}\n"
+            f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
+            f"Dimension rubric: {dim_info['rubric']}\n\n"
+            "Generate two opposing responses to this same scenario.\n"
+            "- Response A should reflect the high/positive end of the target dimension.\n"
+            "- Response B should reflect the low/opposite end of the target dimension.\n"
+            "Both responses must be 2 to 4 sentences, behaviorally realistic, and written in English.\n"
+            "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions "
+            "through behavioral choices and reasoning patterns, not national identity labels.\n"
+            "Do not create a strawman response.\n"
+            "Return ONLY JSON: "
+            "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
+        )
+
+        response = await utils.tracked_completion(
+            "C:triplets",
+            tracker,
+            config=config,
+            model=config.generator_model,
+            messages=[{"role": "user", "content": user_prompt}],
+            response_format={"type": "json_object"},
+            temperature=config.generator_temperature,
+        )
+        payload = utils.parse_json_response(response)
+        return {
+            "response_a": payload["response_a"],
+            "response_b": payload["response_b"],
+            "reasoning": payload.get("reasoning", ""),
+        }
+
+
 async def safe_generate_pair(*args: Any, **kwargs: Any) -> dict[str, Any]:
     """Generate a pair without failing the entire batch on one error."""
 
     try:
         return await generate_pair(*args, **kwargs)
+    except Exception as exc:  # pragma: no cover - exercised indirectly
+        return {"error": utils.compact_error_message(exc)}
+
+
+async def safe_generate_triplet(*args: Any, **kwargs: Any) -> dict[str, Any]:
+    """Generate a fixed triplet without failing the entire batch on one error."""
+
+    try:
+        return await generate_triplet(*args, **kwargs)
+    except Exception as exc:  # pragma: no cover - exercised indirectly
+        return {"error": utils.compact_error_message(exc)}
+
+
+async def select_triplet_for_profile(
+    scenario: str,
+    facet: str,
+    dim_key: str,
+    dim_info: dict[str, str],
+    response_a: str,
+    response_b: str,
+    country: str,
+    profile_text: str,
+    z_c: dict[str, float],
+    sem: asyncio.Semaphore,
+    config: PipelineConfig = CONFIG,
+    tracker: CostTracker | None = None,
+) -> dict[str, Any]:
+    """Select which fixed response better matches one country's GPS disposition."""
+
+    tracker = tracker or CostTracker()
+    async with sem:
+        user_prompt = (
+            f"Scenario: {scenario}\n"
+            f"Target sub-dimension: {facet}\n"
+            f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
+            f"Country/profile code: {country}\n"
+            f"Observed standardized disposition on {dim_key}: {z_c[dim_key]:+.2f}\n\n"
+            f"Response A: {response_a}\n\n"
+            f"Response B: {response_b}\n\n"
+            "Select which fixed response is more aligned with this profile's disposition on the "
+            "target dimension. Do not rewrite either response.\n"
+            "Return ONLY JSON: {\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
+        )
+
+        response = await utils.tracked_completion(
+            "C:selection",
+            tracker,
+            config=config,
+            model=config.scorer_model,
+            messages=[
+                {"role": "system", "content": profile_text},
+                {"role": "user", "content": user_prompt},
+            ],
+            response_format={"type": "json_object"},
+            temperature=config.scorer_temperature,
+        )
+        payload = utils.parse_json_response(response)
+        chosen_option = str(payload.get("chosen_option", "")).strip().upper()
+        if chosen_option not in {"A", "B"}:
+            raise ValueError(f"Selection returned invalid chosen_option={chosen_option!r}")
+        chosen = response_a if chosen_option == "A" else response_b
+        rejected = response_b if chosen_option == "A" else response_a
+        return {
+            "chosen_option": chosen_option,
+            "chosen": chosen,
+            "rejected": rejected,
+            "reasoning": payload.get("reasoning", ""),
+        }
+
+
+async def safe_select_triplet_for_profile(*args: Any, **kwargs: Any) -> dict[str, Any]:
+    """Select a triplet response without failing the entire batch on one error."""
+
+    try:
+        return await select_triplet_for_profile(*args, **kwargs)
     except Exception as exc:  # pragma: no cover - exercised indirectly
         return {"error": utils.compact_error_message(exc)}
 
@@ -186,26 +307,91 @@ async def run_teacher_pipeline(
             len(scenario_bank[dim_key]),
         )
 
-    LOGGER.info("Stage 2/3: generating paired responses for countries=%s", countries)
+    LOGGER.info("Stage 2/3: generating fixed triplets once per scenario")
+    task_specs: list[tuple[str, str, str]] = []
+    for dim_key, scenario_rows in scenario_bank.items():
+        for scenario_row in scenario_rows:
+            task_specs.append((dim_key, scenario_row["facet"], scenario_row["prompt"]))
+
+    window = max(1, config.error_rate_window)
+    triplets: list[dict[str, Any]] = []
+    failures_in_window: list[bool] = []
+    for offset in range(0, len(task_specs), window):
+        chunk_specs = task_specs[offset : offset + window]
+        chunk_coroutines = [
+            safe_generate_triplet(
+                prompt,
+                facet,
+                dim_key,
+                GPS_DIMENSIONS[dim_key],
+                sem,
+                config=config,
+                tracker=tracker,
+            )
+            for dim_key, facet, prompt in chunk_specs
+        ]
+        chunk_results = await utils.gather_with_progress(
+            chunk_coroutines,
+            description="Generate fixed triplets",
+            logger=LOGGER,
+            batch_size=10,
+        )
+        triplets.extend(chunk_results)
+        failures_in_window.extend("response_a" not in result for result in chunk_results)
+        failures_in_window = failures_in_window[-window:]
+
+        if len(failures_in_window) == window:
+            fail_rate = sum(failures_in_window) / window
+            if fail_rate > config.max_error_rate_for_continue:
+                raise RuntimeError(
+                    "Early stop triggered: sustained triplet generation failure rate exceeded threshold "
+                    f"fail_rate={fail_rate:.2%} window={window} "
+                    f"threshold={config.max_error_rate_for_continue:.2%}"
+                )
+
+    fixed_triplets: list[dict[str, Any]] = []
+    failed_messages: list[str] = []
+    for (dim_key, facet, prompt), triplet in zip(task_specs, triplets):
+        if "response_a" not in triplet:
+            failed_messages.append(triplet.get("error", "unknown_generation_error"))
+            continue
+        fixed_triplets.append(
+            {
+                "prompt": prompt,
+                "facet": facet,
+                "gps_dimension": dim_key,
+                "response_a": triplet["response_a"],
+                "response_b": triplet["response_b"],
+                "generation_reasoning": triplet.get("reasoning", ""),
+            }
+        )
+
+    LOGGER.info(
+        "Fixed triplets ready: %d/%d successful",
+        len(fixed_triplets),
+        len(task_specs),
+    )
+    if failed_messages:
+        error_summary = utils.summarize_error_messages(failed_messages, top_n=3)
+        LOGGER.warning(
+            "Triplet generation had %d failed calls. Top errors: %s",
+            len(failed_messages),
+            "; ".join(error_summary),
+        )
+
+    LOGGER.info("Stage 2b/3: selecting fixed responses for countries=%s", countries)
     for country in countries:
         profile = cultural_profiles[country]
-        task_specs: list[tuple[str, str, str]] = []
-        for dim_key, scenario_rows in scenario_bank.items():
-            for scenario_row in scenario_rows:
-                task_specs.append((dim_key, scenario_row["facet"], scenario_row["prompt"]))
-
-        LOGGER.info("Generating %d paired responses for country=%s", len(task_specs), country)
-        window = max(1, config.error_rate_window)
-        all_results: list[dict[str, Any]] = []
-        failures_in_window: list[bool] = []
-        for offset in range(0, len(task_specs), window):
-            chunk_specs = task_specs[offset : offset + window]
-            chunk_coroutines = [
-                safe_generate_pair(
-                    prompt,
-                    facet,
-                    dim_key,
-                    GPS_DIMENSIONS[dim_key],
+        LOGGER.info("Selecting among %d fixed triplets for country=%s", len(fixed_triplets), country)
+        selection_results = await utils.gather_with_progress(
+            [
+                safe_select_triplet_for_profile(
+                    triplet["prompt"],
+                    triplet["facet"],
+                    triplet["gps_dimension"],
+                    GPS_DIMENSIONS[triplet["gps_dimension"]],
+                    triplet["response_a"],
+                    triplet["response_b"],
                     country,
                     profile["profile_text"],
                     profile["z_c"],
@@ -213,57 +399,46 @@ async def run_teacher_pipeline(
                     config=config,
                     tracker=tracker,
                 )
-                for dim_key, facet, prompt in chunk_specs
-            ]
-            chunk_results = await utils.gather_with_progress(
-                chunk_coroutines,
-                description=f"Generate {country}",
-                logger=LOGGER,
-                batch_size=10,
-            )
-            all_results.extend(chunk_results)
-            failures_in_window.extend("response_a" not in result for result in chunk_results)
-            failures_in_window = failures_in_window[-window:]
+                for triplet in fixed_triplets
+            ],
+            description=f"Select {country}",
+            logger=LOGGER,
+            batch_size=10,
+        )
 
-            if len(failures_in_window) == window:
-                fail_rate = sum(failures_in_window) / window
-                if fail_rate > config.max_error_rate_for_continue:
-                    raise RuntimeError(
-                        "Early stop triggered: sustained generation failure rate exceeded threshold "
-                        f"for country={country} fail_rate={fail_rate:.2%} "
-                        f"window={window} threshold={config.max_error_rate_for_continue:.2%}"
-                    )
-
-        results = all_results
-        failed_messages: list[str] = []
-        for (dim_key, facet, prompt), result in zip(task_specs, results):
-            if "response_a" not in result:
-                failed_messages.append(result.get("error", "unknown_generation_error"))
+        failed_selection_messages: list[str] = []
+        for triplet, selection in zip(fixed_triplets, selection_results):
+            if "chosen" not in selection:
+                failed_selection_messages.append(selection.get("error", "unknown_selection_error"))
                 continue
             all_rows.append(
                 {
-                    "prompt": prompt,
-                    "facet": facet,
-                    "gps_dimension": dim_key,
+                    "prompt": triplet["prompt"],
+                    "facet": triplet["facet"],
+                    "gps_dimension": triplet["gps_dimension"],
                     "country": country,
-                    "chosen": result["response_a"],
-                    "rejected": result["response_b"],
-                    "reasoning": result.get("reasoning", ""),
+                    "response_a": triplet["response_a"],
+                    "response_b": triplet["response_b"],
+                    "chosen_option": selection["chosen_option"],
+                    "chosen": selection["chosen"],
+                    "rejected": selection["rejected"],
+                    "reasoning": selection.get("reasoning", ""),
+                    "generation_reasoning": triplet.get("generation_reasoning", ""),
                 }
             )
-        success_count = sum(1 for result in results if "response_a" in result)
+        success_count = sum(1 for result in selection_results if "chosen" in result)
         LOGGER.info(
-            "Finished country=%s with %d/%d successful pairs",
+            "Finished country=%s with %d/%d successful selections",
             country,
             success_count,
-            len(results),
+            len(selection_results),
         )
-        if failed_messages:
-            error_summary = utils.summarize_error_messages(failed_messages, top_n=3)
+        if failed_selection_messages:
+            error_summary = utils.summarize_error_messages(failed_selection_messages, top_n=3)
             LOGGER.warning(
-                "Country=%s had %d failed generations. Top errors: %s",
+                "Country=%s had %d failed selections. Top errors: %s",
                 country,
-                len(failed_messages),
+                len(failed_selection_messages),
                 "; ".join(error_summary),
             )
 

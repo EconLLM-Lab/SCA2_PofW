@@ -145,6 +145,8 @@ class EstimateAssumptions:
     scenario_prompt_output_tokens: int = 350
     pair_prompt_input_tokens: int = 950
     pair_prompt_output_tokens: int = 450
+    selection_prompt_input_tokens: int = 900
+    selection_prompt_output_tokens: int = 120
     scoring_prompt_input_tokens: int = 1200
     scoring_prompt_output_tokens: int = 250
 
@@ -265,12 +267,14 @@ class CostTracker:
         dims = len(GPS_DIMENSIONS)
         estimated_facets = config.estimate.estimated_facets_per_dimension
         raw_per_country = config.scenarios_per_dim * dims
+        fixed_triplets = config.scenarios_per_dim * dims
         expected_pass_per_country = int(raw_per_country * config.estimate.estimated_qc_pass_rate)
         max_requested_sample = max(sample_sizes) if sample_sizes else None
 
         teacher_calls = dims + dims * estimated_facets
-        generator_calls = raw_per_country * len(countries)
-        scorer_calls = generator_calls
+        generator_calls = fixed_triplets
+        selection_calls = raw_per_country * len(countries)
+        scorer_calls = selection_calls
 
         teacher_tokens_in = teacher_calls * (
             config.estimate.facet_prompt_input_tokens
@@ -281,6 +285,8 @@ class CostTracker:
         )
         generator_tokens_in = generator_calls * config.estimate.pair_prompt_input_tokens
         generator_tokens_out = generator_calls * config.estimate.pair_prompt_output_tokens
+        selection_tokens_in = selection_calls * config.estimate.selection_prompt_input_tokens
+        selection_tokens_out = selection_calls * config.estimate.selection_prompt_output_tokens
         scorer_tokens_in = scorer_calls * config.estimate.scoring_prompt_input_tokens
         scorer_tokens_out = scorer_calls * config.estimate.scoring_prompt_output_tokens
 
@@ -297,11 +303,18 @@ class CostTracker:
             "scorer": _estimate_cost_for_tokens(
                 config.scorer_model, scorer_calls, scorer_tokens_in, scorer_tokens_out
             ),
+            "selection": _estimate_cost_for_tokens(
+                config.scorer_model,
+                selection_calls,
+                selection_tokens_in,
+                selection_tokens_out,
+            ),
         }
 
         total_cost = round(
             breakdown["teacher"]["cost_usd"]
             + breakdown["generator"]["cost_usd"]
+            + breakdown["selection"]["cost_usd"]
             + breakdown["scorer"]["cost_usd"],
             6,
         )
@@ -329,7 +342,7 @@ class CostTracker:
                 "concurrency": config.concurrency,
                 "note": (
                     "Based on 5.6s/pair at concurrency=2. Actual time depends on API latency "
-                    "and rate limits."
+                    "and rate limits. Fixed triplets are generated once, then selected/scored per country."
                 ),
             },
         }

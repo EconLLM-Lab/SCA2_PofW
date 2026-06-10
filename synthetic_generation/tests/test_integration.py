@@ -433,11 +433,11 @@ def test_run_teacher_pipeline_stops_early_on_sustained_failures(monkeypatch) -> 
     async def fake_generate_scenarios(dim_key, dim_info, n, config=CONFIG, tracker=None):
         return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
 
-    async def fake_safe_generate_pair(*args, **kwargs):
+    async def fake_safe_generate_triplet(*args, **kwargs):
         return {"error": "RateLimitError: 429"}
 
     monkeypatch.setattr(generate, "generate_scenarios", fake_generate_scenarios)
-    monkeypatch.setattr(generate, "safe_generate_pair", fake_safe_generate_pair)
+    monkeypatch.setattr(generate, "safe_generate_triplet", fake_safe_generate_triplet)
 
     profiles = {
         "SWE": {
