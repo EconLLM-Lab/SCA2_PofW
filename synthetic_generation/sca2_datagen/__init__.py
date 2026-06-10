@@ -1,6 +1,6 @@
 """Synthetic data generation pipeline for SCA 2.0."""
 
-from .config import CONFIG, GPS_DIMENSIONS, MODEL_PRICING, WVS_ITEM_MAP, PipelineConfig
+from .config import CONFIG, GPS_DIMENSIONS, HF_ENDPOINTS, MODEL_PRICING, WVS_ITEM_MAP, PipelineConfig
 from .export import export_sample_runs
 from .generate import (
     generate_pair,
@@ -17,6 +17,7 @@ from .score import run_scoring_qc_export, score_pair, unwrap
 __all__ = [
     "CONFIG",
     "GPS_DIMENSIONS",
+    "HF_ENDPOINTS",
     "MODEL_PRICING",
     "PipelineConfig",
     "WVS_ITEM_MAP",

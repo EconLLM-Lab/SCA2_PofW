@@ -1,4 +1,4 @@
-from sca2_datagen.config import CONFIG, GPS_DIMENSIONS, WVS_ITEM_MAP
+from sca2_datagen.config import CONFIG, GPS_DIMENSIONS, HF_ENDPOINTS, MODEL_PRICING, WVS_ITEM_MAP
 
 
 def test_gps_dimensions_has_six_entries() -> None:
@@ -12,9 +12,23 @@ def test_wvs_item_map_keys_preserved() -> None:
 
 
 def test_config_has_three_model_fields() -> None:
-    assert CONFIG.teacher_model
-    assert CONFIG.generator_model
-    assert CONFIG.scorer_model
+    assert CONFIG.teacher_model == "hf-teacher"
+    assert CONFIG.generator_model == "hf-generator"
+    assert CONFIG.scorer_model == "hf-scorer"
+
+
+def test_hf_endpoint_metadata_is_configured() -> None:
+    assert set(HF_ENDPOINTS) == {"hf-teacher", "hf-generator", "hf-scorer"}
+    for endpoint in HF_ENDPOINTS.values():
+        assert endpoint["base_url"].startswith("https://")
+        assert endpoint["base_url"].endswith("/v1/")
+        assert endpoint["api_key_env"] == "HF_TOKEN"
+        assert endpoint["litellm_model"] == ""
+        assert endpoint["custom_llm_provider"] == "openai"
+
+
+def test_runtime_pricing_contains_only_hf_aliases() -> None:
+    assert set(MODEL_PRICING) == set(HF_ENDPOINTS)
 
 
 def test_config_has_reliability_defaults() -> None:

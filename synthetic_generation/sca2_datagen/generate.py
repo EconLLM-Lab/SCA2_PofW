@@ -31,7 +31,8 @@ async def _generate_facets(
         "You are an expert experimental economist.\n"
         f"Break the cultural trait '{dim_key}' into 4 to 6 distinct sub-dimensions or facets.\n"
         f"Trait description: {dim_info['desc']}\n"
-        "Return ONLY JSON in the form {\"facets\": [\"...\", \"...\"]}.\n"
+        "Return ONLY a valid JSON object, with no markdown or surrounding text, "
+        "in the form {\"facets\": [\"...\", \"...\"]}.\n"
         "Each facet should be short, concrete, and behaviorally distinct."
     )
     response = await utils.tracked_completion(
@@ -76,7 +77,8 @@ async def generate_scenarios(
             "Vary social setting and stakes while staying realistic.\n"
             "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
             "or hypothetical pricing decisions.\n"
-            "Return ONLY JSON: {\"scenarios\": [\"...\", \"...\"]}."
+            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
+            "{\"scenarios\": [\"...\", \"...\"]}."
         )
         response = await utils.tracked_completion(
             "C:scenarios",
@@ -124,7 +126,7 @@ async def generate_pair(
             "dispositions through behavioral choices and reasoning patterns, not national "
             "identity labels.\n"
             "Do not create a strawman response.\n"
-            "Return ONLY JSON: "
+            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
         )
 
@@ -173,7 +175,7 @@ async def generate_triplet(
             "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions "
             "through behavioral choices and reasoning patterns, not national identity labels.\n"
             "Do not create a strawman response.\n"
-            "Return ONLY JSON: "
+            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
         )
 
@@ -240,7 +242,8 @@ async def select_triplet_for_profile(
             f"Response B: {response_b}\n\n"
             "Select which fixed response is more aligned with this profile's disposition on the "
             "target dimension. Do not rewrite either response.\n"
-            "Return ONLY JSON: {\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
+            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
+            "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
         )
 
         response = await utils.tracked_completion(

@@ -52,7 +52,7 @@ async def score_pair(
             f"RESPONSE A: {chosen_text}\n\n"
             f"RESPONSE B: {rejected_text}\n\n"
             "Score each response on all 6 dimensions from 0.0 to 1.0.\n"
-            "Return ONLY JSON: "
+            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scores_a\": {\"trust\": <float>, \"risktaking\": <float>, \"patience\": <float>, "
             "\"altruism\": <float>, \"posrecip\": <float>, \"negrecip\": <float>}, "
             "\"scores_b\": {\"trust\": <float>, \"risktaking\": <float>, \"patience\": <float>, "

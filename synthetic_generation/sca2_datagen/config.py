@@ -118,18 +118,34 @@ WVS_ITEM_MAP = {
 }
 
 
+HF_ENDPOINTS = {
+    "hf-teacher": {
+        "base_url": "https://ekrwkvwahr5lvj8c.us-east-1.aws.endpoints.huggingface.cloud/v1/",
+        "api_key_env": "HF_TOKEN",
+        "litellm_model": "",
+        "custom_llm_provider": "openai",
+    },
+    "hf-generator": {
+        "base_url": "https://qd7j7zt2xlehhoj3.us-east-2.aws.endpoints.huggingface.cloud/v1/",
+        "api_key_env": "HF_TOKEN",
+        "litellm_model": "",
+        "custom_llm_provider": "openai",
+    },
+    "hf-scorer": {
+        "base_url": "https://hyk3cllaaadt9v5d.us-east-1.aws.endpoints.huggingface.cloud/v1/",
+        "api_key_env": "HF_TOKEN",
+        "litellm_model": "",
+        "custom_llm_provider": "openai",
+    },
+}
+
+
 MODEL_PRICING = {
-    "anthropic/claude-sonnet-4-6": {"input_per_1m": 3.00, "output_per_1m": 15.00},
-    "anthropic/claude-opus-4-6": {"input_per_1m": 5.00, "output_per_1m": 25.00},
-    "anthropic/claude-haiku-4-5": {"input_per_1m": 1.00, "output_per_1m": 5.00},
-    "deepseek/deepseek-chat": {"input_per_1m": 0.28, "output_per_1m": 0.42},
-    "deepseek/deepseek-chat-v4": {"input_per_1m": 0.30, "output_per_1m": 0.50},
-    "deepseek/deepseek-reasoner": {"input_per_1m": 0.55, "output_per_1m": 2.19},
-    "mistral/mistral-small-latest": {"input_per_1m": 0.20, "output_per_1m": 0.60},
-    "mistral/mistral-large-latest": {"input_per_1m": 0.50, "output_per_1m": 1.50},
-    "gemini/gemini-2.5-flash": {"input_per_1m": 0.30, "output_per_1m": 2.50},
-    "gemini/gemini-2.5-flash-lite": {"input_per_1m": 0.10, "output_per_1m": 0.40},
-    "openai/gpt-4o-mini": {"input_per_1m": 0.15, "output_per_1m": 0.60},
+    # Endpoint usage is tracked by token/call counts. Dollar costs remain zero until exact
+    # HF Inference Endpoint billing rates are added here.
+    "hf-teacher": {"input_per_1m": 0.0, "output_per_1m": 0.0},
+    "hf-generator": {"input_per_1m": 0.0, "output_per_1m": 0.0},
+    "hf-scorer": {"input_per_1m": 0.0, "output_per_1m": 0.0},
 }
 
 
@@ -155,9 +171,9 @@ class EstimateAssumptions:
 class PipelineConfig:
     """Runtime configuration for the pipeline."""
 
-    teacher_model: str = "anthropic/claude-sonnet-4-6"
-    generator_model: str = "mistral/mistral-large-latest"
-    scorer_model: str = "gemini/gemini-2.5-flash"
+    teacher_model: str = "hf-teacher"
+    generator_model: str = "hf-generator"
+    scorer_model: str = "hf-scorer"
     scenarios_per_dim: int = 20
     qc_distance_thresh: float = 0.20
     concurrency: int = 2

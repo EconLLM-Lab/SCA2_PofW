@@ -5,7 +5,9 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import random
+import re
 import subprocess
 import sys
 from collections import Counter
@@ -16,7 +18,7 @@ import litellm
 from litellm import acompletion
 from tqdm.auto import tqdm
 
-from .config import CostTracker, PipelineConfig
+from .config import CostTracker, HF_ENDPOINTS, PipelineConfig
 
 litellm.drop_params = True
 litellm.suppress_debug_info = True
@@ -72,7 +74,15 @@ def clean_json(content: str) -> str:
         stripped = stripped[3:]
     if stripped.endswith("```"):
         stripped = stripped[:-3]
-    return stripped.strip()
+    stripped = stripped.strip()
+    if stripped.startswith("{"):
+        return stripped
+
+    start = stripped.find("{")
+    end = stripped.rfind("}")
+    if start >= 0 and end > start:
+        return stripped[start : end + 1].strip()
+    return stripped
 
 
 def extract_message_content(response: Any) -> str:
@@ -89,7 +99,16 @@ def extract_message_content(response: Any) -> str:
 def parse_json_response(response: Any) -> dict[str, Any]:
     """Parse a LiteLLM JSON response into a dictionary."""
 
-    return json.loads(clean_json(extract_message_content(response)))
+    content = clean_json(extract_message_content(response))
+    try:
+        payload = json.loads(content)
+    except json.JSONDecodeError:
+        repaired = re.sub(r",(\s*[}\]])", r"\1", content)
+        decoder = json.JSONDecoder()
+        payload, _ = decoder.raw_decode(repaired)
+    if not isinstance(payload, dict):
+        raise ValueError("Model response JSON root must be an object.")
+    return payload
 
 
 async def tracked_completion(
@@ -109,9 +128,34 @@ async def tracked_completion(
     max_backoff = float(config.retry_backoff_max_s) if config is not None else 20.0
     jitter = float(config.retry_jitter_s) if config is not None else 0.75
     model_name = kwargs.get("model", "unknown")
+    endpoint = HF_ENDPOINTS.get(str(model_name))
+    if endpoint is not None:
+        token_env = endpoint["api_key_env"]
+        token = os.environ.get(token_env, "").strip()
+        if not token:
+            raise RuntimeError(
+                f"Missing required environment variable {token_env} for Hugging Face endpoint model "
+                f"{model_name!r}."
+            )
+        kwargs["model"] = endpoint["litellm_model"]
+        kwargs["base_url"] = endpoint["base_url"]
+        kwargs["api_key"] = token
+        kwargs["custom_llm_provider"] = endpoint["custom_llm_provider"]
+    elif model_name not in {"unknown", None}:
+        raise ValueError(
+            f"Unsupported model {model_name!r}. This pipeline is configured for Hugging Face "
+            f"endpoint aliases only: {', '.join(sorted(HF_ENDPOINTS))}."
+        )
 
     for attempt in range(max_retries + 1):
         try:
+            if endpoint is not None and attempt == 0:
+                logging.getLogger("sca2_datagen.api").debug(
+                    "Calling Hugging Face endpoint block=%s model_alias=%s base_url=%s",
+                    block,
+                    model_name,
+                    endpoint["base_url"],
+                )
             response = await acompletion(**kwargs)
             if tracker is not None and getattr(response, "usage", None):
                 await tracker.log(model_name, block, response.usage)

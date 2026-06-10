@@ -39,9 +39,9 @@ The pipeline has five blocks that run sequentially. Each block is a self-contain
 ```
 
 ### Block A — Configuration
-Defines target countries, GPS dimensions, model choices, hyperparameters, WVS item mappings, and cost tracking. This is where you set `scenarios_per_dim`, choose the teacher and scorer models, and configure quality control thresholds.
+Defines target countries, GPS dimensions, Hugging Face endpoint role aliases, hyperparameters, WVS item mappings, and cost tracking. This is where you set `scenarios_per_dim` and configure quality control thresholds.
 
-**Key design decision:** We use a tiered model strategy. A frontier model handles facet and scenario generation, a cost-effective model handles paired responses (the bulk of the cost), and a *different* model family scores them (to reduce self-preference bias).
+**Key design decision:** We use three dedicated Hugging Face Inference Endpoints. The teacher endpoint handles facet and scenario generation, the generator endpoint creates fixed high/low triplets once per scenario, and the scorer endpoint handles profile-based selection plus QC scoring.
 
 ### Block B — Data ingestion and profile construction
 Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile becomes the system prompt for the teacher model.
@@ -49,10 +49,11 @@ Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural s
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
 
 ### Block C — Teacher generation engine
-Three-step architecture:
+Four-step architecture:
 1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into 4–6 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
-3. **Paired generation** (Stage 2): For each scenario × country, a single API call produces both an "aligned" response (matches the country's GPS disposition) and a "contrasting" response (opposite disposition). This contrastive approach avoids the "strawman" problem.
+3. **Fixed triplet generation** (Stage 2): For each scenario, the generator endpoint creates fixed high/low response options once, independent of country.
+4. **Profile-based selection** (Stage 2b): For each country, the scorer endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
 
 ### Block D — Scoring and quality control
 Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters are applied on the target dimension:
@@ -70,8 +71,7 @@ Exports the filtered dataset as `.jsonl` files (one per country and sample size)
 
 ### Prerequisites
 - Python 3.10+
-- API keys for the providers you plan to use
-  With the current defaults, that means Anthropic, Mistral, and Gemini.
+- `HF_TOKEN` for the configured Hugging Face Inference Endpoints.
 - The GPS dataset (`country_gps.dta`)
 
 ### Setup
@@ -123,7 +123,7 @@ The CLI has grown enough that it now deserves its own guide:
 
 - Read [CLI_GUIDE.md](./CLI_GUIDE.md) for the full command reference
 - Use `--resume` if generation already finished and you want to restart from scoring
-- Use `--teacher-model`, `--generator-model`, and `--scorer-model` if you want to override the defaults without editing `config.py`
+- `--teacher-model`, `--generator-model`, and `--scorer-model` are limited to the configured HF aliases (`hf-teacher`, `hf-generator`, `hf-scorer`); closed-provider model names are rejected.
 
 The most common commands are:
 

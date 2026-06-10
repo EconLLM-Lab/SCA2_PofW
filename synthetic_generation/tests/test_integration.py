@@ -28,6 +28,44 @@ def test_estimate_only_runs(caplog, gps_path) -> None:
     assert exit_code == 0
 
 
+def test_cli_rejects_closed_provider_model_override(gps_path) -> None:
+    try:
+        run.main(
+            [
+                "--estimate-only",
+                "--countries",
+                "MEX",
+                "--gps-path",
+                str(gps_path),
+                "--teacher-model",
+                "anthropic/claude-sonnet-4-6",
+            ]
+        )
+    except SystemExit as exc:
+        assert exc.code == 2
+    else:
+        raise AssertionError("Expected argparse failure for closed-provider override")
+
+
+def test_cli_accepts_hf_alias_model_override(gps_path) -> None:
+    exit_code = run.main(
+        [
+            "--estimate-only",
+            "--countries",
+            "MEX",
+            "--gps-path",
+            str(gps_path),
+            "--teacher-model",
+            "hf-teacher",
+            "--generator-model",
+            "hf-generator",
+            "--scorer-model",
+            "hf-scorer",
+        ]
+    )
+    assert exit_code == 0
+
+
 def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_path, monkeypatch) -> None:
     async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
         import pandas as pd

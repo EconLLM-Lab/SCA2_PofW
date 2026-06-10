@@ -1,0 +1,86 @@
+{
+  "trust": [
+    {
+      "facet": "Assuming competence",
+      "prompt": "As you prepare for a group project at university, you must decide whether to rely on a new teammate, who you've just met, to complete a crucial task that will impact your collective grade, despite having no prior experience working with them."
+    },
+    {
+      "facet": "Expecting honesty",
+      "prompt": "You're at a street food market in a foreign country and a vendor tells you that a particular dish is made with a rare, expensive spice, would you believe them and try the dish, or ask for proof, considering the vendor has no reputation to uphold and you'll never see them again?"
+    },
+    {
+      "facet": "Believing in cooperative intentions",
+      "prompt": "You're at a music festival and a stranger offers to hold your spot in the front row while you go buy food, do you accept their offer and trust they won't take your place or let someone else in, or do you decline and wait in line again when you return, in a setting where the stranger has no obvious incentive to deceive you but you've had no prior interactions with them."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "You're a 30-year-old freelance graphic designer considering investing your entire savings of $10,000 into a friend's startup, which has potential for high returns but also a significant chance of failure, and you need to decide whether to take the risk or play it safe by putting your money into a stable but low-yield savings account."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "You're considering switching to a new job in a different city, which would require you to leave your close-knit community and build a new social network from scratch, but offers better career prospects and a higher salary. This decision would impact not only your professional life but also your personal relationships and social connections."
+    },
+    {
+      "facet": "Exploratory Risk Taking",
+      "prompt": "You're the lead researcher on an expedition to a remote, uncharted island, and you must decide whether to venture into the dense jungle in search of a rare species, despite the risk of encountering unknown dangers, or play it safe and stick to the coastal areas, potentially missing a groundbreaking discovery."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "You're a researcher waiting for the results of a crucial experiment that will determine the fate of your project, and you must decide whether to wait an extra week for more accurate results or to proceed with the current data and risk potential errors, all while your team is pressuring you to meet the deadline."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're a freelance writer working on a book, and you must decide whether to take a break now to attend a friend's birthday party or wait until you've finished the first draft, which could take several more weeks, to celebrate with a bigger reward, such as a weekend getaway."
+    },
+    {
+      "facet": "time horizon",
+      "prompt": "You're a single parent working two jobs, and you must decide whether to spend your limited free time this weekend studying for a certification that could lead to a better-paying job in a year, or attending your child's school play, which is a rare opportunity to spend quality time together. Your decision will impact your long-term financial stability and your relationship with your child."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "donating to strangers",
+      "prompt": "You're at a charity event where a stranger's artwork is being auctioned off to raise funds for a local food bank, and you have the opportunity to donate the winning bid to support the cause, even though you won't personally know the beneficiaries."
+    },
+    {
+      "facet": "volunteering time",
+      "prompt": "As a university student, you are considering how to spend your summer break and are deciding between taking a paid internship and volunteering full-time at a local animal shelter that is in desperate need of extra hands. The internship would provide valuable work experience, but the shelter is struggling to care for the large number of animals in its care. Your friends are divided in their opinions, with some encouraging you to take the internship and others supporting your desire to volunteer."
+    },
+    {
+      "facet": "charitable giving in public",
+      "prompt": "You are at a charity gala where attendees are publicly recognized for their donations, and you must decide whether to donate a substantial amount of money to a reputable organization in front of your peers and colleagues, potentially influencing their own giving decisions. The organization supports a cause you deeply care about, and your donation could make a significant impact. Your decision will be announced and displayed on a screen for all to see."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "reciprocal kindness",
+      "prompt": "After a stranger helps you carry your heavy luggage up the stairs at a busy train station, they mention they're running late for a job interview and you offer to give them a ride, going out of your way to ensure they arrive on time."
+    },
+    {
+      "facet": "gratitude expression",
+      "prompt": "After a stranger helps you carry your heavy luggage up a flight of stairs at a busy train station, they decline your offer to buy them a coffee, but you still want to show your appreciation, so you consider sending them a small gift or a thank-you note in the mail to express your gratitude."
+    },
+    {
+      "facet": "cost-sensitive repayment",
+      "prompt": "After a stranger helped you change your flat tire on a deserted road, they asked you to repay the favor by driving them to the nearest town, which would take you out of your way and make you late for a job interview, but you really need to get to that interview to secure a much-needed job."
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "Cost Tolerance",
+      "prompt": "As the leader of a community garden, you discover that one member has been taking more than their fair share of water, causing some plants to wither and die, and you must decide whether to confront them and risk causing tension in the group, even if it means potentially losing their contribution to the garden's upkeep."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "You're a member of a book club where members take turns hosting meetings and providing refreshments. At the last meeting, one member consistently dominated the discussion, not letting others contribute, and now it's their turn to host again, but they're asking everyone else to bring food and drinks. Do you still bring refreshments or decide not to, even if it means the meeting might be less enjoyable?"
+    },
+    {
+      "facet": "Retribution Motive",
+      "prompt": "You're a member of a community garden where everyone is expected to contribute equally to the upkeep. When you notice that one member, who has been slacking off for months, is now taking a large share of the harvest, you have the opportunity to confront them and potentially exclude them from the garden, even if it means you'll have to work harder to maintain it. This decision would not only affect the garden's productivity but also the social dynamics within the community."
+    }
+  ]
+}

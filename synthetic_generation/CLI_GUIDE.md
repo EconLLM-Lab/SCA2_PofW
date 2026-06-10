@@ -106,22 +106,24 @@ What `--resume` does **not** do:
 
 ### Model selection
 
-These override the defaults in `sca2_datagen/config.py` without editing source code:
+The pipeline is cut over to the configured Hugging Face Inference Endpoints. These flags
+remain for compatibility, but they only accept the HF endpoint aliases in
+`sca2_datagen/config.py`; closed-provider model names are rejected.
 
 ```bash
 python run.py \
-  --teacher-model anthropic/claude-sonnet-4-6 \
-  --generator-model mistral/mistral-large-latest \
-  --scorer-model gemini/gemini-2.5-flash \
+  --teacher-model hf-teacher \
+  --generator-model hf-generator \
+  --scorer-model hf-scorer \
   --countries MEX USA \
   --scenarios-per-dim 10
 ```
 
 Current defaults in code are:
 
-- teacher: `anthropic/claude-sonnet-4-6`
-- generator: `mistral/mistral-large-latest`
-- scorer: `gemini/gemini-2.5-flash`
+- teacher: `hf-teacher`
+- generator: `hf-generator`
+- scorer: `hf-scorer`
 
 ### Reliability and throughput controls
 
@@ -207,7 +209,7 @@ This section is intentionally precise, because people often assume the pipeline 
 
 ### What the pipeline does not do
 
-- It does **not** automatically switch from Anthropic to Mistral, Gemini, OpenAI, or another provider if your selected provider is down.
+- It does **not** automatically switch to another provider if a selected Hugging Face endpoint is down.
 - It does **not** automatically retry forever.
 - It does **not** checkpoint midway through scoring.
 
