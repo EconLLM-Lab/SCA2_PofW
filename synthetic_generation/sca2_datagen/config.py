@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import os
+import time
 from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -122,18 +124,21 @@ HF_ENDPOINTS = {
     "hf-teacher": {
         "base_url": "https://ekrwkvwahr5lvj8c.us-east-1.aws.endpoints.huggingface.cloud/v1/",
         "api_key_env": "HF_TOKEN",
+        "hourly_rate_env": "HF_TEACHER_HOURLY_USD",
         "litellm_model": "",
         "custom_llm_provider": "openai",
     },
     "hf-generator": {
         "base_url": "https://qd7j7zt2xlehhoj3.us-east-2.aws.endpoints.huggingface.cloud/v1/",
         "api_key_env": "HF_TOKEN",
+        "hourly_rate_env": "HF_GENERATOR_HOURLY_USD",
         "litellm_model": "",
         "custom_llm_provider": "openai",
     },
     "hf-scorer": {
         "base_url": "https://hyk3cllaaadt9v5d.us-east-1.aws.endpoints.huggingface.cloud/v1/",
         "api_key_env": "HF_TOKEN",
+        "hourly_rate_env": "HF_SCORER_HOURLY_USD",
         "litellm_model": "",
         "custom_llm_provider": "openai",
     },
@@ -141,8 +146,8 @@ HF_ENDPOINTS = {
 
 
 MODEL_PRICING = {
-    # Endpoint usage is tracked by token/call counts. Dollar costs remain zero until exact
-    # HF Inference Endpoint billing rates are added here.
+    # Token usage is tracked for observability. Hugging Face endpoint billing is
+    # estimated from elapsed runtime and endpoint hourly-rate environment variables.
     "hf-teacher": {"input_per_1m": 0.0, "output_per_1m": 0.0},
     "hf-generator": {"input_per_1m": 0.0, "output_per_1m": 0.0},
     "hf-scorer": {"input_per_1m": 0.0, "output_per_1m": 0.0},
@@ -159,8 +164,8 @@ class EstimateAssumptions:
     facet_prompt_output_tokens: int = 150
     scenario_prompt_input_tokens: int = 600
     scenario_prompt_output_tokens: int = 350
-    pair_prompt_input_tokens: int = 950
-    pair_prompt_output_tokens: int = 450
+    triplet_prompt_input_tokens: int = 950
+    triplet_prompt_output_tokens: int = 450
     selection_prompt_input_tokens: int = 900
     selection_prompt_output_tokens: int = 120
     scoring_prompt_input_tokens: int = 1200
@@ -182,6 +187,7 @@ class PipelineConfig:
     retry_backoff_max_s: float = 20.0
     retry_jitter_s: float = 0.75
     request_timeout_s: float = 90.0
+    json_parse_retries: int = 2
     rate_limit_cooldown_s: float = 30.0
     error_rate_window: int = 50
     max_error_rate_for_continue: float = 0.75
@@ -226,12 +232,13 @@ class PipelineConfig:
 
 
 class CostTracker:
-    """Track token usage and compute model cost summaries."""
+    """Track token usage and compute endpoint runtime cost summaries."""
 
     def __init__(self) -> None:
         self.lock = asyncio.Lock()
         self.usage: dict[str, dict[str, dict[str, int]]] = {}
         self.created_at = datetime.now(timezone.utc).isoformat()
+        self.started_monotonic = time.monotonic()
 
     async def log(self, model: str, block: str, usage_obj: Any) -> None:
         """Record prompt/completion token usage for a model call."""
@@ -247,11 +254,11 @@ class CostTracker:
             block_usage["output"] += completion_tokens
             block_usage["calls"] += 1
 
-    def summary(self) -> dict[str, Any]:
+    def summary(self, elapsed_seconds: float | None = None) -> dict[str, Any]:
         """Return a nested summary with per-block and total costs."""
 
         models: dict[str, Any] = {}
-        total_cost = 0.0
+        token_cost = 0.0
         for model, blocks in self.usage.items():
             pricing = MODEL_PRICING.get(model, {"input_per_1m": 0.0, "output_per_1m": 0.0})
             model_total = 0.0
@@ -264,12 +271,21 @@ class CostTracker:
                 model_blocks[block] = {**counts, "cost_usd": round(cost, 6)}
                 model_total += cost
             models[model] = {"blocks": model_blocks, "total_cost_usd": round(model_total, 6)}
-            total_cost += model_total
+            token_cost += model_total
+
+        elapsed = max(
+            0.0,
+            elapsed_seconds if elapsed_seconds is not None else time.monotonic() - self.started_monotonic,
+        )
+        endpoint_runtime_costs = _estimate_endpoint_runtime_cost(elapsed)
+        runtime_total = endpoint_runtime_costs["total_cost_usd"]
 
         return {
             "created_at": self.created_at,
             "models": models,
-            "total_cost_usd": round(total_cost, 6),
+            "token_pricing_cost_usd": round(token_cost, 6),
+            "endpoint_runtime_cost": endpoint_runtime_costs,
+            "total_cost_usd": round(runtime_total if runtime_total > 0 else token_cost, 6),
         }
 
     def estimate_run(
@@ -299,8 +315,8 @@ class CostTracker:
         teacher_tokens_out = dims * config.estimate.facet_prompt_output_tokens + teacher_calls * (
             config.estimate.scenario_prompt_output_tokens
         )
-        generator_tokens_in = generator_calls * config.estimate.pair_prompt_input_tokens
-        generator_tokens_out = generator_calls * config.estimate.pair_prompt_output_tokens
+        generator_tokens_in = generator_calls * config.estimate.triplet_prompt_input_tokens
+        generator_tokens_out = generator_calls * config.estimate.triplet_prompt_output_tokens
         selection_tokens_in = selection_calls * config.estimate.selection_prompt_input_tokens
         selection_tokens_out = selection_calls * config.estimate.selection_prompt_output_tokens
         scorer_tokens_in = scorer_calls * config.estimate.scoring_prompt_input_tokens
@@ -327,20 +343,20 @@ class CostTracker:
             ),
         }
 
-        total_cost = round(
-            breakdown["teacher"]["cost_usd"]
-            + breakdown["generator"]["cost_usd"]
-            + breakdown["selection"]["cost_usd"]
-            + breakdown["scorer"]["cost_usd"],
-            6,
-        )
-
         total_pairs = raw_per_country * len(countries)
         effective_concurrency = max(config.concurrency, 1)
         adjusted_seconds_per_pair = 5.6 / (effective_concurrency / 2)
         total_seconds = int(round(adjusted_seconds_per_pair * total_pairs + 30))
         hours = total_seconds // 3600
         minutes = (total_seconds % 3600) // 60
+        token_cost = round(
+            breakdown["teacher"]["cost_usd"]
+            + breakdown["generator"]["cost_usd"]
+            + breakdown["selection"]["cost_usd"]
+            + breakdown["scorer"]["cost_usd"],
+            6,
+        )
+        runtime_cost = _estimate_endpoint_runtime_cost(float(total_seconds))
 
         return {
             "countries": countries,
@@ -351,7 +367,11 @@ class CostTracker:
             "max_requested_sample_size": max_requested_sample,
             "estimated_facets_per_dimension": estimated_facets,
             "breakdown": breakdown,
-            "total_cost_usd": total_cost,
+            "token_pricing_cost_usd": token_cost,
+            "endpoint_runtime_cost": runtime_cost,
+            "total_cost_usd": (
+                runtime_cost["total_cost_usd"] if runtime_cost["total_cost_usd"] > 0 else token_cost
+            ),
             "estimated_runtime": {
                 "seconds": total_seconds,
                 "human_readable": f"{hours}h {minutes}m",
@@ -377,6 +397,47 @@ def _estimate_cost_for_tokens(
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
         "cost_usd": round(cost, 6),
+    }
+
+
+def _endpoint_hourly_rate_usd(model: str) -> float:
+    endpoint = HF_ENDPOINTS.get(model)
+    if not endpoint:
+        return 0.0
+    raw_rate = os.environ.get(endpoint["hourly_rate_env"], "").strip()
+    if not raw_rate:
+        return 0.0
+    try:
+        rate = float(raw_rate)
+    except ValueError:
+        return 0.0
+    return max(0.0, rate)
+
+
+def _estimate_endpoint_runtime_cost(elapsed_seconds: float) -> dict[str, Any]:
+    hours = max(0.0, elapsed_seconds) / 3600
+    endpoints: dict[str, Any] = {}
+    total = 0.0
+    for model in HF_ENDPOINTS:
+        hourly_rate = _endpoint_hourly_rate_usd(model)
+        cost = hourly_rate * hours
+        endpoints[model] = {
+            "hourly_rate_usd": hourly_rate,
+            "elapsed_seconds": round(elapsed_seconds, 3),
+            "cost_usd": round(cost, 6),
+            "rate_env": HF_ENDPOINTS[model]["hourly_rate_env"],
+        }
+        total += cost
+
+    return {
+        "basis": (
+            "Elapsed wall-clock runtime multiplied by configured Hugging Face endpoint hourly rates. "
+            "Set HF_TEACHER_HOURLY_USD, HF_GENERATOR_HOURLY_USD, and HF_SCORER_HOURLY_USD "
+            "for nonzero estimates."
+        ),
+        "elapsed_seconds": round(max(0.0, elapsed_seconds), 3),
+        "endpoints": endpoints,
+        "total_cost_usd": round(total, 6),
     }
 
 

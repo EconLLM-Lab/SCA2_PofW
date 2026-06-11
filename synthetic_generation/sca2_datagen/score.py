@@ -60,7 +60,7 @@ async def score_pair(
             "\"reasoning\": \"<brief justification>\"}"
         )
 
-        response = await utils.tracked_completion(
+        payload = await utils.tracked_json_completion(
             "D:scoring",
             tracker,
             config=config,
@@ -69,7 +69,6 @@ async def score_pair(
             response_format={"type": "json_object"},
             temperature=config.scorer_temperature,
         )
-        payload = utils.parse_json_response(response)
 
     try:
         scores_a = {key: _clip_score(payload["scores_a"][key]) for key in GPS_DIMENSIONS}
@@ -152,7 +151,7 @@ async def run_scoring_qc_export(
     for _, row in df.iterrows():
         scores_a = row["scores_a"]
         scores_b = row["scores_b"]
-        if scores_a is None or scores_b is None:
+        if not isinstance(scores_a, dict) or not isinstance(scores_b, dict):
             stats["score_fail"] += 1
             continue
 

@@ -28,7 +28,7 @@ For large jobs, do not jump directly to production settings. Use this order:
 
 ### 1. Estimate only
 
-This does not call any model APIs. It only uses static pricing and runtime assumptions.
+This does not call any model APIs. It only uses static runtime and token assumptions.
 
 ```bash
 python run.py \
@@ -42,8 +42,8 @@ The estimate now reports:
 
 - expected raw pairs per country
 - expected QC-passed rows per country
-- cost breakdown by teacher / generator / scorer
-- total estimated cost
+- token usage estimate by teacher / generator / scorer
+- endpoint runtime cost estimate, if hourly-rate env vars are set
 - estimated runtime in seconds and `Xh Ym` form
 
 ### 2. Small pilot run
@@ -79,7 +79,7 @@ python run.py \
 
 What `--resume` does:
 
-- skips facet generation, scenario generation, and pair generation
+- skips facet generation, scenario generation, fixed triplet generation, and profile-based selection
 - loads the raw pair JSONL you point to
 - tries to load `checkpoint_scenario_bank.json` from either the output directory or next to the resume file
 - resumes at scoring and export
@@ -104,26 +104,31 @@ What `--resume` does **not** do:
   - Controls behavior when requested sample sizes exceed QC-passed rows.
   - Default is `skip_unavailable` (export feasible sizes and record skipped sizes in the manifest).
 
-### Model selection
+### Endpoint roles
 
-The pipeline is cut over to the configured Hugging Face Inference Endpoints. These flags
-remain for compatibility, but they only accept the HF endpoint aliases in
-`sca2_datagen/config.py`; closed-provider model names are rejected.
+The pipeline is HF-only. Model override flags were removed after the cutover; endpoint aliases are configured in `sca2_datagen/config.py`:
+
+- `hf-teacher`: facet decomposition and scenario generation
+- `hf-generator`: fixed high/low triplet generation
+- `hf-scorer`: profile-based option selection and QC scoring
+
+Closed-provider model names are not accepted anywhere in the runtime path. If a model alias outside the configured HF endpoints is used programmatically, `tracked_completion()` raises an unsupported-model error.
+
+Required environment:
 
 ```bash
-python run.py \
-  --teacher-model hf-teacher \
-  --generator-model hf-generator \
-  --scorer-model hf-scorer \
-  --countries MEX USA \
-  --scenarios-per-dim 10
+HF_TOKEN="hf_..."
 ```
 
-Current defaults in code are:
+Optional cost-estimation environment:
 
-- teacher: `hf-teacher`
-- generator: `hf-generator`
-- scorer: `hf-scorer`
+```bash
+HF_TEACHER_HOURLY_USD="..."
+HF_GENERATOR_HOURLY_USD="..."
+HF_SCORER_HOURLY_USD="..."
+```
+
+If the hourly-rate variables are unset, manifests still report token usage and elapsed runtime, but dollar cost remains `0.0`.
 
 ### Reliability and throughput controls
 
@@ -199,9 +204,10 @@ This section is intentionally precise, because people often assume the pipeline 
   - Retries are configurable from the CLI (`--max-retries`, backoff and timeout flags).
   - If providers return retry hints (for example `retry-after`), the wrapper respects them.
 
-3. **Pair-level failure isolation**
-   - Pair generation calls are wrapped by `safe_generate_pair()`.
-   - If one pair keeps failing after retries, that pair is dropped and the batch continues.
+3. **Triplet and selection failure isolation**
+   - Fixed triplet generation calls are wrapped by `safe_generate_triplet()`.
+   - Profile-based selection calls are wrapped by `safe_select_triplet_for_profile()`.
+   - Failed triplets or selections are dropped and summarized in the logs.
 
 4. **Sustained-failure early stop**
   - Stage 2 generation tracks rolling failure rates.
@@ -209,7 +215,7 @@ This section is intentionally precise, because people often assume the pipeline 
 
 ### What the pipeline does not do
 
-- It does **not** automatically switch to another provider if a selected Hugging Face endpoint is down.
+- It does **not** automatically switch to another provider or closed model if a selected Hugging Face endpoint is down.
 - It does **not** automatically retry forever.
 - It does **not** checkpoint midway through scoring.
 
@@ -217,14 +223,15 @@ This section is intentionally precise, because people often assume the pipeline 
 
 - **Facet generation fails repeatedly:** the run stops.
 - **Scenario generation fails repeatedly:** the run stops.
-- **A single pair generation fails repeatedly:** that pair is skipped.
+- **A single fixed triplet fails repeatedly:** that triplet is skipped.
+- **A single country selection fails repeatedly:** that selected row is skipped.
 - **Scoring fails repeatedly:** the run stops.
 
 ### What to do in practice
 
 - If generation already finished and scoring later fails, rerun with `--resume ./outputs/checkpoint_raw_pairs.jsonl`.
 - If generation fails before the checkpoint is written, fix the internet/provider issue and rerun the generation step.
-- If you want true provider failover, that would need to be added explicitly in code; it is not a hidden feature of the current CLI.
+- If you want true endpoint failover, that would need to be added explicitly in code; it is not a hidden feature of the current CLI.
 
 ## Reading the outputs
 
@@ -244,7 +251,7 @@ Each `manifest_{N}.json` file records:
 - country GPS vectors
 - QC statistics
 - contamination summaries
-- cost summary
+- token usage and endpoint runtime cost summary
 - git hash
 - scenario bank counts
 

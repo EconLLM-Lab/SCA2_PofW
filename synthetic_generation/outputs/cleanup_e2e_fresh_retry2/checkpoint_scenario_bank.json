@@ -1,0 +1,86 @@
+{
+  "trust": [
+    {
+      "facet": "willingness to share resources",
+      "prompt": "You are at a community garden and notice a stranger struggling to carry a heavy bag of fertilizers, do you offer to help them carry it and potentially lend them some of your own gardening tools, even though you've never met before and there's no one around to enforce any rules or agreements?"
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "You're at a music festival and lend your portable charger to a stranger who promises to return it after charging their phone, but you're not sure if you'll ever see them again in the crowd, so you have to decide whether to trust them to keep their word."
+    },
+    {
+      "facet": "tolerance for vulnerability",
+      "prompt": "As you're moving into a new apartment, you consider lending your new neighbor, who you've just met, a power tool to help them with their own move, even though you won't be around to supervise and might not get it back immediately."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "You've just inherited a small business from a distant relative and must decide whether to invest your own savings to expand the company, potentially increasing profits but also risking financial loss, or play it safe by maintaining the status quo and avoiding any personal financial exposure."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "You're considering switching to a new, unconventional field of study in college, which may lead to uncertain career prospects, but could also provide a unique skillset and personal fulfillment, and you have to weigh the potential benefits against the risk of disappointing your parents, who have high expectations for your traditional career path."
+    },
+    {
+      "facet": "Exploratory Risk Seeking",
+      "prompt": "You're the lead researcher on a project to develop a new sustainable energy source, and you must decide whether to invest limited resources in an untested but potentially groundbreaking technology that could revolutionize the field, or play it safe with a more conventional approach that is less likely to yield significant breakthroughs, all while considering the potential consequences for your team's reputation and future funding."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "You're a freelance writer working on a book project with a potential publisher, and you must decide whether to accept a modest advance now or wait six months for a more substantial payment that would require you to make significant edits to your manuscript, potentially leading to a more successful publication."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're a freelance writer working on a book and have the option to receive a small advance payment now or wait six months for a significantly larger royalty check after the book's publication, which would allow you to invest in a more stable and secure future for yourself and your family. Your decision will impact not just your financial stability but also your ability to support your loved ones. You must weigh the immediate need for funds against the potential long-term benefits of waiting."
+    },
+    {
+      "facet": "impulsivity control",
+      "prompt": "You're at a family dinner and your favorite dessert is being served, but you know that waiting until after everyone has finished their main course will allow you to fully enjoy it without feeling rushed, while eating it immediately might lead to missing out on conversation with your loved ones."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "Donating to strangers",
+      "prompt": "You're at a charity event where you've just been awarded a prestigious prize, and the organizer asks you to donate your prize money to a local food bank that helps feed low-income families you've never met, would you donate the entire amount or keep some for yourself?"
+    },
+    {
+      "facet": "Volunteering time",
+      "prompt": "You are a university student and your local community center is organizing a charity event to collect food and clothing for homeless people, they need volunteers to help sort and pack the donations, would you spare a few hours on a Saturday to help?"
+    },
+    {
+      "facet": "Charitable giving in public",
+      "prompt": "You are at a charity gala where a local food bank is being supported, and as you're about to leave, the organizer announces that any donations made in the next 10 minutes will be matched by a generous sponsor, prompting you to decide whether to donate some of the money you budgeted for the evening's expenses."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "Reciprocal Altruism",
+      "prompt": "While volunteering at a local community garden, a stranger helps you carry a heavy load of soil, straining their back in the process, and now they're asking if you can help them move into a new apartment next weekend. You had been planning a relaxing weekend at home, but you feel obligated to return the favor."
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they handed you their business card and said they'd love to grab coffee sometime, what do you do?"
+    },
+    {
+      "facet": "Social Obligation",
+      "prompt": "After a stranger helps you carry your heavy luggage up the stairs at a train station, they mention they're heading to the same destination as you and you offer to buy them a drink as a thank you, but then they decline, saying they're fasting for a religious holiday, and you feel obligated to respect their wishes and instead offer to help them with something else during the trip."
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "altruistic punishment",
+      "prompt": "You're at a family dinner and your cousin, who makes significantly more than you, offers to split the bill evenly despite ordering the most expensive dishes, and you must decide whether to speak up or let it slide."
+    },
+    {
+      "facet": "cost sensitivity",
+      "prompt": "As the leader of a community garden, you discover that one member has been taking more than their fair share of water, damaging the crops of others. You can confront the member and risk losing their help with the harvest, or ignore the issue and maintain a false sense of harmony. This decision will affect the overall success of the garden and the relationships within the community."
+    },
+    {
+      "facet": "inequality aversion",
+      "prompt": "You're part of a community garden where members share tools and knowledge. A new member, who hasn't contributed anything yet, asks to borrow your expensive lawn mower for an entire weekend, and when you refuse, they accuse you of being selfish and try to convince others to ostracize you. Do you still refuse to lend the mower?"
+    }
+  ]
+}

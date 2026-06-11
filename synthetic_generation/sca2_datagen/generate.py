@@ -1,4 +1,4 @@
-"""Scenario and paired response generation."""
+"""Scenario and fixed-option response generation."""
 
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ async def _generate_facets(
         "in the form {\"facets\": [\"...\", \"...\"]}.\n"
         "Each facet should be short, concrete, and behaviorally distinct."
     )
-    response = await utils.tracked_completion(
+    payload = await utils.tracked_json_completion(
         "C:facets",
         tracker,
         config=config,
@@ -44,7 +44,6 @@ async def _generate_facets(
         response_format={"type": "json_object"},
         temperature=config.teacher_temperature,
     )
-    payload = utils.parse_json_response(response)
     facets = [str(item).strip() for item in payload.get("facets", []) if str(item).strip()]
     if len(facets) < 4:
         raise ValueError(f"Facet generation for {dim_key} returned fewer than 4 facets.")
@@ -80,7 +79,7 @@ async def generate_scenarios(
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scenarios\": [\"...\", \"...\"]}."
         )
-        response = await utils.tracked_completion(
+        payload = await utils.tracked_json_completion(
             "C:scenarios",
             tracker,
             config=config,
@@ -89,65 +88,12 @@ async def generate_scenarios(
             response_format={"type": "json_object"},
             temperature=config.teacher_temperature,
         )
-        payload = utils.parse_json_response(response)
         for scenario in payload.get("scenarios", []):
             text = str(scenario).strip()
             if text:
                 scenarios.append({"facet": facet, "prompt": text})
 
     return scenarios[:n]
-
-
-async def generate_pair(
-    scenario: str,
-    facet: str,
-    dim_key: str,
-    dim_info: dict[str, str],
-    country: str,
-    profile_text: str,
-    z_c: dict[str, float],
-    sem: asyncio.Semaphore,
-    config: PipelineConfig = CONFIG,
-    tracker: CostTracker | None = None,
-) -> dict[str, Any]:
-    """Generate aligned and contrasting responses for a scenario."""
-
-    tracker = tracker or CostTracker()
-    async with sem:
-        user_prompt = (
-            f"Scenario: {scenario}\n"
-            f"Target sub-dimension: {facet}\n"
-            f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n\n"
-            "Generate two responses to this scenario.\n"
-            f"- Response A reflects {country}'s actual disposition on {dim_key} ({z_c[dim_key]:+.2f}).\n"
-            f"- Response B reflects the opposite disposition on {dim_key}.\n"
-            "Both responses must be 2 to 4 sentences, behaviorally realistic, and written in English.\n"
-            "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express cultural "
-            "dispositions through behavioral choices and reasoning patterns, not national "
-            "identity labels.\n"
-            "Do not create a strawman response.\n"
-            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
-            "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
-        )
-
-        response = await utils.tracked_completion(
-            "C:pairs",
-            tracker,
-            config=config,
-            model=config.generator_model,
-            messages=[
-                {"role": "system", "content": profile_text},
-                {"role": "user", "content": user_prompt},
-            ],
-            response_format={"type": "json_object"},
-            temperature=config.generator_temperature,
-        )
-        payload = utils.parse_json_response(response)
-        return {
-            "response_a": payload["response_a"],
-            "response_b": payload["response_b"],
-            "reasoning": payload.get("reasoning", ""),
-        }
 
 
 async def generate_triplet(
@@ -179,7 +125,7 @@ async def generate_triplet(
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
         )
 
-        response = await utils.tracked_completion(
+        payload = await utils.tracked_json_completion(
             "C:triplets",
             tracker,
             config=config,
@@ -188,21 +134,11 @@ async def generate_triplet(
             response_format={"type": "json_object"},
             temperature=config.generator_temperature,
         )
-        payload = utils.parse_json_response(response)
         return {
             "response_a": payload["response_a"],
             "response_b": payload["response_b"],
             "reasoning": payload.get("reasoning", ""),
         }
-
-
-async def safe_generate_pair(*args: Any, **kwargs: Any) -> dict[str, Any]:
-    """Generate a pair without failing the entire batch on one error."""
-
-    try:
-        return await generate_pair(*args, **kwargs)
-    except Exception as exc:  # pragma: no cover - exercised indirectly
-        return {"error": utils.compact_error_message(exc)}
 
 
 async def safe_generate_triplet(*args: Any, **kwargs: Any) -> dict[str, Any]:
@@ -246,7 +182,7 @@ async def select_triplet_for_profile(
             "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
         )
 
-        response = await utils.tracked_completion(
+        payload = await utils.tracked_json_completion(
             "C:selection",
             tracker,
             config=config,
@@ -258,7 +194,6 @@ async def select_triplet_for_profile(
             response_format={"type": "json_object"},
             temperature=config.scorer_temperature,
         )
-        payload = utils.parse_json_response(response)
         chosen_option = str(payload.get("chosen_option", "")).strip().upper()
         if chosen_option not in {"A", "B"}:
             raise ValueError(f"Selection returned invalid chosen_option={chosen_option!r}")
@@ -287,7 +222,7 @@ async def run_teacher_pipeline(
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
 ) -> tuple[pd.DataFrame, dict[str, list[dict[str, str]]]]:
-    """Run scenario generation and paired response generation."""
+    """Run scenario generation, fixed triplet generation, and per-country selection."""
 
     tracker = tracker or CostTracker()
     sem = asyncio.Semaphore(config.concurrency)

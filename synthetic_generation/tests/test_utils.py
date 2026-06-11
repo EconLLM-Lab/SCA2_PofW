@@ -52,6 +52,30 @@ def test_parse_json_response_repairs_trailing_commas() -> None:
     assert utils.parse_json_response(response) == {"scenarios": ["one", "two"]}
 
 
+def test_tracked_json_completion_retries_malformed_json(monkeypatch) -> None:
+    responses = [
+        __import__("tests.conftest", fromlist=["fake_response"]).fake_response('{"scenarios": ["broken"'),
+        __import__("tests.conftest", fromlist=["fake_response"]).fake_response('{"scenarios": ["ok"]}'),
+    ]
+
+    async def fake_acompletion(**kwargs):
+        return responses.pop(0)
+
+    monkeypatch.setenv("HF_TOKEN", "test-token")
+    monkeypatch.setattr(utils, "acompletion", fake_acompletion)
+
+    async def run_test() -> dict:
+        return await utils.tracked_json_completion(
+            "test:block",
+            CostTracker(),
+            config=CONFIG,
+            model="hf-teacher",
+            messages=[{"role": "user", "content": "Return JSON"}],
+        )
+
+    assert asyncio.run(run_test()) == {"scenarios": ["ok"]}
+
+
 def test_tracked_completion_requires_hf_token(monkeypatch) -> None:
     monkeypatch.delenv("HF_TOKEN", raising=False)
 
@@ -76,7 +100,7 @@ def test_tracked_completion_rejects_non_hf_models(monkeypatch) -> None:
             "test:block",
             CostTracker(),
             config=CONFIG,
-            model="anthropic/claude-sonnet-4-6",
+            model="unsupported-model-alias",
             messages=[{"role": "user", "content": "Return {}"}],
         )
 

@@ -44,11 +44,11 @@ Defines target countries, GPS dimensions, Hugging Face endpoint role aliases, hy
 **Key design decision:** We use three dedicated Hugging Face Inference Endpoints. The teacher endpoint handles facet and scenario generation, the generator endpoint creates fixed high/low triplets once per scenario, and the scorer endpoint handles profile-based selection plus QC scoring.
 
 ### Block B — Data ingestion and profile construction
-Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile becomes the system prompt for the teacher model.
+Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile is used by the scorer endpoint when selecting which fixed response option matches a country.
 
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
 
-### Block C — Teacher generation engine
+### Block C — Generation engine
 Four-step architecture:
 1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into 4–6 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
@@ -63,7 +63,7 @@ Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters
 A contamination ratio diagnostic tracks how much non-target dimensions bleed into the scoring.
 
 ### Block E — Export and cost summary
-Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, runtime/cost summary, and git hash.
+Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, token usage, elapsed-runtime endpoint cost estimate, and git hash.
 
 ---
 
@@ -72,6 +72,8 @@ Exports the filtered dataset as `.jsonl` files (one per country and sample size)
 ### Prerequisites
 - Python 3.10+
 - `HF_TOKEN` for the configured Hugging Face Inference Endpoints.
+- Optional endpoint hourly-rate env vars for nonzero cost estimates:
+  `HF_TEACHER_HOURLY_USD`, `HF_GENERATOR_HOURLY_USD`, and `HF_SCORER_HOURLY_USD`.
 - The GPS dataset (`country_gps.dta`)
 
 ### Setup
@@ -83,9 +85,9 @@ cd synthetic_generation
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy the environment template and add your API keys
+# Copy the environment template and add your HF endpoint token
 cp .env.example .env
-# Edit .env with your keys
+# Edit .env with HF_TOKEN and, optionally, endpoint hourly rates
 ```
 
 ### Before you run anything expensive
@@ -123,7 +125,7 @@ The CLI has grown enough that it now deserves its own guide:
 
 - Read [CLI_GUIDE.md](./CLI_GUIDE.md) for the full command reference
 - Use `--resume` if generation already finished and you want to restart from scoring
-- `--teacher-model`, `--generator-model`, and `--scorer-model` are limited to the configured HF aliases (`hf-teacher`, `hf-generator`, `hf-scorer`); closed-provider model names are rejected.
+- Model override flags were removed after the Hugging Face cutover. Endpoint roles are configured in `sca2_datagen/config.py`.
 
 The most common commands are:
 
@@ -183,7 +185,7 @@ synthetic_generation/
 ├── sca2_datagen/
 │   ├── config.py                ← Block A: constants and runtime config
 │   ├── profiles.py              ← Block B: GPS ingestion and profiles
-│   ├── generate.py              ← Block C: scenario + pair generation
+│   ├── generate.py              ← Block C: scenarios, fixed triplets, selection
 │   ├── score.py                 ← Block D: scoring and QC
 │   ├── export.py                ← Block E: export + manifest
 │   └── utils.py                 ← Shared utilities
@@ -224,8 +226,8 @@ These are documented here so new members understand *why* things are the way the
 
 1. **English-only generation:** Confirmed that cross-language behavior shifts are minimal for our purposes. Keeps the pipeline simpler and cheaper.
 2. **Facet-first scenario generation:** Each GPS dimension is first decomposed into 4–6 facets before scenario generation. This raises scenario diversity compared with the original notebook.
-3. **Contrastive pair generation:** Both responses are generated in a single API call. This avoids the "strawman" problem and is cheaper than generating each side independently.
-4. **Multi-model scoring:** Using a different model family for scoring than for generation reduces self-preference bias relative to a single-model pipeline.
+3. **Fixed triplet generation:** The high/low response options are generated once per scenario, independent of country, then reused across countries. This removes the old country-specific pair generation flow and makes cross-country comparisons cleaner.
+4. **Separate scoring endpoint:** The scorer endpoint handles both profile-based selection and QC scoring, reducing generator self-preference bias relative to a single-endpoint pipeline.
 5. **No nationality references:** Responses should not contain phrases like "As a Mexican..." or "As an American...". We express cultural dispositions through behavioral choices, not identity labels.
 6. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked diagnostically but not filtered on.
 7. **Checkpoint after generation:** The pipeline writes raw pairs and a scenario bank checkpoint before scoring so long runs can be resumed without paying for generation twice.
@@ -236,7 +238,7 @@ These are documented here so new members understand *why* things are the way the
 - Positive reciprocity has only 3 WVS proxy items — J-test power will be low on this dimension
 - No human validation yet (Krippendorff's α ≥ 0.7 target is a planned follow-up)
 - Patience and risk-taking WVS proxies have questionable face validity (flagged for review)
-- The pipeline retries transient API failures and can stop early when failure rates remain too high, but it still does **not** automatically fall back to another provider by default. See [CLI_GUIDE.md](./CLI_GUIDE.md) for exact behavior.
+- The pipeline retries transient API failures and can stop early when failure rates remain too high, but it does **not** fall back to closed-provider models or alternate endpoints. See [CLI_GUIDE.md](./CLI_GUIDE.md) for exact behavior.
 
 ---
 

@@ -80,3 +80,59 @@ def test_run_scoring_qc_export_filters_and_keeps_contamination() -> None:
     assert len(df_final) == 1
     assert stats["pass"] == 1
     assert df_final.iloc[0]["contamination_ratio"] is not None
+
+
+def test_run_scoring_qc_export_counts_failed_scores() -> None:
+    calls = 0
+
+    async def fake_score_pair(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise ConnectionError("simulated scorer outage")
+        return (
+            {"trust": 0.2, "risktaking": 0.5, "patience": 0.5, "altruism": 0.5, "posrecip": 0.5, "negrecip": 0.5},
+            {"trust": 0.9, "risktaking": 0.2, "patience": 0.2, "altruism": 0.2, "posrecip": 0.2, "negrecip": 0.2},
+            "reasoning",
+        )
+
+    async def run_test():
+        original = score.score_pair
+        score.score_pair = fake_score_pair
+        try:
+            df_raw = pd.DataFrame(
+                [
+                    {
+                        "prompt": "scenario-1",
+                        "facet": "facet",
+                        "chosen": "chosen",
+                        "rejected": "rejected",
+                        "gps_dimension": "trust",
+                        "country": "MEX",
+                        "reasoning": "generation",
+                    },
+                    {
+                        "prompt": "scenario-2",
+                        "facet": "facet",
+                        "chosen": "chosen",
+                        "rejected": "rejected",
+                        "gps_dimension": "trust",
+                        "country": "MEX",
+                        "reasoning": "generation",
+                    },
+                ]
+            )
+            profiles = {"MEX": {"z_c": {"trust": -0.35}}}
+            return await score.run_scoring_qc_export(
+                df_raw,
+                profiles,
+                config=CONFIG,
+                tracker=CostTracker(),
+            )
+        finally:
+            score.score_pair = original
+
+    df_final, stats = asyncio.run(run_test())
+    assert len(df_final) == 1
+    assert stats["score_fail"] == 1
+    assert stats["pass"] == 1

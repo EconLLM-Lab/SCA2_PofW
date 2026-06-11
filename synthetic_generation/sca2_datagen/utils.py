@@ -111,6 +111,34 @@ def parse_json_response(response: Any) -> dict[str, Any]:
     return payload
 
 
+async def tracked_json_completion(
+    block: str,
+    tracker: CostTracker,
+    *,
+    config: PipelineConfig | None = None,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Call a model for JSON and retry when the response is malformed."""
+
+    parse_retries = max(0, int(config.json_parse_retries)) if config is not None else 2
+    for attempt in range(parse_retries + 1):
+        response = await tracked_completion(block, tracker, config=config, **kwargs)
+        try:
+            return parse_json_response(response)
+        except (json.JSONDecodeError, ValueError) as exc:
+            if attempt >= parse_retries:
+                raise
+            logging.getLogger("sca2_datagen.reliability").warning(
+                "Retrying malformed JSON response block=%s attempt=%d/%d error=%s",
+                block,
+                attempt + 1,
+                parse_retries,
+                compact_error_message(exc),
+            )
+
+    raise RuntimeError("tracked_json_completion retry loop exited unexpectedly")
+
+
 async def tracked_completion(
     block: str,
     tracker: CostTracker,

@@ -12,7 +12,7 @@ from typing import Sequence
 import pandas as pd
 from dotenv import load_dotenv
 
-from sca2_datagen.config import CONFIG, CostTracker, HF_ENDPOINTS
+from sca2_datagen.config import CONFIG, CostTracker
 from sca2_datagen.export import export_sample_runs, summarize_qc
 from sca2_datagen.profiles import load_cultural_profiles
 from sca2_datagen.utils import setup_logging
@@ -56,24 +56,6 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Path to checkpoint_raw_pairs.jsonl to skip generation and resume from scoring",
     )
-    parser.add_argument(
-        "--teacher-model",
-        type=str,
-        default=None,
-        help="Model for scenario/facet generation (default: from config)",
-    )
-    parser.add_argument(
-        "--generator-model",
-        type=str,
-        default=None,
-        help="Model for paired response generation (default: from config)",
-    )
-    parser.add_argument(
-        "--scorer-model",
-        type=str,
-        default=None,
-        help="Model for scoring (default: from config)",
-    )
     return parser
 
 
@@ -83,19 +65,6 @@ def parse_sample_sizes(raw: str) -> list[int]:
     if not raw.strip():
         return []
     return [int(part.strip()) for part in raw.split(",") if part.strip()]
-
-
-def validate_hf_model_alias(parser: argparse.ArgumentParser, role: str, value: str | None) -> str | None:
-    """Accept only configured Hugging Face endpoint aliases for model overrides."""
-
-    if value is None:
-        return None
-    if value not in HF_ENDPOINTS:
-        parser.error(
-            f"--{role}-model must be one of {', '.join(sorted(HF_ENDPOINTS))}; got {value!r}. "
-            "Closed-provider model overrides are disabled for the Hugging Face cutover."
-        )
-    return value
 
 
 async def async_main(argv: Sequence[str] | None = None) -> int:
@@ -118,15 +87,6 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         "max_error_rate_for_continue": args.max_error_rate_for_continue,
         "sample_size_policy": args.sample_size_policy,
     }
-    teacher_model = validate_hf_model_alias(parser, "teacher", args.teacher_model)
-    generator_model = validate_hf_model_alias(parser, "generator", args.generator_model)
-    scorer_model = validate_hf_model_alias(parser, "scorer", args.scorer_model)
-    if teacher_model:
-        overrides["teacher_model"] = teacher_model
-    if generator_model:
-        overrides["generator_model"] = generator_model
-    if scorer_model:
-        overrides["scorer_model"] = scorer_model
     config = CONFIG.with_overrides(**overrides)
     countries = list(dict.fromkeys(args.countries))
     sample_sizes = sorted(parse_sample_sizes(args.sample_sizes))

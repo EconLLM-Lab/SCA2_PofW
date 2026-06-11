@@ -28,7 +28,7 @@ def test_estimate_only_runs(caplog, gps_path) -> None:
     assert exit_code == 0
 
 
-def test_cli_rejects_closed_provider_model_override(gps_path) -> None:
+def test_cli_model_override_flags_are_removed(gps_path) -> None:
     try:
         run.main(
             [
@@ -38,32 +38,13 @@ def test_cli_rejects_closed_provider_model_override(gps_path) -> None:
                 "--gps-path",
                 str(gps_path),
                 "--teacher-model",
-                "anthropic/claude-sonnet-4-6",
+                "unsupported-model-alias",
             ]
         )
     except SystemExit as exc:
         assert exc.code == 2
     else:
-        raise AssertionError("Expected argparse failure for closed-provider override")
-
-
-def test_cli_accepts_hf_alias_model_override(gps_path) -> None:
-    exit_code = run.main(
-        [
-            "--estimate-only",
-            "--countries",
-            "MEX",
-            "--gps-path",
-            str(gps_path),
-            "--teacher-model",
-            "hf-teacher",
-            "--generator-model",
-            "hf-generator",
-            "--scorer-model",
-            "hf-scorer",
-        ]
-    )
-    assert exit_code == 0
+        raise AssertionError("Expected argparse failure for removed model override flag")
 
 
 def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_path, monkeypatch) -> None:

@@ -1,0 +1,86 @@
+{
+  "trust": [
+    {
+      "facet": "willingness to cooperate",
+      "prompt": "You're at a music festival and someone you've never met offers to watch your belongings while you go get food, do you accept their help and leave your bag with them, or do you take your bag with you and miss out on the food?"
+    },
+    {
+      "facet": "assumption of benign intentions",
+      "prompt": "You're at a music festival and ask a stranger to watch your backpack while you go get food, assuming they won't steal from you. As you walk away, you notice the stranger is wearing a volunteer badge for the festival, which reinforces your initial trust. You feel comfortable leaving your belongings with them."
+    },
+    {
+      "facet": "tolerance for vulnerability",
+      "prompt": "You're on a solo hike in a remote area and come across a stranger who offers to lend you their portable charger for your dead phone, but you'll have to give them your backpack with your valuables inside while you wait for your phone to charge, and they'll return it to you at the trailhead."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "You're considering quitting your stable job to start your own business, which could either fail and leave you in debt or succeed and increase your wealth substantially, and you need to decide whether to take the leap and invest your savings in the venture."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "You're considering switching to a new, untested social media platform for your small business, potentially reaching a wider audience but also risking alienating your existing customer base if the new platform doesn't gain traction."
+    },
+    {
+      "facet": "Physical Risk Aversion",
+      "prompt": "You are on a solo hike in the mountains and come across a fast-moving river that you need to cross to reach your destination, but the only available crossing point is a rickety bridge with unclear stability, and you must decide whether to attempt to cross it or turn back."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "You're a researcher waiting for the results of a critical experiment that will determine the fate of your project, and you must decide whether to wait an extra week for more accurate results or settle for the current, less reliable data to meet the looming deadline and potentially secure funding from your institution, which is eager to publish the findings in a prestigious journal."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're a researcher waiting for the results of a crucial experiment that could lead to a breakthrough in your field, and you must decide whether to spend the next few weeks analyzing preliminary data or wait a month for the complete dataset, which would be more comprehensive but might delay your publication."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "As a freelance artist, you have the opportunity to work on a high-profile project that pays well but won't be finished for six months, or take on smaller, shorter-term projects that pay less but provide more immediate income and creative fulfillment."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "donating to known individuals in need",
+      "prompt": "You are at a family reunion and your cousin, who has been struggling to make ends meet, mentions that they are in danger of losing their home due to unforeseen medical expenses - would you offer to help them financially, and if so, how much, considering you've just received an unexpected inheritance from a distant relative."
+    },
+    {
+      "facet": "supporting large-scale charitable organizations",
+      "prompt": "You are attending a high-profile charity gala where wealthy donors and influential figures are gathered to support a renowned international aid organization, and you must decide whether to make a public pledge of support, potentially inspiring others to follow your lead, or keep a low profile and donate anonymously."
+    },
+    {
+      "facet": "volunteering time for community service",
+      "prompt": "You've just graduated from college and are deciding how to spend your summer break before starting your first job - you can either take a paid internship or volunteer full-time at a local community center that helps underprivileged kids, which would not only give you a sense of fulfillment but also provide valuable experience for your future career. Your friends are all taking internships and you're worried that taking the volunteer route might put you behind in your career, but you also feel a strong sense of responsibility to give back to your community. You have to make a decision that aligns with your personal values and priorities."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "Reciprocal Altruism",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they asked if you could help them move into their new apartment the following weekend, which would require you to give up your only free day."
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "After a stranger, who appeared to be a busy working professional, stopped to change your flat tire on the side of a deserted highway, they handed you their business card with a note saying 'no need to pay me back, just pay it forward' before quickly driving off, and now you're considering sending a gift basket to their office as a gesture of gratitude."
+    },
+    {
+      "facet": "Social Obligation",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they asked if you could help them move into a new apartment the following weekend, which would require taking a day off from work."
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "cost tolerance",
+      "prompt": "You're at a family dinner and your cousin, who makes significantly more than you, offers to split the bill evenly despite ordering the most expensive dishes, would you speak up and suggest a more fair split or let it go to avoid tension?"
+    },
+    {
+      "facet": "injustice aversion",
+      "prompt": "You're a member of a community garden where one member consistently takes more than their fair share of water, leaving others' plants to wither. Despite needing the water for your own struggling plants, you must decide whether to confront the unfair member and risk escalating the situation. This could lead to a more equal distribution of resources, but might also damage your relationships within the community."
+    },
+    {
+      "facet": "retaliatory behavior",
+      "prompt": "You're working on a group project and one of your teammates, who hasn't contributed anything, is trying to take credit for your work in front of the class, do you speak up and risk causing tension or stay quiet and let them get away with it?"
+    }
+  ]
+}

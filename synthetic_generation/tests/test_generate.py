@@ -40,46 +40,13 @@ def test_generate_scenarios_uses_facets_and_exclusions() -> None:
     assert any("Do NOT generate scenarios requiring numerical calculations" in prompt for prompt in prompts)
 
 
-def test_generate_pair_prompt_forbids_nationality_self_references() -> None:
-    prompts: list[str] = []
-
-    async def fake_tracked_completion(block, tracker, **kwargs):
-        prompts.append(kwargs["messages"][-1]["content"])
-        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
-            '```json {"response_a": "A", "response_b": "B", "reasoning": "R"} ```'
-        )
-
-    async def run_test() -> None:
-        original = generate.utils.tracked_completion
-        generate.utils.tracked_completion = fake_tracked_completion
-        try:
-            sem = asyncio.Semaphore(1)
-            payload = await generate.generate_pair(
-                "A scenario",
-                "stranger trust",
-                "trust",
-                GPS_DIMENSIONS["trust"],
-                "MEX",
-                "Profile text",
-                {"trust": -0.35},
-                sem,
-                config=CONFIG,
-                tracker=CostTracker(),
-            )
-        finally:
-            generate.utils.tracked_completion = original
-        assert payload["response_a"] == "A"
-
-    asyncio.run(run_test())
-    assert any("Do NOT use phrases like 'As a Mexican' or 'As an American'" in prompt for prompt in prompts)
-    assert any("written in English" in prompt for prompt in prompts)
-
-
 def test_generate_triplet_has_no_country_or_z_arguments() -> None:
     signature = inspect.signature(generate.generate_triplet)
     assert "country" not in signature.parameters
     assert "z_c" not in signature.parameters
     assert "profile_text" not in signature.parameters
+    assert not hasattr(generate, "generate_pair")
+    assert not hasattr(generate, "safe_generate_pair")
 
 
 def test_generate_triplet_prompt_is_country_independent() -> None:
