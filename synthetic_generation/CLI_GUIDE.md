@@ -135,7 +135,7 @@ If the hourly-rate variables are unset, manifests still report token usage and e
 - `--concurrency`
   - Max in-flight generation/scoring requests.
 - `--max-retries`
-  - Max retry attempts for transient API failures (429/timeout/network).
+  - Max retry attempts for transient API failures (429/timeout/network/503 cold starts).
 - `--request-timeout-s`
   - Request timeout passed to LiteLLM calls.
 - `--retry-backoff-min-s`, `--retry-backoff-max-s`, `--retry-jitter-s`
@@ -203,6 +203,7 @@ This section is intentionally precise, because people often assume the pipeline 
    - All model calls go through `tracked_completion()` in `sca2_datagen/utils.py`.
   - Retries are configurable from the CLI (`--max-retries`, backoff and timeout flags).
   - If providers return retry hints (for example `retry-after`), the wrapper respects them.
+  - 503/service-unavailable responses are logged as likely endpoint wake-up events and use a longer minimum wait before retrying.
 
 3. **Triplet and selection failure isolation**
    - Fixed triplet generation calls are wrapped by `safe_generate_triplet()`.
@@ -226,6 +227,8 @@ This section is intentionally precise, because people often assume the pipeline 
 - **A single fixed triplet fails repeatedly:** that triplet is skipped.
 - **A single country selection fails repeatedly:** that selected row is skipped.
 - **Scoring fails repeatedly:** the run stops.
+
+If the logs say an endpoint is "waking up", that usually means Hugging Face scaled the endpoint to zero after inactivity and the first calls are waiting for it to restart. Let the retry loop continue unless failures persist after the full retry budget.
 
 ### What to do in practice
 

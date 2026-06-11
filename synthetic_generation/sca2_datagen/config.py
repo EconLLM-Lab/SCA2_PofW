@@ -122,6 +122,7 @@ WVS_ITEM_MAP = {
 
 HF_ENDPOINTS = {
     "hf-teacher": {
+        "role": "teacher",
         "base_url": "https://ekrwkvwahr5lvj8c.us-east-1.aws.endpoints.huggingface.cloud/v1/",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_TEACHER_HOURLY_USD",
@@ -129,6 +130,7 @@ HF_ENDPOINTS = {
         "custom_llm_provider": "openai",
     },
     "hf-generator": {
+        "role": "generator",
         "base_url": "https://qd7j7zt2xlehhoj3.us-east-2.aws.endpoints.huggingface.cloud/v1/",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_GENERATOR_HOURLY_USD",
@@ -136,6 +138,7 @@ HF_ENDPOINTS = {
         "custom_llm_provider": "openai",
     },
     "hf-scorer": {
+        "role": "scorer",
         "base_url": "https://hyk3cllaaadt9v5d.us-east-1.aws.endpoints.huggingface.cloud/v1/",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_SCORER_HOURLY_USD",
@@ -182,10 +185,12 @@ class PipelineConfig:
     scenarios_per_dim: int = 20
     qc_distance_thresh: float = 0.20
     concurrency: int = 2
-    max_retries: int = 5
+    max_retries: int = 8
     retry_backoff_min_s: float = 1.0
-    retry_backoff_max_s: float = 20.0
+    retry_backoff_max_s: float = 30.0
     retry_jitter_s: float = 0.75
+    cold_start_min_wait_s: float = 15.0
+    server_error_min_wait_s: float = 5.0
     request_timeout_s: float = 90.0
     json_parse_retries: int = 2
     rate_limit_cooldown_s: float = 30.0
@@ -401,31 +406,62 @@ def _estimate_cost_for_tokens(
 
 
 def _endpoint_hourly_rate_usd(model: str) -> float:
+    return _endpoint_hourly_rate_status(model)["hourly_rate_usd"]
+
+
+def _endpoint_hourly_rate_status(model: str) -> dict[str, Any]:
     endpoint = HF_ENDPOINTS.get(model)
     if not endpoint:
-        return 0.0
-    raw_rate = os.environ.get(endpoint["hourly_rate_env"], "").strip()
+        return {
+            "hourly_rate_usd": 0.0,
+            "rate_env": "",
+            "rate_status": "unknown_endpoint",
+        }
+
+    rate_env = endpoint["hourly_rate_env"]
+    raw_rate = os.environ.get(rate_env, "").strip()
     if not raw_rate:
-        return 0.0
+        return {
+            "hourly_rate_usd": 0.0,
+            "rate_env": rate_env,
+            "rate_status": "missing",
+        }
     try:
         rate = float(raw_rate)
     except ValueError:
-        return 0.0
-    return max(0.0, rate)
+        return {
+            "hourly_rate_usd": 0.0,
+            "rate_env": rate_env,
+            "rate_status": "invalid",
+        }
+    return {
+        "hourly_rate_usd": max(0.0, rate),
+        "rate_env": rate_env,
+        "rate_status": "configured",
+    }
 
 
 def _estimate_endpoint_runtime_cost(elapsed_seconds: float) -> dict[str, Any]:
     hours = max(0.0, elapsed_seconds) / 3600
     endpoints: dict[str, Any] = {}
     total = 0.0
+    missing_rate_envs: list[str] = []
+    invalid_rate_envs: list[str] = []
     for model in HF_ENDPOINTS:
-        hourly_rate = _endpoint_hourly_rate_usd(model)
+        rate_status = _endpoint_hourly_rate_status(model)
+        hourly_rate = rate_status["hourly_rate_usd"]
         cost = hourly_rate * hours
+        if rate_status["rate_status"] == "missing":
+            missing_rate_envs.append(rate_status["rate_env"])
+        elif rate_status["rate_status"] == "invalid":
+            invalid_rate_envs.append(rate_status["rate_env"])
         endpoints[model] = {
+            "role": HF_ENDPOINTS[model]["role"],
             "hourly_rate_usd": hourly_rate,
             "elapsed_seconds": round(elapsed_seconds, 3),
             "cost_usd": round(cost, 6),
-            "rate_env": HF_ENDPOINTS[model]["hourly_rate_env"],
+            "rate_env": rate_status["rate_env"],
+            "rate_status": rate_status["rate_status"],
         }
         total += cost
 
@@ -437,6 +473,9 @@ def _estimate_endpoint_runtime_cost(elapsed_seconds: float) -> dict[str, Any]:
         ),
         "elapsed_seconds": round(max(0.0, elapsed_seconds), 3),
         "endpoints": endpoints,
+        "rates_configured": not missing_rate_envs and not invalid_rate_envs,
+        "missing_rate_envs": missing_rate_envs,
+        "invalid_rate_envs": invalid_rate_envs,
         "total_cost_usd": round(total, 6),
     }
 

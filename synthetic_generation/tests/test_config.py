@@ -19,6 +19,11 @@ def test_config_has_three_model_fields() -> None:
 
 def test_hf_endpoint_metadata_is_configured() -> None:
     assert set(HF_ENDPOINTS) == {"hf-teacher", "hf-generator", "hf-scorer"}
+    assert {endpoint["role"] for endpoint in HF_ENDPOINTS.values()} == {
+        "teacher",
+        "generator",
+        "scorer",
+    }
     for endpoint in HF_ENDPOINTS.values():
         assert endpoint["base_url"].startswith("https://")
         assert endpoint["base_url"].endswith("/v1/")
@@ -36,6 +41,8 @@ def test_runtime_pricing_contains_only_hf_aliases() -> None:
 def test_config_has_reliability_defaults() -> None:
     assert CONFIG.max_retries >= 0
     assert CONFIG.json_parse_retries >= 0
+    assert CONFIG.cold_start_min_wait_s > 0
+    assert CONFIG.server_error_min_wait_s > 0
     assert CONFIG.retry_backoff_min_s > 0
     assert CONFIG.retry_backoff_max_s >= CONFIG.retry_backoff_min_s
     assert CONFIG.request_timeout_s > 0
@@ -55,3 +62,20 @@ def test_endpoint_runtime_cost_uses_hourly_rate_env(monkeypatch) -> None:
 
     assert summary["endpoint_runtime_cost"]["total_cost_usd"] == 2.0
     assert summary["total_cost_usd"] == 2.0
+
+
+def test_endpoint_runtime_cost_missing_rates_are_nonfatal(monkeypatch) -> None:
+    monkeypatch.delenv("HF_TEACHER_HOURLY_USD", raising=False)
+    monkeypatch.delenv("HF_GENERATOR_HOURLY_USD", raising=False)
+    monkeypatch.delenv("HF_SCORER_HOURLY_USD", raising=False)
+
+    summary = CostTracker().summary(elapsed_seconds=1800)
+
+    runtime_cost = summary["endpoint_runtime_cost"]
+    assert runtime_cost["total_cost_usd"] == 0.0
+    assert runtime_cost["rates_configured"] is False
+    assert set(runtime_cost["missing_rate_envs"]) == {
+        "HF_TEACHER_HOURLY_USD",
+        "HF_GENERATOR_HOURLY_USD",
+        "HF_SCORER_HOURLY_USD",
+    }

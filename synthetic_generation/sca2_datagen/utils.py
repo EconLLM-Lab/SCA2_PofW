@@ -157,13 +157,15 @@ async def tracked_completion(
     jitter = float(config.retry_jitter_s) if config is not None else 0.75
     model_name = kwargs.get("model", "unknown")
     endpoint = HF_ENDPOINTS.get(str(model_name))
+    endpoint_role = str(endpoint["role"]) if endpoint is not None else "unknown"
     if endpoint is not None:
         token_env = endpoint["api_key_env"]
         token = os.environ.get(token_env, "").strip()
         if not token:
             raise RuntimeError(
-                f"Missing required environment variable {token_env} for Hugging Face endpoint model "
-                f"{model_name!r}."
+                f"Missing {token_env}. Add it to synthetic_generation/.env or export it before running. "
+                f"This HF-only pipeline needs {token_env} to call the {endpoint_role} endpoint "
+                f"({model_name})."
             )
         kwargs["model"] = endpoint["litellm_model"]
         kwargs["base_url"] = endpoint["base_url"]
@@ -189,20 +191,23 @@ async def tracked_completion(
                 await tracker.log(model_name, block, response.usage)
             return response
         except Exception as exc:
-            if attempt >= max_retries or not _is_retryable_error(exc):
+            retry_reason = _retryable_error_reason(exc)
+            if attempt >= max_retries or retry_reason is None:
                 raise
 
             retry_after_s = _extract_retry_after_seconds(exc)
             backoff = min(max_backoff, min_backoff * (2**attempt))
-            wait_s = max(backoff + random.uniform(0, jitter), retry_after_s)
-            logging.getLogger("sca2_datagen.reliability").warning(
-                "Retrying model call block=%s model=%s attempt=%d/%d wait_s=%.2f error_class=%s",
-                block,
-                model_name,
-                attempt + 1,
-                max_retries,
-                wait_s,
-                type(exc).__name__,
+            minimum_wait_s = _minimum_wait_for_retry_reason(retry_reason, config)
+            wait_s = max(backoff + random.uniform(0, jitter), retry_after_s, minimum_wait_s)
+            _log_retry(
+                block=block,
+                model_name=str(model_name),
+                endpoint_role=endpoint_role,
+                attempt=attempt + 1,
+                max_retries=max_retries,
+                wait_s=wait_s,
+                retry_reason=retry_reason,
+                exc=exc,
             )
             await asyncio.sleep(wait_s)
 
@@ -211,6 +216,12 @@ async def tracked_completion(
 
 def _is_retryable_error(exc: Exception) -> bool:
     """Classify transient provider errors that should be retried."""
+
+    return _retryable_error_reason(exc) is not None
+
+
+def _retryable_error_reason(exc: Exception) -> str | None:
+    """Return a user-facing retry category for transient provider errors."""
 
     transient_classes = {
         "RateLimitError",
@@ -221,22 +232,105 @@ def _is_retryable_error(exc: Exception) -> bool:
         "ServiceUnavailableError",
         "InternalServerError",
     }
-    if type(exc).__name__ in transient_classes:
-        return True
 
     text = compact_error_message(exc).lower()
+    if any(marker in text for marker in ("429", "rate limit", "rate_limited")):
+        return "rate_limit"
+
+    cold_start_markers = [
+        "503",
+        "service unavailable",
+        "starting",
+        "warming",
+        "waking",
+        "loading",
+        "cold start",
+        "scale to zero",
+        "scaled to zero",
+    ]
+    if any(marker in text for marker in cold_start_markers):
+        return "cold_start"
+
+    server_error_markers = [
+        "500",
+        "502",
+        "504",
+        "internal server error",
+        "bad gateway",
+        "gateway timeout",
+        "upstream",
+        "temporary",
+    ]
+    if any(marker in text for marker in server_error_markers):
+        return "server_error"
+
+    if type(exc).__name__ in transient_classes:
+        return "network"
+
     transient_markers = [
-        "429",
-        "rate limit",
-        "rate_limited",
         "timeout",
         "connection timed out",
         "cannot connect",
-        "temporary",
-        "service unavailable",
-        "internal server error",
+        "connection error",
+        "connection reset",
+        "dns",
     ]
-    return any(marker in text for marker in transient_markers)
+    if any(marker in text for marker in transient_markers):
+        return "network"
+
+    return None
+
+
+def _minimum_wait_for_retry_reason(reason: str, config: PipelineConfig | None) -> float:
+    if reason == "cold_start":
+        return float(config.cold_start_min_wait_s) if config is not None else 15.0
+    if reason == "server_error":
+        return float(config.server_error_min_wait_s) if config is not None else 5.0
+    return 0.0
+
+
+def _log_retry(
+    *,
+    block: str,
+    model_name: str,
+    endpoint_role: str,
+    attempt: int,
+    max_retries: int,
+    wait_s: float,
+    retry_reason: str,
+    exc: Exception,
+) -> None:
+    logger = logging.getLogger("sca2_datagen.reliability")
+    if retry_reason == "cold_start":
+        logger.warning(
+            "%s endpoint appears to be waking up or temporarily unavailable; retrying block=%s "
+            "alias=%s attempt=%d/%d wait_s=%.1f error=%s",
+            endpoint_role,
+            block,
+            model_name,
+            attempt,
+            max_retries,
+            wait_s,
+            compact_error_message(exc),
+        )
+        return
+
+    reason_label = {
+        "rate_limit": "rate limited",
+        "server_error": "returning a transient server error",
+        "network": "temporarily unreachable",
+    }.get(retry_reason, "temporarily unavailable")
+    logger.warning(
+        "%s endpoint is %s; retrying block=%s alias=%s attempt=%d/%d wait_s=%.1f error=%s",
+        endpoint_role,
+        reason_label,
+        block,
+        model_name,
+        attempt,
+        max_retries,
+        wait_s,
+        compact_error_message(exc),
+    )
 
 
 def _extract_retry_after_seconds(exc: Exception) -> float:

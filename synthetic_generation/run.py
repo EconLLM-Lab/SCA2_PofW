@@ -67,6 +67,38 @@ def parse_sample_sizes(raw: str) -> list[int]:
     return [int(part.strip()) for part in raw.split(",") if part.strip()]
 
 
+def log_cost_summary(cost_summary: dict) -> None:
+    """Log a compact, user-facing endpoint cost summary."""
+
+    runtime_cost = cost_summary.get("endpoint_runtime_cost", {})
+    missing = runtime_cost.get("missing_rate_envs", [])
+    invalid = runtime_cost.get("invalid_rate_envs", [])
+    if missing:
+        LOGGER.warning(
+            "Hourly endpoint cost rates are not configured for %s. Dollar costs for those endpoints "
+            "will be reported as $0.00. Add them to .env when you want cost estimates.",
+            ", ".join(missing),
+        )
+    if invalid:
+        LOGGER.warning(
+            "Hourly endpoint cost rates are invalid for %s. Dollar costs for those endpoints "
+            "will be reported as $0.00 until fixed.",
+            ", ".join(invalid),
+        )
+
+    endpoints = runtime_cost.get("endpoints", {})
+    if endpoints:
+        role_costs = [
+            f"{details.get('role', alias)}={details.get('cost_usd', 0.0):.4f}"
+            for alias, details in endpoints.items()
+        ]
+        LOGGER.info(
+            "Approx endpoint runtime cost: total=$%.4f (%s)",
+            float(runtime_cost.get("total_cost_usd", 0.0)),
+            ", ".join(role_costs),
+        )
+
+
 async def async_main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI."""
 
@@ -105,6 +137,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     if args.estimate_only:
         estimate = tracker.estimate_run(config, countries, sample_sizes=sample_sizes or None)
         LOGGER.info("Estimate summary: %s", json.dumps(estimate, indent=2))
+        log_cost_summary(estimate)
         if sample_sizes and estimate["expected_qc_passed_per_country"] < max(sample_sizes):
             LOGGER.warning(
                 "Estimated QC-passed rows per country (%s) may be below the largest requested sample size (%s).",
@@ -160,13 +193,14 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
 
     export_sizes = sample_sizes or [min(df_final["country"].value_counts())]
     LOGGER.info("Exporting final datasets for sample_sizes=%s", export_sizes)
+    cost_summary = tracker.summary()
     exports = export_sample_runs(
         df_final=df_final,
         sample_sizes=export_sizes,
         cultural_profiles=cultural_profiles,
         config=config,
         output_dir=args.output_dir,
-        cost_summary=tracker.summary(),
+        cost_summary=cost_summary,
         scenario_bank=scenario_bank,
         qc_stats=qc_stats,
         raw_pair_count=len(df_raw),
@@ -182,6 +216,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
             int(entry["manifest"].stem.split("_")[-1]) for entry in exports
         )
         LOGGER.info("Exported sample sizes: %s", exported_sizes)
+        log_cost_summary(cost_summary)
     return 0
 
 

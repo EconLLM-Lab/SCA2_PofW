@@ -1,0 +1,86 @@
+{
+  "trust": [
+    {
+      "facet": "willingness to cooperate",
+      "prompt": "You're at a music festival and a stranger offers to hold your spot in the crowd while you go get a drink, do you accept their offer and leave your belongings with them, or do you decline and wait in line for the drink yourself, in order to keep an eye on your stuff?"
+    },
+    {
+      "facet": "assumption of benign intent",
+      "prompt": "As you're walking alone in an unfamiliar neighborhood at night, a local resident approaches you and offers to walk with you to the nearest bus stop, saying it's not safe for a stranger to be out alone; you must decide whether to trust their intentions and accept their escort."
+    },
+    {
+      "facet": "tolerance for vulnerability",
+      "prompt": "As you're moving into a new apartment, you must decide whether to lend your neighbors, who you've just met, a power tool to help them with their own move, potentially leaving your own tasks undone and relying on their promise to return it."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "You are considering quitting your stable job to start your own business, which could potentially lead to higher earnings but also increases the risk of financial instability and uncertainty, and you need to decide whether to take the leap and invest your savings in the venture or play it safe and stay in your current role."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "You're considering quitting your stable job to start a business with friends, which could lead to financial instability but also potential long-term success and social recognition, and you need to decide whether to take the leap and risk your current career path for the opportunity to be your own boss and create something new with your peers."
+    },
+    {
+      "facet": "Physical Risk Willingness",
+      "prompt": "You're on a hiking trip with friends in the mountains and come across a fast-moving river that you need to cross to reach your campsite, but the only available crossing point is a rickety bridge with uncertain stability, and you must decide whether to attempt to cross it or look for an alternative route that would add several hours to your journey."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "You're a freelance writer working on a book project with a potential publisher, and you must decide whether to submit your manuscript now and risk it being rejected due to its incomplete state, or wait an additional three months to refine it and increase the chances of acceptance, but potentially missing the publisher's current opening for new authors."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're a freelance writer working on a book, and you must decide whether to take a break now to attend a friend's party or wait until you've completed the first draft, which could take several more weeks, to celebrate with a bigger bash, knowing that the book's success could lead to a significant career boost."
+    },
+    {
+      "facet": "time preference",
+      "prompt": "You are a researcher waiting for the results of a crucial experiment that will determine the fate of your project, and you must decide whether to wait an extra week for more accurate results or to proceed with the current, less reliable data to meet the impending deadline and secure funding for your team."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "donating to known individuals",
+      "prompt": "You are at a family reunion and your cousin, who has been struggling to pay medical bills, mentions that they are still short on funds to cover their treatment, and you consider giving them some of the money you recently inherited from a distant relative."
+    },
+    {
+      "facet": "giving to local charities",
+      "prompt": "You are attending a community event in your hometown, where a local food bank is collecting donations to support low-income families during the holiday season, and you must decide whether to donate a portion of your recent tax refund to their cause. Your neighbors and colleagues are also in attendance, and you notice that some of them are making generous contributions, which may influence your decision. As you consider your options, you think about the potential impact of your donation on the local community."
+    },
+    {
+      "facet": "supporting global causes",
+      "prompt": "As a member of a local community group, you are tasked with deciding how to allocate a $10,000 donation from a generous benefactor, and you must choose between supporting a global disaster relief effort or funding a local food bank, considering the potential impact on both global and local communities. You have been invited to join a fundraising campaign for a reputable international organization providing humanitarian aid to refugees, and you need to decide whether to donate your time, skills, or money to support their global cause. At a family gathering, your wealthy aunt announces that she wants to leave a significant portion of her estate to a charity and asks for your advice on choosing between a local children's hospital and a well-known global health organization fighting diseases in developing countries."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "Reciprocal Altruism",
+      "prompt": "You're at a music festival and a stranger lends you their waterproof jacket during a sudden downpour, saving your clothes and phone from getting soaked, and now you have the chance to return the favor by offering them your extra festival ticket for the next day's show."
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they handed you their business card and said they'd love to grab coffee sometime, what do you do?"
+    },
+    {
+      "facet": "Social Obligation",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they asked if you could help them move into a new apartment the following weekend, which would require taking a day off work."
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "Cost Tolerance",
+      "prompt": "You're at a community potluck dinner and someone takes a large portion of the main dish without contributing any food, would you confront them about it even if it might make the rest of the evening awkward?"
+    },
+    {
+      "facet": "Fairness Sensitivity",
+      "prompt": "You're part of a community garden where members share tools and equipment. A new member, who hasn't contributed anything yet, asks to borrow your expensive lawn mower, but when you lend it, they return it damaged without offering to pay for repairs or apologize. Do you confront them about their behavior and risk causing tension in the community?"
+    },
+    {
+      "facet": "Retribution Motive",
+      "prompt": "You're a member of a book club where one member consistently fails to return borrowed books on time and in good condition, and the group is discussing whether to expel this member, even though it would mean disbanding the club due to the member's crucial role in organizing meetings, or to find an alternative solution that might be less effective but keeps the club intact."
+    }
+  ]
+}

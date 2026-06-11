@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
 import pytest
 
@@ -76,6 +77,46 @@ def test_tracked_json_completion_retries_malformed_json(monkeypatch) -> None:
     assert asyncio.run(run_test()) == {"scenarios": ["ok"]}
 
 
+def test_tracked_completion_logs_cold_start_retry(monkeypatch, caplog) -> None:
+    calls = 0
+    sleeps: list[float] = []
+
+    async def fake_acompletion(**kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise RuntimeError("Error code: 503 - Service Unavailable")
+        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response("{}")
+
+    async def fake_sleep(wait_s: float) -> None:
+        sleeps.append(wait_s)
+
+    monkeypatch.setenv("HF_TOKEN", "test-token")
+    monkeypatch.setattr(utils, "acompletion", fake_acompletion)
+    monkeypatch.setattr(utils.asyncio, "sleep", fake_sleep)
+    config = CONFIG.with_overrides(
+        max_retries=1,
+        cold_start_min_wait_s=15.0,
+        retry_jitter_s=0.0,
+    )
+
+    async def run_test() -> None:
+        await utils.tracked_completion(
+            "test:block",
+            CostTracker(),
+            config=config,
+            model="hf-teacher",
+            messages=[{"role": "user", "content": "Return {}"}],
+        )
+
+    with caplog.at_level(logging.WARNING, logger="sca2_datagen.reliability"):
+        asyncio.run(run_test())
+
+    assert calls == 2
+    assert sleeps and sleeps[0] >= 15.0
+    assert "teacher endpoint appears to be waking up" in caplog.text
+
+
 def test_tracked_completion_requires_hf_token(monkeypatch) -> None:
     monkeypatch.delenv("HF_TOKEN", raising=False)
 
@@ -88,7 +129,7 @@ def test_tracked_completion_requires_hf_token(monkeypatch) -> None:
             messages=[{"role": "user", "content": "Return {}"}],
         )
 
-    with pytest.raises(RuntimeError, match="HF_TOKEN"):
+    with pytest.raises(RuntimeError, match="Add it to synthetic_generation/.env"):
         asyncio.run(run_test())
 
 
