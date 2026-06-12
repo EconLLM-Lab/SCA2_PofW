@@ -123,28 +123,43 @@ WVS_ITEM_MAP = {
 HF_ENDPOINTS = {
     "hf-teacher": {
         "role": "teacher",
+        "endpoint_name": "llama-3-3-70b-instruct-gguf-fnk",
+        "hardware": "Nvidia A100",
         "base_url": "https://ekrwkvwahr5lvj8c.us-east-1.aws.endpoints.huggingface.cloud/v1/",
         "base_url_env": "HF_TEACHER_ENDPOINT_URL",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_TEACHER_HOURLY_USD",
+        "default_hourly_rate_usd": 2.50,
+        "observed_total_runtime_seconds": 14160,
+        "observed_total_cost_usd": 9.83,
         "litellm_model": "",
         "custom_llm_provider": "openai",
     },
     "hf-generator": {
         "role": "generator",
+        "endpoint_name": "qwen3-32b-chm",
+        "hardware": "1x Nvidia H200",
         "base_url": "https://qd7j7zt2xlehhoj3.us-east-2.aws.endpoints.huggingface.cloud/v1/",
         "base_url_env": "HF_GENERATOR_ENDPOINT_URL",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_GENERATOR_HOURLY_USD",
+        "default_hourly_rate_usd": 5.00,
+        "observed_total_runtime_seconds": 12720,
+        "observed_total_cost_usd": 17.67,
         "litellm_model": "",
         "custom_llm_provider": "openai",
     },
     "hf-scorer": {
         "role": "scorer",
+        "endpoint_name": "phi-4-uid",
+        "hardware": "Nvidia L40S",
         "base_url": "https://hyk3cllaaadt9v5d.us-east-1.aws.endpoints.huggingface.cloud/v1/",
         "base_url_env": "HF_SCORER_ENDPOINT_URL",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_SCORER_HOURLY_USD",
+        "default_hourly_rate_usd": 1.80,
+        "observed_total_runtime_seconds": 17280,
+        "observed_total_cost_usd": 8.64,
         "litellm_model": "",
         "custom_llm_provider": "openai",
     },
@@ -429,29 +444,89 @@ def _endpoint_hourly_rate_status(model: str) -> dict[str, Any]:
             "hourly_rate_usd": 0.0,
             "rate_env": "",
             "rate_status": "unknown_endpoint",
+            "rate_source": "missing",
         }
 
     rate_env = endpoint["hourly_rate_env"]
+    default_rate = float(endpoint.get("default_hourly_rate_usd", 0.0) or 0.0)
     raw_rate = os.environ.get(rate_env, "").strip()
     if not raw_rate:
+        if default_rate > 0:
+            return {
+                "hourly_rate_usd": default_rate,
+                "rate_env": rate_env,
+                "rate_status": "configured",
+                "rate_source": "config_default",
+            }
         return {
             "hourly_rate_usd": 0.0,
             "rate_env": rate_env,
             "rate_status": "missing",
+            "rate_source": "missing",
         }
     try:
         rate = float(raw_rate)
     except ValueError:
+        if default_rate > 0:
+            return {
+                "hourly_rate_usd": default_rate,
+                "rate_env": rate_env,
+                "rate_status": "invalid",
+                "rate_source": "invalid_env_using_default",
+            }
         return {
             "hourly_rate_usd": 0.0,
             "rate_env": rate_env,
             "rate_status": "invalid",
+            "rate_source": "missing",
         }
     return {
         "hourly_rate_usd": max(0.0, rate),
         "rate_env": rate_env,
         "rate_status": "configured",
+        "rate_source": "env_override",
     }
+
+
+def historical_endpoint_spend_summary() -> dict[str, Any]:
+    """Return observed provider-console endpoint spend used for calibration."""
+
+    endpoints: dict[str, Any] = {}
+    total_runtime_seconds = 0
+    total_cost = 0.0
+    for model, endpoint in HF_ENDPOINTS.items():
+        runtime_seconds = int(endpoint.get("observed_total_runtime_seconds", 0) or 0)
+        observed_cost = float(endpoint.get("observed_total_cost_usd", 0.0) or 0.0)
+        total_runtime_seconds += runtime_seconds
+        total_cost += observed_cost
+        endpoints[model] = {
+            "role": endpoint["role"],
+            "endpoint_name": endpoint.get("endpoint_name", ""),
+            "hardware": endpoint.get("hardware", ""),
+            "observed_total_runtime_seconds": runtime_seconds,
+            "observed_total_runtime_human": _format_duration(runtime_seconds),
+            "observed_total_cost_usd": round(observed_cost, 2),
+        }
+
+    return {
+        "basis": (
+            "Historical Hugging Face provider-console spend since endpoint creation. "
+            "This is calibration metadata only and is not added to per-run cost estimates."
+        ),
+        "endpoints": endpoints,
+        "total_observed_runtime_seconds": total_runtime_seconds,
+        "total_observed_runtime_human": _format_duration(total_runtime_seconds),
+        "total_observed_cost_usd": round(total_cost, 2),
+    }
+
+
+def _format_duration(total_seconds: int) -> str:
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    if seconds:
+        return f"{hours}h {minutes}m {seconds}s"
+    return f"{hours}h {minutes}m"
 
 
 def _estimate_endpoint_runtime_cost(elapsed_seconds: float) -> dict[str, Any]:
@@ -470,25 +545,29 @@ def _estimate_endpoint_runtime_cost(elapsed_seconds: float) -> dict[str, Any]:
             invalid_rate_envs.append(rate_status["rate_env"])
         endpoints[model] = {
             "role": HF_ENDPOINTS[model]["role"],
+            "endpoint_name": HF_ENDPOINTS[model].get("endpoint_name", ""),
+            "hardware": HF_ENDPOINTS[model].get("hardware", ""),
             "hourly_rate_usd": hourly_rate,
             "elapsed_seconds": round(elapsed_seconds, 3),
             "cost_usd": round(cost, 6),
             "rate_env": rate_status["rate_env"],
             "rate_status": rate_status["rate_status"],
+            "rate_source": rate_status["rate_source"],
         }
         total += cost
 
     return {
         "basis": (
-            "Elapsed wall-clock runtime multiplied by configured Hugging Face endpoint hourly rates. "
-            "Set HF_TEACHER_HOURLY_USD, HF_GENERATOR_HOURLY_USD, and HF_SCORER_HOURLY_USD "
-            "for nonzero estimates."
+            "Elapsed wall-clock runtime multiplied by Hugging Face endpoint hourly rates. "
+            "Configured defaults are used unless HF_TEACHER_HOURLY_USD, "
+            "HF_GENERATOR_HOURLY_USD, or HF_SCORER_HOURLY_USD provide valid overrides."
         ),
         "elapsed_seconds": round(max(0.0, elapsed_seconds), 3),
         "endpoints": endpoints,
-        "rates_configured": not missing_rate_envs and not invalid_rate_envs,
+        "rates_configured": not missing_rate_envs,
         "missing_rate_envs": missing_rate_envs,
         "invalid_rate_envs": invalid_rate_envs,
+        "historical_endpoint_spend": historical_endpoint_spend_summary(),
         "total_cost_usd": round(total, 6),
     }
 

@@ -73,7 +73,11 @@ Exports the filtered dataset as `.jsonl` files (one per country and sample size)
 - Python 3.10+
 - A personal Hugging Face token in `HF_TOKEN` with permission to call the configured Inference Endpoints.
 - Hugging Face Inference Endpoint URLs. The repository includes lab defaults, but you can override them in `.env` or with CLI flags.
-- Optional endpoint hourly-rate env vars for nonzero cost estimates:
+- Endpoint hourly-rate defaults are configured for the current lab Hugging Face endpoints:
+  teacher `llama-3-3-70b-instruct-gguf-fnk` on Nvidia A100 at `$2.50/hr`,
+  generator `qwen3-32b-chm` on 1x Nvidia H200 at `$5.00/hr`, and scorer
+  `phi-4-uid` on Nvidia L40S at `$1.80/hr`.
+- Optional endpoint hourly-rate env vars override those defaults when endpoints change:
   `HF_TEACHER_HOURLY_USD`, `HF_GENERATOR_HOURLY_USD`, and `HF_SCORER_HOURLY_USD`.
 - The GPS dataset (`country_gps.dta`)
 
@@ -93,7 +97,7 @@ python -m pip install -e ".[dev]"
 
 # Copy the environment template and add your personal HF token
 cp .env.example .env
-# Edit .env with HF_TOKEN and, optionally, endpoint URLs and hourly rates
+# Edit .env with HF_TOKEN and, optionally, endpoint URL/rate overrides
 ```
 
 Place `country_gps.dta` in one of the default locations listed in `sca2_datagen/config.py`, or pass it explicitly:
@@ -130,6 +134,11 @@ Before committing to a large run, always estimate costs first:
 ```bash
 python run.py --estimate-only --scenarios-per-dim 170 --countries MEX USA ARG SWE
 ```
+
+Cost estimates are run-scoped: the manifest multiplies the pipeline wall-clock runtime by
+the configured endpoint hourly rates. Historical provider-console spend is also included
+as calibration metadata, but it is not added to every run. Provider-console totals can be
+higher than manifest totals when endpoints remain active before or after the CLI run.
 
 ### Using the CLI
 
@@ -202,9 +211,7 @@ synthetic_generation/
 │   ├── export.py                ← Block E: export + manifest
 │   └── utils.py                 ← Shared utilities
 ├── tests/                       ← Unit and integration tests (mocked APIs)
-├── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
-├── sample_output/               ← Legacy illustrative outputs; do not use for current JSONL validation
-└── SCA2_SyntheticDataGeneration_v3.ipynb
+└── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
 ```
 
 ---
@@ -222,7 +229,7 @@ synthetic_generation/
 - Create a branch for your changes
 - Test with a small pilot run before pushing
 - Document any prompt changes in the commit message — prompt wording matters significantly for output quality
-- If using a coding agent (Claude Code, Codex), provide it with this README and the relevant module file
+- If using a coding agent, provide it with this README and the relevant module file
 - If you are editing CLI behavior, also update `CLI_GUIDE.md`
 
 ### What NOT to do

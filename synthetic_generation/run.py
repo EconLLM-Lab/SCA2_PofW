@@ -165,7 +165,7 @@ def log_cost_summary(cost_summary: dict) -> None:
     if invalid:
         LOGGER.warning(
             "Hourly endpoint cost rates are invalid for %s. Dollar costs for those endpoints "
-            "will be reported as $0.00 until fixed.",
+            "will fall back to config defaults until fixed.",
             ", ".join(invalid),
         )
 

@@ -47,7 +47,8 @@ def test_generate_scenarios_can_include_anchor_block() -> None:
     scenario_prompts = [prompt for prompt in prompts if "Generate exactly" in prompt]
 
     assert any("## High-Quality Reference Anchors for the trust dimension" in prompt for prompt in scenario_prompts)
-    assert any("The Open Shelf Steward" in prompt for prompt in scenario_prompts)
+    assert any("trust_remote_handoff_01" in prompt for prompt in scenario_prompts)
+    assert any("The Early File Sender" in prompt for prompt in scenario_prompts)
     assert any("use a different setting, decision object" in prompt for prompt in scenario_prompts)
 
 
@@ -123,7 +124,8 @@ def test_generate_triplet_can_include_anchor_block() -> None:
 
     asyncio.run(run_test())
     assert any("## High-Quality Reference Anchors for the trust dimension" in prompt for prompt in prompts)
-    assert any("The Open Shelf Steward" in prompt for prompt in prompts)
+    assert any("trust_remote_handoff_01" in prompt for prompt in prompts)
+    assert any("The Early File Sender" in prompt for prompt in prompts)
     assert any("Core tradeoff:" in prompt for prompt in prompts)
     assert any("Return ONLY a valid JSON object" in prompt for prompt in prompts)
 
