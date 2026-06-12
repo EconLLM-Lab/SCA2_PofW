@@ -67,12 +67,17 @@ def format_anchor_block(dimension: str, anchors: list[dict[str, Any]]) -> str:
     return (
         f"## High-Quality Reference Anchors for the {dimension} dimension\n\n"
         "Use these anchors only as calibration examples for realistic economic tradeoffs. "
-        "Do not copy their setting, objects, social distance, timing, or opportunity cost.\n\n"
+        "Do not copy their setting, objects, social distance, timing, opportunity cost, "
+        "decision stage, or domain.\n\n"
         "Your generation MUST:\n"
-        "- Stay structurally different from every anchor below.\n"
+        "- Create scenarios that are structurally different from every anchor below.\n"
+        "- Use a new combination of social distance, stakes, domain, and decision stage.\n"
         "- Keep the scenario and both responses culturally neutral: no countries, names, ethnic "
         "references, or specific institutions.\n"
         "- Make the behavioral contrast load primarily on the target dimension.\n"
         "- Avoid reusing the same cost type, social relationship, or time horizon from the anchors.\n\n"
+        "Anti-pattern frames to avoid: generic shared shelves, community gardens, music festivals, "
+        "vague strangers on the street, lost wallets, generic fundraisers, volunteer cleanups, "
+        "and undifferentiated shared supplies.\n\n"
         + "\n\n".join(examples)
     )

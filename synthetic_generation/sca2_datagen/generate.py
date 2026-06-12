@@ -73,8 +73,10 @@ async def generate_scenarios(
                 f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
                 "For the scenarios you generate now, use a different setting, decision object, "
                 "social relationship, time horizon, and opportunity cost from every anchor above. "
-                "Avoid repeating a generic community event, garden, fundraiser, or volunteer frame "
-                "across the batch unless the facet specifically requires it.\n"
+                "Across the batch, also avoid generic shared shelves, community gardens, music "
+                "festivals, vague strangers on the street, lost wallets, generic fundraisers, "
+                "volunteer cleanups, and undifferentiated shared supplies unless the facet "
+                "specifically requires one of those frames.\n"
             )
 
     for facet, count in zip(facets, counts):

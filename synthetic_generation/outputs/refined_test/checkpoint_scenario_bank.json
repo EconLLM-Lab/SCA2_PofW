@@ -1,0 +1,206 @@
+{
+  "trust": [
+    {
+      "facet": "Willingness to Cooperate",
+      "prompt": "A family is planning a group vacation and needs to book a large villa. One family member, who has experience with vacation rentals, offers to handle the booking and pay the deposit upfront, with the understanding that others will reimburse them later. The rest of the family must decide whether to trust this family member to book the villa and manage the finances without directly overseeing the process."
+    },
+    {
+      "facet": "Willingness to Cooperate",
+      "prompt": "A research team in a university lab is working on a project that requires access to a limited number of specialized equipment. A new team member, who is still getting familiar with the lab's protocols, asks to borrow one of the devices for an experiment, promising to return it in the same condition and within a specified timeframe. The team lead must decide whether to lend the equipment based on the new member's assurance, potentially risking damage or delay, or to deny the request and find an alternative solution."
+    },
+    {
+      "facet": "Assumption of Benevolence",
+      "prompt": "A person is considering lending their rare, valuable book to a new colleague for a crucial project, with the understanding that it will be returned in the same condition after a week. The book's condition is crucial for the person's own research, and its loss or damage would significantly hinder their progress. Returning the book on time without damage is solely dependent on the colleague's sense of responsibility and care."
+    },
+    {
+      "facet": "Assumption of Benevolence",
+      "prompt": "A family is deciding whether to allow a recently hired, inexperienced but highly recommended, live-in caregiver to take their child on a weekend outing without direct supervision, based on the caregiver's assurance of ability to handle any situation that may arise, and the family's observation of the caregiver's behavior and interactions with the child over the past few weeks."
+    },
+    {
+      "facet": "Tolerance for Uncertainty",
+      "prompt": "A person is considering lending their rare, specialty tool to a fellow hobbyist they met through an online forum, who needs it to complete a project with a looming exhibition deadline. The borrower has a good reputation within the community, but the lender has never met them in person and is unsure if they will return the tool in the same condition. The lender must decide whether to trust the borrower and risk potential damage to the tool, or to decline and potentially harm the borrower's project."
+    },
+    {
+      "facet": "Tolerance for Uncertainty",
+      "prompt": "A family is planning a week-long vacation and needs to find a trustworthy house-sitter to take care of their pets and home. They have interviewed a candidate who comes highly recommended by a friend of a friend, but they have not had a chance to meet the candidate in person or see how they interact with the pets. The family must decide whether to trust the candidate based on the recommendation and the candidate's online profile, or to continue searching for someone they can get to know better before making a decision."
+    },
+    {
+      "facet": "Openness to New Relationships",
+      "prompt": "A person is considering joining a new, exclusive professional network that promises to connect them with influential figures in their industry, but the network's selective admission process and high membership fees make them hesitant to invest time and money without knowing more about the community's dynamics and the potential return on investment."
+    },
+    {
+      "facet": "Reluctance to Betray",
+      "prompt": "A researcher is collaborating with a new colleague on a project and has shared sensitive data with them. The colleague asks to present the preliminary findings at an upcoming conference, and the researcher must decide whether to trust them to accurately represent the data and give proper credit, or to spend additional time reviewing and editing the presentation themselves, potentially delaying the submission."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A family business owner must decide whether to invest in a new, untested marketing strategy that could significantly increase sales, but also risks alienating their loyal customer base if it backfires, all while their children's education funds are tied to the business's success."
+    },
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A freelancer, nearing the end of a large project, is offered a chance to collaborate with a prestigious client on a high-profile, yet unconventional project that could catapult their career, but requires them to put their current, stable project on hold, potentially jeopardizing their relationship with the existing client and impacting their immediate financial stability."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "A close friend is planning a group trip to a remote area with limited medical facilities, and you must decide whether to join despite having a pre-existing medical condition that could be exacerbated by the travel conditions. The trip offers a unique opportunity to bond with friends, but it also increases the risk of a medical emergency."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "You are part of a tight-knit team working on a high-stakes project with a short deadline, and a new team member suggests a novel approach that could significantly improve the outcome but also risks delaying the project if it doesn't work out. You must decide whether to support the new approach, which would require adjusting the team's workload and responsibilities, or stick with the original plan that is more likely to meet the deadline but may not yield the best results."
+    },
+    {
+      "facet": "Exploratory Risk Seeking",
+      "prompt": "A researcher is considering a collaboration with a colleague from a different field to investigate an innovative topic. The collaboration could lead to groundbreaking findings, but it may also require significant adjustments to their existing research framework and potentially divert attention from their current projects. The researcher must weigh the potential benefits of interdisciplinary collaboration against the risks of disrupting their established workflow."
+    },
+    {
+      "facet": "Exploratory Risk Seeking",
+      "prompt": "A team leader is planning a corporate retreat and must decide between booking a conventional resort with standard amenities or a unique, eco-friendly venue that offers team-building activities, but has limited reviews and uncertain logistics. The unconventional venue could foster a more creative and cohesive team environment, but it also poses a risk of unforeseen challenges and participant dissatisfaction."
+    },
+    {
+      "facet": "Loss Aversion",
+      "prompt": "A family-owned business must decide whether to invest in a new, untested technology to improve their manufacturing process, which could lead to significant cost savings but also risks disrupting their current operations and potentially losing valuable customers if it fails, or stick with their traditional methods and forgo the potential benefits."
+    },
+    {
+      "facet": "Ambiguity Acceptance",
+      "prompt": "A researcher is considering collaborating with a new, untested laboratory to access advanced equipment that could significantly enhance their project's outcomes, but there's a risk the lab's methods might not be reliable, potentially undermining the entire research effort."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "In a research collaboration, a team member must decide whether to thoroughly review and edit a complex manuscript now, which would delay its submission but potentially lead to a higher-impact publication, or to submit it quickly with minimal review, risking rejection or major revisions later. The team's reputation and future funding depend on the publication's quality. Waiting for a thorough review means tolerating a longer period before the work is shared, but it could lead to more significant recognition and better opportunities."
+    },
+    {
+      "facet": "delay tolerance",
+      "prompt": "A family is planning a vacation and needs to book accommodations. They can choose between booking a unique, eco-friendly resort that has a limited availability and requires a waiting list of several weeks, or opting for a more readily available, standard hotel that can be booked immediately. The eco-friendly resort offers a unique experience and aligns with the family's values, but waiting for its availability means delaying the finalization of their travel plans and potentially adjusting other aspects of their trip."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "A family is planning a vacation and can choose between booking a popular resort now, which offers immediate confirmation and a relaxing trip, or waiting a few months to book a newly opened eco-lodge, which promises a unique experience and a chance to support sustainable tourism, but with the risk of it being fully booked by then."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "A researcher is working on a project and needs to decide whether to spend the next few weeks collecting more data to strengthen their findings, which would delay the publication but potentially lead to a more impactful study, or to submit their current work for publication immediately, which would allow them to share their results sooner but might limit their long-term influence."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A family is planning a vacation and has the option to book a popular tour that is available immediately, but it's during the peak season and will be crowded. Alternatively, they can wait a few months for the off-season and book a more exclusive, guided tour that will provide a more personalized experience, but they risk that the tour might not be available then. The family needs to decide whether to prioritize the immediate convenience of booking now or wait for a potentially better experience later."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A researcher is working on a project with a colleague and they have discovered a groundbreaking finding that they can publish immediately, but it might not be fully developed. Alternatively, they can spend more time refining their research, collecting more data, and ensuring that their findings are robust, which would delay publication but potentially lead to a more significant impact in their field. The researchers need to decide whether to prioritize the immediate recognition of publishing now or invest time in developing a more comprehensive and influential paper."
+    },
+    {
+      "facet": "long-term orientation",
+      "prompt": "A family is planning a vacation and can either book a package deal now that includes a few compromises on accommodations, or wait a few weeks to see if a better option becomes available at a similar price, potentially leading to a more enjoyable trip. Waiting means tolerating uncertainty for a potentially better experience. The decision affects the whole family's leisure time."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A family is planning a vacation and can choose between booking a popular resort immediately, which would require paying a premium, or waiting a few weeks to see if any last-minute discounts become available, potentially saving money but risking that the resort might be fully booked by then. The decision involves weighing the desire for a confirmed vacation plan against the potential for future savings. This choice requires self-control to resist the temptation of immediate confirmation."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "donating to strangers",
+      "prompt": "A person is moving into a new apartment and has extra packing boxes that they no longer need. They notice that a neighboring family, who is also moving in, seems to be struggling to unpack their belongings due to a lack of boxes. The person can offer their extra boxes to the family, which would help them greatly, but it would also mean that the person would have to spend time and effort to carry the boxes to the family's apartment."
+    },
+    {
+      "facet": "donating to strangers",
+      "prompt": "A local animal shelter is in need of temporary foster homes for animals affected by a recent natural disaster. A person who has the space and resources to care for an animal can decide to take in a foster animal, which would provide a safe and comfortable environment for the animal until it can be reunited with its owner or adopted. However, taking in a foster animal would require the person to adjust their daily routine and living situation to accommodate the animal's needs."
+    },
+    {
+      "facet": "volunteering time",
+      "prompt": "A local mentorship program for underprivileged youth is in need of tutors to help students with their homework and study skills. An individual with expertise in a particular subject is considering volunteering their time to help, but it would mean giving up their weekly book club meetings. The mentorship program relies on volunteer tutors to operate and has a waiting list of students in need of guidance."
+    },
+    {
+      "facet": "volunteering time",
+      "prompt": "A community arts organization is planning a public exhibition showcasing artwork created by people with disabilities. They need volunteers to help with event setup, artwork installation, and visitor assistance on the day of the exhibition. A person who values art and social inclusion is deciding whether to volunteer their time, which would require taking a day off from their part-time job and potentially impacting their monthly income."
+    },
+    {
+      "facet": "charitable giving to known groups",
+      "prompt": "A local animal shelter is in need of supplies, and a person has the opportunity to donate a portion of their recently inherited goods to support the shelter's operations. The decision to donate would not only benefit the shelter but also allow the person to declutter their newly acquired estate."
+    },
+    {
+      "facet": "charitable giving to known groups",
+      "prompt": "A group of artisans from a nearby village are struggling to recover from a recent disaster that destroyed their workshop and equipment. A skilled craftsperson has the chance to allocate a portion of their own workshop's resources, such as tools and materials, to help the artisans rebuild and regain their livelihood."
+    },
+    {
+      "facet": "anonymous philanthropy",
+      "prompt": "A person is part of a professional network where members can anonymously donate their unused professional development funds to support the training of less experienced colleagues. The person has a surplus of funds that can be allocated to this cause without affecting their own career advancement, but doing so would mean giving up the opportunity to use the funds for a future project that might benefit their own professional reputation. The decision to donate is made without knowing who the recipients will be or how they will use the funds."
+    },
+    {
+      "facet": "reciprocal altruism",
+      "prompt": "A family member's friend is organizing a charity event for a local animal shelter and has asked for help with spreading the word on social media, which would take a few hours and might lead to more donations, but the time could also be used to promote one's own business or personal project."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "Reciprocal Kindness",
+      "prompt": "A person's car breaks down on a rural road, and a passerby, who is a skilled mechanic, stops to fix it, refusing any payment. Later, the car's owner encounters the mechanic at a local event where the mechanic's child is participating in a competition. The owner can choose to watch the child's performance and provide emotional support, or leave immediately after their own obligations are met."
+    },
+    {
+      "facet": "Reciprocal Kindness",
+      "prompt": "A researcher receives crucial feedback on their project from a peer who invested significant time and expertise, asking for no credit or compensation. When the peer's own project is in need of participants for a study, the researcher can choose to participate, which would require a substantial time commitment, or decline, potentially leaving the peer's effort unrewarded."
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "A person's car breaks down on a rural road, and a passing driver, who is also a skilled mechanic, stops to make repairs, refusing any payment. Later, the car's owner encounters the mechanic at a social gathering and learns that the mechanic's family is struggling to find a reliable childcare service. The car's owner has a trusted babysitter and could offer to help the mechanic's family find a similar service, but this would require dedicating several hours to making introductions and facilitating the connection."
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "A new employee in a large company is struggling to navigate the complex internal systems and receives extensive guidance from a veteran staff member, who invests considerable time in explaining procedures and sharing valuable insights. As the new employee becomes more comfortable, they discover that the veteran staff member is working on a high-profile project with a tight deadline and is having trouble finding relevant historical data. The new employee could offer to help search for the data, which would require spending their weekend combing through archives, but this effort would significantly aid the veteran staff member's project and serve as a gesture of gratitude for the earlier assistance."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "A person's car breaks down on a rural road, and a passing driver stops to provide a jump start, using their own equipment and waiting until the car is restarted. Later, the driver's child is participating in a regional science fair, and the person whose car was jump-started is a judge in the same category. The person can choose to provide detailed, constructive feedback on the child's project, which would require extra time and effort, or simply fill out the standard evaluation form."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "A freelance translator receives crucial feedback on their work from a more experienced translator, which significantly improves the quality of their project and helps them meet a tight deadline. The experienced translator later reaches out because they are struggling to meet their own deadline for a project that requires specialized software the freelance translator has access to. The freelance translator can offer to lend the software, which would mean delaying their own projects, or suggest alternative, less effective solutions that would not impact their own work schedule."
+    },
+    {
+      "facet": "Stranger Trust",
+      "prompt": "A freelance writer is helped by a stranger who provides a crucial introduction to a key industry contact at a networking event, resulting in a major project. Later, the writer has the opportunity to review and provide constructive feedback on the stranger's own writing portfolio, which would require a significant time investment, but would demonstrate appreciation for the earlier assistance."
+    },
+    {
+      "facet": "Timely Reciprocation",
+      "prompt": "A freelance writer, who received a crucial introduction to a key client from a fellow freelancer at a networking event, now has the chance to review and edit a draft proposal for that same freelancer before a major pitch, which would take away from their own deadline but show appreciation for the earlier connection."
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "Cost tolerance",
+      "prompt": "In a family business, a younger member discovers that an older member has been taking more than their fair share of profits without contributing equally to the workload. Speaking up about the unfair distribution would lead to an uncomfortable family discussion but might correct the imbalance. Remaining silent allows the status quo to continue, avoiding conflict but perpetuating the inequity."
+    },
+    {
+      "facet": "Cost tolerance",
+      "prompt": "A researcher notices that a colleague is consistently receiving undue recognition for their joint research projects, such as being named as the primary author on papers where they contributed less. Publicly addressing the issue could lead to a more accurate representation of contributions but might strain their working relationship and impact future collaborations. Ignoring the discrepancy avoids immediate tension but lets the unfair recognition continue."
+    },
+    {
+      "facet": "Fairness sensitivity",
+      "prompt": "You are part of a close-knit research team working on a groundbreaking project. One team member consistently takes more resources than allocated, impacting others' work. Speaking up would ensure fairness but might strain relationships and hinder the project's progress. Remaining silent allows the project to continue uninterrupted but lets the unfair distribution of resources stand."
+    },
+    {
+      "facet": "Fairness sensitivity",
+      "prompt": "You've been mentoring a junior colleague who has been passing off your ideas as their own in high-stakes presentations. Confronting them would uphold fairness and integrity but could damage your mentoring relationship and their career prospects. Ignoring the behavior would maintain a positive working relationship but compromise your own reputation and the value of your contributions."
+    },
+    {
+      "facet": "Retribution motivation",
+      "prompt": "In a tight-knit research team, a member discovers that another team member has been taking credit for their ideas in meetings with their supervisor, potentially undermining their chance at a promotion. The team member must decide whether to confront the idea thief directly, which could lead to an awkward team dynamic, or stay quiet and potentially miss out on the recognition they deserve."
+    },
+    {
+      "facet": "Retribution motivation",
+      "prompt": "A family-owned business is considering a partnership with a supplier who has a history of reneging on contracts with other small businesses. The family must weigh the potential financial benefits of the partnership against the moral cost of supporting a company with a questionable business ethic, and decide whether to pursue the partnership or take their business elsewhere, potentially at a higher cost."
+    },
+    {
+      "facet": "Self-sacrifice willingness",
+      "prompt": "In a tight-knit research team, a member discovers that another team member has been taking credit for their ideas in meetings with their supervisor, potentially impacting the team's project funding and individual career advancement. The member must decide whether to confront the behavior, potentially straining the team's dynamics, or stay quiet to maintain harmony. Speaking up would require a private conversation with the supervisor and potentially awkward team discussions."
+    },
+    {
+      "facet": "Norm enforcement",
+      "prompt": "In a private online forum for freelance writers, a member discovers that another writer has plagiarized their work and is passing it off as their own to attract clients. The member must decide whether to publicly expose the plagiarist, potentially damaging their own reputation and relationships within the community, or to remain silent and allow the unfair behavior to continue. Reporting the plagiarism would uphold ethical standards but might lead to backlash and strained relationships."
+    }
+  ]
+}
