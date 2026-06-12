@@ -1,206 +1,854 @@
 {
   "trust": [
     {
-      "facet": "Willingness to Cooperate",
-      "prompt": "A family is planning a group vacation and needs to book a large villa. One family member, who has experience with vacation rentals, offers to handle the booking and pay the deposit upfront, with the understanding that others will reimburse them later. The rest of the family must decide whether to trust this family member to book the villa and manage the finances without directly overseeing the process."
+      "facet": "willingness to cooperate",
+      "prompt": "A person is considering lending their specialized camera equipment to a colleague from a different department for an important project. The equipment is crucial for the project's success, and the colleague has a reputation for being responsible, but the person has never worked with them directly. The decision to lend the equipment hinges on whether the person trusts the colleague to handle it carefully and return it in good condition."
     },
     {
-      "facet": "Willingness to Cooperate",
-      "prompt": "A research team in a university lab is working on a project that requires access to a limited number of specialized equipment. A new team member, who is still getting familiar with the lab's protocols, asks to borrow one of the devices for an experiment, promising to return it in the same condition and within a specified timeframe. The team lead must decide whether to lend the equipment based on the new member's assurance, potentially risking damage or delay, or to deny the request and find an alternative solution."
+      "facet": "willingness to cooperate",
+      "prompt": "A group of friends are planning a group vacation and need to decide who will book the accommodations. One friend offers to take care of it, but the others are hesitant because they have never traveled together before and are not sure if they can trust this friend to make arrangements that suit everyone's needs. The decision to trust this friend with the booking affects the overall success of the trip."
     },
     {
-      "facet": "Assumption of Benevolence",
-      "prompt": "A person is considering lending their rare, valuable book to a new colleague for a crucial project, with the understanding that it will be returned in the same condition after a week. The book's condition is crucial for the person's own research, and its loss or damage would significantly hinder their progress. Returning the book on time without damage is solely dependent on the colleague's sense of responsibility and care."
+      "facet": "willingness to cooperate",
+      "prompt": "A new employee is given a task that requires collaboration with a team member who has a history of being uncooperative. The new employee must decide whether to trust this team member to provide necessary information and support, or to spend extra time verifying everything independently, which could delay the project. The decision to trust the team member affects not only the project's timeline but also the new employee's relationships with their colleagues."
     },
     {
-      "facet": "Assumption of Benevolence",
-      "prompt": "A family is deciding whether to allow a recently hired, inexperienced but highly recommended, live-in caregiver to take their child on a weekend outing without direct supervision, based on the caregiver's assurance of ability to handle any situation that may arise, and the family's observation of the caregiver's behavior and interactions with the child over the past few weeks."
+      "facet": "willingness to cooperate",
+      "prompt": "A person is asked to provide a professional reference for a former classmate who is now applying for a job in the same field. The person is not closely acquainted with the classmate's work but is aware of their good reputation. The decision to provide a reference depends on whether the person trusts the classmate to have accurately represented their skills and experience."
     },
     {
-      "facet": "Tolerance for Uncertainty",
-      "prompt": "A person is considering lending their rare, specialty tool to a fellow hobbyist they met through an online forum, who needs it to complete a project with a looming exhibition deadline. The borrower has a good reputation within the community, but the lender has never met them in person and is unsure if they will return the tool in the same condition. The lender must decide whether to trust the borrower and risk potential damage to the tool, or to decline and potentially harm the borrower's project."
+      "facet": "willingness to cooperate",
+      "prompt": "A community center is considering partnering with a local business to offer joint programs. The business has a good reputation, but the community center has never worked with them before. The decision to trust the business and move forward with the partnership affects the community center's ability to offer new services to its members."
     },
     {
-      "facet": "Tolerance for Uncertainty",
-      "prompt": "A family is planning a week-long vacation and needs to find a trustworthy house-sitter to take care of their pets and home. They have interviewed a candidate who comes highly recommended by a friend of a friend, but they have not had a chance to meet the candidate in person or see how they interact with the pets. The family must decide whether to trust the candidate based on the recommendation and the candidate's online profile, or to continue searching for someone they can get to know better before making a decision."
+      "facet": "willingness to cooperate",
+      "prompt": "A researcher is deciding whether to share preliminary data with a potential collaborator from another institution. The collaborator has a good track record of producing high-quality work, but the researcher is not sure if they can trust this person to keep the data confidential and not use it for their own benefit. The decision to share the data affects the potential for future collaboration and the advancement of the research."
     },
     {
-      "facet": "Openness to New Relationships",
-      "prompt": "A person is considering joining a new, exclusive professional network that promises to connect them with influential figures in their industry, but the network's selective admission process and high membership fees make them hesitant to invest time and money without knowing more about the community's dynamics and the potential return on investment."
+      "facet": "willingness to cooperate",
+      "prompt": "A person is thinking of joining a carpool with coworkers who live in the same neighborhood. The person does not know these coworkers well outside of work but is considering the environmental and financial benefits of carpooling. The decision to trust these coworkers to be reliable and respectful carpool partners affects the person's daily commute and overall job satisfaction."
     },
     {
-      "facet": "Reluctance to Betray",
-      "prompt": "A researcher is collaborating with a new colleague on a project and has shared sensitive data with them. The colleague asks to present the preliminary findings at an upcoming conference, and the researcher must decide whether to trust them to accurately represent the data and give proper credit, or to spend additional time reviewing and editing the presentation themselves, potentially delaying the submission."
+      "facet": "expectation of reciprocity",
+      "prompt": "A person is considering lending their specialized camera equipment to a new colleague for an upcoming photoshoot, with the understanding that the colleague will return the equipment in good condition and possibly offer assistance on a future project. The decision hinges on whether the colleague will reciprocate the favor and take proper care of the equipment."
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "A family is deciding whether to allow their neighbors, who they have a cordial but not close relationship with, to borrow their lawn mower in exchange for future help with snow shoveling during the winter months. The family must weigh the potential benefits of reciprocal help against the risk of damage to their property."
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "A freelance writer is offered a collaboration opportunity with another writer they met online, where they would work together on a project and split the profits. The writer must decide whether to trust their new partner to contribute equally to the project and uphold their end of the agreement."
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "A community center is considering partnering with a local business to offer joint programs, with the business providing resources and the community center providing space and expertise. The community center must trust that the business will follow through on their commitments and provide the necessary support."
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "A person is thinking of joining a carpool with coworkers who they don't know very well, where they would take turns driving and share the costs of gas and maintenance. The person must decide whether to trust their coworkers to fulfill their driving obligations and contribute fairly to the shared expenses."
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "A group of friends are planning a group vacation and are considering renting a large house together, with each person contributing to the cost and taking turns planning activities. The friends must trust each other to pay their share and participate in the planning process."
+    },
+    {
+      "facet": "expectation of reciprocity",
+      "prompt": "A small business owner is deciding whether to trust a new supplier to deliver goods on time and in good condition, in exchange for a lower price and potential long-term partnership. The business owner must weigh the potential benefits of a reliable supplier against the risk of delayed or damaged shipments."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A person is considering lending their rare, expensive book to a new coworker for a few weeks, despite having only interacted with them briefly in the office. The coworker seems genuinely interested in the book's topic and promises to return it in good condition, but there's a risk it could get damaged or lost. Not lending the book would mean missing an opportunity to build a connection with the coworker."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A family is deciding whether to trust a recommended, unlicensed babysitter who has been vouched for by a trusted family friend, to watch their young children for an evening. The sitter seems experienced and kind, but the family has never met them before, and there's a risk that the sitter might not be able to handle an emergency. Hiring a licensed sitter would be more expensive and might not be available on short notice."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A group of friends are planning a group vacation and need to decide whether to trust one friend to book all the accommodations and activities without getting everyone's explicit approval first. The friend is usually reliable, but there's a risk that they might make choices that not everyone will like, or that something will go wrong with the bookings. Having everyone approve each decision would take a lot of time and might delay the planning process."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A researcher is considering sharing their unpublished data with a colleague from another institution, who has requested it for a collaborative project. The colleague seems reputable and has a good track record of producing high-quality research, but there's a risk that they might use the data for their own benefit or share it with others without permission. Not sharing the data would mean missing an opportunity for a potentially valuable collaboration."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A community is deciding whether to trust a new, untested community organization to manage a local park renovation project, which would involve handling a significant budget and making decisions about the park's design. The organization seems enthusiastic and has a good vision for the project, but there's a risk that they might not have the necessary expertise or experience to handle the project successfully. Hiring a more established organization would be more expensive and might not bring the same level of community engagement."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A person is considering trusting a friend's recommendation to hire a specific contractor to do some home repairs, despite not having met the contractor before. The friend has used the contractor in the past and recommends them highly, but there's a risk that the contractor might not do a good job or might overcharge for their services. Getting multiple bids from different contractors would take more time and effort, but would provide more assurance about the quality and price of the work."
+    },
+    {
+      "facet": "tolerance for uncertainty",
+      "prompt": "A team of entrepreneurs is deciding whether to trust a potential investor who has expressed interest in their startup, but wants to remain anonymous. The investor seems to have a good understanding of the business and is offering a significant amount of funding, but there's a risk that they might have ulterior motives or might try to exert too much control over the company. Not accepting the investment would mean giving up a potentially valuable opportunity for growth, but would also avoid the risk of losing control or autonomy."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A person is considering lending their rare book to a new colleague for a research project, and the colleague promises to return it in the same condition. The person must decide whether to trust the colleague's promise and lend the book, or to spend time making a digital copy of the book's contents to protect their investment."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A family is planning a vacation and needs to rent a house from an individual they have never met. The owner has provided references and seems friendly, but the family is unsure if they should trust the owner to provide a clean and safe living space. They must decide whether to trust the owner and send a deposit, or to spend more time researching and verifying the owner's reputation."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A group of friends are planning a potluck dinner and one of the friends, who is new to the group, offers to bring a dish that requires a special ingredient. The others must decide whether to trust that the new friend will bring the correct ingredient, or to spend extra money buying a backup ingredient to ensure the dish turns out well."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A person is selling their used car and a potential buyer, who seems honest and knowledgeable, asks to take the car for a test drive without leaving a deposit. The seller must decide whether to trust the buyer and let them take the car, or to insist on a deposit to protect themselves from potential theft or damage."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A team of researchers is collaborating on a project and one of the team members, who is working remotely, claims to have completed a critical task. The others must decide whether to trust that the task is done correctly, or to spend time reviewing and verifying the work to ensure its quality."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A person is considering hiring a freelance writer to create content for their website, and the writer has provided samples of their work and seems competent. However, the person has never worked with the writer before and is unsure if they can trust them to deliver high-quality content on time. They must decide whether to trust the writer and hire them, or to spend more time interviewing and verifying the writer's credentials."
+    },
+    {
+      "facet": "assumption of benevolence",
+      "prompt": "A community center is planning an event and a local business owner has offered to donate food and drinks for the attendees. The center's staff must decide whether to trust that the business owner will follow through on their promise, or to spend extra time and resources finding alternative donors to ensure the event's success."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A person is considering lending their rare book to a new colleague for a research project, which would require them to trust that the colleague will handle the book with care and return it on time, in order to build a positive working relationship."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A family is deciding whether to allow their child to stay overnight at a friend's house for the first time, which would require them to trust the friend's family to provide a safe environment, in exchange for the potential benefits of increased socialization and independence for their child."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A team of entrepreneurs is evaluating whether to share their business plan with a potential investor, who has a reputation for being trustworthy, but still poses a risk of stealing their idea, in order to secure funding and take their business to the next level."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A homeowner is considering hiring a contractor who was referred by a friend, but has no online reviews or formal certifications, which would require them to trust that the contractor will do quality work and not take advantage of them, in exchange for the potential benefits of a personalized recommendation and lower costs."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A student is deciding whether to trust a classmate to collaborate on a group project, despite having had negative experiences with group work in the past, in order to achieve a better grade and learn from the classmate's strengths."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A community center is evaluating whether to allow a new, untested organization to use their facilities for a event, which would require them to trust that the organization will respect their space and follow their rules, in exchange for the potential benefits of increased community engagement and diversity."
+    },
+    {
+      "facet": "openness to vulnerability",
+      "prompt": "A researcher is considering sharing their preliminary findings with a colleague from a different institution, who has a reputation for being a rigorous and respectful scholar, but still poses a risk of scooping their research, in order to get feedback and improve the quality of their work."
     }
   ],
   "risktaking": [
     {
       "facet": "Financial Risk Tolerance",
-      "prompt": "A family business owner must decide whether to invest in a new, untested marketing strategy that could significantly increase sales, but also risks alienating their loyal customer base if it backfires, all while their children's education funds are tied to the business's success."
+      "prompt": "A family is planning a vacation and must decide between booking a package tour with a reputable company or organizing the trip themselves, which could be more cost-effective but also increases the risk of mistakes and unforeseen expenses."
     },
     {
       "facet": "Financial Risk Tolerance",
-      "prompt": "A freelancer, nearing the end of a large project, is offered a chance to collaborate with a prestigious client on a high-profile, yet unconventional project that could catapult their career, but requires them to put their current, stable project on hold, potentially jeopardizing their relationship with the existing client and impacting their immediate financial stability."
+      "prompt": "A freelancer is offered a chance to work with a new client on a project that aligns with their long-term career goals, but the client's payment history is uncertain, and the freelancer would have to turn down a shorter, well-paid project to take on the new opportunity."
+    },
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A group of friends want to start a small business together and must decide whether to invest their own savings or seek funding from a venture capitalist, which would provide more resources but also mean giving up some control over the company's direction."
+    },
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A person is considering switching to a new, environmentally friendly energy provider for their home, which would require a significant upfront investment but could lead to long-term savings and a reduced carbon footprint."
+    },
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A team leader must decide whether to delegate a critical task to a new team member who shows potential but lacks experience, or to assign it to a more seasoned team member who is already overloaded with work, which could impact the team's overall performance and morale."
+    },
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A couple is planning their retirement and must choose between investing in a diversified portfolio with a potentially higher return or opting for a more conservative investment strategy that provides greater stability but might not keep pace with inflation."
+    },
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "A small business owner is faced with the decision to expand their operations to a new location, which would require taking on additional debt and staff, or to maintain the current size and focus on consolidating their existing market share, which would be less risky but might limit future growth opportunities."
     },
     {
       "facet": "Social Risk Propensity",
-      "prompt": "A close friend is planning a group trip to a remote area with limited medical facilities, and you must decide whether to join despite having a pre-existing medical condition that could be exacerbated by the travel conditions. The trip offers a unique opportunity to bond with friends, but it also increases the risk of a medical emergency."
+      "prompt": "A person is considering inviting a new colleague to join their project team, despite having limited experience working together. The new colleague has skills that could greatly benefit the project, but also has a reputation for being difficult to work with, which could disrupt team dynamics."
     },
     {
       "facet": "Social Risk Propensity",
-      "prompt": "You are part of a tight-knit team working on a high-stakes project with a short deadline, and a new team member suggests a novel approach that could significantly improve the outcome but also risks delaying the project if it doesn't work out. You must decide whether to support the new approach, which would require adjusting the team's workload and responsibilities, or stick with the original plan that is more likely to meet the deadline but may not yield the best results."
+      "prompt": "A family is deciding whether to host an international student for a semester, which would provide a unique cultural exchange opportunity but also requires significant adjustments to their daily routines and living space."
     },
     {
-      "facet": "Exploratory Risk Seeking",
-      "prompt": "A researcher is considering a collaboration with a colleague from a different field to investigate an innovative topic. The collaboration could lead to groundbreaking findings, but it may also require significant adjustments to their existing research framework and potentially divert attention from their current projects. The researcher must weigh the potential benefits of interdisciplinary collaboration against the risks of disrupting their established workflow."
+      "facet": "Social Risk Propensity",
+      "prompt": "A group of friends are planning a weekend trip and one of them suggests trying a new, unconventional mode of transportation that could be exciting but also poses safety risks and unpredictable delays."
     },
     {
-      "facet": "Exploratory Risk Seeking",
-      "prompt": "A team leader is planning a corporate retreat and must decide between booking a conventional resort with standard amenities or a unique, eco-friendly venue that offers team-building activities, but has limited reviews and uncertain logistics. The unconventional venue could foster a more creative and cohesive team environment, but it also poses a risk of unforeseen challenges and participant dissatisfaction."
+      "facet": "Social Risk Propensity",
+      "prompt": "A community leader is weighing the pros and cons of partnering with a local business to organize a charity event, which could increase visibility and fundraising potential but also risks being seen as overly commercialized."
     },
     {
-      "facet": "Loss Aversion",
-      "prompt": "A family-owned business must decide whether to invest in a new, untested technology to improve their manufacturing process, which could lead to significant cost savings but also risks disrupting their current operations and potentially losing valuable customers if it fails, or stick with their traditional methods and forgo the potential benefits."
+      "facet": "Social Risk Propensity",
+      "prompt": "A researcher is considering collaborating with a colleague from a different field on a groundbreaking project, which could lead to innovative discoveries but also requires navigating unfamiliar methodologies and potential conflicts over authorship."
     },
     {
-      "facet": "Ambiguity Acceptance",
-      "prompt": "A researcher is considering collaborating with a new, untested laboratory to access advanced equipment that could significantly enhance their project's outcomes, but there's a risk the lab's methods might not be reliable, potentially undermining the entire research effort."
+      "facet": "Social Risk Propensity",
+      "prompt": "A team of entrepreneurs is deciding whether to pitch their startup idea to a prominent investor, who has a reputation for being tough but also has the resources to take their business to the next level, or to play it safe and seek funding from a less prominent source."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "A student is thinking about speaking up in a large lecture class to challenge a statement made by the instructor, which could lead to a valuable discussion and clarification but also risks being perceived as confrontational or disruptive."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You're on a solo hiking trip and come across a fast-moving river that you need to cross. You can either try to ford the river immediately, which could be dangerous due to the strong current, or take a few hours to hike upstream to a safer crossing point, which would add significant time to your journey."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You've been invited to join a friend on a challenging rock climbing route with exposed sections and no safety nets. If you succeed, you'll have a thrilling experience and a great story to share, but if you fail, you could get seriously injured."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You're part of a search and rescue team responding to a call in a remote area with dense forest and steep terrain. You can either follow established protocols and search in a systematic pattern, which may take longer to locate the missing person, or take a more direct but riskier route that could potentially find the person faster but also increases the chance of getting lost or injured."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You're a member of a competitive sailing team, and during a critical race, you need to decide whether to take a riskier route that could give you an advantage over your competitors or stick to a safer route that is more likely to result in a middle-of-the-pack finish."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You're on a wilderness survival course and are given the option to try to start a fire using a challenging method, such as friction, which could be rewarding if successful but may leave you without a fire for the night if you fail, or use a more reliable but less challenging method, such as matches."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You're part of a group planning a charity event, and one of the options is to organize a high-risk, high-reward activity, such as a sponsored skydive, which could attract a lot of attention and donations but also poses significant safety risks, or choose a safer, more conventional activity, such as a bake sale, which is less likely to result in a large payoff."
+    },
+    {
+      "facet": "Physical Risk Seeking",
+      "prompt": "You're a beginner surfer, and you're faced with the decision to paddle out to catch a large wave that's beyond your skill level, which could be an exhilarating experience if you succeed but also increases the risk of wiping out and getting injured, or stick to smaller waves that are more within your comfort zone."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A team leader must decide whether to delegate a critical project task to a new team member who shows promise but lacks experience, potentially risking the project's success, or to assign it to a more seasoned team member who is already overloaded with work."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A person is considering investing in a friend's startup, which has a unique product but faces intense competition, and must weigh the potential for high returns against the risk of losing the investment and potentially straining the friendship."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A manager must choose between two suppliers for a key component: one is a well-established company with a higher price but reliable quality, while the other is a newer company offering a lower price but with some uncertainty about their ability to meet the required standards."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A researcher is deciding whether to pursue a novel research direction that could lead to a groundbreaking discovery but may not yield results for several years, or to focus on a more conventional research topic that is likely to produce publishable results sooner but may not have as significant an impact."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A small business owner must decide whether to expand their operations to a new location, which could increase revenue but also increases costs and the risk of failure, or to maintain the current scale and focus on consolidating their existing customer base."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A group of friends are planning a wilderness expedition and must decide whether to take a more challenging route that offers breathtaking scenery but also higher risks of accidents and inclement weather, or to choose a safer route that is less demanding but may not be as rewarding."
+    },
+    {
+      "facet": "Strategic Risk Calculation",
+      "prompt": "A department head must decide whether to implement a new, untested technology that could significantly improve efficiency but may also disrupt existing workflows and require significant retraining of staff, or to stick with the current systems and processes that are familiar but may be less efficient."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A family business owner must decide whether to invest in a new, untested technology to improve their production process, which could lead to significant cost savings but also risks disrupting their current operations and potentially losing valuable customers if it fails."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A researcher is considering whether to collaborate with a new, inexperienced team member on a high-stakes project, which could bring fresh perspectives and ideas but also increases the risk of errors and delays if the team member is not up to the task."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A manager is faced with the decision of whether to give a second chance to an employee who has made a serious mistake, which could demonstrate empathy and loyalty but also risks repeating the mistake and damaging the team's morale and performance."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A entrepreneur is weighing the pros and cons of launching a new product line in a highly competitive market, which could lead to significant revenue growth but also risks cannibalizing sales from existing products and damaging the company's brand reputation if it fails."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A team leader must decide whether to take a calculated risk and delegate a critical task to a junior team member, which could help with their development and growth but also increases the risk of failure and negative consequences if the task is not completed successfully."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A small business owner is considering whether to expand their operations to a new location, which could lead to increased revenue and market share but also risks overextending resources and damaging the business's financial stability if the new location does not perform as expected."
+    },
+    {
+      "facet": "Emotional Risk Resilience",
+      "prompt": "A department head is faced with the decision of whether to implement a new, innovative policy that could lead to significant improvements in efficiency and effectiveness but also risks resistance and pushback from employees and stakeholders who are accustomed to the existing way of doing things."
     }
   ],
   "patience": [
     {
       "facet": "delay tolerance",
-      "prompt": "In a research collaboration, a team member must decide whether to thoroughly review and edit a complex manuscript now, which would delay its submission but potentially lead to a higher-impact publication, or to submit it quickly with minimal review, risking rejection or major revisions later. The team's reputation and future funding depend on the publication's quality. Waiting for a thorough review means tolerating a longer period before the work is shared, but it could lead to more significant recognition and better opportunities."
+      "prompt": "A family is planning a vacation and has the option to book a popular resort immediately, but it's expensive and not their first choice. They can wait a few weeks to see if their preferred resort becomes available at a lower price, which would require adjusting their travel dates. Waiting means tolerating uncertainty for a potentially better experience."
     },
     {
       "facet": "delay tolerance",
-      "prompt": "A family is planning a vacation and needs to book accommodations. They can choose between booking a unique, eco-friendly resort that has a limited availability and requires a waiting list of several weeks, or opting for a more readily available, standard hotel that can be booked immediately. The eco-friendly resort offers a unique experience and aligns with the family's values, but waiting for its availability means delaying the finalization of their travel plans and potentially adjusting other aspects of their trip."
+      "prompt": "A researcher is working on a project and has the opportunity to publish a paper quickly, but it would require omitting some important data and analysis. They can wait a few months to collect more data and conduct further analysis, which would strengthen their findings and increase the paper's impact. Waiting means delaying professional recognition in exchange for producing higher-quality work."
+    },
+    {
+      "facet": "delay tolerance",
+      "prompt": "A group of friends want to start a business together and have the option to launch quickly with a basic product. However, they can also wait a few months to develop a more innovative and polished product, which would require investing more time and effort. Waiting means postponing potential revenue in exchange for a stronger market position and higher long-term growth."
+    },
+    {
+      "facet": "delay tolerance",
+      "prompt": "A person is considering buying a new car and has the option to purchase a model that's available immediately, but it's not the most fuel-efficient or environmentally friendly. They can wait a few months for a new model to be released, which would be more eco-friendly and cost-effective in the long run. Waiting means tolerating their current vehicle's limitations for a potentially better long-term outcome."
+    },
+    {
+      "facet": "delay tolerance",
+      "prompt": "A team is working on a complex project and has the option to deliver a partial solution quickly, which would meet the immediate needs of some stakeholders. However, they can also wait a few weeks to develop a more comprehensive solution that addresses the needs of all stakeholders, which would require coordinating with more people and gathering additional feedback. Waiting means delaying short-term satisfaction in exchange for a more sustainable and inclusive outcome."
+    },
+    {
+      "facet": "delay tolerance",
+      "prompt": "A person is learning a new language and has the option to focus on basic conversation skills, which would allow them to communicate quickly with native speakers. However, they can also wait a few months to develop a stronger foundation in grammar and vocabulary, which would enable them to understand more complex texts and communicate more effectively in the long run. Waiting means postponing immediate communication in exchange for deeper understanding and fluency."
+    },
+    {
+      "facet": "delay tolerance",
+      "prompt": "A community is planning a public event and has the option to organize a simple gathering quickly, which would be easy to execute and require minimal resources. However, they can also wait a few months to plan a more elaborate and engaging event, which would require more time, effort, and coordination with various stakeholders. Waiting means tolerating a shorter-term outcome for a potentially more impactful and memorable experience."
     },
     {
       "facet": "reward sensitivity",
-      "prompt": "A family is planning a vacation and can choose between booking a popular resort now, which offers immediate confirmation and a relaxing trip, or waiting a few months to book a newly opened eco-lodge, which promises a unique experience and a chance to support sustainable tourism, but with the risk of it being fully booked by then."
+      "prompt": "You're a member of a close-knit book club where everyone takes turns hosting meetings. You can either spend the next few weekends preparing an elaborate, themed dinner for your upcoming hosting duty, which will likely impress your friends and create lasting memories, or you can quickly prepare a simple meal and use the extra time to catch up on other hobbies. The elaborate dinner will require significant time and effort but will be a unique experience for your friends."
     },
     {
       "facet": "reward sensitivity",
-      "prompt": "A researcher is working on a project and needs to decide whether to spend the next few weeks collecting more data to strengthen their findings, which would delay the publication but potentially lead to a more impactful study, or to submit their current work for publication immediately, which would allow them to share their results sooner but might limit their long-term influence."
+      "prompt": "You've recently joined a recreational sports team and are eager to contribute to the team's success. You can focus on developing a specific skill that will take several practices to master but will significantly improve your performance in upcoming games, or you can work on a quick fix that will give you a minor advantage in the next game but won't provide long-term benefits. The team's coach has expressed appreciation for players who invest time in skill development."
     },
     {
-      "facet": "impulsivity regulation",
-      "prompt": "A family is planning a vacation and has the option to book a popular tour that is available immediately, but it's during the peak season and will be crowded. Alternatively, they can wait a few months for the off-season and book a more exclusive, guided tour that will provide a more personalized experience, but they risk that the tour might not be available then. The family needs to decide whether to prioritize the immediate convenience of booking now or wait for a potentially better experience later."
+      "facet": "reward sensitivity",
+      "prompt": "You're planning a surprise birthday party for a family member and need to decide on the entertainment. You can hire a professional musician who will require a few weeks' notice to prepare a customized performance, or you can opt for a more generic, readily available entertainment option that can be booked on short notice. The customized performance will be more meaningful and memorable but requires waiting and planning ahead."
     },
     {
-      "facet": "impulsivity regulation",
-      "prompt": "A researcher is working on a project with a colleague and they have discovered a groundbreaking finding that they can publish immediately, but it might not be fully developed. Alternatively, they can spend more time refining their research, collecting more data, and ensuring that their findings are robust, which would delay publication but potentially lead to a more significant impact in their field. The researchers need to decide whether to prioritize the immediate recognition of publishing now or invest time in developing a more comprehensive and influential paper."
+      "facet": "reward sensitivity",
+      "prompt": "You're working on a group project with classmates and have the opportunity to take on a leadership role. You can spend extra time creating a comprehensive project plan that will help the team work more efficiently and effectively in the long run, or you can focus on completing your individual tasks quickly and let someone else handle the planning. The project plan will take time to develop but will save time and reduce stress for the team in the future."
     },
     {
-      "facet": "long-term orientation",
-      "prompt": "A family is planning a vacation and can either book a package deal now that includes a few compromises on accommodations, or wait a few weeks to see if a better option becomes available at a similar price, potentially leading to a more enjoyable trip. Waiting means tolerating uncertainty for a potentially better experience. The decision affects the whole family's leisure time."
+      "facet": "reward sensitivity",
+      "prompt": "You've been tasked with organizing a corporate event and need to decide on the catering. You can choose a reputable, high-end catering service that will require a minimum notice period to prepare a customized menu, or you can opt for a faster, more affordable option that may not impress your clients as much. The high-end catering service will provide a unique and memorable experience but requires waiting and planning ahead."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're a freelance writer working on a long-term project with a flexible deadline. You can spend extra time researching and outlining to create a high-quality, engaging piece that will likely attract more readers and lead to future opportunities, or you can quickly write and submit a decent article to meet the immediate deadline and free up time for other projects. The high-quality piece will take longer to write but will have more impact and benefit your career in the long run."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're part of a neighborhood watch program and have the opportunity to participate in a community safety initiative. You can attend a series of training sessions over the next few months to become a certified community safety leader, which will enable you to make a more significant impact and contribute to the community's long-term safety, or you can focus on shorter-term, more visible tasks that will give you a sense of immediate accomplishment but may not lead to lasting change. The training sessions will require a significant time commitment but will provide a valuable skillset and recognition within the community."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A family is planning a vacation and can choose between booking a popular resort now, which has limited availability, or waiting a few months to see if a new, potentially better resort opens up in the same area. The new resort might offer more amenities and activities, but there's a risk it won't be ready on time. Waiting means potentially getting a better experience, but also risking that the new resort doesn't meet expectations."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A researcher is working on a project and has the option to publish a preliminary paper now, which would give them a quick publication credit, or to wait and continue collecting data to publish a more comprehensive paper later. The comprehensive paper would likely have more impact and be more cited, but waiting means delaying the immediate recognition and potential career benefits."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A group of friends are deciding how to spend their weekend and can choose between attending a concert now, which would be a fun but potentially expensive and fleeting experience, or planning a weekend trip for a few months from now, which would require more planning and saving but could create longer-lasting memories. Waiting means potentially having a more meaningful experience, but also risking that the trip doesn't come together as planned."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A small business owner is considering whether to invest in a new marketing campaign now, which would give them a quick boost in sales, or to wait and focus on developing a new product line, which would take longer to pay off but could lead to more sustainable growth. Waiting means potentially missing out on short-term sales, but also risking that the new product line isn't successful."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A student is deciding whether to take a break from their studies now and travel, which would give them a chance to relax and recharge, or to wait and continue studying to get better grades, which would potentially lead to better job opportunities and higher earning potential. Waiting means potentially missing out on a unique travel experience, but also risking burnout and decreased productivity."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A team is working on a project and has the option to launch a minimum viable product now, which would give them quick feedback and revenue, or to wait and continue developing the product to make it more polished and feature-rich, which would take longer but could lead to higher customer satisfaction and retention. Waiting means potentially missing out on early revenue, but also risking that the product isn't competitive if launched too early."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "A community is deciding how to allocate its resources and can choose between fixing a pressing infrastructure issue now, which would provide immediate relief, or investing in a long-term sustainability project, which would take longer to pay off but could lead to significant environmental benefits and cost savings. Waiting means potentially leaving the immediate issue unaddressed, but also risking that the sustainability project doesn't achieve its intended goals."
     },
     {
       "facet": "self-control",
-      "prompt": "A family is planning a vacation and can choose between booking a popular resort immediately, which would require paying a premium, or waiting a few weeks to see if any last-minute discounts become available, potentially saving money but risking that the resort might be fully booked by then. The decision involves weighing the desire for a confirmed vacation plan against the potential for future savings. This choice requires self-control to resist the temptation of immediate confirmation."
+      "prompt": "A family is planning a vacation and can either book a more expensive but highly-rated resort now, or wait for a potential discount on a similar resort in a few weeks, which would allow them to use the saved money for additional activities during the trip. Waiting means tolerating uncertainty about availability in exchange for potential extra experiences."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A researcher is working on a project and can either submit a preliminary paper to a conference immediately, or spend more time refining the research and submitting it to a more prestigious journal later, which could lead to greater recognition and more opportunities in the long run. Delaying submission sacrifices immediate visibility in exchange for potentially higher future impact."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A friend is considering buying a new bike and can either purchase a cheaper model now, or wait for a few months to save up for a more expensive but high-quality bike that will last longer and require less maintenance. Waiting means putting off the pleasure of having a new bike in exchange for a better long-term investment."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A team is working on a project with a tight deadline and can either take a break to celebrate a milestone now, or put in extra hours to ensure the project is completed to the highest standard, which could lead to greater client satisfaction and more business in the future. Taking a break now would sacrifice potential future benefits in exchange for immediate relaxation and celebration."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A person is learning a new language and can either focus on basic conversation skills now, or spend more time studying grammar and vocabulary, which would lead to greater proficiency and more opportunities for travel and cultural exchange in the future. Focusing on basics now would sacrifice long-term language skills in exchange for short-term communication abilities."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A community group is planning an event and can either book a popular but expensive venue now, or wait for a potentially cheaper option to become available later, which would allow them to allocate more resources to other aspects of the event. Waiting means tolerating uncertainty about the venue in exchange for potentially more resources for the event itself."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "A entrepreneur is considering launching a new product and can either release a minimum viable product now, or spend more time refining the product and testing it with a small group of users, which could lead to a more successful launch and greater customer satisfaction in the long run. Releasing the product now would sacrifice potential future success in exchange for immediate revenue and market presence."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A family is planning a vacation and can either book a package deal now that includes all the activities they want, but has to be paid in full immediately, or wait a few weeks to see if the prices drop, but risk losing the opportunity to book their preferred activities. The family has to weigh the benefits of saving money against the risk of missing out on their desired vacation experiences. They also have to consider the potential stress of last-minute planning."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A researcher has the opportunity to collaborate with a colleague on a project that has a high potential for long-term impact, but requires a significant amount of time and effort upfront without any guarantee of immediate results. The researcher must decide whether to invest their time and energy into this project, potentially delaying other shorter-term goals, or focus on quicker, more tangible achievements."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A person is considering adopting a pet from a shelter and has the option to take home a animal that is already house-trained and ready to go, or wait a few months for a younger animal that will require more time and training, but may form a stronger bond with its owner. The person must weigh the benefits of having a pet immediately against the potential long-term rewards of investing time and effort into training a younger animal."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A team of friends is planning a group project and has to decide whether to spend more time brainstorming and refining their idea, potentially delaying the start of the project, or begin working on the project immediately, potentially sacrificing some quality for the sake of meeting a deadline. The team has to balance the need for creativity and innovation with the pressure of meeting a timeline."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A person has the opportunity to learn a new language through an intensive course that requires a significant upfront commitment of time and money, but offers the potential for rapid progress and long-term benefits. Alternatively, they could opt for a more casual, self-paced approach that is less expensive and time-consuming, but may not lead to the same level of fluency. The person must weigh the benefits of rapid progress against the costs and potential risks of the intensive course."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A community organization is considering investing in a new, sustainable energy system that will require a significant upfront investment, but promises long-term cost savings and environmental benefits. The organization must decide whether to prioritize short-term financial stability or invest in a more sustainable future, potentially requiring some short-term sacrifices."
+    },
+    {
+      "facet": "impulsivity regulation",
+      "prompt": "A person is offered a chance to participate in a prestigious, invite-only workshop that will take place in a few months, but requires a significant amount of preparation and planning beforehand. The person must decide whether to invest the time and effort required to prepare for the workshop, potentially delaying other goals and activities, or focus on more immediate priorities and forgo the opportunity."
     }
   ],
   "altruism": [
     {
-      "facet": "donating to strangers",
-      "prompt": "A person is moving into a new apartment and has extra packing boxes that they no longer need. They notice that a neighboring family, who is also moving in, seems to be struggling to unpack their belongings due to a lack of boxes. The person can offer their extra boxes to the family, which would help them greatly, but it would also mean that the person would have to spend time and effort to carry the boxes to the family's apartment."
+      "facet": "Donating to known individuals",
+      "prompt": "A person is planning a birthday party for a close friend and has budgeted a certain amount for decorations and entertainment. However, they learn that another friend, who is going through a tough time, is also having a birthday soon and cannot afford to celebrate. The person must decide whether to reallocate some of their party budget to help the other friend have a decent celebration."
     },
     {
-      "facet": "donating to strangers",
-      "prompt": "A local animal shelter is in need of temporary foster homes for animals affected by a recent natural disaster. A person who has the space and resources to care for an animal can decide to take in a foster animal, which would provide a safe and comfortable environment for the animal until it can be reunited with its owner or adopted. However, taking in a foster animal would require the person to adjust their daily routine and living situation to accommodate the animal's needs."
+      "facet": "Donating to known individuals",
+      "prompt": "A family member is in need of a specific medical device for treatment, but it is not covered by their insurance. A relative has the means to purchase the device but must choose between doing so and using the money for a long-planned family vacation."
     },
     {
-      "facet": "volunteering time",
-      "prompt": "A local mentorship program for underprivileged youth is in need of tutors to help students with their homework and study skills. An individual with expertise in a particular subject is considering volunteering their time to help, but it would mean giving up their weekly book club meetings. The mentorship program relies on volunteer tutors to operate and has a waiting list of students in need of guidance."
+      "facet": "Donating to known individuals",
+      "prompt": "A colleague is struggling to pay for their child's education expenses and is at risk of having to withdraw them from school. A coworker, who has a close relationship with the colleague, must decide whether to offer financial assistance or use their own savings for a home renovation project."
     },
     {
-      "facet": "volunteering time",
-      "prompt": "A community arts organization is planning a public exhibition showcasing artwork created by people with disabilities. They need volunteers to help with event setup, artwork installation, and visitor assistance on the day of the exhibition. A person who values art and social inclusion is deciding whether to volunteer their time, which would require taking a day off from their part-time job and potentially impacting their monthly income."
+      "facet": "Donating to known individuals",
+      "prompt": "A person has the opportunity to donate a valuable item they no longer need to a friend who has been searching for it, but doing so would mean giving up the chance to sell it and use the money to pay off debt."
     },
     {
-      "facet": "charitable giving to known groups",
-      "prompt": "A local animal shelter is in need of supplies, and a person has the opportunity to donate a portion of their recently inherited goods to support the shelter's operations. The decision to donate would not only benefit the shelter but also allow the person to declutter their newly acquired estate."
+      "facet": "Donating to known individuals",
+      "prompt": "A community leader is organizing a fundraising campaign to support a local family who has lost their home in a fire. A neighbor, who is also a close friend of the family, must decide whether to contribute a significant amount of money to the campaign or use it to repair their own damaged property."
     },
     {
-      "facet": "charitable giving to known groups",
-      "prompt": "A group of artisans from a nearby village are struggling to recover from a recent disaster that destroyed their workshop and equipment. A skilled craftsperson has the chance to allocate a portion of their own workshop's resources, such as tools and materials, to help the artisans rebuild and regain their livelihood."
+      "facet": "Donating to known individuals",
+      "prompt": "A person is considering whether to lend a substantial amount of money to a friend who is starting a new business venture, despite the risk of not being repaid, or use the money to invest in their own retirement fund."
     },
     {
-      "facet": "anonymous philanthropy",
-      "prompt": "A person is part of a professional network where members can anonymously donate their unused professional development funds to support the training of less experienced colleagues. The person has a surplus of funds that can be allocated to this cause without affecting their own career advancement, but doing so would mean giving up the opportunity to use the funds for a future project that might benefit their own professional reputation. The decision to donate is made without knowing who the recipients will be or how they will use the funds."
+      "facet": "Donating to known individuals",
+      "prompt": "A person has the chance to help a friend who is experiencing financial difficulties by covering their expenses for a few months, but doing so would require them to dip into their own emergency fund, which they have been building up for a long time."
     },
     {
-      "facet": "reciprocal altruism",
-      "prompt": "A family member's friend is organizing a charity event for a local animal shelter and has asked for help with spreading the word on social media, which would take a few hours and might lead to more donations, but the time could also be used to promote one's own business or personal project."
+      "facet": "Volunteering time for community service",
+      "prompt": "You are a member of a professional network and have the opportunity to mentor a junior colleague who is struggling to find a job in your field. You can dedicate a few hours a week to provide guidance and support, which would help them build their skills and confidence, but it would also take away from the time you have to focus on your own projects and career development."
+    },
+    {
+      "facet": "Volunteering time for community service",
+      "prompt": "You have been invited to participate in a community-based project to create a public art installation, which aims to promote social cohesion and community engagement. You can volunteer your time to help design and build the installation, but it would require you to take time off from your family and other personal commitments."
+    },
+    {
+      "facet": "Volunteering time for community service",
+      "prompt": "You are part of a group of friends who are planning a charity event to raise funds for a local food bank. You can offer to help with the organization and planning of the event, which would involve several weeks of work, but it would also give you the opportunity to make a positive impact on your community and bond with your friends."
+    },
+    {
+      "facet": "Volunteering time for community service",
+      "prompt": "You are a skilled craftsperson and have been asked to teach a workshop to a group of disadvantaged youth. You can donate your time and expertise to teach the workshop, which would help the youth develop new skills and build their self-esteem, but it would also require you to take time away from your own business and clients."
+    },
+    {
+      "facet": "Volunteering time for community service",
+      "prompt": "You have the opportunity to participate in a citizen science project, which aims to collect data on local environmental issues. You can volunteer your time to collect and analyze data, which would contribute to a better understanding of the issues and inform policy decisions, but it would also require you to spend time outdoors in potentially uncomfortable conditions."
+    },
+    {
+      "facet": "Volunteering time for community service",
+      "prompt": "You are a member of a community organization that provides support services to elderly residents. You can volunteer your time to visit and assist elderly residents, which would help them maintain their independence and quality of life, but it would also require you to take time away from your own family and other commitments."
+    },
+    {
+      "facet": "Volunteering time for community service",
+      "prompt": "You have been asked to help a local non-profit organization develop a social media campaign to raise awareness about a specific social issue. You can donate your time and expertise to help create and implement the campaign, which would help amplify the organization's message and reach a wider audience, but it would also require you to take time away from your own projects and work commitments."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "A person is part of a professional network where members can anonymously donate to support a colleague's family in need due to a medical emergency. The donation would be made through a third-party platform to maintain anonymity, and the giver would have to forgo a luxury item they've been wanting to purchase."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "A community center is organizing a charity drive to collect books for an underfunded library in a different part of town. An individual can choose to donate some of their own books or buy new ones specifically for the drive, but doing so would mean they cannot attend a pricey workshop they've been interested in."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "An employee is given the option to direct a portion of their company's charitable funds to an anonymous grant program supporting local artists. However, choosing to do so would mean they have less budget for their own department's team-building activities."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "A group of friends are planning a potluck dinner and one of them suggests that instead of bringing a dish to share, they could bring a dish to donate to a local food bank. The person considering the suggestion would have to spend extra time and money to prepare something suitable for donation, potentially cutting into their personal hobby time."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "A new employee is onboarded into a company that has an anonymous giving program where employees can donate a portion of their first-month salary to a charity of their choice. The decision must be made within the first week of employment, and choosing to donate would impact the employee's initial financial setup."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "An online forum user has the opportunity to donate to a fund supporting an open-source project they frequently use. The donation would be anonymous, and the user would have to give up the idea of purchasing a premium subscription to another service they've been considering."
+    },
+    {
+      "facet": "Giving to anonymous charitable causes",
+      "prompt": "A university student is part of a student organization that collects donations for a local youth center. The student can choose to donate their used technology or buy new equipment for the youth center, but doing so would require them to take on a part-time job to compensate for the expense, affecting their study schedule."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A family is planning a vacation to a coastal area and has the option to book a hotel that has implemented sustainable practices to reduce its environmental impact, but it's more expensive than other alternatives. Choosing the eco-friendly hotel would increase their travel costs but support environmentally responsible tourism."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A company is deciding whether to invest in renewable energy sources for its operations, which would increase its costs in the short term but reduce its carbon footprint. The investment would be made at the expense of other potential projects that could improve the company's profitability."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A group of friends are organizing a camping trip and have to decide whether to take a longer route to the campsite that avoids a sensitive wildlife habitat, which would add an extra day to their journey. Taking the longer route would reduce their impact on the environment but require more time and resources."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A researcher has the opportunity to collaborate on a project that aims to develop sustainable technologies, but it would require dedicating time and resources away from their own projects. Participating in the collaboration would contribute to environmental benefits but potentially delay their own research goals."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A community is considering implementing a recycling program that would require residents to sort their waste and participate in regular collections. Implementing the program would increase the community's costs and require significant resident engagement but reduce the amount of waste sent to landfills."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A farmer is deciding whether to convert their farm to organic practices, which would reduce the use of chemical pesticides and fertilizers but also decrease crop yields and increase labor costs. Making the switch would support environmental sustainability but affect the farm's profitability."
+    },
+    {
+      "facet": "Sacrificing personal gain for environmental benefits",
+      "prompt": "A city is planning to host a major event and has to decide whether to prioritize sustainable transportation options, such as electric or hybrid vehicles, for attendees and staff. Choosing sustainable transportation would increase the event's costs but reduce its carbon footprint and support the city's environmental goals."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A local business owner is approached by a representative from a social justice organization, asking to display informational posters about an upcoming advocacy event in their store window. The owner must decide whether to allocate valuable window space to support the cause, potentially drawing in customers who share similar values, or use the space to promote their own products."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A group of friends are planning a birthday celebration for one of their own, and someone suggests making a donation to a social justice charity in the birthday person's name, rather than buying them a gift. The others must decide whether to support this idea, potentially making the celebration less traditional but more meaningful, or stick with the original gift-giving plan."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A student is elected as a representative to their university's student council and must decide how to allocate a discretionary fund. They can choose to support a social justice initiative on campus, which would require them to collaborate with various student groups and potentially face controversy, or use the funds for more popular but less impactful projects."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A family is discussing how to observe a significant cultural holiday, and one member suggests using the occasion to raise awareness and funds for a social justice issue relevant to their community. The others must decide whether to incorporate this element into their celebrations, potentially making the event more meaningful but also more complicated, or stick with traditional observances."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A professional network is organizing a conference, and the planning committee must decide whether to invite a controversial social justice advocate as a keynote speaker. The speaker's presence could attract a new audience and stimulate important discussions, but also risks alienating some attendees and creating logistical challenges."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A community is developing a public art project, and the lead artist is considering incorporating themes and messages related to social justice. The artist must decide whether to take this approach, potentially creating a more impactful and thought-provoking work, or focus on more neutral or decorative elements to avoid controversy."
+    },
+    {
+      "facet": "Advocating for social justice",
+      "prompt": "A company is reviewing its corporate social responsibility strategy and must decide whether to partner with a social justice organization to support their advocacy work. The partnership could enhance the company's reputation and contribute to positive change, but also requires significant resources and may be seen as taking a political stance."
     }
   ],
   "posrecip": [
     {
-      "facet": "Reciprocal Kindness",
-      "prompt": "A person's car breaks down on a rural road, and a passerby, who is a skilled mechanic, stops to fix it, refusing any payment. Later, the car's owner encounters the mechanic at a local event where the mechanic's child is participating in a competition. The owner can choose to watch the child's performance and provide emotional support, or leave immediately after their own obligations are met."
+      "facet": "Reciprocation Intent",
+      "prompt": "A person receives a valuable introduction to a professional network from an acquaintance, which leads to a new business opportunity. Later, the acquaintance's own project requires a specific skill that the person has, and they ask for assistance. Providing the skill would require a significant time commitment, but it would reciprocate the earlier introduction."
     },
     {
-      "facet": "Reciprocal Kindness",
-      "prompt": "A researcher receives crucial feedback on their project from a peer who invested significant time and expertise, asking for no credit or compensation. When the peer's own project is in need of participants for a study, the researcher can choose to participate, which would require a substantial time commitment, or decline, potentially leaving the peer's effort unrewarded."
+      "facet": "Reciprocation Intent",
+      "prompt": "A family's home is protected from potential damage by a neighbor who notices a gas leak and alerts them. The neighbor later experiences a similar issue, and the family is in a position to return the favor by checking on the neighbor's home while they are away. However, this would require the family to adjust their own schedule and travel plans."
     },
     {
-      "facet": "Gratitude Expression",
-      "prompt": "A person's car breaks down on a rural road, and a passing driver, who is also a skilled mechanic, stops to make repairs, refusing any payment. Later, the car's owner encounters the mechanic at a social gathering and learns that the mechanic's family is struggling to find a reliable childcare service. The car's owner has a trusted babysitter and could offer to help the mechanic's family find a similar service, but this would require dedicating several hours to making introductions and facilitating the connection."
+      "facet": "Reciprocation Intent",
+      "prompt": "A researcher receives critical feedback on a manuscript from a peer, which significantly improves the work. The peer later asks for feedback on their own manuscript, which is in a different field and would require the researcher to invest time in understanding the new context. Providing the feedback would be a reciprocal gesture, but it would also divert time from the researcher's own projects."
     },
     {
-      "facet": "Gratitude Expression",
-      "prompt": "A new employee in a large company is struggling to navigate the complex internal systems and receives extensive guidance from a veteran staff member, who invests considerable time in explaining procedures and sharing valuable insights. As the new employee becomes more comfortable, they discover that the veteran staff member is working on a high-profile project with a tight deadline and is having trouble finding relevant historical data. The new employee could offer to help search for the data, which would require spending their weekend combing through archives, but this effort would significantly aid the veteran staff member's project and serve as a gesture of gratitude for the earlier assistance."
+      "facet": "Reciprocation Intent",
+      "prompt": "A group of friends on a camping trip are helped by a park ranger who assists them in navigating a difficult trail. Later, the park ranger's own vehicle gets stuck in the mud, and the group has the opportunity to return the favor by helping to pull it out. However, this would require them to delay their own plans and get physically involved in the rescue effort."
     },
     {
-      "facet": "Cost Sensitivity",
-      "prompt": "A person's car breaks down on a rural road, and a passing driver stops to provide a jump start, using their own equipment and waiting until the car is restarted. Later, the driver's child is participating in a regional science fair, and the person whose car was jump-started is a judge in the same category. The person can choose to provide detailed, constructive feedback on the child's project, which would require extra time and effort, or simply fill out the standard evaluation form."
+      "facet": "Reciprocation Intent",
+      "prompt": "A new employee is mentored by a colleague who helps them adjust to the company culture and responsibilities. When the colleague is later facing a tight deadline, the new employee is in a position to assist with tasks that are outside their own job description. Taking on these tasks would demonstrate gratitude for the mentorship, but it would also add to the employee's workload and potentially impact their own performance."
     },
     {
-      "facet": "Cost Sensitivity",
-      "prompt": "A freelance translator receives crucial feedback on their work from a more experienced translator, which significantly improves the quality of their project and helps them meet a tight deadline. The experienced translator later reaches out because they are struggling to meet their own deadline for a project that requires specialized software the freelance translator has access to. The freelance translator can offer to lend the software, which would mean delaying their own projects, or suggest alternative, less effective solutions that would not impact their own work schedule."
+      "facet": "Reciprocation Intent",
+      "prompt": "A community is protected from a potential health risk by an individual who identifies and reports a contaminated water source. The individual later requires help with a separate issue, such as repairing their own water filtration system, and community members are in a position to return the favor. However, this would require them to contribute their own time and expertise, potentially at a personal cost."
     },
     {
-      "facet": "Stranger Trust",
-      "prompt": "A freelance writer is helped by a stranger who provides a crucial introduction to a key industry contact at a networking event, resulting in a major project. Later, the writer has the opportunity to review and provide constructive feedback on the stranger's own writing portfolio, which would require a significant time investment, but would demonstrate appreciation for the earlier assistance."
+      "facet": "Reciprocation Intent",
+      "prompt": "A team of collaborators on a creative project receives crucial support from an external expert who provides guidance on a critical aspect of the work. When the expert later needs assistance with promoting their own work, the team is faced with the decision of whether to dedicate their social media channels to support the expert, which would divert attention from their own project but reciprocate the earlier help."
     },
     {
-      "facet": "Timely Reciprocation",
-      "prompt": "A freelance writer, who received a crucial introduction to a key client from a fellow freelancer at a networking event, now has the chance to review and edit a draft proposal for that same freelancer before a major pitch, which would take away from their own deadline but show appreciation for the earlier connection."
+      "facet": "Timeliness of Return",
+      "prompt": "A person receives crucial career advice from a former mentor's industry acquaintance during an informal networking event, which leads to a job interview. Later, the acquaintance's project proposal is due soon, and they need someone to review and provide feedback on it quickly. The person must decide whether to dedicate a few hours to help, potentially delaying their own project."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "A family's home is protected from a potential flood due to the efforts of a nearby resident who helped reinforce their levee at personal expense. When the resident's own home is in need of similar reinforcement, the family must decide how quickly to return the favor, considering their own busy schedule and the risk of future floods."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "A freelance writer benefits from an introduction to a key client made by a fellow writer at a conference, resulting in a significant contract. Later, the introducing writer needs help meeting a tight deadline for their own article and asks for research assistance. The freelance writer must choose between helping immediately or focusing on their own projects."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "A hiker is rescued by a park ranger after a serious injury and later learns that the ranger's own search and rescue dog needs expensive surgery. The hiker must decide whether to donate to the ranger's fundraising campaign immediately or delay, considering their own financial constraints and the urgency of the dog's condition."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "A small business owner receives a valuable referral from a competitor that leads to a major sale. When the competitor's business is facing a crisis due to unexpected supply chain issues, the owner must decide how quickly to offer assistance, such as sharing resources or expertise, despite the potential impact on their own operations."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "A researcher benefits from access to rare equipment loaned by a colleague from another institution, leading to a breakthrough discovery. Later, the colleague needs urgent help with data analysis for their own project and asks for the researcher's expertise. The researcher must choose between providing immediate assistance or prioritizing their own research deadlines."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "A community organization receives a significant donation from an anonymous supporter, which helps them launch a critical program. When the supporter's identity is revealed, and they are found to be in need of volunteer help for their own community project, the organization must decide how quickly to mobilize their resources and volunteers to return the favor, considering their existing commitments and the supporter's expectations."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A person receives a rare book from an online forum member who had to pay for shipping, and later the sender asks for a digital copy of a hard-to-find article that the person has access to through their university library, requiring a trip to the library to scan and send."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A family's home is protected from a potential flood by a neighbor who constructed a makeshift barrier, and later the neighbor's child needs a ride to a doctor's appointment due to a broken-down car, requiring the family to adjust their daily routine."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A freelance writer is given valuable feedback on their work by an experienced editor, which significantly improves the manuscript, and later the editor requests a testimonial for their own professional website, requiring the writer to spend time crafting a thoughtful endorsement."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A group of friends on a hiking trip are aided by a park ranger who provides them with critical guidance to avoid a treacherous path, and later one of the hikers has the opportunity to help the ranger's family member with a task that requires specific skills the hiker possesses, such as fixing a broken appliance."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A small business owner is given a crucial introduction to a key client by a fellow business owner, resulting in a significant contract, and later the fellow business owner needs help preparing for a major presentation, requiring the small business owner to dedicate time to reviewing and providing feedback on the presentation."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A researcher is provided with access to a unique dataset by a colleague, which leads to a breakthrough in their study, and later the colleague requests assistance in collecting samples for their own research project, requiring the researcher to accompany them to a remote location."
+    },
+    {
+      "facet": "Proportionality of Return",
+      "prompt": "A new employee is trained by a senior colleague who invests significant time and effort, and later the senior colleague is in need of someone to cover a critical shift on short notice due to an unexpected absence, requiring the new employee to adjust their personal plans and work the shift."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "A person receives a valuable professional reference from a former classmate that helps them land a job. Later, the classmate is applying for a similar position and asks for a reference from the person, who is now busy with their new role. Agreeing to provide the reference would require dedicating time to drafting and customizing it."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "A homeowner's neighbor lends them a rare and expensive tool to fix a critical issue, saving them from significant costs. When the neighbor's pipes burst, causing water damage, the homeowner has the opportunity to return the favor by helping with the cleanup, which would require taking time off from work."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "A cyclist is assisted by a fellow rider who stops to help fix their bike after a serious accident, getting them back on the road quickly. Later, the cyclist sees the helper's bike stalled on the side of the road and must decide whether to stop and assist, potentially making them late for an important appointment."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "A new employee is onboarded and trained by a colleague who takes extra time to explain complex processes, ensuring their success. When the trainer is struggling to meet a project deadline due to unforeseen circumstances, the new employee must decide whether to offer help, which would mean putting in extra hours beyond their regular workload."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "An artist receives constructive feedback and mentorship from an established figure in their community, significantly improving their craft. Later, the mentor asks for feedback on their own work, which is outside the artist's usual genre, requiring them to dedicate time to understand and provide meaningful insights."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "A resident in a coastal area benefits from a warning about an impending storm from a fellow community member, allowing them to secure their property. When the storm passes, leaving the warning giver's home damaged, the resident must decide whether to volunteer their time to help with repairs, which would take away from their own storm recovery efforts."
+    },
+    {
+      "facet": "Initiative in Returning",
+      "prompt": "A researcher is given access to a unique dataset by a colleague that significantly enhances their study, leading to a publication. When the colleague needs assistance in collecting data for their next project, which involves traveling to a remote location, the researcher must decide whether to participate, incurring travel costs and time away from their current projects."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A person receives crucial career advice from a former mentor's industry colleague, which leads to a successful job interview. Later, the person is invited to speak at a professional conference and can choose to publicly acknowledge the colleague's role in their success, potentially boosting the colleague's reputation but also drawing attention away from their own accomplishments."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A community center receives a significant donation of art supplies from a local business owner, which are used for a popular children's program. The center's director can decide to display a prominent public thank-you message to the business owner during an upcoming event, which may encourage further donations but also takes up space that could be used for program information."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A researcher benefits from access to a unique dataset shared by a peer at a different institution, leading to a breakthrough publication. The researcher can choose to include a public acknowledgement of the peer's contribution in a forthcoming presentation, which would recognize the peer's generosity but might also be seen as diminishing their own contribution to the research."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A homeowner's property is protected from potential damage by a neighbor who temporarily relocates a shared fence at their own expense. The homeowner can later offer to publicly endorse the neighbor's contracting business on social media, which would help the neighbor attract new clients but also commits the homeowner to a public statement."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A non-profit organization receives pro-bono legal services from a law firm, which helps them navigate a critical regulatory issue. The organization's leaders can decide to publicly recognize the law firm's contribution at an annual gala, which may foster a positive relationship with the firm but also uses event time that could be spent on other fundraising efforts."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A student receives informal tutoring from a classmate that significantly improves their understanding of a difficult subject. The student can choose to express public gratitude to the classmate during a class discussion, which acknowledges the classmate's help but might also make them uncomfortable with the attention."
+    },
+    {
+      "facet": "Public Acknowledgement of Help",
+      "prompt": "A small business owner's store is saved from a potential flood due to the quick actions of a nearby resident who alerts them to the danger. The owner can decide to offer public thanks to the resident through a local newspaper advertisement, which recognizes the resident's heroism but also incurs an advertising cost that could be used for other business purposes."
     }
   ],
   "negrecip": [
     {
-      "facet": "Cost tolerance",
-      "prompt": "In a family business, a younger member discovers that an older member has been taking more than their fair share of profits without contributing equally to the workload. Speaking up about the unfair distribution would lead to an uncomfortable family discussion but might correct the imbalance. Remaining silent allows the status quo to continue, avoiding conflict but perpetuating the inequity."
+      "facet": "Altruistic Punishment",
+      "prompt": "In a training program, a peer is caught cheating on a certification exam by using unauthorized materials. Reporting the incident would lead to the peer's disqualification and create an awkward team dynamic, but not reporting it would undermine the integrity of the certification process. The decision to report must be made quickly, before the exam results are finalized."
     },
     {
-      "facet": "Cost tolerance",
-      "prompt": "A researcher notices that a colleague is consistently receiving undue recognition for their joint research projects, such as being named as the primary author on papers where they contributed less. Publicly addressing the issue could lead to a more accurate representation of contributions but might strain their working relationship and impact future collaborations. Ignoring the discrepancy avoids immediate tension but lets the unfair recognition continue."
+      "facet": "Altruistic Punishment",
+      "prompt": "A local business owner discovers that a competitor is deceiving customers about the origin of their products. Exposing the deception through a public campaign would protect consumers and uphold fair business practices, but it would also divert resources away from the owner's own business and potentially escalate into a costly feud."
     },
     {
-      "facet": "Fairness sensitivity",
-      "prompt": "You are part of a close-knit research team working on a groundbreaking project. One team member consistently takes more resources than allocated, impacting others' work. Speaking up would ensure fairness but might strain relationships and hinder the project's progress. Remaining silent allows the project to continue uninterrupted but lets the unfair distribution of resources stand."
+      "facet": "Altruistic Punishment",
+      "prompt": "A researcher finds out that a colleague has falsified data in a joint research project to achieve more favorable results. Confronting the colleague and insisting on correcting the data would be time-consuming and might strain their working relationship, but failing to do so would compromise the validity of their research and potentially harm its applications."
     },
     {
-      "facet": "Fairness sensitivity",
-      "prompt": "You've been mentoring a junior colleague who has been passing off your ideas as their own in high-stakes presentations. Confronting them would uphold fairness and integrity but could damage your mentoring relationship and their career prospects. Ignoring the behavior would maintain a positive working relationship but compromise your own reputation and the value of your contributions."
+      "facet": "Altruistic Punishment",
+      "prompt": "A member of a homeowners association notices that another member is consistently violating rules regarding property maintenance, affecting the overall appearance and value of the properties. Addressing the issue through the association's formal channels would require time and effort, and might lead to conflict with the neighbor, but ignoring it would set a bad precedent and potentially decrease property values."
     },
     {
-      "facet": "Retribution motivation",
-      "prompt": "In a tight-knit research team, a member discovers that another team member has been taking credit for their ideas in meetings with their supervisor, potentially undermining their chance at a promotion. The team member must decide whether to confront the idea thief directly, which could lead to an awkward team dynamic, or stay quiet and potentially miss out on the recognition they deserve."
+      "facet": "Altruistic Punishment",
+      "prompt": "A team leader in a project realizes that one of the team members is not contributing their fair share of the work but is still expecting equal credit for the project's outcomes. Discussing the issue with the team member and potentially adjusting their role or credit could lead to resentment and affect team morale, but not addressing it would be unfair to the other team members and might reduce their motivation."
     },
     {
-      "facet": "Retribution motivation",
-      "prompt": "A family-owned business is considering a partnership with a supplier who has a history of reneging on contracts with other small businesses. The family must weigh the potential financial benefits of the partnership against the moral cost of supporting a company with a questionable business ethic, and decide whether to pursue the partnership or take their business elsewhere, potentially at a higher cost."
+      "facet": "Altruistic Punishment",
+      "prompt": "A consumer discovers that a company they frequently purchase from has been involved in unethical practices, such as exploiting workers or damaging the environment. Deciding to boycott the company and encouraging others to do so would take a stand against the unethical behavior, but it would also mean finding alternative, possibly more expensive, products and services, and might not significantly impact the company's bottom line."
     },
     {
-      "facet": "Self-sacrifice willingness",
-      "prompt": "In a tight-knit research team, a member discovers that another team member has been taking credit for their ideas in meetings with their supervisor, potentially impacting the team's project funding and individual career advancement. The member must decide whether to confront the behavior, potentially straining the team's dynamics, or stay quiet to maintain harmony. Speaking up would require a private conversation with the supervisor and potentially awkward team discussions."
+      "facet": "Altruistic Punishment",
+      "prompt": "A student witnesses another student plagiarizing in an academic setting. Reporting the plagiarism would uphold academic integrity and prevent unfair advantage, but it could lead to social ostracism and require investing time in the disciplinary process, potentially distracting from the student's own studies."
     },
     {
-      "facet": "Norm enforcement",
-      "prompt": "In a private online forum for freelance writers, a member discovers that another writer has plagiarized their work and is passing it off as their own to attract clients. The member must decide whether to publicly expose the plagiarist, potentially damaging their own reputation and relationships within the community, or to remain silent and allow the unfair behavior to continue. Reporting the plagiarism would uphold ethical standards but might lead to backlash and strained relationships."
+      "facet": "Cost Sensitivity",
+      "prompt": "You are part of a research team working on a project with a tight deadline. A team member consistently fails to contribute their share of the workload, putting extra burden on others. When the project leader suggests distributing the credit equally among team members regardless of individual contributions, you must decide whether to speak up against this unfair distribution, potentially causing tension within the team, or stay silent to maintain harmony."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "You've been renting a shared studio space with fellow artists, and one of them has been using more than their allocated storage space, encroaching on your area. Correcting this behavior would require an awkward conversation and potentially jeopardize your collaborative relationships. However, not addressing the issue means you continue to suffer the inconvenience of reduced space."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "A local, member-owned cooperative is deciding how to allocate its annual surplus among members. Some members propose distributing the surplus based on each member's level of engagement and contribution to the cooperative, while others suggest an equal distribution regardless of individual contributions. You must choose between supporting the proposal that rewards contributions, which might be seen as unfair to less active members, or backing the equal distribution proposal, which could be perceived as unfair to more active members."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "You are a member of a small, private online forum where members share knowledge and resources. One member has been consistently sharing copyrighted material without permission, which could put the entire forum at risk of legal action. Calling out this behavior could lead to conflict and potentially drive valuable members away, but ignoring it jeopardizes the forum's integrity and legal standing."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "You've invested time and resources into developing a community project, and another participant is trying to claim ownership of the idea to attract external funding. Challenging this claim would protect your contribution but might deter potential investors due to the appearance of internal conflict. Staying quiet allows the project to proceed but at the cost of your recognition and potential future control."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "A friend has been borrowing tools from you for their DIY projects without returning them in good condition or offering compensation. When they ask to borrow another tool, you must decide whether to set boundaries and potentially strain the friendship or continue lending, absorbing the costs and inconvenience to maintain the relationship."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "You are participating in a group project at work, and one team member is not pulling their weight, leaving others to pick up the slack. When the time comes for performance evaluations, you have the opportunity to provide feedback that could impact this team member's career advancement. You must choose between giving honest feedback that reflects their lack of contribution, which could be seen as punitive, or providing a more lenient evaluation to avoid conflict and protect the team's morale."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A team is working on a project with a tight deadline, and one member consistently fails to pull their weight, leaving others to pick up the slack. When it's time for performance evaluations, the team lead suggests giving the underperforming member a passing grade to avoid conflict, but doing so would unfairly reward their lack of effort."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A small business owner discovers that a supplier has been overcharging them for materials, taking advantage of their lack of expertise. The owner must decide whether to confront the supplier, potentially jeopardizing their business relationship, or to continue paying the inflated prices to avoid a dispute."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A group of friends are planning a vacation together and one member suggests a destination that is much more expensive than initially agreed upon, without consulting the others. The group must decide whether to speak up and risk ruining the planning process or to go along with the new plan, even if it means some members will struggle to afford it."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A researcher is collaborating with a colleague on a study, but the colleague is not contributing equally to the workload. When it's time to publish the results, the colleague suggests listing themselves as the lead author, despite not doing the majority of the work. The researcher must decide whether to challenge this unfair suggestion or to let it slide to maintain a positive working relationship."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A company is hiring for a new position, and the hiring manager has already decided to give the job to a friend's relative, regardless of their qualifications. An employee who is part of the hiring committee must decide whether to speak out against this unfair practice or to remain silent and avoid rocking the boat."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A community is organizing a neighborhood watch program, and one of the organizers is taking credit for ideas and work contributed by others. A participant must decide whether to correct the record and give credit where it's due, potentially causing tension, or to let the organizer take the credit and maintain a sense of harmony."
+    },
+    {
+      "facet": "Fairness Perception",
+      "prompt": "A student notices that a classmate is cheating on exams by looking at others' work, and the teacher seems oblivious to the situation. The student must decide whether to report the cheating, which could lead to the classmate's punishment and create an uncomfortable classroom environment, or to stay quiet and allow the cheating to continue."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A researcher discovers that a colleague has been falsifying data in a joint project. Exposing the fraud would damage the colleague's reputation and potentially delay the project, but staying silent would allow the dishonest behavior to continue. The researcher must decide whether to report the issue to their supervisor."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A new employee notices that a senior staff member is consistently taking extra breaks and leaving early, while others are expected to work long hours. Speaking up about the unfair treatment could lead to retaliation, but saying nothing would condone the unequal workload. The employee must choose between addressing the issue and maintaining a peaceful work environment."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A group of friends plan a vacation together, but one member books a more expensive room without consulting the others. When the time comes to split the bill, the group must decide whether to confront the friend about the unfair expense or absorb the cost to avoid conflict."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A student witnesses another student cheating on an exam and must decide whether to report the incident to the teacher. Reporting the cheat would uphold academic integrity, but could lead to social ostracism and conflict with the cheating student. Staying silent would allow the unfair behavior to go unpunished."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A team leader is tasked with allocating bonuses among team members. However, one team member has been underperforming and has not contributed equally to the team's success. The leader must decide whether to allocate the bonus fairly based on individual performance or to distribute it equally to maintain team harmony."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A neighbor's dog is consistently entering another neighbor's yard and causing damage. The affected neighbor must decide whether to confront the dog's owner about the issue, potentially straining their relationship, or to absorb the cost of repairing the damage themselves."
+    },
+    {
+      "facet": "Retributive Motivation",
+      "prompt": "A company is considering hiring a new employee, but one of the candidates has a history of unethical behavior in their previous role. The hiring manager must decide whether to prioritize the candidate's skills and experience or to reject them due to their questionable ethics, potentially missing out on a talented hire."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A researcher discovers a colleague has falsified data in a joint study and must decide whether to report the misconduct, potentially damaging their working relationship and delaying publication, or stay silent to avoid conflict."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A family member is consistently late to gatherings, causing inconvenience to others, and the host must choose between addressing the issue directly, which might lead to tension, or ignoring it to maintain peace."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A new employee notices that a senior colleague is taking undue credit for others' ideas in meetings and must decide whether to speak up, possibly risking their own reputation and relationships, or remain quiet to avoid being seen as confrontational."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A community leader is asked to endorse a project that they believe does not serve the community's best interests, and they must weigh the benefits of maintaining a positive relationship with the project's proponents against the potential harm of supporting something unfair."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A friend consistently borrows tools without returning them or offering compensation, and the owner must decide whether to confront the issue, potentially straining the friendship, or continue to lend, enabling the unfair behavior."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A team member is not pulling their weight in a group project, leaving others to do more work, and the team lead must choose between addressing the issue, which could lead to conflict, or distributing the workload unevenly to avoid tension."
+    },
+    {
+      "facet": "Self-Sacrificial Tendency",
+      "prompt": "A neighbor's pet is consistently causing damage to nearby properties, and the affected homeowner must decide whether to confront the neighbor about the issue, potentially leading to a strained relationship, or absorb the costs of the damage to maintain neighborhood harmony."
     }
   ]
 }
