@@ -66,10 +66,23 @@ def test_cli_model_override_flags_are_removed(gps_path) -> None:
         raise AssertionError("Expected argparse failure for removed model override flag")
 
 
+def test_cli_use_anchors_accepts_bare_and_explicit_booleans() -> None:
+    parser = run.build_parser()
+
+    assert parser.parse_args(["--use-anchors"]).use_anchors is True
+    assert parser.parse_args(["--use-anchors", "True"]).use_anchors is True
+    assert parser.parse_args(["--use-anchors", "False"]).use_anchors is False
+
+
 def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_path, monkeypatch) -> None:
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    seen_anchor_settings: list[tuple[bool, bool]] = []
+
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         import pandas as pd
 
+        seen_anchor_settings.append((use_anchors, config.use_anchors))
         rows = []
         for country in countries:
             for index in range(3):
@@ -136,6 +149,8 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
             "2,3",
             "--scenarios-per-dim",
             "1",
+            "--use-anchors",
+            "True",
             "--gps-path",
             str(gps_path),
             "--output-dir",
@@ -144,11 +159,13 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     )
 
     assert exit_code == 0
+    assert seen_anchor_settings == [(True, True)]
     assert (output_dir / "D_syn_MEX_2.jsonl").exists()
     assert (output_dir / "D_syn_USA_3.jsonl").exists()
     manifest = json.loads((output_dir / "manifest_3.json").read_text())
     assert manifest["sample_size"] == 3
     assert manifest["config"]["teacher_model"]
+    assert manifest["config"]["use_anchors"] is True
     assert (output_dir / "D_syn_combined_hf_2").exists()
 
 
@@ -184,7 +201,9 @@ def test_cli_resume_uses_checkpoint_without_generation(tmp_path: Path, gps_path,
     generation_called = False
     scoring_input_rows: list[int] = []
 
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         nonlocal generation_called
         generation_called = True
         raise AssertionError("Generation should be skipped when --resume is used")
@@ -385,7 +404,9 @@ def test_cli_resume_country_mismatch_has_clear_argparse_error(tmp_path: Path, gp
 
 
 def test_cli_checkpoint_fallback_after_scoring_failure(tmp_path: Path, gps_path, monkeypatch) -> None:
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         rows = []
         for country in countries:
             rows.append(
@@ -507,7 +528,9 @@ def test_cli_checkpoint_fallback_after_scoring_failure(tmp_path: Path, gps_path,
 def test_cli_skip_unavailable_sample_sizes_exports_feasible_only(
     tmp_path: Path, gps_path, monkeypatch
 ) -> None:
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         rows = []
         for country in countries:
             for index in range(3):
@@ -596,7 +619,9 @@ def test_cli_skip_unavailable_sample_sizes_exports_feasible_only(
 
 
 def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path, monkeypatch) -> None:
-    async def failing_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def failing_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         raise ConnectionError("503 Service Unavailable")
 
     monkeypatch.setattr(generate, "run_teacher_pipeline", failing_run_teacher_pipeline)
@@ -625,7 +650,9 @@ def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path,
 
 
 def test_run_teacher_pipeline_stops_early_on_sustained_failures(monkeypatch) -> None:
-    async def fake_generate_scenarios(dim_key, dim_info, n, config=CONFIG, tracker=None):
+    async def fake_generate_scenarios(
+        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False
+    ):
         return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
 
     async def fake_safe_generate_triplet(*args, **kwargs):

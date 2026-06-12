@@ -57,6 +57,7 @@ async def generate_scenarios(
     n: int,
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
+    use_anchors: bool = False,
 ) -> list[dict[str, str]]:
     """Generate exactly n scenarios for one dimension, grouped by facet."""
 
@@ -64,6 +65,17 @@ async def generate_scenarios(
     facets = await _generate_facets(dim_key, dim_info, config, tracker)
     counts = _allocate_counts(n, len(facets))
     scenarios: list[dict[str, str]] = []
+    anchor_block = ""
+    if use_anchors:
+        anchors = load_anchors(dim_key)[:3]
+        if anchors:
+            anchor_block = (
+                f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
+                "For the scenarios you generate now, use a different setting, decision object, "
+                "social relationship, time horizon, and opportunity cost from every anchor above. "
+                "Avoid repeating a generic community event, garden, fundraiser, or volunteer frame "
+                "across the batch unless the facet specifically requires it.\n"
+            )
 
     for facet, count in zip(facets, counts):
         if count <= 0:
@@ -77,6 +89,7 @@ async def generate_scenarios(
             "Vary social setting and stakes while staying realistic.\n"
             "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
             "or hypothetical pricing decisions.\n"
+            f"{anchor_block}"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scenarios\": [\"...\", \"...\"]}."
         )
@@ -248,6 +261,7 @@ async def run_teacher_pipeline(
             config.scenarios_per_dim,
             config=config,
             tracker=tracker,
+            use_anchors=use_anchors,
         )
         LOGGER.info(
             "Scenario bank ready for %s: %d scenarios",

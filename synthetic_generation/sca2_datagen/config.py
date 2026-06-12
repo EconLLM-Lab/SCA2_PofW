@@ -200,6 +200,7 @@ class PipelineConfig:
     error_rate_window: int = 50
     max_error_rate_for_continue: float = 0.75
     sample_size_policy: str = "skip_unavailable"
+    use_anchors: bool = False
     teacher_temperature: float = 0.7
     generator_temperature: float = 0.8
     scorer_temperature: float = 0.1

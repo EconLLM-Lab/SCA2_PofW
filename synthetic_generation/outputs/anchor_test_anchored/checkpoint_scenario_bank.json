@@ -1,0 +1,134 @@
+{
+  "trust": [
+    {
+      "facet": "Willingness to Cooperate",
+      "prompt": "You're at a music festival and a stranger offers to hold your spot in line for the restroom while you grab a drink, do you accept their offer and leave your belongings with them?"
+    },
+    {
+      "facet": "Assumption of Benevolence",
+      "prompt": "You're at a music festival and a stranger offers to watch your belongings while you go to the restroom, requiring you to decide whether to trust them with your valuable items in a crowded and somewhat chaotic environment."
+    },
+    {
+      "facet": "Tolerance for Uncertainty",
+      "prompt": "As the new manager of a small, family-owned restaurant in a rural town, you must decide whether to trust a stranger who walks in off the street and offers to help with a catering order for a large wedding, with no prior experience or references, but a friendly demeanor and a willingness to work for a low wage."
+    },
+    {
+      "facet": "Expectation of Reciprocity",
+      "prompt": "You're at a music festival and lend your portable charger to a stranger who promises to return it after charging their phone, but you're not sure if you'll ever see them again in the crowd. You have to decide whether to trust this person and hand over your charger, potentially risking losing it, or refuse and miss an opportunity to help someone in need."
+    },
+    {
+      "facet": "Disposition to Forgive",
+      "prompt": "After a long-lasting collaboration, a close friend and business partner accidentally reveals a confidential project idea to a rival company, causing significant financial loss, and now asks for a second chance to work together on a new project, requiring you to decide whether to forgive and trust them again, or to end the partnership."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "You've just inherited a small business from a distant relative and must decide whether to invest your own savings in expanding the company, potentially increasing profits but also risking financial loss, or play it safe by maintaining the status quo and avoiding any major financial commitments."
+    },
+    {
+      "facet": "Social Risk Propensity",
+      "prompt": "You're considering switching to a new job in a different city, which would require you to leave your close-knit community and established social network, but offers better career prospects and a higher salary, and you need to decide whether the potential benefits outweigh the risks of starting over in a new place."
+    },
+    {
+      "facet": "Exploratory Risk Seeking",
+      "prompt": "You're the leader of a startup considering whether to pivot your business model to enter a new, untested market with high potential for growth, but also high uncertainty and potential financial losses, while your team is divided on the decision and investors are pressuring for a quick return on investment."
+    },
+    {
+      "facet": "Loss Aversion",
+      "prompt": "You're the manager of a small startup, considering whether to invest a significant portion of your budget in a new marketing campaign that could either greatly increase your customer base or lead to a substantial financial loss, and you need to decide how to proceed with the limited resources you have, while also being aware of the potential consequences of failure on your team's morale and job security."
+    },
+    {
+      "facet": "Ambiguity Acceptance",
+      "prompt": "You're the leader of a startup considering whether to launch a new product line in an untested market, which could either greatly expand your customer base or lead to significant financial losses, and you must decide based on incomplete information about consumer demand and competitor responses."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "You're a freelance writer working on a book project with a potential publisher, and you must decide whether to submit your manuscript now and risk it being rejected due to its incomplete state, or to wait another three months to refine it, potentially increasing its chances of being accepted, but delaying your payment and publication."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "You're a freelance writer working on a book project with a potential publisher, and you must decide whether to spend the next three months editing and refining your manuscript for a higher chance of a lucrative publishing deal, or to submit it as-is for a quicker, but possibly smaller, payout. Your friends are all eager to read your work and are pressuring you to finish soon, but you know that taking your time will result in a better product. The publishing deal could make or break your career as a writer."
+    },
+    {
+      "facet": "time discounting",
+      "prompt": "You're a freelance writer working on a book, and you must decide whether to take a break now and attend your friend's birthday party tonight or put in extra hours to meet the looming deadline, potentially allowing you to take a longer, more relaxing vacation in a few months."
+    },
+    {
+      "facet": "goal persistence",
+      "prompt": "You're working on a long-term research project with a tight deadline and your colleague suggests taking a break to attend a conference that might not be directly relevant to your current task, but could potentially lead to new insights and collaborations in the future, how do you decide whether to attend or stay focused on your project?"
+    },
+    {
+      "facet": "impulsivity resistance",
+      "prompt": "You're a freelance writer working on a deadline-sensitive project, and you must decide whether to take a break to attend a friend's spontaneous game night or stay focused on meeting the looming deadline to ensure a timely payment and maintain your professional reputation."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "donating to strangers",
+      "prompt": "You're at a charity gala where you've been seated next to a wealthy donor who has just announced a large pledge to a local food bank, and now it's your turn to make a public donation, with the organizer specifically highlighting the impact of collective giving on the community's most vulnerable members. As you consider your contribution, you notice that several tables of strangers around you are eagerly waiting to see what you'll give, and the atmosphere is filled with a sense of camaraderie and shared purpose."
+    },
+    {
+      "facet": "volunteering time",
+      "prompt": "You are a university student and your professor asks if you would be willing to volunteer 5 hours of your time to help organize a charity event on campus, which aims to raise funds for a local food bank, and you have to decide whether to participate or focus on your upcoming exams."
+    },
+    {
+      "facet": "charitable giving to known groups",
+      "prompt": "You are attending a fundraising dinner at your alma mater, where you are asked to consider making a donation to support a new scholarship fund for underprivileged students, with the option to donate anonymously or have your name recognized as a major donor. The dinner is attended by your former classmates, professors, and the university's administration. As you ponder your decision, you think about the potential impact of your donation on the students' lives."
+    },
+    {
+      "facet": "anonymous giving",
+      "prompt": "You are at a fundraising event for a local food bank, and as you're about to leave, the organizer mentions that any remaining donations will be matched by an anonymous benefactor, prompting you to consider giving a portion of your wallet's contents without anyone knowing, including the event staff."
+    },
+    {
+      "facet": "sacrificing personal gain for others' benefit",
+      "prompt": "You are at a family reunion and your cousin, who has been struggling to make ends meet, mentions that their child's school is in dire need of new musical instruments, and you consider donating your own unused instrument collection to help, even though it holds sentimental value and you had considered passing it down to your own children one day."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "Reciprocal Altruism",
+      "prompt": "While on a solo hike, you get lost in the woods and a local stranger, who was on their way to work, spends an hour guiding you back to the trailhead, now you're back in town and you see them at a community event, do you offer to buy them dinner as a thank you?"
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "After a stranger helps you carry your heavy luggage up the stairs at a busy train station, they decline your offer to buy them a coffee, but you still want to show your appreciation, so you consider sending them a small gift or a thank-you note in the mail."
+    },
+    {
+      "facet": "Social Obligation",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they handed you their business card and said 'no need to pay me back, but if you're ever in my city, look me up and I'll show you around,' and now you're planning a trip to that city and wondering if you should reach out to them."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "After a stranger helped you carry your heavy luggage up the stairs at a busy train station, they asked if you could help them move into a new apartment the following weekend, which would require taking a day off work and potentially missing an important meeting, what would you do?"
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "A friend of a friend, who you had never met before, drove you to the airport during a heavy snowstorm, putting their own safety at risk, and now they are asking if you could dog-sit for them for a week while they are on vacation, which would mean rearranging your own plans and taking on significant responsibility, would you agree?"
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "Cost tolerance",
+      "prompt": "You're at a family dinner and your cousin, who makes significantly more than you, offers to split the bill evenly despite ordering the most expensive dishes, would you speak up and suggest a more fair split even if it might lead to an awkward conversation?"
+    },
+    {
+      "facet": "Norm enforcement",
+      "prompt": "As the leader of a community garden, you notice that one member consistently takes more than their share of shared tools and resources without contributing to the maintenance, and you must decide whether to confront them and risk causing tension within the group or let it slide and potentially create a sense of unfairness among other members."
+    },
+    {
+      "facet": "Emotional reactivity",
+      "prompt": "You're at a family dinner and your cousin, who makes significantly more than you, offers to split the bill evenly despite ordering the most expensive dishes, and you must decide whether to speak up or let it slide."
+    },
+    {
+      "facet": "Fairness sensitivity",
+      "prompt": "You're at a family dinner and your cousin, who makes significantly more than you, offers to split the bill evenly, despite having ordered the most expensive dishes, and you must decide whether to accept or speak up about the unfairness, potentially causing tension."
+    },
+    {
+      "facet": "Retributive motivation",
+      "prompt": "You're a member of a community garden where everyone is expected to contribute equally to upkeep, but you notice one member consistently neglects their duties, and you must decide whether to confront them and risk causing tension or ignore the issue and maintain harmony, even though their lack of effort affects your own plot's prosperity."
+    }
+  ]
+}

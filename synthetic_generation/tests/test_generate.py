@@ -2,10 +2,11 @@ import asyncio
 import inspect
 
 from sca2_datagen.config import CONFIG, CostTracker, GPS_DIMENSIONS
+from sca2_datagen.anchors import ANCHOR_FIELDS, load_anchors
 from sca2_datagen import generate
 
 
-async def _run_generate_scenarios() -> tuple[list[dict[str, str]], list[str]]:
+async def _run_generate_scenarios(use_anchors: bool = False) -> tuple[list[dict[str, str]], list[str]]:
     prompts: list[str] = []
 
     async def fake_tracked_completion(block, tracker, **kwargs):
@@ -27,6 +28,7 @@ async def _run_generate_scenarios() -> tuple[list[dict[str, str]], list[str]]:
             4,
             config=CONFIG,
             tracker=CostTracker(),
+            use_anchors=use_anchors,
         )
     finally:
         generate.utils.tracked_completion = original
@@ -38,6 +40,15 @@ def test_generate_scenarios_uses_facets_and_exclusions() -> None:
     assert rows
     assert any("4 to 6 distinct sub-dimensions or facets" in prompt for prompt in prompts)
     assert any("Do NOT generate scenarios requiring numerical calculations" in prompt for prompt in prompts)
+
+
+def test_generate_scenarios_can_include_anchor_block() -> None:
+    _, prompts = asyncio.run(_run_generate_scenarios(use_anchors=True))
+    scenario_prompts = [prompt for prompt in prompts if "Generate exactly" in prompt]
+
+    assert any("## High-Quality Reference Anchors for the trust dimension" in prompt for prompt in scenario_prompts)
+    assert any("The Open Shelf Steward" in prompt for prompt in scenario_prompts)
+    assert any("use a different setting, decision object" in prompt for prompt in scenario_prompts)
 
 
 def test_generate_triplet_has_no_country_or_z_arguments() -> None:
@@ -112,12 +123,25 @@ def test_generate_triplet_can_include_anchor_block() -> None:
 
     asyncio.run(run_test())
     assert any("## High-Quality Reference Anchors for the trust dimension" in prompt for prompt in prompts)
-    assert any("The Anonymous Well Contributor" in prompt for prompt in prompts)
+    assert any("The Open Shelf Steward" in prompt for prompt in prompts)
+    assert any("Core tradeoff:" in prompt for prompt in prompts)
     assert any("Return ONLY a valid JSON object" in prompt for prompt in prompts)
 
 
+def test_anchor_files_use_required_schema_and_three_per_dimension() -> None:
+    for dimension in GPS_DIMENSIONS:
+        anchors = load_anchors(dimension)
+        assert len(anchors) == 3
+        assert all(set(anchor) == ANCHOR_FIELDS for anchor in anchors)
+        assert len({anchor["id"] for anchor in anchors}) == 3
+        assert all(anchor["full_scenario"].count(".") >= 2 for anchor in anchors)
+        assert all(anchor["core_tradeoff"].strip().endswith(".") for anchor in anchors)
+
+
 def test_run_teacher_pipeline_reuses_fixed_options_and_only_selects_per_country(monkeypatch) -> None:
-    async def fake_generate_scenarios(dim_key, dim_info, n, config=CONFIG, tracker=None):
+    async def fake_generate_scenarios(
+        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False
+    ):
         return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
 
     triplet_calls: list[tuple[str, str]] = []

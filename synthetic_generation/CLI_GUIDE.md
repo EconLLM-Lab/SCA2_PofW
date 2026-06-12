@@ -113,6 +113,9 @@ What `--resume` does **not** do:
 - `--sample-size-policy {fail_fast,skip_unavailable,degrade_to_feasible}`
   - Controls behavior when requested sample sizes exceed QC-passed rows.
   - Default is `skip_unavailable` (export feasible sizes and record skipped sizes in the manifest).
+- `--use-anchors [True|False]`
+  - Adds three curated anchors for the current GPS dimension to fixed triplet prompts.
+  - A bare `--use-anchors` is equivalent to `--use-anchors True`.
 
 ### Endpoint roles
 

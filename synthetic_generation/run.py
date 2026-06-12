@@ -57,9 +57,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--sample-sizes", type=str, default="")
     parser.add_argument(
         "--use-anchors",
-        action="store_true",
+        nargs="?",
+        const=True,
         default=False,
-        help="Add curated scenario anchors to hf-generator triplet prompts.",
+        type=parse_bool_arg,
+        help="Add curated scenario anchors to hf-generator triplet prompts. Accepts True/False.",
     )
     parser.add_argument("--estimate-only", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
@@ -98,6 +100,19 @@ def parse_sample_sizes(raw: str) -> list[int]:
     if any(sample_size <= 0 for sample_size in sample_sizes):
         raise ValueError("--sample-sizes must contain positive integers.")
     return sample_sizes
+
+
+def parse_bool_arg(raw: str | bool) -> bool:
+    """Parse permissive CLI booleans while keeping bare flags supported."""
+
+    if isinstance(raw, bool):
+        return raw
+    normalized = raw.strip().lower()
+    if normalized in {"1", "true", "yes", "y", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "n", "off"}:
+        return False
+    raise argparse.ArgumentTypeError("expected a boolean value: true or false")
 
 
 def normalize_countries(countries: Sequence[str] | None) -> list[str] | None:
@@ -191,6 +206,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         "error_rate_window": args.error_rate_window,
         "max_error_rate_for_continue": args.max_error_rate_for_continue,
         "sample_size_policy": args.sample_size_policy,
+        "use_anchors": args.use_anchors,
     }
     config = CONFIG.with_overrides(**overrides)
     if config.scenarios_per_dim <= 0:
@@ -241,7 +257,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         config.scenarios_per_dim,
         sample_sizes or "auto",
         config.concurrency,
-        args.use_anchors,
+        config.use_anchors,
         config.teacher_model,
         config.generator_model,
         config.scorer_model,
@@ -281,7 +297,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
                 countries,
                 config=config,
                 tracker=tracker,
-                use_anchors=args.use_anchors,
+                use_anchors=config.use_anchors,
             )
         except Exception as exc:
             raise SystemExit(

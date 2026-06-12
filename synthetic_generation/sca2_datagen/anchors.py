@@ -14,13 +14,13 @@ ANCHOR_FILE_ALIASES = {
     "negrecip": "neg_reciprocity",
 }
 ANCHOR_FIELDS = {
-    "anchor_id",
+    "id",
     "dimension",
-    "primary_facet",
-    "archetype_name",
-    "narrative",
-    "high_response",
-    "low_response",
+    "facet",
+    "archetype",
+    "storyline_skeleton",
+    "full_scenario",
+    "core_tradeoff",
 }
 
 
@@ -56,29 +56,23 @@ def format_anchor_block(dimension: str, anchors: list[dict[str, Any]]) -> str:
     examples = []
     for index, anchor in enumerate(anchors, start=1):
         examples.append(
-            f"Example {index}\n"
-            f"Archetype: {anchor['archetype_name']}\n"
-            f"Narrative: {anchor['narrative']}\n"
-            f"Response A (higher on dimension): {anchor['high_response']}\n"
-            f"Response B (lower on dimension): {anchor['low_response']}"
+            f"Anchor {index}: {anchor['id']}\n"
+            f"Facet: {anchor['facet']}\n"
+            f"Archetype: {anchor['archetype']}\n"
+            f"Structure: {anchor['storyline_skeleton']}\n"
+            f"Scenario: {anchor['full_scenario']}\n"
+            f"Core tradeoff: {anchor['core_tradeoff']}"
         )
 
     return (
         f"## High-Quality Reference Anchors for the {dimension} dimension\n\n"
-        "Study the following curated examples. They show diverse narrative structures and how the "
-        f"{dimension} preference appears in natural language. Use them only as structural guidance.\n\n"
-        "Your new triplet MUST:\n"
-        "- Use a completely different archetype and situational frame from every example below.\n"
-        "- Vary the narrative stage (micro-dyadic, small-community resource, one-shot high-stakes "
-        "anonymous encounter, or repeated-interaction dilemma).\n"
-        "- Maintain absolute cultural neutrality — no countries, ethnic groups, religions, or "
-        "specific institutions.\n"
-        "- Produce responses whose contrast loads primarily on the target dimension with minimal "
-        "confounding.\n\n"
+        "Use these anchors only as calibration examples for realistic economic tradeoffs. "
+        "Do not copy their setting, objects, social distance, timing, or opportunity cost.\n\n"
+        "Your generation MUST:\n"
+        "- Stay structurally different from every anchor below.\n"
+        "- Keep the scenario and both responses culturally neutral: no countries, names, ethnic "
+        "references, or specific institutions.\n"
+        "- Make the behavioral contrast load primarily on the target dimension.\n"
+        "- Avoid reusing the same cost type, social relationship, or time horizon from the anchors.\n\n"
         + "\n\n".join(examples)
-        + "\n\n[Repeat for the other 1-2 sampled anchors]\n\n"
-        "Now generate ONE new triplet in exactly this format:\n\n"
-        "scenario: <fresh narrative>\n"
-        "response_a: <higher on dimension>\n"
-        "response_b: <lower on dimension>"
     )
