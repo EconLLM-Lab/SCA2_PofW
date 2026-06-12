@@ -55,6 +55,12 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--sample-sizes", type=str, default="")
+    parser.add_argument(
+        "--use-anchors",
+        action="store_true",
+        default=False,
+        help="Add curated scenario anchors to hf-generator triplet prompts.",
+    )
     parser.add_argument("--estimate-only", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     parser.add_argument("--gps-path", type=Path, default=None)
@@ -230,11 +236,12 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         countries = countries or CONFIG.default_countries
 
     LOGGER.info(
-        "Run configuration: countries=%s scenarios_per_dim=%d sample_sizes=%s concurrency=%d teacher=%s generator=%s scorer=%s",
+        "Run configuration: countries=%s scenarios_per_dim=%d sample_sizes=%s concurrency=%d use_anchors=%s teacher=%s generator=%s scorer=%s",
         countries,
         config.scenarios_per_dim,
         sample_sizes or "auto",
         config.concurrency,
+        args.use_anchors,
         config.teacher_model,
         config.generator_model,
         config.scorer_model,
@@ -274,6 +281,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
                 countries,
                 config=config,
                 tracker=tracker,
+                use_anchors=args.use_anchors,
             )
         except Exception as exc:
             raise SystemExit(

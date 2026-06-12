@@ -81,6 +81,39 @@ def test_generate_triplet_prompt_is_country_independent() -> None:
     assert message_roles == [["user"]]
     assert not any("MEX" in prompt or "USA" in prompt or "z-score" in prompt for prompt in prompts)
     assert any("Do NOT use phrases like 'As a Mexican' or 'As an American'" in prompt for prompt in prompts)
+    assert not any("High-Quality Reference Anchors" in prompt for prompt in prompts)
+
+
+def test_generate_triplet_can_include_anchor_block() -> None:
+    prompts: list[str] = []
+
+    async def fake_tracked_completion(block, tracker, **kwargs):
+        prompts.append(kwargs["messages"][-1]["content"])
+        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
+            '{"response_a": "High trust option", "response_b": "Low trust option", "reasoning": "R"}'
+        )
+
+    async def run_test() -> None:
+        original = generate.utils.tracked_completion
+        generate.utils.tracked_completion = fake_tracked_completion
+        try:
+            await generate.generate_triplet(
+                "A scenario",
+                "stranger trust",
+                "trust",
+                GPS_DIMENSIONS["trust"],
+                asyncio.Semaphore(1),
+                config=CONFIG,
+                tracker=CostTracker(),
+                use_anchors=True,
+            )
+        finally:
+            generate.utils.tracked_completion = original
+
+    asyncio.run(run_test())
+    assert any("## High-Quality Reference Anchors for the trust dimension" in prompt for prompt in prompts)
+    assert any("The Anonymous Well Contributor" in prompt for prompt in prompts)
+    assert any("Return ONLY a valid JSON object" in prompt for prompt in prompts)
 
 
 def test_run_teacher_pipeline_reuses_fixed_options_and_only_selects_per_country(monkeypatch) -> None:
@@ -90,7 +123,16 @@ def test_run_teacher_pipeline_reuses_fixed_options_and_only_selects_per_country(
     triplet_calls: list[tuple[str, str]] = []
     selection_calls: list[tuple[str, str, str, str, str]] = []
 
-    async def fake_safe_generate_triplet(prompt, facet, dim_key, dim_info, sem, config=CONFIG, tracker=None):
+    async def fake_safe_generate_triplet(
+        prompt,
+        facet,
+        dim_key,
+        dim_info,
+        sem,
+        config=CONFIG,
+        tracker=None,
+        use_anchors=False,
+    ):
         triplet_calls.append((dim_key, prompt))
         return {
             "response_a": f"{prompt} :: high {dim_key}",

@@ -8,6 +8,7 @@ from typing import Any
 
 import pandas as pd
 
+from .anchors import format_anchor_block, load_anchors
 from .config import CONFIG, CostTracker, GPS_DIMENSIONS, PipelineConfig
 from . import utils
 
@@ -104,11 +105,18 @@ async def generate_triplet(
     sem: asyncio.Semaphore,
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
+    use_anchors: bool = False,
 ) -> dict[str, Any]:
     """Generate a country-independent scenario and two opposing response options."""
 
     tracker = tracker or CostTracker()
     async with sem:
+        anchor_block = ""
+        if use_anchors:
+            anchors = load_anchors(dim_key)[:3]
+            if anchors:
+                anchor_block = f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
+
         user_prompt = (
             f"Scenario: {scenario}\n"
             f"Target sub-dimension: {facet}\n"
@@ -121,6 +129,7 @@ async def generate_triplet(
             "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions "
             "through behavioral choices and reasoning patterns, not national identity labels.\n"
             "Do not create a strawman response.\n"
+            f"{anchor_block}"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
         )
@@ -221,6 +230,7 @@ async def run_teacher_pipeline(
     countries: list[str],
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
+    use_anchors: bool = False,
 ) -> tuple[pd.DataFrame, dict[str, list[dict[str, str]]]]:
     """Run scenario generation, fixed triplet generation, and per-country selection."""
 
@@ -265,6 +275,7 @@ async def run_teacher_pipeline(
                 sem,
                 config=config,
                 tracker=tracker,
+                use_anchors=use_anchors,
             )
             for dim_key, facet, prompt in chunk_specs
         ]
