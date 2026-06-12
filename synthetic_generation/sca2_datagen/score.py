@@ -102,9 +102,8 @@ async def run_scoring_qc_export(
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Score all rows and apply QC filters.
 
-    The monotonicity check includes a small epsilon tolerance for scorer noise so
-    near-ties from the LLM scorer are not treated as directionally meaningful
-    failures.
+    The monotonicity check applies a small negative tolerance
+    (qc_mono_epsilon) for scorer-noise robustness near zero.
     """
 
     tracker = tracker or CostTracker()
