@@ -124,6 +124,7 @@ HF_ENDPOINTS = {
     "hf-teacher": {
         "role": "teacher",
         "base_url": "https://ekrwkvwahr5lvj8c.us-east-1.aws.endpoints.huggingface.cloud/v1/",
+        "base_url_env": "HF_TEACHER_ENDPOINT_URL",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_TEACHER_HOURLY_USD",
         "litellm_model": "",
@@ -132,6 +133,7 @@ HF_ENDPOINTS = {
     "hf-generator": {
         "role": "generator",
         "base_url": "https://qd7j7zt2xlehhoj3.us-east-2.aws.endpoints.huggingface.cloud/v1/",
+        "base_url_env": "HF_GENERATOR_ENDPOINT_URL",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_GENERATOR_HOURLY_USD",
         "litellm_model": "",
@@ -140,6 +142,7 @@ HF_ENDPOINTS = {
     "hf-scorer": {
         "role": "scorer",
         "base_url": "https://hyk3cllaaadt9v5d.us-east-1.aws.endpoints.huggingface.cloud/v1/",
+        "base_url_env": "HF_SCORER_ENDPOINT_URL",
         "api_key_env": "HF_TOKEN",
         "hourly_rate_env": "HF_SCORER_HOURLY_USD",
         "litellm_model": "",
@@ -407,6 +410,15 @@ def _estimate_cost_for_tokens(
 
 def _endpoint_hourly_rate_usd(model: str) -> float:
     return _endpoint_hourly_rate_status(model)["hourly_rate_usd"]
+
+
+def resolve_hf_endpoint_base_url(model: str) -> str:
+    """Resolve a Hugging Face endpoint URL, allowing .env overrides."""
+
+    endpoint = HF_ENDPOINTS[model]
+    env_name = endpoint.get("base_url_env", "")
+    env_value = os.environ.get(env_name, "").strip() if env_name else ""
+    return env_value or endpoint["base_url"]
 
 
 def _endpoint_hourly_rate_status(model: str) -> dict[str, Any]:

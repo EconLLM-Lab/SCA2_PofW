@@ -71,7 +71,8 @@ Exports the filtered dataset as `.jsonl` files (one per country and sample size)
 
 ### Prerequisites
 - Python 3.10+
-- `HF_TOKEN` for the configured Hugging Face Inference Endpoints.
+- A personal Hugging Face token in `HF_TOKEN` with permission to call the configured Inference Endpoints.
+- Hugging Face Inference Endpoint URLs. The repository includes lab defaults, but you can override them in `.env` or with CLI flags.
 - Optional endpoint hourly-rate env vars for nonzero cost estimates:
   `HF_TEACHER_HOURLY_USD`, `HF_GENERATOR_HOURLY_USD`, and `HF_SCORER_HOURLY_USD`.
 - The GPS dataset (`country_gps.dta`)
@@ -82,12 +83,23 @@ Exports the filtered dataset as `.jsonl` files (one per country and sample size)
 # From the monorepo root
 cd synthetic_generation
 
-# Install dependencies
-pip install -r requirements.txt
+# Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
 
-# Copy the environment template and add your HF endpoint token
+# Install dependencies, including test dependencies
+python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
+
+# Copy the environment template and add your personal HF token
 cp .env.example .env
-# Edit .env with HF_TOKEN and, optionally, endpoint hourly rates
+# Edit .env with HF_TOKEN and, optionally, endpoint URLs and hourly rates
+```
+
+Place `country_gps.dta` in one of the default locations listed in `sca2_datagen/config.py`, or pass it explicitly:
+
+```bash
+python run.py --estimate-only --gps-path /path/to/country_gps.dta --countries MEX USA
 ```
 
 ### Before you run anything expensive
@@ -191,7 +203,7 @@ synthetic_generation/
 │   └── utils.py                 ← Shared utilities
 ├── tests/                       ← Unit and integration tests (mocked APIs)
 ├── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
-├── sample_output/               ← Example outputs
+├── sample_output/               ← Legacy illustrative outputs; do not use for current JSONL validation
 └── SCA2_SyntheticDataGeneration_v3.ipynb
 ```
 

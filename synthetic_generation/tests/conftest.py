@@ -36,6 +36,24 @@ def gps_path(tmp_path: Path) -> Path:
                 "posrecip": 0.20,
                 "negrecip": 0.01,
             },
+            {
+                "isocode": "ARG",
+                "trust": -0.05,
+                "risktaking": 0.26,
+                "patience": -0.22,
+                "altruism": -0.18,
+                "posrecip": -0.12,
+                "negrecip": 0.31,
+            },
+            {
+                "isocode": "SWE",
+                "trust": 0.74,
+                "risktaking": 0.33,
+                "patience": 0.45,
+                "altruism": 0.29,
+                "posrecip": 0.18,
+                "negrecip": -0.27,
+            },
         ]
     )
     path = tmp_path / "country_gps.dta"

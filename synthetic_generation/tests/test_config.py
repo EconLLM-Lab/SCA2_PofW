@@ -27,6 +27,8 @@ def test_hf_endpoint_metadata_is_configured() -> None:
     for endpoint in HF_ENDPOINTS.values():
         assert endpoint["base_url"].startswith("https://")
         assert endpoint["base_url"].endswith("/v1/")
+        assert endpoint["base_url_env"].startswith("HF_")
+        assert endpoint["base_url_env"].endswith("_ENDPOINT_URL")
         assert endpoint["api_key_env"] == "HF_TOKEN"
         assert endpoint["hourly_rate_env"].startswith("HF_")
         assert endpoint["hourly_rate_env"].endswith("_HOURLY_USD")

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 import run
 from sca2_datagen import generate, score
@@ -26,6 +27,24 @@ def test_estimate_only_runs(caplog, gps_path) -> None:
         ]
     )
     assert exit_code == 0
+
+
+def test_estimate_only_normalizes_non_default_countries(gps_path, caplog) -> None:
+    with caplog.at_level("INFO", logger="sca2_datagen.run"):
+        exit_code = run.main(
+            [
+                "--estimate-only",
+                "--countries",
+                "arg",
+                "swe",
+                "--scenarios-per-dim",
+                "20",
+                "--gps-path",
+                str(gps_path),
+            ]
+        )
+    assert exit_code == 0
+    assert "countries=['ARG', 'SWE']" in caplog.text
 
 
 def test_cli_model_override_flags_are_removed(gps_path) -> None:
@@ -238,6 +257,133 @@ def test_cli_resume_uses_checkpoint_without_generation(tmp_path: Path, gps_path,
     assert (output_dir / "manifest_1.json").exists()
 
 
+def test_cli_resume_defaults_to_checkpoint_countries(tmp_path: Path, gps_path, monkeypatch) -> None:
+    checkpoint_path = tmp_path / "checkpoint_raw_pairs.jsonl"
+    checkpoint_df = pd.DataFrame(
+        [
+            {
+                "prompt": "prompt-ARG-0",
+                "facet": "facet",
+                "gps_dimension": "trust",
+                "country": "arg",
+                "chosen": "chosen",
+                "rejected": "rejected",
+                "reasoning": "generation",
+            },
+            {
+                "prompt": "prompt-SWE-0",
+                "facet": "facet",
+                "gps_dimension": "trust",
+                "country": "SWE",
+                "chosen": "chosen",
+                "rejected": "rejected",
+                "reasoning": "generation",
+            },
+        ]
+    )
+    checkpoint_df.to_json(checkpoint_path, orient="records", lines=True)
+
+    seen_profile_countries: list[list[str]] = []
+
+    async def should_not_generate(cultural_profiles, countries, config=CONFIG, tracker=None):
+        raise AssertionError("Generation should be skipped when --resume is used")
+
+    async def fake_run_scoring_qc_export(df_raw, cultural_profiles, config=CONFIG, tracker=None):
+        seen_profile_countries.append(sorted(cultural_profiles))
+        rows = []
+        for _, row in df_raw.iterrows():
+            rows.append(
+                {
+                    "prompt": row["prompt"],
+                    "facet": row["facet"],
+                    "chosen": row["chosen"],
+                    "rejected": row["rejected"],
+                    "gps_dimension": row["gps_dimension"],
+                    "country": row["country"],
+                    "generation_reasoning": row["reasoning"],
+                    "reasoning": "score",
+                    "m_chosen": 0.9,
+                    "m_rejected": 0.2,
+                    "m_diff_signed": 0.7,
+                    "m_diff_abs": 0.7,
+                    "z_value": 0.1,
+                    "contamination_ratio": 1.0,
+                    "m_chosen_trust": 0.9,
+                    "m_rejected_trust": 0.2,
+                    "m_chosen_risktaking": 0.1,
+                    "m_rejected_risktaking": 0.2,
+                    "m_chosen_patience": 0.1,
+                    "m_rejected_patience": 0.2,
+                    "m_chosen_altruism": 0.1,
+                    "m_rejected_altruism": 0.2,
+                    "m_chosen_posrecip": 0.1,
+                    "m_rejected_posrecip": 0.2,
+                    "m_chosen_negrecip": 0.1,
+                    "m_rejected_negrecip": 0.2,
+                }
+            )
+        return pd.DataFrame(rows), {
+            "total": len(rows),
+            "score_fail": 0,
+            "mono_fail": 0,
+            "dist_fail": 0,
+            "pass": len(rows),
+        }
+
+    monkeypatch.setattr(generate, "run_teacher_pipeline", should_not_generate)
+    monkeypatch.setattr(score, "run_scoring_qc_export", fake_run_scoring_qc_export)
+
+    output_dir = tmp_path / "outputs"
+    exit_code = run.main(
+        [
+            "--resume",
+            str(checkpoint_path),
+            "--sample-sizes",
+            "1",
+            "--gps-path",
+            str(gps_path),
+            "--output-dir",
+            str(output_dir),
+        ]
+    )
+
+    assert exit_code == 0
+    assert seen_profile_countries == [["ARG", "SWE"]]
+    manifest = json.loads((output_dir / "manifest_1.json").read_text())
+    assert sorted(manifest["countries"]) == ["ARG", "SWE"]
+
+
+def test_cli_resume_country_mismatch_has_clear_argparse_error(tmp_path: Path, gps_path) -> None:
+    checkpoint_path = tmp_path / "checkpoint_raw_pairs.jsonl"
+    pd.DataFrame(
+        [
+            {
+                "prompt": "prompt-ARG-0",
+                "facet": "facet",
+                "gps_dimension": "trust",
+                "country": "ARG",
+                "chosen": "chosen",
+                "rejected": "rejected",
+                "reasoning": "generation",
+            }
+        ]
+    ).to_json(checkpoint_path, orient="records", lines=True)
+
+    with pytest.raises(SystemExit) as exc_info:
+        run.main(
+            [
+                "--resume",
+                str(checkpoint_path),
+                "--countries",
+                "MEX",
+                "--gps-path",
+                str(gps_path),
+            ]
+        )
+
+    assert exc_info.value.code == 2
+
+
 def test_cli_checkpoint_fallback_after_scoring_failure(tmp_path: Path, gps_path, monkeypatch) -> None:
     async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
         rows = []
@@ -276,10 +422,11 @@ def test_cli_checkpoint_fallback_after_scoring_failure(tmp_path: Path, gps_path,
                 str(output_dir),
             ]
         )
-    except ConnectionError as exc:
+    except SystemExit as exc:
         assert "Simulated internet error" in str(exc)
+        assert "Resume with --resume" in str(exc)
     else:
-        raise AssertionError("Expected simulated scoring failure to propagate")
+        raise AssertionError("Expected simulated scoring failure to exit with resume guidance")
 
     checkpoint_path = output_dir / "checkpoint_raw_pairs.jsonl"
     assert checkpoint_path.exists()
@@ -446,6 +593,35 @@ def test_cli_skip_unavailable_sample_sizes_exports_feasible_only(
     manifest = json.loads((output_dir / "manifest_2.json").read_text())
     assert manifest["sample_size_policy"] == "skip_unavailable"
     assert any(item["requested"] == 5 for item in manifest["skipped_sample_sizes"])
+
+
+def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path, monkeypatch) -> None:
+    async def failing_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+        raise ConnectionError("503 Service Unavailable")
+
+    monkeypatch.setattr(generate, "run_teacher_pipeline", failing_run_teacher_pipeline)
+
+    output_dir = tmp_path / "outputs"
+    with pytest.raises(SystemExit) as exc_info:
+        run.main(
+            [
+                "--countries",
+                "ARG",
+                "SWE",
+                "--scenarios-per-dim",
+                "1",
+                "--sample-sizes",
+                "1",
+                "--gps-path",
+                str(gps_path),
+                "--output-dir",
+                str(output_dir),
+            ]
+        )
+
+    assert "Generation failed before a raw-pair checkpoint" in str(exc_info.value)
+    assert "larger retry budget" in str(exc_info.value)
+    assert not (output_dir / "checkpoint_raw_pairs.jsonl").exists()
 
 
 def test_run_teacher_pipeline_stops_early_on_sustained_failures(monkeypatch) -> None:

@@ -18,7 +18,7 @@ import litellm
 from litellm import acompletion
 from tqdm.auto import tqdm
 
-from .config import CostTracker, HF_ENDPOINTS, PipelineConfig
+from .config import CostTracker, HF_ENDPOINTS, PipelineConfig, resolve_hf_endpoint_base_url
 
 litellm.drop_params = True
 litellm.suppress_debug_info = True
@@ -168,7 +168,8 @@ async def tracked_completion(
                 f"({model_name})."
             )
         kwargs["model"] = endpoint["litellm_model"]
-        kwargs["base_url"] = endpoint["base_url"]
+        base_url = resolve_hf_endpoint_base_url(str(model_name))
+        kwargs["base_url"] = base_url
         kwargs["api_key"] = token
         kwargs["custom_llm_provider"] = endpoint["custom_llm_provider"]
     elif model_name not in {"unknown", None}:
@@ -184,7 +185,7 @@ async def tracked_completion(
                     "Calling Hugging Face endpoint block=%s model_alias=%s base_url=%s",
                     block,
                     model_name,
-                    endpoint["base_url"],
+                    kwargs["base_url"],
                 )
             response = await acompletion(**kwargs)
             if tracker is not None and getattr(response, "usage", None):

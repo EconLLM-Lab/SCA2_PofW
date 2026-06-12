@@ -15,6 +15,15 @@ python run.py --estimate-only --countries MEX USA
 
 The package expects paths relative to this directory, and the default GPS/WVS path search is written with that assumption in mind.
 
+Use a virtual environment for reproducible setup:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
+```
+
 ## Recommended workflow
 
 For large jobs, do not jump directly to production settings. Use this order:
@@ -98,6 +107,7 @@ What `--resume` does **not** do:
   - Number of raw scenarios to generate per GPS dimension before QC.
 - `--countries MEX USA ARG`
   - Space-separated ISO3 country codes.
+  - Codes are normalized to uppercase. On `--resume`, omitting `--countries` uses the countries found in the checkpoint.
 - `--sample-sizes 100,350,500`
   - Final QC-passed rows per country to export. The pipeline runs once, then writes nested subsets.
 - `--sample-size-policy {fail_fast,skip_unavailable,degrade_to_feasible}`
@@ -118,6 +128,26 @@ Required environment:
 
 ```bash
 HF_TOKEN="hf_..."
+```
+
+Use a personal Hugging Face token. Do not pass tokens as CLI flags; command-line arguments can be captured in shell history and process listings.
+
+The repository has lab default endpoint URLs, but you can override them in `.env`:
+
+```bash
+HF_TEACHER_ENDPOINT_URL="https://.../v1/"
+HF_GENERATOR_ENDPOINT_URL="https://.../v1/"
+HF_SCORER_ENDPOINT_URL="https://.../v1/"
+```
+
+You can also override URLs for one run:
+
+```bash
+python run.py \
+  --countries MEX ARG \
+  --teacher-endpoint-url https://.../v1/ \
+  --generator-endpoint-url https://.../v1/ \
+  --scorer-endpoint-url https://.../v1/
 ```
 
 Optional cost-estimation environment:
@@ -241,6 +271,8 @@ If the logs say an endpoint is "waking up", that usually means Hugging Face scal
 ### JSONL files
 
 Each `D_syn_{country}_{N}.jsonl` file contains the final QC-passed training pairs for one country and one sample size.
+
+Use outputs from a fresh run or from `outputs/`. The checked-in `sample_output/` directory is legacy illustrative material and should not be used to validate current JSONL formatting or English-only generation.
 
 ### Hugging Face dataset directory
 

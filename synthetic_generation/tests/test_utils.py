@@ -39,6 +39,30 @@ def test_tracked_completion_routes_hf_alias_to_openai_compatible_endpoint(monkey
     assert "hf-teacher" in summary["models"]
 
 
+def test_tracked_completion_uses_endpoint_url_env_override(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    async def fake_acompletion(**kwargs):
+        captured.update(kwargs)
+        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response("{}")
+
+    monkeypatch.setenv("HF_TOKEN", "test-token")
+    monkeypatch.setenv("HF_TEACHER_ENDPOINT_URL", "https://example.test/v1/")
+    monkeypatch.setattr(utils, "acompletion", fake_acompletion)
+
+    async def run_test() -> None:
+        await utils.tracked_completion(
+            "test:block",
+            CostTracker(),
+            config=CONFIG,
+            model="hf-teacher",
+            messages=[{"role": "user", "content": "Return {}"}],
+        )
+
+    asyncio.run(run_test())
+    assert captured["base_url"] == "https://example.test/v1/"
+
+
 def test_parse_json_response_accepts_first_json_object_with_trailing_text() -> None:
     response = __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
         '{"scenarios": ["one"]}\nNote: done'
