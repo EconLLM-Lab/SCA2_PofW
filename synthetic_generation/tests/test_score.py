@@ -79,7 +79,50 @@ def test_run_scoring_qc_export_filters_and_keeps_contamination() -> None:
     df_final, stats = asyncio.run(run_test())
     assert len(df_final) == 1
     assert stats["pass"] == 1
+    assert stats["per_dimension"]["trust"]["pass"] == 1
     assert df_final.iloc[0]["contamination_ratio"] is not None
+    assert df_final.iloc[0]["contamination_category"] == "high"
+
+
+def test_run_scoring_qc_export_allows_mono_epsilon_near_tie() -> None:
+    async def fake_score_pair(*args, **kwargs):
+        return (
+            {"trust": 0.49, "risktaking": 0.5, "patience": 0.5, "altruism": 0.5, "posrecip": 0.5, "negrecip": 0.5},
+            {"trust": 0.50, "risktaking": 0.5, "patience": 0.5, "altruism": 0.5, "posrecip": 0.5, "negrecip": 0.5},
+            "reasoning",
+        )
+
+    async def run_test():
+        original = score.score_pair
+        score.score_pair = fake_score_pair
+        try:
+            df_raw = pd.DataFrame(
+                [
+                    {
+                        "prompt": "scenario",
+                        "facet": "facet",
+                        "chosen": "chosen",
+                        "rejected": "rejected",
+                        "gps_dimension": "trust",
+                        "country": "USA",
+                        "reasoning": "generation",
+                    }
+                ]
+            )
+            profiles = {"USA": {"z_c": {"trust": 0.35}}}
+            config = CONFIG.with_overrides(qc_distance_thresh=0.0, qc_mono_epsilon=0.03)
+            return await score.run_scoring_qc_export(
+                df_raw,
+                profiles,
+                config=config,
+                tracker=CostTracker(),
+            )
+        finally:
+            score.score_pair = original
+
+    df_final, stats = asyncio.run(run_test())
+    assert len(df_final) == 1
+    assert stats["pass"] == 1
 
 
 def test_run_scoring_qc_export_counts_failed_scores() -> None:

@@ -166,6 +166,14 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     assert manifest["sample_size"] == 3
     assert manifest["config"]["teacher_model"]
     assert manifest["config"]["use_anchors"] is True
+    assert manifest["config"]["qc_mono_epsilon"] == 0.03
+    assert manifest["qc_pass_rate"] == 1.0
+    assert manifest["mono_fail_rate"] == 0.0
+    assert manifest["dist_fail_rate"] == 0.0
+    assert manifest["contamination_distribution"]["high"]["count"] == 6
+    assert manifest["mean_m_diff_abs"] == 0.7
+    assert "trust" in manifest["per_dimension_qc"]
+    assert manifest["qc_health_summary"]
     assert (output_dir / "D_syn_combined_hf_2").exists()
 
 

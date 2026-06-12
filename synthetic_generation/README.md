@@ -56,11 +56,27 @@ Four-step architecture:
 4. **Profile-based selection** (Stage 2b): For each country, the scorer endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
 
 ### Block D — Scoring and quality control
-Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters are applied on the target dimension:
-- **Monotonicity:** The score difference must point in the correct GPS direction.
-- **Feature distance:** The absolute score difference must exceed a minimum threshold (default: 0.20).
+Each pair is scored on all 6 GPS dimensions in a single API call. For the target GPS dimension,
+`m_chosen` and `m_rejected` are the scorer's 0-1 ratings for the selected and rejected
+responses. `m_diff_signed = m_chosen - m_rejected`, `m_diff_abs` is its absolute value, and
+`z_value` is the country's standardized GPS score on that dimension.
 
-A contamination ratio diagnostic tracks how much non-target dimensions bleed into the scoring.
+Two QC filters are applied on the target dimension only:
+- **Monotonicity:** `m_diff_signed` must point in the same direction as `z_value`, with a small
+  epsilon tolerance (`qc_mono_epsilon`, default: 0.03) for LLM scorer noise near zero.
+- **Feature distance:** `m_diff_abs` must exceed a minimum threshold (default: 0.20), ensuring the
+  preference contrast is behaviorally meaningful.
+
+`contamination_ratio` measures non-target movement: the sum of absolute score differences across
+the other five GPS dimensions divided by the target-dimension difference. `contamination_category`
+bins that diagnostic as `low` (<0.3), `medium` (<0.7), or `high` (>=0.7). We track it to identify
+pairs that pass target-dimension QC but may also encode other cultural traits.
+
+For DPO and structural validation, a high-quality generated dataset should have strong QC pass
+rates, low monotonicity and distance failure rates, contamination concentrated in the low/medium
+buckets, and signed differences aligned with the country GPS `z_value`. High-contamination
+dimensions should be reviewed before downstream use, but contamination remains diagnostic rather
+than an additional hard filter.
 
 ### Block E — Export and cost summary
 Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, token usage, elapsed-runtime endpoint cost estimate, and git hash.

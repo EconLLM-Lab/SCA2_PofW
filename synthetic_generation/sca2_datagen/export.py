@@ -108,6 +108,107 @@ def summarize_qc(df_final: pd.DataFrame, qc_stats: dict[str, Any]) -> None:
         LOGGER.info("Per-dimension counts: %s", df_final["gps_dimension"].value_counts().to_dict())
 
 
+def _safe_rate(numerator: float, denominator: float) -> float:
+    return round(float(numerator) / float(denominator), 4) if denominator else 0.0
+
+
+def _contamination_category(value: Any) -> str | None:
+    if pd.isna(value):
+        return None
+    value = float(value)
+    if value < 0.3:
+        return "low"
+    if value < 0.7:
+        return "medium"
+    return "high"
+
+
+def _contamination_distribution(df: pd.DataFrame) -> dict[str, dict[str, float | int]]:
+    if df.empty:
+        return {key: {"count": 0, "share": 0.0} for key in ("low", "medium", "high")}
+    if "contamination_category" in df.columns:
+        categories = df["contamination_category"].dropna()
+    else:
+        categories = df["contamination_ratio"].dropna().map(_contamination_category)
+    counts = categories.value_counts().to_dict()
+    total = sum(int(counts.get(key, 0)) for key in ("low", "medium", "high"))
+    return {
+        key: {
+            "count": int(counts.get(key, 0)),
+            "share": _safe_rate(int(counts.get(key, 0)), total),
+        }
+        for key in ("low", "medium", "high")
+    }
+
+
+def _per_dimension_qc_breakdown(df: pd.DataFrame, qc_stats: dict[str, Any]) -> dict[str, dict[str, float | int]]:
+    per_dimension_stats = qc_stats.get("per_dimension", {})
+    breakdown: dict[str, dict[str, float | int]] = {}
+    for dim in GPS_DIMENSIONS:
+        dim_subset = df.loc[df["gps_dimension"] == dim] if not df.empty else df
+        dim_stats = per_dimension_stats.get(dim, {})
+        total = int(dim_stats.get("total", 0))
+        passed = int(dim_stats.get("pass", len(dim_subset)))
+        contamination = dim_subset["contamination_ratio"].dropna() if "contamination_ratio" in dim_subset else pd.Series(dtype=float)
+        breakdown[dim] = {
+            "total": total,
+            "pass": passed,
+            "pass_rate": _safe_rate(passed, total) if total else (1.0 if passed else 0.0),
+            "mean_contamination_ratio": (
+                round(float(contamination.mean()), 4) if not contamination.empty else 0.0
+            ),
+        }
+    return breakdown
+
+
+def _qc_health_summary(
+    qc_pass_rate: float,
+    mono_fail_rate: float,
+    dist_fail_rate: float,
+    contamination_distribution: dict[str, dict[str, float | int]],
+) -> str:
+    low_share = float(contamination_distribution.get("low", {}).get("share", 0.0))
+    high_share = float(contamination_distribution.get("high", {}).get("share", 0.0))
+    if qc_pass_rate >= 0.7 and mono_fail_rate <= 0.1 and high_share <= 0.25:
+        return "Good: high QC pass rate, low monotonicity failure, and limited high contamination."
+    if qc_pass_rate >= 0.5 and mono_fail_rate <= 0.25 and low_share >= high_share:
+        return "Usable: moderate QC pass rate with contamination concentrated outside the high bucket."
+    return "Review: inspect monotonicity failures, distance failures, and high-contamination dimensions before downstream use."
+
+
+def build_qc_manifest_summary(subset: pd.DataFrame, qc_stats: dict[str, Any]) -> dict[str, Any]:
+    """Build manifest-ready QC observability metrics for the exported rows."""
+
+    total = int(qc_stats.get("total", 0))
+    passed = int(qc_stats.get("pass", len(subset)))
+    mono_fail = int(qc_stats.get("mono_fail", 0))
+    dist_fail = int(qc_stats.get("dist_fail", 0))
+    contamination_distribution = _contamination_distribution(subset)
+    qc_pass_rate = _safe_rate(passed, total)
+    mono_fail_rate = _safe_rate(mono_fail, total)
+    dist_fail_rate = _safe_rate(dist_fail, total)
+    contamination_values = subset["contamination_ratio"].dropna() if "contamination_ratio" in subset else pd.Series(dtype=float)
+    mean_m_diff_abs = round(float(subset["m_diff_abs"].mean()), 4) if not subset.empty else 0.0
+    mean_contamination_ratio = (
+        round(float(contamination_values.mean()), 4) if not contamination_values.empty else 0.0
+    )
+    return {
+        "qc_pass_rate": qc_pass_rate,
+        "mono_fail_rate": mono_fail_rate,
+        "dist_fail_rate": dist_fail_rate,
+        "mean_contamination_ratio": mean_contamination_ratio,
+        "contamination_distribution": contamination_distribution,
+        "mean_m_diff_abs": mean_m_diff_abs,
+        "per_dimension_qc": _per_dimension_qc_breakdown(subset, qc_stats),
+        "qc_health_summary": _qc_health_summary(
+            qc_pass_rate,
+            mono_fail_rate,
+            dist_fail_rate,
+            contamination_distribution,
+        ),
+    }
+
+
 def export_sample_runs(
     df_final: pd.DataFrame,
     sample_sizes: list[int],
@@ -153,6 +254,7 @@ def export_sample_runs(
 
         hf_path = output_root / f"D_syn_combined_hf_{sample_size}"
         Dataset.from_pandas(subset.reset_index(drop=True)).save_to_disk(str(hf_path))
+        qc_manifest_summary = build_qc_manifest_summary(subset, qc_stats)
 
         manifest = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -166,14 +268,10 @@ def export_sample_runs(
             "tier_2_items": [q for q, value in WVS_ITEM_MAP.items() if value["tier"] == 2],
             "tier_3_items": [q for q, value in WVS_ITEM_MAP.items() if value["tier"] == 3],
             "qc_stats": qc_stats,
+            **qc_manifest_summary,
             "per_dim_counts": subset["gps_dimension"].value_counts().to_dict(),
             "per_country_counts": subset["country"].value_counts().to_dict(),
-            "mean_feature_distance": round(float(subset["m_diff_abs"].mean()), 4) if not subset.empty else 0.0,
-            "mean_contamination_ratio": (
-                round(float(subset["contamination_ratio"].dropna().mean()), 4)
-                if not subset["contamination_ratio"].dropna().empty
-                else 0.0
-            ),
+            "mean_feature_distance": qc_manifest_summary["mean_m_diff_abs"],
             "per_dim_contamination": {
                 dim: round(
                     float(subset.loc[subset["gps_dimension"] == dim, "contamination_ratio"].dropna().mean()),

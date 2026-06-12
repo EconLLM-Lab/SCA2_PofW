@@ -202,6 +202,7 @@ class PipelineConfig:
     scorer_model: str = "hf-scorer"
     scenarios_per_dim: int = 20
     qc_distance_thresh: float = 0.20
+    qc_mono_epsilon: float = 0.03
     concurrency: int = 2
     max_retries: int = 8
     retry_backoff_min_s: float = 1.0
