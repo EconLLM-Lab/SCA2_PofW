@@ -21,6 +21,11 @@ Each file is validated for `prompt`, `chosen`, `rejected`, `country`, and
 Run training in a Colab GPU runtime. A100 or L4 is preferred; T4 may be slow or
 memory constrained.
 
+For the current stable Colab checkpoint, use
+[`COLAB_CHECKPOINT.md`](COLAB_CHECKPOINT.md). It starts from cloning the
+`feature/scenario-anchors-v1` branch and includes the Drive-backed commands used
+for the anchored pilot run.
+
 1. Confirm Hugging Face access to `meta-llama/Llama-3.1-8B-Instruct`.
 2. Create or use a Hugging Face token with read access.
 3. Upload or clone this repo in Colab.
