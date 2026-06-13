@@ -140,6 +140,8 @@ async def generate_triplet(
             "Generate two opposing responses to this same scenario.\n"
             "- Response A should reflect the high/positive end of the target dimension.\n"
             "- Response B should reflect the low/opposite end of the target dimension.\n"
+            "Vary only the target dimension/facet between Response A and Response B; keep the other five GPS traits (trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity, excluding the target) as constant as possible.\n"
+            "The two responses should be nearly identical in tone, length, and behavioral realism except for the specific choices and reasoning that reflect the target dimension.\n"
             "Both responses must be 2 to 4 sentences, behaviorally realistic, and written in English.\n"
             "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions "
             "through behavioral choices and reasoning patterns, not national identity labels.\n"
