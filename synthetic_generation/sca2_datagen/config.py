@@ -367,13 +367,40 @@ class CostTracker:
                 selection_tokens_out,
             ),
         }
+        stage_estimates = {
+            "scenario_generation": {
+                **breakdown["teacher"],
+                "description": "Facet and scenario-bank generation, shared across countries.",
+            },
+            "fixed_triplet_generation": {
+                **breakdown["generator"],
+                "description": "One fixed A/B triplet per generated scenario.",
+            },
+            "profile_selection": {
+                **breakdown["selection"],
+                "description": "Country-specific chosen/rejected selection for each fixed triplet.",
+            },
+            "scoring_qc": {
+                **breakdown["scorer"],
+                "description": "QC scoring for each country-specific pair.",
+            },
+            "export": {
+                "model": "local",
+                "calls": 0,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "cost_usd": 0.0,
+                "description": "Local JSONL/HF/manifest writes. Nested sample sizes do not add LLM calls.",
+            },
+        }
 
         total_pairs = raw_per_country * len(countries)
+        total_llm_calls = sum(stage["calls"] for stage in stage_estimates.values())
+        total_input_tokens = sum(stage["input_tokens"] for stage in stage_estimates.values())
+        total_output_tokens = sum(stage["output_tokens"] for stage in stage_estimates.values())
         effective_concurrency = max(config.concurrency, 1)
         adjusted_seconds_per_pair = 5.6 / (effective_concurrency / 2)
         total_seconds = int(round(adjusted_seconds_per_pair * total_pairs + 30))
-        hours = total_seconds // 3600
-        minutes = (total_seconds % 3600) // 60
         token_cost = round(
             breakdown["teacher"]["cost_usd"]
             + breakdown["generator"]["cost_usd"]
@@ -382,24 +409,53 @@ class CostTracker:
             6,
         )
         runtime_cost = _estimate_endpoint_runtime_cost(float(total_seconds))
+        country_count = max(len(countries), 1)
+        rough_total_cost = (
+            runtime_cost["total_cost_usd"] if runtime_cost["total_cost_usd"] > 0 else token_cost
+        )
+        variable_token_cost = breakdown["selection"]["cost_usd"] + breakdown["scorer"]["cost_usd"]
+        fixed_token_cost = breakdown["teacher"]["cost_usd"] + breakdown["generator"]["cost_usd"]
 
         return {
             "countries": countries,
+            "country_count": len(countries),
             "scenarios_per_dim": config.scenarios_per_dim,
+            "gps_dimension_count": dims,
             "raw_pairs_per_country": raw_per_country,
+            "raw_pairs_total": total_pairs,
             "expected_qc_passed_per_country": expected_pass_per_country,
             "estimated_qc_pass_rate": config.estimate.estimated_qc_pass_rate,
+            "sample_sizes": sample_sizes or [],
             "max_requested_sample_size": max_requested_sample,
             "estimated_facets_per_dimension": estimated_facets,
+            "total_llm_calls": total_llm_calls,
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "stage_estimates": stage_estimates,
             "breakdown": breakdown,
             "token_pricing_cost_usd": token_cost,
             "endpoint_runtime_cost": runtime_cost,
-            "total_cost_usd": (
-                runtime_cost["total_cost_usd"] if runtime_cost["total_cost_usd"] > 0 else token_cost
-            ),
+            "total_cost_usd": rough_total_cost,
+            "rough_cost_per_country_usd": round(rough_total_cost / country_count, 6),
+            "token_cost_basis": {
+                "fixed_shared_cost_usd": round(fixed_token_cost, 6),
+                "variable_country_cost_usd": round(variable_token_cost / country_count, 6),
+                "note": (
+                    "Token-pricing costs are zero for the configured Hugging Face endpoints; "
+                    "runtime endpoint cost is usually the relevant budget number."
+                ),
+            },
+            "major_cost_drivers": {
+                "scenarios_per_dim": config.scenarios_per_dim,
+                "gps_dimensions": dims,
+                "countries": len(countries),
+                "raw_pairs_per_country": raw_per_country,
+                "selection_and_scoring_calls_scale_with": "scenarios_per_dim * gps_dimensions * countries",
+                "nested_sample_sizes_add_llm_calls": False,
+            },
             "estimated_runtime": {
                 "seconds": total_seconds,
-                "human_readable": f"{hours}h {minutes}m",
+                "human_readable": _format_duration(total_seconds),
                 "concurrency": config.concurrency,
                 "note": (
                     "Based on 5.6s/pair at concurrency=2. Actual time depends on API latency "

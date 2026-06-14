@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,21 @@ from .utils import get_git_hash
 
 
 LOGGER = logging.getLogger("sca2_datagen.export")
+
+
+FRONT_JSONL_COLUMNS = [
+    "prompt",
+    "chosen",
+    "rejected",
+    "country",
+    "gps_dimension",
+    "z_value",
+    "contamination_category",
+    "contamination_ratio",
+    "run_id",
+    "export_timestamp",
+    "gps_profile_vector",
+]
 
 
 def prepare_ranked_subsets(df_final: pd.DataFrame, seed: int) -> pd.DataFrame:
@@ -141,6 +157,77 @@ def _contamination_distribution(df: pd.DataFrame) -> dict[str, dict[str, float |
     }
 
 
+def _slugify_run_name(value: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "_", value.strip()).strip("_").lower()
+    return slug or "sca2_generation"
+
+
+def _build_run_id(output_root: Path, timestamp: datetime) -> str:
+    return f"{_slugify_run_name(output_root.name)}_{timestamp.strftime('%Y%m%d_%H%M%SZ')}"
+
+
+def _ordered_columns(df: pd.DataFrame) -> list[str]:
+    front = [column for column in FRONT_JSONL_COLUMNS if column in df.columns]
+    rest = [column for column in df.columns if column not in front]
+    return front + rest
+
+
+def _add_export_metadata(
+    subset: pd.DataFrame,
+    cultural_profiles: dict[str, dict[str, Any]],
+    run_id: str,
+    export_timestamp: str,
+) -> pd.DataFrame:
+    """Add reproducibility metadata without renaming or dropping existing fields."""
+
+    enriched = subset.copy()
+    if "contamination_category" not in enriched.columns and "contamination_ratio" in enriched.columns:
+        enriched["contamination_category"] = enriched["contamination_ratio"].map(_contamination_category)
+    enriched["run_id"] = run_id
+    enriched["export_timestamp"] = export_timestamp
+    enriched["gps_profile_vector"] = enriched["country"].map(
+        lambda country: cultural_profiles.get(str(country), {}).get("z_c", {})
+    )
+    return enriched[_ordered_columns(enriched)]
+
+
+def _per_country_dimension_counts(subset: pd.DataFrame) -> dict[str, dict[str, int]]:
+    counts: dict[str, dict[str, int]] = {}
+    if subset.empty:
+        return counts
+    working = subset.copy()
+    working["country"] = working["country"].astype(str)
+    grouped = working.groupby(["country", "gps_dimension"]).size()
+    for country in sorted(working["country"].dropna().unique()):
+        country_counts: dict[str, int] = {}
+        for dim in GPS_DIMENSIONS:
+            country_counts[dim] = int(grouped.get((country, dim), 0))
+        counts[country] = country_counts
+    return counts
+
+
+def _per_country_contamination_counts(subset: pd.DataFrame) -> dict[str, dict[str, int]]:
+    counts: dict[str, dict[str, int]] = {}
+    if subset.empty:
+        return counts
+    working = subset.copy()
+    working["country"] = working["country"].astype(str)
+    if "contamination_category" not in working.columns and "contamination_ratio" in working.columns:
+        working["contamination_category"] = working["contamination_ratio"].map(_contamination_category)
+    if "contamination_category" not in working.columns:
+        return {
+            country: {"low": 0, "medium": 0, "high": 0}
+            for country in sorted(working["country"].dropna().unique())
+        }
+    grouped = working.groupby(["country", "contamination_category"]).size()
+    for country in sorted(working["country"].dropna().unique()):
+        counts[country] = {
+            category: int(grouped.get((country, category), 0))
+            for category in ("low", "medium", "high")
+        }
+    return counts
+
+
 def _per_dimension_qc_breakdown(df: pd.DataFrame, qc_stats: dict[str, Any]) -> dict[str, dict[str, float | int]]:
     per_dimension_stats = qc_stats.get("per_dimension", {})
     breakdown: dict[str, dict[str, float | int]] = {}
@@ -225,6 +312,9 @@ def export_sample_runs(
 
     output_root = Path(output_dir)
     output_root.mkdir(parents=True, exist_ok=True)
+    export_time = datetime.now(timezone.utc)
+    export_timestamp = export_time.isoformat()
+    run_id = _build_run_id(output_root, export_time)
 
     ranked = prepare_ranked_subsets(df_final, config.seed)
     skipped_sizes: list[dict[str, Any]] = []
@@ -242,22 +332,29 @@ def export_sample_runs(
         subset = ranked[ranked["_sample_rank"] <= sample_size].drop(
             columns=["_sample_rank", "_country_key"], errors="ignore"
         )
+        export_subset = _add_export_metadata(
+            subset,
+            cultural_profiles=cultural_profiles,
+            run_id=run_id,
+            export_timestamp=export_timestamp,
+        )
         LOGGER.info(
             "Exporting sample size %d with %d rows (%s)",
             sample_size,
-            len(subset),
-            subset["country"].value_counts().to_dict() if not subset.empty else {},
+            len(export_subset),
+            export_subset["country"].value_counts().to_dict() if not export_subset.empty else {},
         )
-        for country, group in subset.groupby("country", sort=True):
+        for country, group in export_subset.groupby("country", sort=True):
             jsonl_path = output_root / f"D_syn_{country}_{sample_size}.jsonl"
             group.to_json(jsonl_path, orient="records", lines=True)
 
         hf_path = output_root / f"D_syn_combined_hf_{sample_size}"
-        Dataset.from_pandas(subset.reset_index(drop=True)).save_to_disk(str(hf_path))
+        Dataset.from_pandas(export_subset.reset_index(drop=True)).save_to_disk(str(hf_path))
         qc_manifest_summary = build_qc_manifest_summary(subset, qc_stats)
 
         manifest = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "run_id": run_id,
+            "timestamp": export_timestamp,
             "sample_size": sample_size,
             "sample_size_policy": config.sample_size_policy,
             "skipped_sample_sizes": skipped_sizes,
@@ -271,6 +368,8 @@ def export_sample_runs(
             **qc_manifest_summary,
             "per_dim_counts": subset["gps_dimension"].value_counts().to_dict(),
             "per_country_counts": subset["country"].value_counts().to_dict(),
+            "per_country_dimension_counts": _per_country_dimension_counts(subset),
+            "per_country_contamination_counts": _per_country_contamination_counts(subset),
             "mean_feature_distance": qc_manifest_summary["mean_m_diff_abs"],
             "per_dim_contamination": {
                 dim: round(

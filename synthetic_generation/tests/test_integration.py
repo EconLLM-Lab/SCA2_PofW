@@ -11,7 +11,7 @@ from sca2_datagen import generate, score
 from sca2_datagen.config import CONFIG
 
 
-def test_estimate_only_runs(caplog, gps_path) -> None:
+def test_estimate_only_runs(caplog, capsys, gps_path) -> None:
     exit_code = run.main(
         [
             "--estimate-only",
@@ -27,6 +27,10 @@ def test_estimate_only_runs(caplog, gps_path) -> None:
         ]
     )
     assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "SCA 2.0 generator budget estimate" in out
+    assert "LLM calls and token estimate" in out
+    assert "rough cost per country" in out
 
 
 def test_estimate_only_normalizes_non_default_countries(gps_path, caplog) -> None:
@@ -162,7 +166,26 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     assert seen_anchor_settings == [(True, True)]
     assert (output_dir / "D_syn_MEX_2.jsonl").exists()
     assert (output_dir / "D_syn_USA_3.jsonl").exists()
+    first_export_row = json.loads((output_dir / "D_syn_MEX_2.jsonl").read_text().splitlines()[0])
+    assert list(first_export_row)[:11] == [
+        "prompt",
+        "chosen",
+        "rejected",
+        "country",
+        "gps_dimension",
+        "z_value",
+        "contamination_category",
+        "contamination_ratio",
+        "run_id",
+        "export_timestamp",
+        "gps_profile_vector",
+    ]
+    assert first_export_row["run_id"].startswith("outputs_")
+    assert first_export_row["export_timestamp"]
+    assert first_export_row["gps_profile_vector"]
+    assert first_export_row["contamination_category"] == "high"
     manifest = json.loads((output_dir / "manifest_3.json").read_text())
+    assert manifest["run_id"] == first_export_row["run_id"]
     assert manifest["sample_size"] == 3
     assert manifest["config"]["teacher_model"]
     assert manifest["config"]["use_anchors"] is True
@@ -173,6 +196,10 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     assert manifest["contamination_distribution"]["high"]["count"] == 6
     assert manifest["mean_m_diff_abs"] == 0.7
     assert "trust" in manifest["per_dimension_qc"]
+    assert manifest["per_country_dimension_counts"]["MEX"]["trust"] == 3
+    assert manifest["per_country_dimension_counts"]["USA"]["trust"] == 3
+    assert manifest["per_country_contamination_counts"]["MEX"]["high"] == 3
+    assert manifest["per_country_contamination_counts"]["USA"]["high"] == 3
     assert manifest["qc_health_summary"]
     assert (output_dir / "D_syn_combined_hf_2").exists()
 

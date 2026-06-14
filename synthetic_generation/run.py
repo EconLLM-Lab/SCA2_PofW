@@ -182,6 +182,86 @@ def log_cost_summary(cost_summary: dict) -> None:
         )
 
 
+def _format_cost(value: float | int | None) -> str:
+    return f"${float(value or 0.0):,.2f}"
+
+
+def _format_int(value: float | int | None) -> str:
+    return f"{int(value or 0):,}"
+
+
+def format_estimate_summary(estimate: dict) -> str:
+    """Return a readable budget summary for --estimate-only runs."""
+
+    sample_sizes = estimate.get("sample_sizes") or []
+    runtime_cost = estimate.get("endpoint_runtime_cost", {})
+    endpoint_rows = []
+    for alias, details in runtime_cost.get("endpoints", {}).items():
+        endpoint_rows.append(
+            "  - "
+            f"{details.get('role', alias)} ({alias}): "
+            f"{_format_cost(details.get('cost_usd'))} "
+            f"@ ${float(details.get('hourly_rate_usd', 0.0) or 0.0):.2f}/hr"
+        )
+
+    stage_rows = []
+    for stage_name, stage in estimate.get("stage_estimates", {}).items():
+        stage_rows.append(
+            "  - "
+            f"{stage_name}: calls={_format_int(stage.get('calls'))}, "
+            f"input_tokens={_format_int(stage.get('input_tokens'))}, "
+            f"output_tokens={_format_int(stage.get('output_tokens'))}, "
+            f"token_cost={_format_cost(stage.get('cost_usd'))}"
+        )
+
+    drivers = estimate.get("major_cost_drivers", {})
+    warning = ""
+    max_requested = estimate.get("max_requested_sample_size")
+    expected_pass = estimate.get("expected_qc_passed_per_country")
+    if max_requested and expected_pass and expected_pass < max_requested:
+        warning = (
+            "\n\nBudget note:\n"
+            f"  - Expected QC-passed rows per country ({expected_pass}) is below "
+            f"the largest requested sample size ({max_requested}). Consider a larger "
+            "`--scenarios-per-dim` or accept that larger nested exports may be skipped."
+        )
+
+    return "\n".join(
+        [
+            "",
+            "SCA 2.0 generator budget estimate",
+            "=================================",
+            f"Countries: {', '.join(estimate.get('countries', []))}",
+            f"GPS dimensions: {estimate.get('gps_dimension_count')}",
+            f"Scenarios per dimension: {estimate.get('scenarios_per_dim')}",
+            f"Raw pairs per country: {_format_int(estimate.get('raw_pairs_per_country'))}",
+            f"Raw pairs total: {_format_int(estimate.get('raw_pairs_total'))}",
+            f"Expected QC-passed per country: {_format_int(expected_pass)} "
+            f"(assumed pass rate {float(estimate.get('estimated_qc_pass_rate', 0.0)):.0%})",
+            f"Nested sample sizes: {', '.join(str(size) for size in sample_sizes) if sample_sizes else 'auto'}",
+            "",
+            "LLM calls and token estimate:",
+            *stage_rows,
+            f"  - total: calls={_format_int(estimate.get('total_llm_calls'))}, "
+            f"input_tokens={_format_int(estimate.get('total_input_tokens'))}, "
+            f"output_tokens={_format_int(estimate.get('total_output_tokens'))}",
+            "",
+            "Endpoint runtime cost estimate:",
+            *(endpoint_rows or ["  - no endpoint runtime costs available"]),
+            f"  - total estimated cost: {_format_cost(estimate.get('total_cost_usd'))}",
+            f"  - rough cost per country: {_format_cost(estimate.get('rough_cost_per_country_usd'))}",
+            f"  - estimated runtime: {estimate.get('estimated_runtime', {}).get('human_readable')}",
+            "",
+            "Major cost drivers:",
+            f"  - scenarios_per_dim={drivers.get('scenarios_per_dim')}",
+            f"  - countries={drivers.get('countries')}",
+            f"  - selection/scoring scale: {drivers.get('selection_and_scoring_calls_scale_with')}",
+            f"  - nested sample sizes add LLM calls: {drivers.get('nested_sample_sizes_add_llm_calls')}",
+            warning,
+        ]
+    )
+
+
 async def async_main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI."""
 
@@ -265,7 +345,8 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
 
     if args.estimate_only:
         estimate = tracker.estimate_run(config, countries, sample_sizes=sample_sizes or None)
-        LOGGER.info("Estimate summary: %s", json.dumps(estimate, indent=2))
+        print(format_estimate_summary(estimate), flush=True)
+        LOGGER.debug("Raw estimate JSON: %s", json.dumps(estimate, indent=2))
         log_cost_summary(estimate)
         if sample_sizes and estimate["expected_qc_passed_per_country"] < max(sample_sizes):
             LOGGER.warning(
