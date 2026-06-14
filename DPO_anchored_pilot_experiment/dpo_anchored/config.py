@@ -24,6 +24,8 @@ class ExperimentConfig:
 
     repo_root: Path = repo_root()
     output_root: Path = experiment_root() / "outputs" / "anchored_pilot_v1_dpo"
+    source_dir: Path | None = None
+    source_suffix: str = "_172"
     model_name: str = MODEL_NAME
     train_frac: float = 0.80
     seed: int = 42
@@ -37,9 +39,10 @@ class ExperimentConfig:
     learning_rate: float = 1e-4
     warmup_ratio: float = 0.03
 
-    @property
-    def source_dir(self) -> Path:
-        return self.repo_root / "synthetic_generation" / "outputs" / "anchored_pilot_v1"
+    def __post_init__(self) -> None:
+        if self.source_dir is None:
+            default_source_dir = self.repo_root / "synthetic_generation" / "outputs" / "anchored_pilot_v1"
+            object.__setattr__(self, "source_dir", default_source_dir)
 
     @property
     def splits_dir(self) -> Path:
@@ -63,7 +66,7 @@ class ExperimentConfig:
 
     def source_file(self, country: str) -> Path:
         self.require_country(country)
-        return self.source_dir / f"D_syn_{country}_172.jsonl"
+        return self.source_dir / f"D_syn_{country}{self.source_suffix}.jsonl"
 
     def train_file(self, country: str) -> Path:
         self.require_country(country)

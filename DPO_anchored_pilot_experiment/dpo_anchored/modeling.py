@@ -33,11 +33,10 @@ def require_cuda() -> None:
 
 def build_user_prompt(prompt_text: str) -> str:
     return (
-        "You are answering a questionnaire as an individual person. "
-        "Respond naturally and thoughtfully, as someone would in real life. "
+        "You are responding as an individual person. "
+        "Respond naturally and thoughtfully. "
         "Do not mention being an AI or assistant. "
-        "Keep the answer short, under 3 sentences. "
-        "Give a sincere, human-like answer.\n\n"
+        "Keep the answer short, sincere, and in your own voice.\n\n"
         "Situation:\n"
         f"{prompt_text.strip()}\n\n"
         "Answer:"

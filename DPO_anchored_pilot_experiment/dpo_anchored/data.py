@@ -34,7 +34,11 @@ class ValidationReport:
             self.missing_required == 0
             and self.empty_required == 0
             and self.identical_chosen_rejected == 0
-            and (self.expected_rows is None or self.n_rows == self.expected_rows)
+            and (
+                self.expected_rows is None
+                or self.expected_rows <= 0
+                or self.n_rows == self.expected_rows
+            )
         )
 
 
@@ -54,7 +58,7 @@ def validate_rows(
     rows: list[dict[str, Any]],
     country: str,
     source_file: Path,
-    expected_rows: int | None = 172,
+    expected_rows: int | None = None,
 ) -> ValidationReport:
     missing_required = 0
     empty_required = 0
@@ -82,7 +86,7 @@ def validate_rows(
     )
 
 
-def validate_sources(config: ExperimentConfig, expected_rows: int | None = 172) -> list[ValidationReport]:
+def validate_sources(config: ExperimentConfig, expected_rows: int | None = None) -> list[ValidationReport]:
     reports: list[ValidationReport] = []
     for country in COUNTRIES:
         source_file = config.source_file(country)

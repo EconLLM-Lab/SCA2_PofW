@@ -18,8 +18,19 @@ from dpo_anchored.config import COUNTRIES, ExperimentConfig
 from dpo_anchored.data import prepare_splits, print_reports, validate_sources, write_validation_report
 
 
-def make_config(output_root: Path | None) -> ExperimentConfig:
-    return ExperimentConfig(output_root=output_root) if output_root else ExperimentConfig()
+def make_config(
+    output_root: Path | None,
+    source_dir: Path | None,
+    source_suffix: str | None,
+) -> ExperimentConfig:
+    kwargs: dict[str, object] = {}
+    if output_root is not None:
+        kwargs["output_root"] = output_root
+    if source_dir is not None:
+        kwargs["source_dir"] = source_dir
+    if source_suffix is not None:
+        kwargs["source_suffix"] = source_suffix
+    return ExperimentConfig(**kwargs)
 
 
 def main() -> None:
@@ -29,13 +40,15 @@ def main() -> None:
         choices=("check", "prepare", "smoke", "precompute", "train", "evaluate", "summarize"),
     )
     parser.add_argument("--output-root", type=Path, default=None)
+    parser.add_argument("--source-dir", type=Path, default=None)
+    parser.add_argument("--source-suffix", type=str, default=None)
     parser.add_argument("--country", choices=COUNTRIES, default=None)
     parser.add_argument("--adapter-country", choices=COUNTRIES, default=None)
     parser.add_argument("--max-examples", type=int, default=None)
     parser.add_argument("--no-generate-answers", action="store_true")
     args = parser.parse_args()
 
-    config = make_config(args.output_root)
+    config = make_config(args.output_root, args.source_dir, args.source_suffix)
 
     if args.phase == "check":
         reports = validate_sources(config)
