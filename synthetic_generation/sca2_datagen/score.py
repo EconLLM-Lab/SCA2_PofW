@@ -44,14 +44,14 @@ async def score_pair(
 
     async with sem:
         prompt = (
-            "You are a cultural behavioral scientist scoring responses on six dimensions.\n\n"
+            "You are an expert experimental economist scoring responses on six dimensions.\n\n"
             "DIMENSIONS AND RUBRICS:\n"
             f"{rubric_block}\n\n"
             f"SCENARIO: {scenario}\n\n"
             f"TARGET DIMENSION: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n\n"
             f"RESPONSE A: {chosen_text}\n\n"
             f"RESPONSE B: {rejected_text}\n\n"
-            "Score each response on all 6 dimensions from 0.0 to 1.0.\n"
+            "Score each response from 0.0 to 1.0 on every dimension, where 0.0 represents the lowest possible expression of the trait and 1.0 represents the highest.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scores_a\": {\"trust\": <float>, \"risktaking\": <float>, \"patience\": <float>, "
             "\"altruism\": <float>, \"posrecip\": <float>, \"negrecip\": <float>}, "

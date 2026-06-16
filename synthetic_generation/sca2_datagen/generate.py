@@ -30,7 +30,7 @@ async def _generate_facets(
 ) -> list[str]:
     prompt = (
         "You are an expert experimental economist.\n"
-        f"Break the cultural trait '{dim_key}' into 4 to 6 distinct sub-dimensions or facets.\n"
+        f"Break the cultural trait '{dim_key}' into exactly 5 distinct sub-dimensions (facets).\n"
         f"Trait description: {dim_info['desc']}\n"
         "Return ONLY a valid JSON object, with no markdown or surrounding text, "
         "in the form {\"facets\": [\"...\", \"...\"]}.\n"
@@ -192,10 +192,13 @@ async def select_triplet_for_profile(
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
             f"Country/profile code: {country}\n"
             f"Observed standardized disposition on {dim_key}: {z_c[dim_key]:+.2f}\n\n"
+            f"Profile description:\n{profile_text}\n\n"
             f"Response A: {response_a}\n\n"
             f"Response B: {response_b}\n\n"
-            "Select which fixed response is more aligned with this profile's disposition on the "
-            "target dimension. Do not rewrite either response.\n"
+            "Select which fixed response is more aligned with the profile's disposition on the "
+            "target dimension. The profile has a {z_c[dim_key]:+.2f} standardized score. "
+            "Choose the response that better matches this specific tendency (pay special attention to the sign).\n"
+            "Do not rewrite either response.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
         )

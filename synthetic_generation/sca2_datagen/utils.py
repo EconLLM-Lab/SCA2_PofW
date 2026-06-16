@@ -59,8 +59,7 @@ def log_banner(logger: logging.Logger, text: str, style: str = "double") -> None
     else:
         line = "=" * width
     centered = text.center(width)
-    logger.info(f"
-{line}")
+    logger.info(f"\n{line}")
     logger.info(centered)
     logger.info(line)
 
