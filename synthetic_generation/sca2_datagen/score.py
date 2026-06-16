@@ -171,46 +171,64 @@ async def run_scoring_qc_export(
         dim_stats["total"] += 1
         scores_a = row["scores_a"]
         scores_b = row["scores_b"]
+
+        qc_status = "pass"
+        failure_reason = ""
+        contamination = None
+        contamination_category = None
+        chosen_target = None
+        rejected_target = None
+        signed_diff = None
+        mono_pass = False
+        dist_pass = False
+
         if not isinstance(scores_a, dict) or not isinstance(scores_b, dict):
             stats["score_fail"] += 1
             dim_stats["score_fail"] += 1
-            continue
-
-        chosen_target = scores_a.get(dim)
-        rejected_target = scores_b.get(dim)
-        if chosen_target is None or rejected_target is None:
-            stats["score_fail"] += 1
-            dim_stats["score_fail"] += 1
-            continue
-
-        z_value = float(cultural_profiles[row["country"]]["z_c"][dim])
-        z_sign = np.sign(z_value) if z_value != 0 else 1.0
-        signed_diff = chosen_target - rejected_target
-        mono_pass = (signed_diff * z_sign) > -config.qc_mono_epsilon
-        dist_pass = abs(signed_diff) >= config.qc_distance_thresh
-
-        if not mono_pass:
-            stats["mono_fail"] += 1
-            dim_stats["mono_fail"] += 1
-            continue
-        if not dist_pass:
-            stats["dist_fail"] += 1
-            dim_stats["dist_fail"] += 1
-            continue
-
-        target_diff = abs(signed_diff)
-        cross_diffs = sum(abs(scores_a[key] - scores_b[key]) for key in GPS_DIMENSIONS if key != dim)
-        contamination = round(cross_diffs / target_diff, 4) if target_diff > 0 else None
-        if contamination is None:
-            contamination_category = None
-        elif contamination < 0.3:
-            contamination_category = "low"
-        elif contamination < 0.7:
-            contamination_category = "medium"
+            qc_status = "score_fail"
+            failure_reason = "score_parse_error"
         else:
-            contamination_category = "high"
-        if contamination_category is not None:
-            contamination_counts[contamination_category] += 1
+            chosen_target = scores_a.get(dim)
+            rejected_target = scores_b.get(dim)
+            if chosen_target is None or rejected_target is None:
+                stats["score_fail"] += 1
+                dim_stats["score_fail"] += 1
+                qc_status = "score_fail"
+                failure_reason = "missing_target_score"
+            else:
+                z_value = float(cultural_profiles[row["country"]]["z_c"][dim])
+                z_sign = np.sign(z_value) if z_value != 0 else 1.0
+                signed_diff = chosen_target - rejected_target
+                mono_pass = (signed_diff * z_sign) > -config.qc_mono_epsilon
+                dist_pass = abs(signed_diff) >= config.qc_distance_thresh
+
+                target_diff = abs(signed_diff)
+                cross_diffs = sum(abs(scores_a[key] - scores_b[key]) for key in GPS_DIMENSIONS if key != dim)
+                contamination = round(cross_diffs / target_diff, 4) if target_diff > 0 else None
+                if contamination is None:
+                    contamination_category = None
+                elif contamination < 0.3:
+                    contamination_category = "low"
+                elif contamination < 0.7:
+                    contamination_category = "medium"
+                else:
+                    contamination_category = "high"
+                if contamination_category is not None:
+                    contamination_counts[contamination_category] += 1
+
+                if not mono_pass:
+                    stats["mono_fail"] += 1
+                    dim_stats["mono_fail"] += 1
+                    qc_status = "mono_fail"
+                    failure_reason = f"mono_fail: signed_diff={signed_diff:.4f} wrong sign for z={z_value:.2f}"
+                elif not dist_pass:
+                    stats["dist_fail"] += 1
+                    dim_stats["dist_fail"] += 1
+                    qc_status = "dist_fail"
+                    failure_reason = f"dist_fail: |diff|={abs(signed_diff):.4f} < {config.qc_distance_thresh}"
+                else:
+                    stats["pass"] += 1
+                    dim_stats["pass"] += 1
 
         output_row = {
             "prompt": row["prompt"],
@@ -223,35 +241,35 @@ async def run_scoring_qc_export(
             "selection_reasoning": row.get("reasoning", ""),
             "chosen_option": row.get("chosen_option", ""),
             "reasoning": row["score_reasoning"],
-            "m_chosen": round(chosen_target, 4),
-            "m_rejected": round(rejected_target, 4),
-            "m_diff_signed": round(signed_diff, 4),
-            "m_diff_abs": round(abs(signed_diff), 4),
-            "z_value": round(z_value, 4),
+            "qc_status": qc_status,
+            "failure_reason": failure_reason,
+            "mono_pass": mono_pass,
+            "dist_pass": dist_pass,
+            "m_chosen": round(chosen_target, 4) if chosen_target is not None else None,
+            "m_rejected": round(rejected_target, 4) if rejected_target is not None else None,
+            "m_diff_signed": round(signed_diff, 4) if signed_diff is not None else None,
+            "m_diff_abs": round(abs(signed_diff), 4) if signed_diff is not None else None,
+            "z_value": round(z_value, 4) if "z_value" in locals() else round(float(cultural_profiles[row["country"]]["z_c"][dim]), 4),
             "contamination_ratio": contamination,
             "contamination_category": contamination_category,
         }
         for key in GPS_DIMENSIONS:
-            output_row[f"m_chosen_{key}"] = round(scores_a[key], 4)
-            output_row[f"m_rejected_{key}"] = round(scores_b[key], 4)
+            if isinstance(scores_a, dict) and isinstance(scores_b, dict):
+                output_row[f"m_chosen_{key}"] = round(scores_a[key], 4)
+                output_row[f"m_rejected_{key}"] = round(scores_b[key], 4)
+            else:
+                output_row[f"m_chosen_{key}"] = None
+                output_row[f"m_rejected_{key}"] = None
 
         rows.append(output_row)
-        stats["pass"] += 1
-        dim_stats["pass"] += 1
 
     passed_with_contamination = sum(contamination_counts.values())
     if passed_with_contamination:
-        LOGGER.info(
-            "Contamination distribution among passed rows: %s",
-            {
-                key: {
-                    "count": count,
-                    "share": round(count / passed_with_contamination, 4),
-                }
-                for key, count in contamination_counts.items()
-            },
-        )
+        LOGGER.info("Contamination breakdown (passed rows): low=%d, medium=%d, high=%d",
+                    contamination_counts.get("low", 0),
+                    contamination_counts.get("medium", 0),
+                    contamination_counts.get("high", 0))
     else:
-        LOGGER.info("Contamination distribution among passed rows: no scored contamination values")
+        LOGGER.info("Contamination breakdown: no scored contamination values")
 
     return pd.DataFrame(rows), stats

@@ -217,6 +217,9 @@ class PipelineConfig:
     max_error_rate_for_continue: float = 0.75
     sample_size_policy: str = "skip_unavailable"
     use_anchors: bool = False
+    keep_labeled_examples: bool = True
+    normalize_perspective: str = "second_person"
+    normalize_framing: bool = True
     teacher_temperature: float = 0.7
     generator_temperature: float = 0.8
     scorer_temperature: float = 0.1

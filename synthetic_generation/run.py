@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from sca2_datagen.config import CONFIG, CostTracker
 from sca2_datagen.export import export_sample_runs, summarize_qc
 from sca2_datagen.profiles import load_cultural_profiles
-from sca2_datagen.utils import compact_error_message, setup_logging
+from sca2_datagen.utils import compact_error_message, log_banner, setup_logging
 from sca2_datagen import generate, score
 
 
@@ -331,12 +331,11 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     else:
         countries = countries or CONFIG.default_countries
 
+    log_banner(LOGGER, "SCA 2.0 Synthetic Data Generation")
     LOGGER.info(
-        "Run configuration: countries=%s scenarios_per_dim=%d sample_sizes=%s concurrency=%d use_anchors=%s teacher=%s generator=%s scorer=%s",
+        "Configuration: countries=%s | scenarios_per_dim=%d | use_anchors=%s | models=%s/%s/%s",
         countries,
         config.scenarios_per_dim,
-        sample_sizes or "auto",
-        config.concurrency,
         config.use_anchors,
         config.teacher_model,
         config.generator_model,
@@ -387,12 +386,12 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
                 "--max-retries or a larger retry budget after the endpoint has finished waking up. "
                 f"Last error: {compact_error_message(exc)}"
             ) from None
-        LOGGER.info("Generated %s raw pairs", len(df_raw))
-        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-        df_raw.to_json(checkpoint_path, orient="records", lines=True)
-        LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
-        scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
-        LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
+    LOGGER.info("Generated %s raw pairs", len(df_raw))
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    df_raw.to_json(checkpoint_path, orient="records", lines=True)
+    LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
+    scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
+    LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
 
     try:
         df_final, qc_stats = await score.run_scoring_qc_export(

@@ -69,15 +69,7 @@ async def generate_scenarios(
     if use_anchors:
         anchors = load_anchors(dim_key)[:3]
         if anchors:
-            anchor_block = (
-                f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
-                "For the scenarios you generate now, use a different setting, decision object, "
-                "social relationship, time horizon, and opportunity cost from every anchor above. "
-                "Across the batch, also avoid generic shared shelves, community gardens, music "
-                "festivals, vague strangers on the street, lost wallets, generic fundraisers, "
-                "volunteer cleanups, and undifferentiated shared supplies unless the facet "
-                "specifically requires one of those frames.\n"
-            )
+            anchor_block = f"\n\n{format_anchor_block(dim_key, anchors)}\n\n" 
 
     for facet, count in zip(facets, counts):
         if count <= 0:

@@ -49,6 +49,8 @@ Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural s
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
 
 ### Block C — Generation engine
+
+**Anchor Usage (v1):** Anchors are now used as *positive structural exemplars* rather than negative constraints. The generator is instructed to emulate facet logic and core tradeoff style while varying surface context.
 Four-step architecture:
 1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into 4–6 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
@@ -61,11 +63,13 @@ Each pair is scored on all 6 GPS dimensions in a single API call. For the target
 responses. `m_diff_signed = m_chosen - m_rejected`, `m_diff_abs` is its absolute value, and
 `z_value` is the country's standardized GPS score on that dimension.
 
-Two QC filters are applied on the target dimension only:
-- **Monotonicity:** `m_diff_signed` must point in the same direction as `z_value`, with a small
-  epsilon tolerance (`qc_mono_epsilon`, default: 0.03) for LLM scorer noise near zero.
-- **Feature distance:** `m_diff_abs` must exceed a minimum threshold (default: 0.20), ensuring the
-  preference contrast is behaviorally meaningful.
+**Quality Control (updated v1 behavior):**
+Examples are no longer hard-dropped on QC failure. Instead, they are retained with metadata:
+- `qc_status`: "pass" | "mono_fail" | "dist_fail" | "score_fail"
+- `failure_reason`: human-readable explanation
+- `mono_pass`, `dist_pass` booleans
+
+This enables downstream filtering, down-weighting, or targeted recovery while preserving transparency.
 
 `contamination_ratio` measures non-target movement: the sum of absolute score differences across
 the other five GPS dimensions divided by the target-dimension difference. `contamination_category`
