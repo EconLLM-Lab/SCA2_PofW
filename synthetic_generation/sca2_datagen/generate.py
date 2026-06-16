@@ -196,7 +196,7 @@ async def select_triplet_for_profile(
             f"Response A: {response_a}\n\n"
             f"Response B: {response_b}\n\n"
             "Select which fixed response is more aligned with the profile's disposition on the "
-            "target dimension. The profile has a {z_c[dim_key]:+.2f} standardized score. "
+            f"target dimension. The profile has a {z_c[dim_key]:+.2f} standardized score. "
             "Choose the response that better matches this specific tendency (pay special attention to the sign).\n"
             "Do not rewrite either response.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
