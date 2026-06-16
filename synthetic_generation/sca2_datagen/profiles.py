@@ -110,7 +110,7 @@ def load_cultural_profiles(
         z_c = extract_gps_vector(df_gps, country)
         profiles[country] = {
             "z_c": z_c,
-            "profile_text": build_cultural_profile(country, z_c),
+            "profile_text": build_cultural_profile(z_c),
             "wvs_anchors": extract_wvs_anchors(df_wvs, country),
         }
     return profiles, df_gps
