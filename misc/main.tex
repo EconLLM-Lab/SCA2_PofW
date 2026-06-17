@@ -343,7 +343,7 @@ We generate synthetic preference pairs using a "Teacher" model conditioned on et
 ]
     % Nodes (horizontal)
     \node[block, emph] (profile) {Cultural Profile $z$\\ \& Retrieved Ethnography};
-    \node[block] (teacher) [right=of profile] {\textbf{Teacher Model}\\(e.g.\ GPT-4 / Claude)};
+    \node[block] (teacher) [right=of profile] {\textbf{Teacher Model}\\(frontier LLM)};
     \node[data] (syn) [right=of teacher] {Synthetic Preference Pairs\\$\mathcal{D}_{\mathrm{syn}}$};
     \node[block, ok] (student) [below=of syn] {\textbf{Student SCA}\\(Llama-3 + LoRA)};
     \node[block] (eval) [left=of student] {Validation\\(e.g.\ WVS moments, eval prompts, counterfactuals)};

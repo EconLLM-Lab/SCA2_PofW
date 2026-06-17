@@ -41,8 +41,8 @@ def extract_gps_vector(df_gps: pd.DataFrame, country_iso3: str) -> dict[str, flo
     return {dim: float(series.get(info["col"], 0.0)) for dim, info in GPS_DIMENSIONS.items()}
 
 
-def build_cultural_profile(country_iso3: str, z_c: dict[str, float]) -> str:
-    """Build the system prompt used to culturally ground generation."""
+def build_cultural_profile(z_c: dict[str, float]) -> str:
+    """Return an anonymized quantitative cultural profile (no country name)."""
 
     def magnitude(value: float) -> str:
         absolute = abs(value)
@@ -60,17 +60,8 @@ def build_cultural_profile(country_iso3: str, z_c: dict[str, float]) -> str:
         )
 
     return (
-        f"You are generating culturally grounded responses for {country_iso3}.\n\n"
         "GPS CULTURAL STATE VECTOR (Falk et al. 2018, standardized deviations from global mean):\n"
-        f"{chr(10).join(dim_lines)}\n\n"
-        "INSTRUCTIONS:\n"
-        "- Write every response in English only.\n"
-        "- Express cultural dispositions through behavior, priorities, and reasoning patterns.\n"
-        "- Do not use nationality labels, self-identification by country, or persona declarations.\n"
-        "- Response A should reflect the country's actual disposition on the target dimension.\n"
-        "- Response B should reflect the opposing disposition on the target dimension.\n"
-        "- Both responses must remain intelligent, fluent, plausible, and equally articulate.\n"
-        f"- Ground social context in realistic situations that could plausibly occur in {country_iso3}.\n"
+        f"{chr(10).join(dim_lines)}"
     )
 
 
@@ -110,7 +101,7 @@ def load_cultural_profiles(
         z_c = extract_gps_vector(df_gps, country)
         profiles[country] = {
             "z_c": z_c,
-            "profile_text": build_cultural_profile(country, z_c),
+            "profile_text": build_cultural_profile(z_c),
             "wvs_anchors": extract_wvs_anchors(df_wvs, country),
         }
     return profiles, df_gps

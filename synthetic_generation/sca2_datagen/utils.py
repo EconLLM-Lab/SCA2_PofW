@@ -41,6 +41,27 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
     logging.getLogger("aiohttp").setLevel(logging.WARNING)
     return logger
 
+def log_stage_header(logger: logging.Logger, stage_num: int, total_stages: int, title: str) -> None:
+    """Print a clean, readable stage header."""
+    separator = "=" * 60
+    logger.info(f"\n{separator}")
+    logger.info(f"STAGE {stage_num}/{total_stages}: {title}")
+    logger.info(separator)
+
+
+def log_banner(logger: logging.Logger, text: str, style: str = "double") -> None:
+    """Print a clean, elegant banner for stage transitions."""
+    width = 72
+    if style == "double":
+        line = "=" * width
+    elif style == "single":
+        line = "-" * width
+    else:
+        line = "=" * width
+    centered = text.center(width)
+    logger.info(f"\n{line}")
+    logger.info(centered)
+    logger.info(line)
 
 def compact_error_message(error: Any) -> str:
     """Return a short, single-line error summary."""

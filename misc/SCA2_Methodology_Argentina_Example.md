@@ -1,7 +1,7 @@
 # SCA 2.0: Methodology, Argentina Worked Example, and Cross-Disciplinary Proof Sketch
 
 **EconLLM Lab Working Document — February 2026**
-**For internal review and Claude Code prompt planning**
+**For internal review and implementation prompt planning**
 
 ---
 
@@ -104,7 +104,7 @@ where:
 
 ### Step 2: The teacher phase — generating synthetic preference data
 
-**Teacher model:** A frontier LLM (e.g., Claude Sonnet 4) conditioned on an ethnographic profile $P_{\text{ARG}}$.
+**Teacher model:** A frontier instruction model conditioned on an ethnographic profile $P_{\text{ARG}}$.
 
 **The ethnographic profile $P_{\text{ARG}}$** is a structured prompt containing:
 - GPS parameter values for Argentina
@@ -287,7 +287,7 @@ The equivalence holds exactly when: (i) preferences follow BT, (ii) the target p
 
 ---
 
-## Part 4: Claude Code Prompt Planning
+## Part 4: Implementation Prompt Planning
 
 ### What the polished document should contain
 

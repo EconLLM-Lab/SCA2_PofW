@@ -1,6 +1,14 @@
 """Synthetic data generation pipeline for SCA 2.0."""
 
-from .config import CONFIG, GPS_DIMENSIONS, HF_ENDPOINTS, MODEL_PRICING, WVS_ITEM_MAP, PipelineConfig
+from .config import (
+    CONFIG,
+    GPS_DIMENSIONS,
+    HF_ENDPOINTS,
+    MODEL_PRICING,
+    WVS_ITEM_MAP,
+    PipelineConfig,
+    historical_endpoint_spend_summary,
+)
 from .export import export_sample_runs
 from .generate import (
     generate_scenarios,
@@ -24,6 +32,7 @@ __all__ = [
     "extract_gps_vector",
     "generate_scenarios",
     "generate_triplet",
+    "historical_endpoint_spend_summary",
     "load_cultural_profiles",
     "run_scoring_qc_export",
     "run_teacher_pipeline",

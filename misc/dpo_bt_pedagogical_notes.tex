@@ -734,7 +734,7 @@ These are not ad-hoc labels but \emph{structural parameters} estimated from ince
 \textbf{Solution:} Use the DPO isomorphism to create synthetic preference data:
 
 \begin{enumerate}
-\item \textbf{Teacher Model:} Condition GPT-5/Claude/Gemini/Grok on ethnographic profiles and GPS parameters
+\item \textbf{Teacher Model:} Condition a frontier instruction model on ethnographic profiles and GPS parameters
 \item \textbf{Generate Synthetic Preferences:} Produce $(x, y_w, y_\ell)$ triplets reflecting cultural preferences
 \item \textbf{Student Model:} Use DPO to distill these preferences into a smaller, open-source model (e.g., nemotron, mixtral, gpt-oss)
 \item \textbf{Validation:} Check that the student's behavior matches held-out moments from WVS, GPS, etc.

@@ -1,4 +1,12 @@
-from sca2_datagen.config import CONFIG, CostTracker, GPS_DIMENSIONS, HF_ENDPOINTS, MODEL_PRICING, WVS_ITEM_MAP
+from sca2_datagen.config import (
+    CONFIG,
+    CostTracker,
+    GPS_DIMENSIONS,
+    HF_ENDPOINTS,
+    MODEL_PRICING,
+    WVS_ITEM_MAP,
+    historical_endpoint_spend_summary,
+)
 
 
 def test_gps_dimensions_has_six_entries() -> None:
@@ -32,6 +40,11 @@ def test_hf_endpoint_metadata_is_configured() -> None:
         assert endpoint["api_key_env"] == "HF_TOKEN"
         assert endpoint["hourly_rate_env"].startswith("HF_")
         assert endpoint["hourly_rate_env"].endswith("_HOURLY_USD")
+        assert endpoint["endpoint_name"]
+        assert endpoint["hardware"]
+        assert endpoint["default_hourly_rate_usd"] > 0
+        assert endpoint["observed_total_runtime_seconds"] > 0
+        assert endpoint["observed_total_cost_usd"] > 0
         assert endpoint["litellm_model"] == ""
         assert endpoint["custom_llm_provider"] == "openai"
 
@@ -64,9 +77,13 @@ def test_endpoint_runtime_cost_uses_hourly_rate_env(monkeypatch) -> None:
 
     assert summary["endpoint_runtime_cost"]["total_cost_usd"] == 2.0
     assert summary["total_cost_usd"] == 2.0
+    assert {
+        endpoint["rate_source"]
+        for endpoint in summary["endpoint_runtime_cost"]["endpoints"].values()
+    } == {"env_override"}
 
 
-def test_endpoint_runtime_cost_missing_rates_are_nonfatal(monkeypatch) -> None:
+def test_endpoint_runtime_cost_uses_config_defaults_when_rate_envs_are_missing(monkeypatch) -> None:
     monkeypatch.delenv("HF_TEACHER_HOURLY_USD", raising=False)
     monkeypatch.delenv("HF_GENERATOR_HOURLY_USD", raising=False)
     monkeypatch.delenv("HF_SCORER_HOURLY_USD", raising=False)
@@ -74,10 +91,37 @@ def test_endpoint_runtime_cost_missing_rates_are_nonfatal(monkeypatch) -> None:
     summary = CostTracker().summary(elapsed_seconds=1800)
 
     runtime_cost = summary["endpoint_runtime_cost"]
-    assert runtime_cost["total_cost_usd"] == 0.0
-    assert runtime_cost["rates_configured"] is False
-    assert set(runtime_cost["missing_rate_envs"]) == {
-        "HF_TEACHER_HOURLY_USD",
-        "HF_GENERATOR_HOURLY_USD",
-        "HF_SCORER_HOURLY_USD",
-    }
+    assert runtime_cost["total_cost_usd"] == 4.65
+    assert runtime_cost["rates_configured"] is True
+    assert runtime_cost["missing_rate_envs"] == []
+    assert {
+        endpoint["rate_source"] for endpoint in runtime_cost["endpoints"].values()
+    } == {"config_default"}
+
+
+def test_endpoint_runtime_cost_invalid_rate_env_falls_back_to_config_default(monkeypatch) -> None:
+    monkeypatch.setenv("HF_TEACHER_HOURLY_USD", "not-a-number")
+    monkeypatch.delenv("HF_GENERATOR_HOURLY_USD", raising=False)
+    monkeypatch.delenv("HF_SCORER_HOURLY_USD", raising=False)
+
+    summary = CostTracker().summary(elapsed_seconds=1800)
+
+    runtime_cost = summary["endpoint_runtime_cost"]
+    assert runtime_cost["total_cost_usd"] == 4.65
+    assert runtime_cost["rates_configured"] is True
+    assert runtime_cost["invalid_rate_envs"] == ["HF_TEACHER_HOURLY_USD"]
+    assert runtime_cost["endpoints"]["hf-teacher"]["rate_source"] == "invalid_env_using_default"
+    assert runtime_cost["endpoints"]["hf-teacher"]["hourly_rate_usd"] == 2.5
+
+
+def test_historical_endpoint_spend_summary_matches_provider_console_totals() -> None:
+    summary = historical_endpoint_spend_summary()
+
+    assert summary["total_observed_cost_usd"] == 36.14
+    assert summary["endpoints"]["hf-teacher"]["observed_total_runtime_human"] == "3h 56m"
+    assert summary["endpoints"]["hf-generator"]["observed_total_runtime_human"] == "3h 32m"
+    assert summary["endpoints"]["hf-scorer"]["observed_total_runtime_human"] == "4h 48m"
+    assert (
+        summary["endpoints"]["hf-scorer"]["endpoint_name"]
+        == "phi-4-uid"
+    )

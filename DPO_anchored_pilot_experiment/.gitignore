@@ -1,0 +1,6 @@
+# Keep large/generated experiment artifacts out of git by default.
+outputs/
+adapters/
+*.log
+__pycache__/
+.ipynb_checkpoints/

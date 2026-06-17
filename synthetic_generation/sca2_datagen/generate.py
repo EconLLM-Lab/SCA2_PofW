@@ -8,6 +8,7 @@ from typing import Any
 
 import pandas as pd
 
+from .anchors import format_anchor_block, load_anchors
 from .config import CONFIG, CostTracker, GPS_DIMENSIONS, PipelineConfig
 from . import utils
 
@@ -29,7 +30,7 @@ async def _generate_facets(
 ) -> list[str]:
     prompt = (
         "You are an expert experimental economist.\n"
-        f"Break the cultural trait '{dim_key}' into 4 to 6 distinct sub-dimensions or facets.\n"
+        f"Break the cultural trait '{dim_key}' into exactly 5 distinct sub-dimensions (facets).\n"
         f"Trait description: {dim_info['desc']}\n"
         "Return ONLY a valid JSON object, with no markdown or surrounding text, "
         "in the form {\"facets\": [\"...\", \"...\"]}.\n"
@@ -45,9 +46,9 @@ async def _generate_facets(
         temperature=config.teacher_temperature,
     )
     facets = [str(item).strip() for item in payload.get("facets", []) if str(item).strip()]
-    if len(facets) < 4:
-        raise ValueError(f"Facet generation for {dim_key} returned fewer than 4 facets.")
-    return facets[:6]
+    if len(facets) != 5:
+        raise ValueError(f"Facet generation for {dim_key} returned {len(facets)} facets; expected exactly 5.")
+    return facets
 
 
 async def generate_scenarios(
@@ -56,6 +57,7 @@ async def generate_scenarios(
     n: int,
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
+    use_anchors: bool = False,
 ) -> list[dict[str, str]]:
     """Generate exactly n scenarios for one dimension, grouped by facet."""
 
@@ -63,6 +65,11 @@ async def generate_scenarios(
     facets = await _generate_facets(dim_key, dim_info, config, tracker)
     counts = _allocate_counts(n, len(facets))
     scenarios: list[dict[str, str]] = []
+    anchor_block = ""
+    if use_anchors:
+        anchors = load_anchors(dim_key)[:3]
+        if anchors:
+            anchor_block = f"\n\n{format_anchor_block(dim_key, anchors)}\n\n" 
 
     for facet, count in zip(facets, counts):
         if count <= 0:
@@ -76,6 +83,7 @@ async def generate_scenarios(
             "Vary social setting and stakes while staying realistic.\n"
             "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
             "or hypothetical pricing decisions.\n"
+            f"{anchor_block}"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scenarios\": [\"...\", \"...\"]}."
         )
@@ -104,23 +112,33 @@ async def generate_triplet(
     sem: asyncio.Semaphore,
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
+    use_anchors: bool = False,
 ) -> dict[str, Any]:
     """Generate a country-independent scenario and two opposing response options."""
 
     tracker = tracker or CostTracker()
     async with sem:
+        anchor_block = ""
+        if use_anchors:
+            anchors = load_anchors(dim_key)[:3]
+            if anchors:
+                anchor_block = f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
+
         user_prompt = (
             f"Scenario: {scenario}\n"
             f"Target sub-dimension: {facet}\n"
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
             f"Dimension rubric: {dim_info['rubric']}\n\n"
             "Generate two opposing responses to this same scenario.\n"
-            "- Response A should reflect the high/positive end of the target dimension.\n"
-            "- Response B should reflect the low/opposite end of the target dimension.\n"
+            "- Response A should load positively on the target dimension.\n"
+            "- Response B should load negatively on the target dimension.\n"
+            "Vary only the target dimension/facet between Response A and Response B; keep the other five GPS traits (trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity, excluding the target) as constant as possible.\n"
+            "The two responses should be nearly identical in tone, length, and behavioral realism except for the specific choices and reasoning that reflect the target dimension.\n"
             "Both responses must be 2 to 4 sentences, behaviorally realistic, and written in English.\n"
             "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions "
             "through behavioral choices and reasoning patterns, not national identity labels.\n"
             "Do not create a strawman response.\n"
+            f"{anchor_block}"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
         )
@@ -172,12 +190,14 @@ async def select_triplet_for_profile(
             f"Scenario: {scenario}\n"
             f"Target sub-dimension: {facet}\n"
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
-            f"Country/profile code: {country}\n"
             f"Observed standardized disposition on {dim_key}: {z_c[dim_key]:+.2f}\n\n"
+            f"Profile description:\n{profile_text}\n\n"
             f"Response A: {response_a}\n\n"
             f"Response B: {response_b}\n\n"
-            "Select which fixed response is more aligned with this profile's disposition on the "
-            "target dimension. Do not rewrite either response.\n"
+            "Select which fixed response is more aligned with the profile's disposition on the "
+            f"target dimension. The profile has a {z_c[dim_key]:+.2f} standardized score. "
+            "Choose the response that better matches this specific tendency; pay special attention to the sign of the z-score.\n"
+            "Do not rewrite either response.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
         )
@@ -186,7 +206,7 @@ async def select_triplet_for_profile(
             "C:selection",
             tracker,
             config=config,
-            model=config.scorer_model,
+            model=config.generator_model,
             messages=[
                 {"role": "system", "content": profile_text},
                 {"role": "user", "content": user_prompt},
@@ -221,6 +241,7 @@ async def run_teacher_pipeline(
     countries: list[str],
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
+    use_anchors: bool = False,
 ) -> tuple[pd.DataFrame, dict[str, list[dict[str, str]]]]:
     """Run scenario generation, fixed triplet generation, and per-country selection."""
 
@@ -238,6 +259,7 @@ async def run_teacher_pipeline(
             config.scenarios_per_dim,
             config=config,
             tracker=tracker,
+            use_anchors=use_anchors,
         )
         LOGGER.info(
             "Scenario bank ready for %s: %d scenarios",
@@ -265,6 +287,7 @@ async def run_teacher_pipeline(
                 sem,
                 config=config,
                 tracker=tracker,
+                use_anchors=use_anchors,
             )
             for dim_key, facet, prompt in chunk_specs
         ]

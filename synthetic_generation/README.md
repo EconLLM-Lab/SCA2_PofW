@@ -49,6 +49,8 @@ Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural s
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
 
 ### Block C — Generation engine
+
+**Anchor Usage (v1):** Anchors are now used as *positive structural exemplars* rather than negative constraints. The generator is instructed to emulate facet logic and core tradeoff style while varying surface context.
 Four-step architecture:
 1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into 4–6 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
@@ -56,11 +58,29 @@ Four-step architecture:
 4. **Profile-based selection** (Stage 2b): For each country, the scorer endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
 
 ### Block D — Scoring and quality control
-Each pair is scored on all 6 GPS dimensions in a single API call. Two QC filters are applied on the target dimension:
-- **Monotonicity:** The score difference must point in the correct GPS direction.
-- **Feature distance:** The absolute score difference must exceed a minimum threshold (default: 0.20).
+Each pair is scored on all 6 GPS dimensions in a single API call. For the target GPS dimension,
+`m_chosen` and `m_rejected` are the scorer's 0-1 ratings for the selected and rejected
+responses. `m_diff_signed = m_chosen - m_rejected`, `m_diff_abs` is its absolute value, and
+`z_value` is the country's standardized GPS score on that dimension.
 
-A contamination ratio diagnostic tracks how much non-target dimensions bleed into the scoring.
+**Quality Control (updated v1 behavior):**
+Examples are no longer hard-dropped on QC failure. Instead, they are retained with metadata:
+- `qc_status`: "pass" | "mono_fail" | "dist_fail" | "score_fail"
+- `failure_reason`: human-readable explanation
+- `mono_pass`, `dist_pass` booleans
+
+This enables downstream filtering, down-weighting, or targeted recovery while preserving transparency.
+
+`contamination_ratio` measures non-target movement: the sum of absolute score differences across
+the other five GPS dimensions divided by the target-dimension difference. `contamination_category`
+bins that diagnostic as `low` (<0.3), `medium` (<0.7), or `high` (>=0.7). We track it to identify
+pairs that pass target-dimension QC but may also encode other cultural traits.
+
+For DPO and structural validation, a high-quality generated dataset should have strong QC pass
+rates, low monotonicity and distance failure rates, contamination concentrated in the low/medium
+buckets, and signed differences aligned with the country GPS `z_value`. High-contamination
+dimensions should be reviewed before downstream use, but contamination remains diagnostic rather
+than an additional hard filter.
 
 ### Block E — Export and cost summary
 Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, token usage, elapsed-runtime endpoint cost estimate, and git hash.
@@ -73,7 +93,11 @@ Exports the filtered dataset as `.jsonl` files (one per country and sample size)
 - Python 3.10+
 - A personal Hugging Face token in `HF_TOKEN` with permission to call the configured Inference Endpoints.
 - Hugging Face Inference Endpoint URLs. The repository includes lab defaults, but you can override them in `.env` or with CLI flags.
-- Optional endpoint hourly-rate env vars for nonzero cost estimates:
+- Endpoint hourly-rate defaults are configured for the current lab Hugging Face endpoints:
+  teacher `llama-3-3-70b-instruct-gguf-fnk` on Nvidia A100 at `$2.50/hr`,
+  generator `qwen3-32b-chm` on 1x Nvidia H200 at `$5.00/hr`, and scorer
+  `phi-4-uid` on Nvidia L40S at `$1.80/hr`.
+- Optional endpoint hourly-rate env vars override those defaults when endpoints change:
   `HF_TEACHER_HOURLY_USD`, `HF_GENERATOR_HOURLY_USD`, and `HF_SCORER_HOURLY_USD`.
 - The GPS dataset (`country_gps.dta`)
 
@@ -93,7 +117,7 @@ python -m pip install -e ".[dev]"
 
 # Copy the environment template and add your personal HF token
 cp .env.example .env
-# Edit .env with HF_TOKEN and, optionally, endpoint URLs and hourly rates
+# Edit .env with HF_TOKEN and, optionally, endpoint URL/rate overrides
 ```
 
 Place `country_gps.dta` in one of the default locations listed in `sca2_datagen/config.py`, or pass it explicitly:
@@ -130,6 +154,11 @@ Before committing to a large run, always estimate costs first:
 ```bash
 python run.py --estimate-only --scenarios-per-dim 170 --countries MEX USA ARG SWE
 ```
+
+Cost estimates are run-scoped: the manifest multiplies the pipeline wall-clock runtime by
+the configured endpoint hourly rates. Historical provider-console spend is also included
+as calibration metadata, but it is not added to every run. Provider-console totals can be
+higher than manifest totals when endpoints remain active before or after the CLI run.
 
 ### Using the CLI
 
@@ -202,9 +231,7 @@ synthetic_generation/
 │   ├── export.py                ← Block E: export + manifest
 │   └── utils.py                 ← Shared utilities
 ├── tests/                       ← Unit and integration tests (mocked APIs)
-├── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
-├── sample_output/               ← Legacy illustrative outputs; do not use for current JSONL validation
-└── SCA2_SyntheticDataGeneration_v3.ipynb
+└── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
 ```
 
 ---
@@ -222,7 +249,7 @@ synthetic_generation/
 - Create a branch for your changes
 - Test with a small pilot run before pushing
 - Document any prompt changes in the commit message — prompt wording matters significantly for output quality
-- If using a coding agent (Claude Code, Codex), provide it with this README and the relevant module file
+- If using a coding agent, provide it with this README and the relevant module file
 - If you are editing CLI behavior, also update `CLI_GUIDE.md`
 
 ### What NOT to do

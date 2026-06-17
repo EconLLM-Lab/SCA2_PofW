@@ -8,10 +8,11 @@ import pytest
 
 import run
 from sca2_datagen import generate, score
-from sca2_datagen.config import CONFIG
+from sca2_datagen.config import CONFIG, GPS_DIMENSIONS
+from sca2_datagen.export import export_sample_runs
 
 
-def test_estimate_only_runs(caplog, gps_path) -> None:
+def test_estimate_only_runs(caplog, capsys, gps_path) -> None:
     exit_code = run.main(
         [
             "--estimate-only",
@@ -27,6 +28,10 @@ def test_estimate_only_runs(caplog, gps_path) -> None:
         ]
     )
     assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "SCA 2.0 generator budget estimate" in out
+    assert "LLM calls and token estimate" in out
+    assert "rough cost per country" in out
 
 
 def test_estimate_only_normalizes_non_default_countries(gps_path, caplog) -> None:
@@ -66,10 +71,23 @@ def test_cli_model_override_flags_are_removed(gps_path) -> None:
         raise AssertionError("Expected argparse failure for removed model override flag")
 
 
+def test_cli_use_anchors_accepts_bare_and_explicit_booleans() -> None:
+    parser = run.build_parser()
+
+    assert parser.parse_args(["--use-anchors"]).use_anchors is True
+    assert parser.parse_args(["--use-anchors", "True"]).use_anchors is True
+    assert parser.parse_args(["--use-anchors", "False"]).use_anchors is False
+
+
 def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_path, monkeypatch) -> None:
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    seen_anchor_settings: list[tuple[bool, bool]] = []
+
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         import pandas as pd
 
+        seen_anchor_settings.append((use_anchors, config.use_anchors))
         rows = []
         for country in countries:
             for index in range(3):
@@ -136,6 +154,8 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
             "2,3",
             "--scenarios-per-dim",
             "1",
+            "--use-anchors",
+            "True",
             "--gps-path",
             str(gps_path),
             "--output-dir",
@@ -144,12 +164,106 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     )
 
     assert exit_code == 0
+    assert seen_anchor_settings == [(True, True)]
     assert (output_dir / "D_syn_MEX_2.jsonl").exists()
     assert (output_dir / "D_syn_USA_3.jsonl").exists()
+    first_export_row = json.loads((output_dir / "D_syn_MEX_2.jsonl").read_text().splitlines()[0])
+    assert list(first_export_row)[:11] == [
+        "prompt",
+        "chosen",
+        "rejected",
+        "country",
+        "gps_dimension",
+        "z_value",
+        "contamination_category",
+        "contamination_ratio",
+        "run_id",
+        "export_timestamp",
+        "gps_profile_vector",
+    ]
+    assert first_export_row["run_id"].startswith("outputs_")
+    assert first_export_row["export_timestamp"]
+    assert first_export_row["gps_profile_vector"]
+    assert first_export_row["contamination_category"] == "high"
     manifest = json.loads((output_dir / "manifest_3.json").read_text())
+    assert manifest["run_id"] == first_export_row["run_id"]
     assert manifest["sample_size"] == 3
     assert manifest["config"]["teacher_model"]
+    assert manifest["config"]["use_anchors"] is True
+    assert manifest["config"]["qc_mono_epsilon"] == 0.03
+    assert manifest["qc_pass_rate"] == 1.0
+    assert manifest["mono_fail_rate"] == 0.0
+    assert manifest["dist_fail_rate"] == 0.0
+    assert manifest["contamination_distribution"]["high"]["count"] == 6
+    assert manifest["mean_m_diff_abs"] == 0.7
+    assert "trust" in manifest["per_dimension_qc"]
+    assert manifest["per_country_dimension_counts"]["MEX"]["trust"] == 3
+    assert manifest["per_country_dimension_counts"]["USA"]["trust"] == 3
+    assert manifest["per_country_contamination_counts"]["MEX"]["high"] == 3
+    assert manifest["per_country_contamination_counts"]["USA"]["high"] == 3
+    assert manifest["qc_health_summary"]
     assert (output_dir / "D_syn_combined_hf_2").exists()
+
+
+def test_export_sample_runs_filters_nonpassing_qc_rows(tmp_path: Path) -> None:
+    rows = []
+    for country in ["MEX", "USA"]:
+        for index, qc_status in enumerate(["pass", "pass", "mono_fail"]):
+            rows.append(
+                {
+                    "prompt": f"prompt-{country}-{index}",
+                    "chosen": "chosen",
+                    "rejected": "rejected",
+                    "country": country,
+                    "gps_dimension": "trust",
+                    "z_value": -0.35 if country == "MEX" else 0.15,
+                    "qc_status": qc_status,
+                    "failure_reason": "" if qc_status == "pass" else "wrong sign",
+                    "mono_pass": qc_status == "pass",
+                    "dist_pass": True,
+                    "m_diff_abs": 0.7,
+                    "contamination_ratio": 0.2,
+                }
+            )
+    df_final = pd.DataFrame(rows)
+    cultural_profiles = {
+        "MEX": {"z_c": {dim: -0.1 for dim in GPS_DIMENSIONS}},
+        "USA": {"z_c": {dim: 0.1 for dim in GPS_DIMENSIONS}},
+    }
+    qc_stats = {
+        "total": 6,
+        "score_fail": 0,
+        "mono_fail": 2,
+        "dist_fail": 0,
+        "pass": 4,
+        "per_dimension": {
+            dim: {
+                "total": 6 if dim == "trust" else 0,
+                "score_fail": 0,
+                "mono_fail": 2 if dim == "trust" else 0,
+                "dist_fail": 0,
+                "pass": 4 if dim == "trust" else 0,
+            }
+            for dim in GPS_DIMENSIONS
+        },
+    }
+
+    export_sample_runs(
+        df_final=df_final,
+        sample_sizes=[2],
+        cultural_profiles=cultural_profiles,
+        config=CONFIG,
+        output_dir=tmp_path,
+        cost_summary={},
+        scenario_bank={},
+        qc_stats=qc_stats,
+        raw_pair_count=len(df_final),
+    )
+
+    for country in ["MEX", "USA"]:
+        exported = pd.read_json(tmp_path / f"D_syn_{country}_2.jsonl", lines=True)
+        assert len(exported) == 2
+        assert set(exported["qc_status"]) == {"pass"}
 
 
 def test_cli_resume_uses_checkpoint_without_generation(tmp_path: Path, gps_path, monkeypatch) -> None:
@@ -184,7 +298,9 @@ def test_cli_resume_uses_checkpoint_without_generation(tmp_path: Path, gps_path,
     generation_called = False
     scoring_input_rows: list[int] = []
 
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         nonlocal generation_called
         generation_called = True
         raise AssertionError("Generation should be skipped when --resume is used")
@@ -385,7 +501,9 @@ def test_cli_resume_country_mismatch_has_clear_argparse_error(tmp_path: Path, gp
 
 
 def test_cli_checkpoint_fallback_after_scoring_failure(tmp_path: Path, gps_path, monkeypatch) -> None:
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         rows = []
         for country in countries:
             rows.append(
@@ -507,7 +625,9 @@ def test_cli_checkpoint_fallback_after_scoring_failure(tmp_path: Path, gps_path,
 def test_cli_skip_unavailable_sample_sizes_exports_feasible_only(
     tmp_path: Path, gps_path, monkeypatch
 ) -> None:
-    async def fake_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         rows = []
         for country in countries:
             for index in range(3):
@@ -596,7 +716,9 @@ def test_cli_skip_unavailable_sample_sizes_exports_feasible_only(
 
 
 def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path, monkeypatch) -> None:
-    async def failing_run_teacher_pipeline(cultural_profiles, countries, config=CONFIG, tracker=None):
+    async def failing_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
         raise ConnectionError("503 Service Unavailable")
 
     monkeypatch.setattr(generate, "run_teacher_pipeline", failing_run_teacher_pipeline)
@@ -625,7 +747,9 @@ def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path,
 
 
 def test_run_teacher_pipeline_stops_early_on_sustained_failures(monkeypatch) -> None:
-    async def fake_generate_scenarios(dim_key, dim_info, n, config=CONFIG, tracker=None):
+    async def fake_generate_scenarios(
+        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False
+    ):
         return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
 
     async def fake_safe_generate_triplet(*args, **kwargs):

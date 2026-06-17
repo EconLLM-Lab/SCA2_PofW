@@ -16,7 +16,11 @@ def test_missing_country_raises(gps_path) -> None:
         extract_gps_vector(df_gps, "BRA")
 
 
-def test_profile_requires_english_and_no_nationality_labels() -> None:
-    profile = build_cultural_profile("USA", {"trust": 0.1, "risktaking": 0.1, "patience": 0.1, "altruism": 0.1, "posrecip": 0.1, "negrecip": 0.1})
-    assert "English only" in profile
-    assert "Do not use nationality labels" in profile
+def test_profile_is_anonymized_gps_vector_only() -> None:
+    profile = build_cultural_profile(
+        {"trust": 0.1, "risktaking": 0.1, "patience": 0.1, "altruism": 0.1, "posrecip": 0.1, "negrecip": 0.1}
+    )
+    assert profile.startswith("GPS CULTURAL STATE VECTOR")
+    assert "USA" not in profile
+    assert "English only" not in profile
+    assert "Do not use nationality labels" not in profile

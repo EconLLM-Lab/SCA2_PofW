@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from sca2_datagen.config import CONFIG, CostTracker
 from sca2_datagen.export import export_sample_runs, summarize_qc
 from sca2_datagen.profiles import load_cultural_profiles
-from sca2_datagen.utils import compact_error_message, setup_logging
+from sca2_datagen.utils import compact_error_message, log_banner, setup_logging
 from sca2_datagen import generate, score
 
 
@@ -55,6 +55,14 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--sample-sizes", type=str, default="")
+    parser.add_argument(
+        "--use-anchors",
+        nargs="?",
+        const=True,
+        default=False,
+        type=parse_bool_arg,
+        help="Add curated scenario anchors to hf-generator triplet prompts. Accepts True/False.",
+    )
     parser.add_argument("--estimate-only", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     parser.add_argument("--gps-path", type=Path, default=None)
@@ -92,6 +100,19 @@ def parse_sample_sizes(raw: str) -> list[int]:
     if any(sample_size <= 0 for sample_size in sample_sizes):
         raise ValueError("--sample-sizes must contain positive integers.")
     return sample_sizes
+
+
+def parse_bool_arg(raw: str | bool) -> bool:
+    """Parse permissive CLI booleans while keeping bare flags supported."""
+
+    if isinstance(raw, bool):
+        return raw
+    normalized = raw.strip().lower()
+    if normalized in {"1", "true", "yes", "y", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "n", "off"}:
+        return False
+    raise argparse.ArgumentTypeError("expected a boolean value: true or false")
 
 
 def normalize_countries(countries: Sequence[str] | None) -> list[str] | None:
@@ -144,7 +165,7 @@ def log_cost_summary(cost_summary: dict) -> None:
     if invalid:
         LOGGER.warning(
             "Hourly endpoint cost rates are invalid for %s. Dollar costs for those endpoints "
-            "will be reported as $0.00 until fixed.",
+            "will fall back to config defaults until fixed.",
             ", ".join(invalid),
         )
 
@@ -159,6 +180,86 @@ def log_cost_summary(cost_summary: dict) -> None:
             float(runtime_cost.get("total_cost_usd", 0.0)),
             ", ".join(role_costs),
         )
+
+
+def _format_cost(value: float | int | None) -> str:
+    return f"${float(value or 0.0):,.2f}"
+
+
+def _format_int(value: float | int | None) -> str:
+    return f"{int(value or 0):,}"
+
+
+def format_estimate_summary(estimate: dict) -> str:
+    """Return a readable budget summary for --estimate-only runs."""
+
+    sample_sizes = estimate.get("sample_sizes") or []
+    runtime_cost = estimate.get("endpoint_runtime_cost", {})
+    endpoint_rows = []
+    for alias, details in runtime_cost.get("endpoints", {}).items():
+        endpoint_rows.append(
+            "  - "
+            f"{details.get('role', alias)} ({alias}): "
+            f"{_format_cost(details.get('cost_usd'))} "
+            f"@ ${float(details.get('hourly_rate_usd', 0.0) or 0.0):.2f}/hr"
+        )
+
+    stage_rows = []
+    for stage_name, stage in estimate.get("stage_estimates", {}).items():
+        stage_rows.append(
+            "  - "
+            f"{stage_name}: calls={_format_int(stage.get('calls'))}, "
+            f"input_tokens={_format_int(stage.get('input_tokens'))}, "
+            f"output_tokens={_format_int(stage.get('output_tokens'))}, "
+            f"token_cost={_format_cost(stage.get('cost_usd'))}"
+        )
+
+    drivers = estimate.get("major_cost_drivers", {})
+    warning = ""
+    max_requested = estimate.get("max_requested_sample_size")
+    expected_pass = estimate.get("expected_qc_passed_per_country")
+    if max_requested and expected_pass and expected_pass < max_requested:
+        warning = (
+            "\n\nBudget note:\n"
+            f"  - Expected QC-passed rows per country ({expected_pass}) is below "
+            f"the largest requested sample size ({max_requested}). Consider a larger "
+            "`--scenarios-per-dim` or accept that larger nested exports may be skipped."
+        )
+
+    return "\n".join(
+        [
+            "",
+            "SCA 2.0 generator budget estimate",
+            "=================================",
+            f"Countries: {', '.join(estimate.get('countries', []))}",
+            f"GPS dimensions: {estimate.get('gps_dimension_count')}",
+            f"Scenarios per dimension: {estimate.get('scenarios_per_dim')}",
+            f"Raw pairs per country: {_format_int(estimate.get('raw_pairs_per_country'))}",
+            f"Raw pairs total: {_format_int(estimate.get('raw_pairs_total'))}",
+            f"Expected QC-passed per country: {_format_int(expected_pass)} "
+            f"(assumed pass rate {float(estimate.get('estimated_qc_pass_rate', 0.0)):.0%})",
+            f"Nested sample sizes: {', '.join(str(size) for size in sample_sizes) if sample_sizes else 'auto'}",
+            "",
+            "LLM calls and token estimate:",
+            *stage_rows,
+            f"  - total: calls={_format_int(estimate.get('total_llm_calls'))}, "
+            f"input_tokens={_format_int(estimate.get('total_input_tokens'))}, "
+            f"output_tokens={_format_int(estimate.get('total_output_tokens'))}",
+            "",
+            "Endpoint runtime cost estimate:",
+            *(endpoint_rows or ["  - no endpoint runtime costs available"]),
+            f"  - total estimated cost: {_format_cost(estimate.get('total_cost_usd'))}",
+            f"  - rough cost per country: {_format_cost(estimate.get('rough_cost_per_country_usd'))}",
+            f"  - estimated runtime: {estimate.get('estimated_runtime', {}).get('human_readable')}",
+            "",
+            "Major cost drivers:",
+            f"  - scenarios_per_dim={drivers.get('scenarios_per_dim')}",
+            f"  - countries={drivers.get('countries')}",
+            f"  - selection/scoring scale: {drivers.get('selection_and_scoring_calls_scale_with')}",
+            f"  - nested sample sizes add LLM calls: {drivers.get('nested_sample_sizes_add_llm_calls')}",
+            warning,
+        ]
+    )
 
 
 async def async_main(argv: Sequence[str] | None = None) -> int:
@@ -185,6 +286,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         "error_rate_window": args.error_rate_window,
         "max_error_rate_for_continue": args.max_error_rate_for_continue,
         "sample_size_policy": args.sample_size_policy,
+        "use_anchors": args.use_anchors,
     }
     config = CONFIG.with_overrides(**overrides)
     if config.scenarios_per_dim <= 0:
@@ -229,12 +331,12 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     else:
         countries = countries or CONFIG.default_countries
 
+    log_banner(LOGGER, "SCA 2.0 Synthetic Data Generation")
     LOGGER.info(
-        "Run configuration: countries=%s scenarios_per_dim=%d sample_sizes=%s concurrency=%d teacher=%s generator=%s scorer=%s",
+        "Configuration: countries=%s | scenarios_per_dim=%d | use_anchors=%s | models=%s/%s/%s",
         countries,
         config.scenarios_per_dim,
-        sample_sizes or "auto",
-        config.concurrency,
+        config.use_anchors,
         config.teacher_model,
         config.generator_model,
         config.scorer_model,
@@ -242,7 +344,8 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
 
     if args.estimate_only:
         estimate = tracker.estimate_run(config, countries, sample_sizes=sample_sizes or None)
-        LOGGER.info("Estimate summary: %s", json.dumps(estimate, indent=2))
+        print(format_estimate_summary(estimate), flush=True)
+        LOGGER.debug("Raw estimate JSON: %s", json.dumps(estimate, indent=2))
         log_cost_summary(estimate)
         if sample_sizes and estimate["expected_qc_passed_per_country"] < max(sample_sizes):
             LOGGER.warning(
@@ -274,6 +377,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
                 countries,
                 config=config,
                 tracker=tracker,
+                use_anchors=config.use_anchors,
             )
         except Exception as exc:
             raise SystemExit(
@@ -282,12 +386,12 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
                 "--max-retries or a larger retry budget after the endpoint has finished waking up. "
                 f"Last error: {compact_error_message(exc)}"
             ) from None
-        LOGGER.info("Generated %s raw pairs", len(df_raw))
-        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-        df_raw.to_json(checkpoint_path, orient="records", lines=True)
-        LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
-        scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
-        LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
+    LOGGER.info("Generated %s raw pairs", len(df_raw))
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    df_raw.to_json(checkpoint_path, orient="records", lines=True)
+    LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
+    scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
+    LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
 
     try:
         df_final, qc_stats = await score.run_scoring_qc_export(

@@ -52,7 +52,7 @@ The estimate now reports:
 - expected raw pairs per country
 - expected QC-passed rows per country
 - token usage estimate by teacher / generator / scorer
-- endpoint runtime cost estimate, if hourly-rate env vars are set
+- endpoint runtime cost estimate using configured defaults or hourly-rate env overrides
 - estimated runtime in seconds and `Xh Ym` form
 
 ### 2. Small pilot run
@@ -113,6 +113,9 @@ What `--resume` does **not** do:
 - `--sample-size-policy {fail_fast,skip_unavailable,degrade_to_feasible}`
   - Controls behavior when requested sample sizes exceed QC-passed rows.
   - Default is `skip_unavailable` (export feasible sizes and record skipped sizes in the manifest).
+- `--use-anchors [True|False]`
+  - Adds three curated anchors for the current GPS dimension to fixed triplet prompts.
+  - A bare `--use-anchors` is equivalent to `--use-anchors True`.
 
 ### Endpoint roles
 
@@ -150,7 +153,15 @@ python run.py \
   --scorer-endpoint-url https://.../v1/
 ```
 
-Optional cost-estimation environment:
+The pipeline has calibrated default hourly rates for the current lab endpoints:
+
+| Role | Endpoint | Hardware | Default rate |
+|------|----------|----------|--------------|
+| teacher | `llama-3-3-70b-instruct-gguf-fnk` | Nvidia A100 | `$2.50/hr` |
+| generator | `qwen3-32b-chm` | 1x Nvidia H200 | `$5.00/hr` |
+| scorer | `phi-4-uid` | Nvidia L40S | `$1.80/hr` |
+
+Optional cost-estimation environment overrides:
 
 ```bash
 HF_TEACHER_HOURLY_USD="..."
@@ -158,7 +169,14 @@ HF_GENERATOR_HOURLY_USD="..."
 HF_SCORER_HOURLY_USD="..."
 ```
 
-If the hourly-rate variables are unset, manifests still report token usage and elapsed runtime, but dollar cost remains `0.0`.
+If the hourly-rate variables are unset, manifests use the calibrated defaults in
+`sca2_datagen/config.py`. If an hourly-rate variable is invalid, the manifest marks it as
+invalid and falls back to the config default.
+
+Manifest costs are run-scoped estimates: elapsed CLI wall-clock time multiplied by hourly
+endpoint rates. The manifest also records historical provider-console spend since endpoint
+creation as calibration metadata. That historical spend is not added to each run because it
+can include endpoint uptime before or after the CLI process.
 
 ### Reliability and throughput controls
 
@@ -272,7 +290,7 @@ If the logs say an endpoint is "waking up", that usually means Hugging Face scal
 
 Each `D_syn_{country}_{N}.jsonl` file contains the final QC-passed training pairs for one country and one sample size.
 
-Use outputs from a fresh run or from `outputs/`. The checked-in `sample_output/` directory is legacy illustrative material and should not be used to validate current JSONL formatting or English-only generation.
+Use outputs from a fresh run or from `outputs/`. Legacy closed-provider sample outputs have been removed from the repository; current validation should use freshly generated HF-only outputs.
 
 ### Hugging Face dataset directory
 
