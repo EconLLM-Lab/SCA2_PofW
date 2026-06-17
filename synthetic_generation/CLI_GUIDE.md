@@ -1,8 +1,27 @@
 # CLI Guide
 
-This document explains how to run the SCA 2.0 synthetic data pipeline from the command line.
+This guide explains how to run the SCA 2.0 synthetic data pipeline from the command line.
 
-If you are a new undergraduate in the lab, read [README.md](./README.md) first. That file explains the research motivation. This guide is for actually running the code.
+**Important**: If you are new to the lab or this project, please read the [README.md](./README.md) first. It explains the research goals and overall architecture.
+
+This guide assumes you have basic comfort with the terminal (cd, ls, python, etc.).
+
+
+## Before You Start
+
+1. **Activate your virtual environment**
+   ```bash
+   source .venv/bin/activate
+   ```
+
+2. **Make sure you are in the right directory**
+   ```bash
+   cd synthetic_generation
+   ```
+
+3. **Endpoints take time to wake up**
+   The first time you run the pipeline (or after a long pause), the Hugging Face endpoints will need 30–90 seconds to start. The pipeline has automatic retries, so just let it run.
+
 
 ## Where to run commands
 
