@@ -33,6 +33,7 @@ python run.py --estimate-only --countries MEX USA
 ```
 
 The package expects paths relative to this directory, and the default GPS/WVS path search is written with that assumption in mind.
+The cost estimates are not reliable (often overestimated) as of **June 16** because we switched to open-source models served via hugginface inference endpoints which charge per hour rather than per token/call. 
 
 Use a virtual environment for reproducible setup:
 
