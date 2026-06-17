@@ -41,7 +41,10 @@ The pipeline has five blocks that run sequentially. Each block is a self-contain
 ### Block A — Configuration
 Defines target countries, GPS dimensions, Hugging Face endpoint role aliases, hyperparameters, WVS item mappings, and cost tracking. This is where you set `scenarios_per_dim` and configure quality control thresholds.
 
-**Key design decision:** We use three dedicated Hugging Face Inference Endpoints. The teacher endpoint handles facet and scenario generation, the generator endpoint creates fixed high/low triplets once per scenario, and the scorer endpoint handles profile-based selection plus QC scoring.
+**Key design decision:** We use three dedicated Hugging Face Inference Endpoints:
+- `hf-teacher`: Facet decomposition and scenario generation
+- `hf-generator`: Fixed triplet generation + profile-based selection (as of v1)
+- `hf-scorer`: Quality control scoring only
 
 ### Block B — Data ingestion and profile construction
 Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile is used by the scorer endpoint when selecting which fixed response option matches a country.
@@ -52,7 +55,7 @@ Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural s
 
 **Anchor Usage (v1):** Anchors are now used as *positive structural exemplars* rather than negative constraints. The generator is instructed to emulate facet logic and core tradeoff style while varying surface context.
 Four-step architecture:
-1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into 4–6 concrete sub-dimensions.
+1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into exactly 5 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
 3. **Fixed triplet generation** (Stage 2): For each scenario, the generator endpoint creates fixed high/low response options once, independent of country.
 4. **Profile-based selection** (Stage 2b): For each country, the scorer endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
@@ -71,16 +74,19 @@ Examples are no longer hard-dropped on QC failure. Instead, they are retained wi
 
 This enables downstream filtering, down-weighting, or targeted recovery while preserving transparency.
 
-`contamination_ratio` measures non-target movement: the sum of absolute score differences across
-the other five GPS dimensions divided by the target-dimension difference. `contamination_category`
-bins that diagnostic as `low` (<0.3), `medium` (<0.7), or `high` (>=0.7). We track it to identify
-pairs that pass target-dimension QC but may also encode other cultural traits.
+**Contamination Measurement**
 
-For DPO and structural validation, a high-quality generated dataset should have strong QC pass
-rates, low monotonicity and distance failure rates, contamination concentrated in the low/medium
-buckets, and signed differences aligned with the country GPS `z_value`. High-contamination
-dimensions should be reviewed before downstream use, but contamination remains diagnostic rather
-than an additional hard filter.
+We quantify how cleanly a pair isolates the target dimension using a contamination ratio:
+
+```
+contamination_ratio = cross_diffs / target_diff
+```
+
+where `target_diff` is the absolute score difference on the target dimension, and `cross_diffs` is the sum of absolute differences across the other five dimensions.
+
+In practice, we observe average `target_diff` values between 0.35–0.55 and average `cross_diffs` between 0.9–1.6. We consider ratios below 1.4 reasonably healthy for identifiability, while ratios consistently above 2.0 begin to meaningfully weaken the signal on the target dimension.
+
+Note that some cross-dimensional movement is realistic — economic decisions rarely isolate a single motive. However, very high contamination creates an identifiability trade-off: the data becomes more ecologically valid but harder to attribute to specific cultural traits. We therefore treat contamination as diagnostic rather than applying it as an additional hard filter.
 
 ### Block E — Export and cost summary
 Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, token usage, elapsed-runtime endpoint cost estimate, and git hash.
