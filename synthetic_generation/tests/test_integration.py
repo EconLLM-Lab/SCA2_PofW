@@ -8,7 +8,8 @@ import pytest
 
 import run
 from sca2_datagen import generate, score
-from sca2_datagen.config import CONFIG
+from sca2_datagen.config import CONFIG, GPS_DIMENSIONS
+from sca2_datagen.export import export_sample_runs
 
 
 def test_estimate_only_runs(caplog, capsys, gps_path) -> None:
@@ -202,6 +203,67 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     assert manifest["per_country_contamination_counts"]["USA"]["high"] == 3
     assert manifest["qc_health_summary"]
     assert (output_dir / "D_syn_combined_hf_2").exists()
+
+
+def test_export_sample_runs_filters_nonpassing_qc_rows(tmp_path: Path) -> None:
+    rows = []
+    for country in ["MEX", "USA"]:
+        for index, qc_status in enumerate(["pass", "pass", "mono_fail"]):
+            rows.append(
+                {
+                    "prompt": f"prompt-{country}-{index}",
+                    "chosen": "chosen",
+                    "rejected": "rejected",
+                    "country": country,
+                    "gps_dimension": "trust",
+                    "z_value": -0.35 if country == "MEX" else 0.15,
+                    "qc_status": qc_status,
+                    "failure_reason": "" if qc_status == "pass" else "wrong sign",
+                    "mono_pass": qc_status == "pass",
+                    "dist_pass": True,
+                    "m_diff_abs": 0.7,
+                    "contamination_ratio": 0.2,
+                }
+            )
+    df_final = pd.DataFrame(rows)
+    cultural_profiles = {
+        "MEX": {"z_c": {dim: -0.1 for dim in GPS_DIMENSIONS}},
+        "USA": {"z_c": {dim: 0.1 for dim in GPS_DIMENSIONS}},
+    }
+    qc_stats = {
+        "total": 6,
+        "score_fail": 0,
+        "mono_fail": 2,
+        "dist_fail": 0,
+        "pass": 4,
+        "per_dimension": {
+            dim: {
+                "total": 6 if dim == "trust" else 0,
+                "score_fail": 0,
+                "mono_fail": 2 if dim == "trust" else 0,
+                "dist_fail": 0,
+                "pass": 4 if dim == "trust" else 0,
+            }
+            for dim in GPS_DIMENSIONS
+        },
+    }
+
+    export_sample_runs(
+        df_final=df_final,
+        sample_sizes=[2],
+        cultural_profiles=cultural_profiles,
+        config=CONFIG,
+        output_dir=tmp_path,
+        cost_summary={},
+        scenario_bank={},
+        qc_stats=qc_stats,
+        raw_pair_count=len(df_final),
+    )
+
+    for country in ["MEX", "USA"]:
+        exported = pd.read_json(tmp_path / f"D_syn_{country}_2.jsonl", lines=True)
+        assert len(exported) == 2
+        assert set(exported["qc_status"]) == {"pass"}
 
 
 def test_cli_resume_uses_checkpoint_without_generation(tmp_path: Path, gps_path, monkeypatch) -> None:

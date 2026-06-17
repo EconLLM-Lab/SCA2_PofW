@@ -46,9 +46,9 @@ async def _generate_facets(
         temperature=config.teacher_temperature,
     )
     facets = [str(item).strip() for item in payload.get("facets", []) if str(item).strip()]
-    if len(facets) < 4:
-        raise ValueError(f"Facet generation for {dim_key} returned fewer than 4 facets.")
-    return facets[:6]
+    if len(facets) != 5:
+        raise ValueError(f"Facet generation for {dim_key} returned {len(facets)} facets; expected exactly 5.")
+    return facets
 
 
 async def generate_scenarios(
@@ -130,8 +130,8 @@ async def generate_triplet(
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
             f"Dimension rubric: {dim_info['rubric']}\n\n"
             "Generate two opposing responses to this same scenario.\n"
-            "- Response A should reflect the high/positive end of the target dimension.\n"
-            "- Response B should reflect the low/opposite end of the target dimension.\n"
+            "- Response A should load positively on the target dimension.\n"
+            "- Response B should load negatively on the target dimension.\n"
             "Vary only the target dimension/facet between Response A and Response B; keep the other five GPS traits (trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity, excluding the target) as constant as possible.\n"
             "The two responses should be nearly identical in tone, length, and behavioral realism except for the specific choices and reasoning that reflect the target dimension.\n"
             "Both responses must be 2 to 4 sentences, behaviorally realistic, and written in English.\n"
@@ -190,14 +190,13 @@ async def select_triplet_for_profile(
             f"Scenario: {scenario}\n"
             f"Target sub-dimension: {facet}\n"
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
-            f"Country/profile code: {country}\n"
             f"Observed standardized disposition on {dim_key}: {z_c[dim_key]:+.2f}\n\n"
             f"Profile description:\n{profile_text}\n\n"
             f"Response A: {response_a}\n\n"
             f"Response B: {response_b}\n\n"
             "Select which fixed response is more aligned with the profile's disposition on the "
             f"target dimension. The profile has a {z_c[dim_key]:+.2f} standardized score. "
-            "Choose the response that better matches this specific tendency (pay special attention to the sign).\n"
+            "Choose the response that better matches this specific tendency; pay special attention to the sign of the z-score.\n"
             "Do not rewrite either response.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
@@ -207,7 +206,7 @@ async def select_triplet_for_profile(
             "C:selection",
             tracker,
             config=config,
-            model=config.scorer_model,
+            model=config.generator_model,
             messages=[
                 {"role": "system", "content": profile_text},
                 {"role": "user", "content": user_prompt},

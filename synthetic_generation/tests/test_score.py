@@ -176,6 +176,7 @@ def test_run_scoring_qc_export_counts_failed_scores() -> None:
             score.score_pair = original
 
     df_final, stats = asyncio.run(run_test())
-    assert len(df_final) == 1
+    assert len(df_final) == 2
     assert stats["score_fail"] == 1
     assert stats["pass"] == 1
+    assert set(df_final["qc_status"]) == {"pass", "score_fail"}

@@ -320,7 +320,15 @@ def export_sample_runs(
     export_timestamp = export_time.isoformat()
     run_id = _build_run_id(output_root, export_time)
 
-    ranked = prepare_ranked_subsets(df_final, config.seed)
+    if "qc_status" in df_final.columns:
+        export_source = df_final.loc[df_final["qc_status"] == "pass"].copy()
+        dropped = len(df_final) - len(export_source)
+        if dropped:
+            LOGGER.info("Filtered %d non-passing QC rows before export", dropped)
+    else:
+        export_source = df_final.copy()
+
+    ranked = prepare_ranked_subsets(export_source, config.seed)
     skipped_sizes: list[dict[str, Any]] = []
     if sample_sizes:
         sample_sizes, skipped_sizes = validate_sample_sizes(

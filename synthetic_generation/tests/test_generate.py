@@ -13,7 +13,7 @@ async def _run_generate_scenarios(use_anchors: bool = False) -> tuple[list[dict[
         prompts.append(kwargs["messages"][-1]["content"])
         if block == "C:facets":
             return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
-                '{"facets": ["institutional trust", "stranger trust", "workplace trust", "market trust"]}'
+                '{"facets": ["institutional trust", "stranger trust", "workplace trust", "market trust", "online trust"]}'
             )
         return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
             '{"scenarios": ["Scenario one", "Scenario two"]}'
@@ -38,7 +38,7 @@ async def _run_generate_scenarios(use_anchors: bool = False) -> tuple[list[dict[
 def test_generate_scenarios_uses_facets_and_exclusions() -> None:
     rows, prompts = asyncio.run(_run_generate_scenarios())
     assert rows
-    assert any("4 to 6 distinct sub-dimensions or facets" in prompt for prompt in prompts)
+    assert any("exactly 5 distinct sub-dimensions (facets)" in prompt for prompt in prompts)
     assert any("Do NOT generate scenarios requiring numerical calculations" in prompt for prompt in prompts)
 
 
@@ -49,7 +49,7 @@ def test_generate_scenarios_can_include_anchor_block() -> None:
     assert any("## High-Quality Reference Anchors for the trust dimension" in prompt for prompt in scenario_prompts)
     assert any("trust_remote_handoff_01" in prompt for prompt in scenario_prompts)
     assert any("The Early File Sender" in prompt for prompt in scenario_prompts)
-    assert any("use a different setting, decision object" in prompt for prompt in scenario_prompts)
+    assert any("Vary the specific setting, decision object" in prompt for prompt in scenario_prompts)
 
 
 def test_generate_triplet_has_no_country_or_z_arguments() -> None:
@@ -92,8 +92,54 @@ def test_generate_triplet_prompt_is_country_independent() -> None:
     asyncio.run(run_test())
     assert message_roles == [["user"]]
     assert not any("MEX" in prompt or "USA" in prompt or "z-score" in prompt for prompt in prompts)
+    assert any("Response A should load positively on the target dimension" in prompt for prompt in prompts)
+    assert any("Response B should load negatively on the target dimension" in prompt for prompt in prompts)
     assert any("Do NOT use phrases like 'As a Mexican' or 'As an American'" in prompt for prompt in prompts)
     assert not any("High-Quality Reference Anchors" in prompt for prompt in prompts)
+
+
+def test_select_triplet_uses_generator_model_and_profile_sign_prompt() -> None:
+    calls: list[dict[str, object]] = []
+    config = CONFIG.with_overrides(generator_model="generator-under-test", scorer_model="scorer-not-used")
+
+    async def fake_tracked_completion(block, tracker, **kwargs):
+        calls.append({"block": block, **kwargs})
+        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
+            '{"chosen_option": "B", "reasoning": "negative z-score selects low-loading response"}'
+        )
+
+    async def run_test() -> dict[str, object]:
+        original = generate.utils.tracked_completion
+        generate.utils.tracked_completion = fake_tracked_completion
+        try:
+            return await generate.select_triplet_for_profile(
+                "A scenario",
+                "stranger trust",
+                "trust",
+                GPS_DIMENSIONS["trust"],
+                "High trust option",
+                "Low trust option",
+                "MEX",
+                "GPS CULTURAL STATE VECTOR\n- tau (trust) = -0.35",
+                {key: (-0.35 if key == "trust" else 0.0) for key in GPS_DIMENSIONS},
+                asyncio.Semaphore(1),
+                config=config,
+                tracker=CostTracker(),
+            )
+        finally:
+            generate.utils.tracked_completion = original
+
+    payload = asyncio.run(run_test())
+    assert payload["chosen_option"] == "B"
+    assert calls[0]["block"] == "C:selection"
+    assert calls[0]["model"] == "generator-under-test"
+    assert calls[0]["model"] != "scorer-not-used"
+    messages = calls[0]["messages"]
+    assert [message["role"] for message in messages] == ["system", "user"]
+    assert messages[0]["content"].startswith("GPS CULTURAL STATE VECTOR")
+    assert "Profile description:" in messages[1]["content"]
+    assert "pay special attention to the sign of the z-score" in messages[1]["content"]
+    assert "Country/profile code" not in messages[1]["content"]
 
 
 def test_generate_triplet_can_include_anchor_block() -> None:
