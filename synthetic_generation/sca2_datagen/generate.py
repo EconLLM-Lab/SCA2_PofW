@@ -86,6 +86,7 @@ async def generate_scenarios(
             "The Decision line must make clear what choice the agent is actually facing.\n"
             "The Trade-off line must make the relevant target dimension/facet easy to infer while avoiding labels like "
             "'high trust' or 'low altruism'.\n"
+            "Write the scenario in first-person.\n"
             "Vary social setting and stakes while staying realistic and culturally neutral.\n"
             "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
             "or hypothetical pricing decisions.\n"
