@@ -44,7 +44,7 @@ async def score_pair(
 
     async with sem:
         prompt = (
-            "You are an expert experimental economist.\n"
+            "You are a behavioral scientist who designs realistic decision scenarios.\n"
             "Score responses on six GPS dimensions using the rubrics below.\n\n"
             "DIMENSIONS AND RUBRICS:\n"
             f"{rubric_block}\n\n"
@@ -55,6 +55,7 @@ async def score_pair(
             "Score each response from 0.0 to 1.0 on every dimension. "
             "A score of 0.0 means the response expresses the lowest possible level or absence of that trait; "
             "a score of 1.0 means the response expresses the highest possible level of that trait.\n"
+            "Reasoning field: Briefly justify the scores assigned to both responses, focusing on the target dimension and any notable movement on non-target dimensions.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scores_a\": {\"trust\": <float>, \"risktaking\": <float>, \"patience\": <float>, "
             "\"altruism\": <float>, \"posrecip\": <float>, \"negrecip\": <float>}, "

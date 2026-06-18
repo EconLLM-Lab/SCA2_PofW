@@ -139,11 +139,12 @@ def test_select_triplet_uses_generator_model_and_profile_sign_prompt() -> None:
     assert calls[0]["model"] != "scorer-not-used"
     messages = calls[0]["messages"]
     assert [message["role"] for message in messages] == ["system", "user"]
-    assert messages[0]["content"] == "You are an expert experimental economist."
+    assert messages[0]["content"] == "You are a behavioral scientist who designs realistic decision scenarios."
     assert "Profile description:" in messages[1]["content"]
     assert "Response A was generated to load positively on the target dimension" in messages[1]["content"]
     assert "Response B was generated to load negatively on the target dimension" in messages[1]["content"]
     assert "pay special attention to the sign of the z-score" in messages[1]["content"]
+    assert "Reasoning field: Explain which response better matches" in messages[1]["content"]
     assert "Country/profile code" not in messages[1]["content"]
 
 

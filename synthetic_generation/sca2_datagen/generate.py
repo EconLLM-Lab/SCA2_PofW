@@ -29,7 +29,7 @@ async def _generate_facets(
     tracker: CostTracker,
 ) -> list[str]:
     prompt = (
-        "You are an expert experimental economist.\n"
+        "You are a behavioral scientist who designs realistic decision scenarios.\n"
         f"Break the cultural trait '{dim_key}' into exactly 5 distinct sub-dimensions (facets).\n"
         f"Trait description: {dim_info['desc']}\n"
         "Return ONLY a valid JSON object, with no markdown or surrounding text, "
@@ -75,7 +75,7 @@ async def generate_scenarios(
         if count <= 0:
             continue
         prompt = (
-            "You are an expert experimental economist.\n"
+            "You are a behavioral scientist who designs realistic decision scenarios.\n"
             f"Generate exactly {count} diverse scenarios for the GPS dimension '{dim_key}'.\n"
             f"Dimension description: {dim_info['desc']}\n"
             f"Target sub-dimension/facet: {facet}\n"
@@ -131,7 +131,7 @@ async def generate_triplet(
                 anchor_block = f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
 
         user_prompt = (
-            "You are an expert experimental economist.\n\n"
+            "You are a behavioral scientist who designs realistic decision scenarios.\n\n"
             "CONTEXT\n"
             f"Scenario:\n{scenario}\n\n"
             f"Target sub-dimension: {facet}\n"
@@ -157,6 +157,7 @@ async def generate_triplet(
             "- Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions through behavioral choices and reasoning patterns.\n"
             "- Do not create a strawman response; both responses must sound like plausible choices by reasonable people.\n"
             f"{anchor_block}"
+            "Reasoning field: Briefly explain (1) how Response A loads positively and Response B loads negatively on the target dimension, and (2) how the two responses remain similar on the other five GPS traits.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
         )
@@ -225,7 +226,7 @@ async def select_triplet_for_profile(
             )
 
         user_prompt = (
-            "You are an expert experimental economist.\n\n"
+            "You are a behavioral scientist who designs realistic decision scenarios.\n\n"
             "CONTEXT\n"
             f"Scenario:\n{scenario}\n\n"
             f"Target sub-dimension: {facet}\n"
@@ -244,6 +245,7 @@ async def select_triplet_for_profile(
             "- Focus on the target dimension first; use the other GPS dimensions only as secondary context when the target signal is near zero or ambiguous.\n"
             "- Please pay special attention to the sign of the z-score. Magnitude affects how strong the explanation should be, but the sign determines the expected direction.\n"
             "- Do not rewrite either response.\n"
+            "Reasoning field: Explain which response better matches the profile's disposition on the target dimension and why, paying special attention to the sign of the z-score.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
         )
@@ -254,7 +256,7 @@ async def select_triplet_for_profile(
             config=config,
             model=config.generator_model,
             messages=[
-                {"role": "system", "content": "You are an expert experimental economist."},
+                {"role": "system", "content": "You are a behavioral scientist who designs realistic decision scenarios."},
                 {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_object"},
