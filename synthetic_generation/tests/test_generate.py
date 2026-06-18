@@ -194,7 +194,7 @@ def test_anchor_files_use_required_schema_and_three_per_dimension() -> None:
 
 def test_run_teacher_pipeline_reuses_fixed_options_and_only_selects_per_country(monkeypatch) -> None:
     async def fake_generate_scenarios(
-        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False
+        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False, sem=None
     ):
         return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
 

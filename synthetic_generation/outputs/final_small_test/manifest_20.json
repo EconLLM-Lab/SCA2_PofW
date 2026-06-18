@@ -1,0 +1,386 @@
+{
+  "run_id": "final_small_test_20260618_035819Z",
+  "timestamp": "2026-06-18T03:58:19.463050+00:00",
+  "sample_size": 20,
+  "sample_size_policy": "skip_unavailable",
+  "skipped_sample_sizes": [],
+  "raw_pair_count": 60,
+  "config": {
+    "teacher_model": "hf-teacher",
+    "generator_model": "hf-generator",
+    "scorer_model": "hf-scorer",
+    "scenarios_per_dim": 20,
+    "qc_distance_thresh": 0.2,
+    "qc_mono_epsilon": 0.03,
+    "concurrency": 2,
+    "max_retries": 8,
+    "retry_backoff_min_s": 1.0,
+    "retry_backoff_max_s": 30.0,
+    "retry_jitter_s": 0.75,
+    "cold_start_min_wait_s": 15.0,
+    "server_error_min_wait_s": 5.0,
+    "request_timeout_s": 90.0,
+    "json_parse_retries": 2,
+    "rate_limit_cooldown_s": 30.0,
+    "error_rate_window": 50,
+    "max_error_rate_for_continue": 0.75,
+    "sample_size_policy": "skip_unavailable",
+    "use_anchors": false,
+    "keep_labeled_examples": true,
+    "normalize_perspective": "second_person",
+    "normalize_framing": true,
+    "teacher_temperature": 0.7,
+    "generator_temperature": 0.8,
+    "scorer_temperature": 0.1,
+    "seed": 42,
+    "default_countries": [
+      "MEX",
+      "USA"
+    ],
+    "gps_path_candidates": [
+      "../data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "../data/country_gps.dta",
+      "../country_gps.dta",
+      "data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "data/country_gps.dta",
+      "country_gps.dta"
+    ],
+    "wvs_path_candidates": [
+      "../data/WVS/WVS_wave7.dta",
+      "../data/wvs_wave7.dta",
+      "../WVS_wave7.dta",
+      "data/WVS/WVS_wave7.dta",
+      "data/wvs_wave7.dta",
+      "WVS_wave7.dta"
+    ],
+    "estimate": {
+      "estimated_qc_pass_rate": 0.65,
+      "estimated_facets_per_dimension": 5,
+      "facet_prompt_input_tokens": 450,
+      "facet_prompt_output_tokens": 150,
+      "scenario_prompt_input_tokens": 600,
+      "scenario_prompt_output_tokens": 350,
+      "triplet_prompt_input_tokens": 950,
+      "triplet_prompt_output_tokens": 450,
+      "selection_prompt_input_tokens": 900,
+      "selection_prompt_output_tokens": 120,
+      "scoring_prompt_input_tokens": 1200,
+      "scoring_prompt_output_tokens": 250
+    }
+  },
+  "countries": {
+    "MEX": {
+      "trust": -0.3570720851421356,
+      "risktaking": -0.13891679048538208,
+      "patience": -0.10842810571193695,
+      "altruism": -0.8130887150764465,
+      "posrecip": -1.0379811525344849,
+      "negrecip": -0.1146494597196579
+    },
+    "USA": {
+      "trust": 0.15036696195602417,
+      "risktaking": 0.11658679693937302,
+      "patience": 0.8112621307373047,
+      "altruism": 0.40642887353897095,
+      "posrecip": 0.20365002751350403,
+      "negrecip": 0.011553643271327019
+    }
+  },
+  "wvs_item_map_n": 30,
+  "tier_2_items": [
+    "Q57",
+    "Q59",
+    "Q61",
+    "Q62",
+    "Q63",
+    "Q64",
+    "Q69",
+    "Q70",
+    "Q71",
+    "Q13",
+    "Q14",
+    "Q43",
+    "Q106",
+    "Q107",
+    "Q109",
+    "Q12",
+    "Q174",
+    "Q176",
+    "Q177",
+    "Q179",
+    "Q101",
+    "Q99"
+  ],
+  "tier_3_items": [
+    "Q58",
+    "Q60",
+    "Q73",
+    "Q50",
+    "Q178",
+    "Q81",
+    "Q195",
+    "Q103"
+  ],
+  "qc_stats": {
+    "total": 60,
+    "score_fail": 0,
+    "mono_fail": 1,
+    "dist_fail": 0,
+    "pass": 59,
+    "per_dimension": {
+      "trust": {
+        "total": 10,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 10
+      },
+      "risktaking": {
+        "total": 10,
+        "score_fail": 0,
+        "mono_fail": 1,
+        "dist_fail": 0,
+        "pass": 9
+      },
+      "patience": {
+        "total": 10,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 10
+      },
+      "altruism": {
+        "total": 10,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 10
+      },
+      "posrecip": {
+        "total": 10,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 10
+      },
+      "negrecip": {
+        "total": 10,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 10
+      }
+    }
+  },
+  "qc_pass_rate": 0.9833,
+  "mono_fail_rate": 0.0167,
+  "dist_fail_rate": 0.0,
+  "mean_contamination_ratio": 1.5972,
+  "contamination_distribution": {
+    "low": {
+      "count": 1,
+      "share": 0.025
+    },
+    "medium": {
+      "count": 1,
+      "share": 0.025
+    },
+    "high": {
+      "count": 38,
+      "share": 0.95
+    }
+  },
+  "mean_m_diff_abs": 0.8075,
+  "per_dimension_qc": {
+    "trust": {
+      "total": 10,
+      "pass": 10,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 2.192
+    },
+    "risktaking": {
+      "total": 10,
+      "pass": 9,
+      "pass_rate": 0.9,
+      "mean_contamination_ratio": 0.8357
+    },
+    "patience": {
+      "total": 10,
+      "pass": 10,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 1.2143
+    },
+    "altruism": {
+      "total": 10,
+      "pass": 10,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 1.1577
+    },
+    "posrecip": {
+      "total": 10,
+      "pass": 10,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 1.8292
+    },
+    "negrecip": {
+      "total": 10,
+      "pass": 10,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 1.8944
+    }
+  },
+  "qc_health_summary": "Review: inspect monotonicity failures, distance failures, and high-contamination dimensions before downstream use.",
+  "per_dim_counts": {
+    "trust": 10,
+    "patience": 7,
+    "negrecip": 6,
+    "altruism": 6,
+    "posrecip": 6,
+    "risktaking": 5
+  },
+  "per_country_counts": {
+    "MEX": 20,
+    "USA": 20
+  },
+  "per_country_dimension_counts": {
+    "MEX": {
+      "trust": 5,
+      "risktaking": 3,
+      "patience": 3,
+      "altruism": 3,
+      "posrecip": 3,
+      "negrecip": 3
+    },
+    "USA": {
+      "trust": 5,
+      "risktaking": 2,
+      "patience": 4,
+      "altruism": 3,
+      "posrecip": 3,
+      "negrecip": 3
+    }
+  },
+  "per_country_contamination_counts": {
+    "MEX": {
+      "low": 1,
+      "medium": 1,
+      "high": 18
+    },
+    "USA": {
+      "low": 0,
+      "medium": 0,
+      "high": 20
+    }
+  },
+  "mean_feature_distance": 0.8075,
+  "per_dim_contamination": {
+    "trust": 2.192,
+    "risktaking": 0.8357,
+    "patience": 1.2143,
+    "altruism": 1.1577,
+    "posrecip": 1.8292,
+    "negrecip": 1.8944
+  },
+  "cost_breakdown": {
+    "created_at": "2026-06-18T03:51:26.443033+00:00",
+    "models": {
+      "hf-scorer": {
+        "blocks": {
+          "D:scoring": {
+            "input": 38804,
+            "output": 19583,
+            "calls": 60,
+            "cost_usd": 0.0
+          }
+        },
+        "total_cost_usd": 0.0
+      }
+    },
+    "token_pricing_cost_usd": 0.0,
+    "endpoint_runtime_cost": {
+      "basis": "Elapsed wall-clock runtime multiplied by Hugging Face endpoint hourly rates. Configured defaults are used unless HF_TEACHER_HOURLY_USD, HF_GENERATOR_HOURLY_USD, or HF_SCORER_HOURLY_USD provide valid overrides.",
+      "elapsed_seconds": 413.006,
+      "endpoints": {
+        "hf-teacher": {
+          "role": "teacher",
+          "endpoint_name": "llama-3-3-70b-instruct-gguf-fnk",
+          "hardware": "Nvidia A100",
+          "hourly_rate_usd": 2.5,
+          "elapsed_seconds": 413.006,
+          "cost_usd": 0.286809,
+          "rate_env": "HF_TEACHER_HOURLY_USD",
+          "rate_status": "configured",
+          "rate_source": "config_default"
+        },
+        "hf-generator": {
+          "role": "generator",
+          "endpoint_name": "qwen3-32b-chm",
+          "hardware": "1x Nvidia H200",
+          "hourly_rate_usd": 5.0,
+          "elapsed_seconds": 413.006,
+          "cost_usd": 0.573619,
+          "rate_env": "HF_GENERATOR_HOURLY_USD",
+          "rate_status": "configured",
+          "rate_source": "config_default"
+        },
+        "hf-scorer": {
+          "role": "scorer",
+          "endpoint_name": "phi-4-uid",
+          "hardware": "Nvidia L40S",
+          "hourly_rate_usd": 1.8,
+          "elapsed_seconds": 413.006,
+          "cost_usd": 0.206503,
+          "rate_env": "HF_SCORER_HOURLY_USD",
+          "rate_status": "configured",
+          "rate_source": "config_default"
+        }
+      },
+      "rates_configured": true,
+      "missing_rate_envs": [],
+      "invalid_rate_envs": [],
+      "historical_endpoint_spend": {
+        "basis": "Historical Hugging Face provider-console spend since endpoint creation. This is calibration metadata only and is not added to per-run cost estimates.",
+        "endpoints": {
+          "hf-teacher": {
+            "role": "teacher",
+            "endpoint_name": "llama-3-3-70b-instruct-gguf-fnk",
+            "hardware": "Nvidia A100",
+            "observed_total_runtime_seconds": 14160,
+            "observed_total_runtime_human": "3h 56m",
+            "observed_total_cost_usd": 9.83
+          },
+          "hf-generator": {
+            "role": "generator",
+            "endpoint_name": "qwen3-32b-chm",
+            "hardware": "1x Nvidia H200",
+            "observed_total_runtime_seconds": 12720,
+            "observed_total_runtime_human": "3h 32m",
+            "observed_total_cost_usd": 17.67
+          },
+          "hf-scorer": {
+            "role": "scorer",
+            "endpoint_name": "phi-4-uid",
+            "hardware": "Nvidia L40S",
+            "observed_total_runtime_seconds": 17280,
+            "observed_total_runtime_human": "4h 48m",
+            "observed_total_cost_usd": 8.64
+          }
+        },
+        "total_observed_runtime_seconds": 44160,
+        "total_observed_runtime_human": "12h 16m",
+        "total_observed_cost_usd": 36.14
+      },
+      "total_cost_usd": 1.066931
+    },
+    "total_cost_usd": 1.066931
+  },
+  "git_hash": "8a47210",
+  "scenario_bank_counts": {
+    "trust": 5,
+    "risktaking": 5,
+    "patience": 5,
+    "altruism": 5,
+    "posrecip": 5,
+    "negrecip": 5
+  }
+}

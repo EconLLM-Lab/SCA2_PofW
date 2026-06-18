@@ -27,6 +27,7 @@ async def _generate_facets(
     dim_info: dict[str, str],
     config: PipelineConfig,
     tracker: CostTracker,
+    sem: asyncio.Semaphore | None = None,
 ) -> list[str]:
     prompt = (
         "You are a behavioral scientist who designs realistic decision scenarios.\n"
@@ -36,15 +37,16 @@ async def _generate_facets(
         "in the form {\"facets\": [\"...\", \"...\"]}.\n"
         "Each facet should be short, concrete, and behaviorally distinct."
     )
-    payload = await utils.tracked_json_completion(
-        "C:facets",
-        tracker,
-        config=config,
-        model=config.teacher_model,
-        messages=[{"role": "user", "content": prompt}],
-        response_format={"type": "json_object"},
-        temperature=config.teacher_temperature,
-    )
+    async with sem or utils.null_async_context():
+        payload = await utils.tracked_json_completion(
+            "C:facets",
+            tracker,
+            config=config,
+            model=config.teacher_model,
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"},
+            temperature=config.teacher_temperature,
+        )
     facets = [str(item).strip() for item in payload.get("facets", []) if str(item).strip()]
     if len(facets) != 5:
         raise ValueError(f"Facet generation for {dim_key} returned {len(facets)} facets; expected exactly 5.")
@@ -58,11 +60,12 @@ async def generate_scenarios(
     config: PipelineConfig = CONFIG,
     tracker: CostTracker | None = None,
     use_anchors: bool = False,
+    sem: asyncio.Semaphore | None = None,
 ) -> list[dict[str, str]]:
     """Generate exactly n scenarios for one dimension, grouped by facet."""
 
     tracker = tracker or CostTracker()
-    facets = await _generate_facets(dim_key, dim_info, config, tracker)
+    facets = await _generate_facets(dim_key, dim_info, config, tracker, sem=sem)
     counts = _allocate_counts(n, len(facets))
     scenarios: list[dict[str, str]] = []
     anchor_block = ""
@@ -94,15 +97,16 @@ async def generate_scenarios(
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"scenarios\": [\"...\", \"...\"]}."
         )
-        payload = await utils.tracked_json_completion(
-            "C:scenarios",
-            tracker,
-            config=config,
-            model=config.teacher_model,
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=config.teacher_temperature,
-        )
+        async with sem or utils.null_async_context():
+            payload = await utils.tracked_json_completion(
+                "C:scenarios",
+                tracker,
+                config=config,
+                model=config.teacher_model,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                temperature=config.teacher_temperature,
+            )
         for scenario in payload.get("scenarios", []):
             text = str(scenario).strip()
             if text:
@@ -300,16 +304,25 @@ async def run_teacher_pipeline(
     scenario_bank: dict[str, list[dict[str, str]]] = {}
 
     LOGGER.info("Stage 1/3: generating facets and scenarios for %d GPS dimensions", len(GPS_DIMENSIONS))
-    for dim_key, dim_info in GPS_DIMENSIONS.items():
-        LOGGER.info("Generating facet/scenario bank for dimension=%s", dim_key)
-        scenario_bank[dim_key] = await generate_scenarios(
-            dim_key,
-            dim_info,
-            config.scenarios_per_dim,
-            config=config,
-            tracker=tracker,
-            use_anchors=use_anchors,
-        )
+    scenario_results = await utils.gather_with_progress(
+        [
+            generate_scenarios(
+                dim_key,
+                dim_info,
+                config.scenarios_per_dim,
+                config=config,
+                tracker=tracker,
+                use_anchors=use_anchors,
+                sem=sem,
+            )
+            for dim_key, dim_info in GPS_DIMENSIONS.items()
+        ],
+        description="Generate scenario banks",
+        logger=LOGGER,
+        batch_size=1,
+    )
+    for dim_key, scenarios in zip(GPS_DIMENSIONS, scenario_results):
+        scenario_bank[dim_key] = scenarios
         LOGGER.info(
             "Scenario bank ready for %s: %d scenarios",
             dim_key,

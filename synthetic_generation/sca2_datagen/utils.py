@@ -11,6 +11,7 @@ import re
 import subprocess
 import sys
 from collections import Counter
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,13 @@ from .config import CostTracker, HF_ENDPOINTS, PipelineConfig, resolve_hf_endpoi
 
 litellm.drop_params = True
 litellm.suppress_debug_info = True
+
+
+@asynccontextmanager
+async def null_async_context():
+    """Async context manager used when an optional semaphore is absent."""
+
+    yield
 
 
 def setup_logging(level: int = logging.INFO) -> logging.Logger:

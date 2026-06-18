@@ -23,6 +23,21 @@ from sca2_datagen import generate, score
 LOGGER = logging.getLogger("sca2_datagen.run")
 
 
+SCORING_CHECKPOINT_COLUMNS = [
+    "qc_status",
+    "failure_reason",
+    "mono_pass",
+    "dist_pass",
+    "m_chosen",
+    "m_rejected",
+    "m_diff_signed",
+    "m_diff_abs",
+    "z_value",
+    "contamination_ratio",
+    "contamination_category",
+]
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Create the CLI parser."""
 
@@ -148,6 +163,41 @@ def apply_endpoint_url_overrides(args: argparse.Namespace) -> None:
     for env_name, raw_url in endpoint_args.items():
         if raw_url:
             os.environ[env_name] = validate_endpoint_url(raw_url)
+
+
+def persist_scored_checkpoint(
+    df_raw: pd.DataFrame,
+    df_scored: pd.DataFrame,
+    checkpoint_path: Path,
+) -> None:
+    """Write raw rows enriched with scoring/QC fields back to the checkpoint."""
+
+    if len(df_raw) != len(df_scored):
+        raise ValueError(
+            "Cannot persist scored checkpoint because raw/scored row counts differ: "
+            f"raw={len(df_raw)} scored={len(df_scored)}"
+        )
+
+    enriched = df_raw.reset_index(drop=True).copy()
+    scored = df_scored.reset_index(drop=True)
+    scoring_columns = [
+        column
+        for column in scored.columns
+        if column in SCORING_CHECKPOINT_COLUMNS
+        or column.startswith("m_chosen_")
+        or column.startswith("m_rejected_")
+    ]
+    for column in scoring_columns:
+        enriched[column] = scored[column].to_list()
+
+    if "reasoning" in scored.columns:
+        enriched["score_reasoning"] = scored["reasoning"].to_list()
+    for column in ("selection_reasoning", "generation_reasoning"):
+        if column in scored.columns:
+            enriched[column] = scored[column].to_list()
+
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    enriched.to_json(checkpoint_path, orient="records", lines=True)
 
 
 def log_cost_summary(cost_summary: dict) -> None:
@@ -410,6 +460,8 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
             "Scoring/export failed. Raw generation is checkpointed when available."
             f"{resume_hint} Last error: {compact_error_message(exc)}"
         ) from None
+    persist_scored_checkpoint(df_raw, df_final, checkpoint_path)
+    LOGGER.info("Scored checkpoint updated: %s (%d pairs)", checkpoint_path, len(df_final))
     summarize_qc(df_final, qc_stats)
 
     if df_final.empty:

@@ -1,0 +1,134 @@
+{
+  "trust": [
+    {
+      "facet": "Assuming honesty",
+      "prompt": "Context: A freelancer is considering collaborating with a new partner on a project that requires sharing sensitive information and relying on each other's expertise to meet a tight deadline. Decision: The freelancer must decide between sharing all the necessary information immediately to speed up the project and waiting until they have a chance to get to know the partner better and establish a stronger professional relationship. Trade-off: Relying on the partner's honesty and competence from the outset would accelerate the project but also increases the risk of betrayal or incompetence, whereas delaying the sharing of information would provide more time to assess the partner's trustworthiness but might jeopardize the project's timeline."
+    },
+    {
+      "facet": "Expecting cooperation",
+      "prompt": "Context: A volunteer coordinator is preparing for a large community event and needs to delegate tasks to new team members. Decision: The coordinator must choose between assigning a critical task to a new volunteer who seems capable but has no prior experience, or taking on the task personally, which would add to an already heavy workload. Trade-off: Relying on the new volunteer to complete the task successfully would free up the coordinator's time but risks the task not being done correctly, potentially disrupting the entire event."
+    },
+    {
+      "facet": "Tolerating vulnerability",
+      "prompt": "Context: A freelance translator is considering collaborating with a new, untested editor on a critical project with a tight deadline. Decision: The translator must choose between sharing the nearly completed manuscript with the editor immediately, or waiting until they have a chance to meet in person and establish a stronger connection. Trade-off: Relying on the editor's professionalism without prior face-to-face interaction saves valuable time but increases the risk of misunderstandings or misappropriation of the work."
+    },
+    {
+      "facet": "Giving benefit of doubt",
+      "prompt": "Context: A freelance writer is waiting for a new client to provide feedback on a draft article that is already a week overdue. Decision: The writer must decide between sending a polite reminder email to the client, potentially annoying them, or giving them more time to respond, risking a further delay in the project. Trade-off: Giving the client more time preserves the possibility of a harmonious working relationship but may allow an unreasonably slow pace to continue unchecked."
+    },
+    {
+      "facet": "Maintaining loyalty",
+      "prompt": "Context: A team leader is considering whether to assign a critical project task to a new team member who has been with the team for only a few weeks. Decision: The team leader must choose between giving the new team member full responsibility for the task or assigning it to a more experienced team member who is already overloaded with work. Trade-off: Relying on the new team member to complete the task successfully would demonstrate faith in their abilities and free up the experienced team member's time, but it also risks delaying the project if the new team member is not up to the task."
+    }
+  ],
+  "risktaking": [
+    {
+      "facet": "Financial Risk Tolerance",
+      "prompt": "Context: A freelance photographer is considering two job offers to shoot a high-profile wedding, with one offer coming from a well-established client and the other from a new, untested client who is willing to pay more. Decision: The photographer must decide between accepting the offer from the established client, which guarantees a steady but modest payment, or taking a chance on the new client, who offers a higher fee but has a history of being difficult to work with. Trade-off: Accepting the offer from the new client creates an opportunity for a larger payday but puts the photographer's reputation and relationship with the client at risk if things go awry."
+    },
+    {
+      "facet": "Social Adventure Seeking",
+      "prompt": "Context: A group of friends are planning a weekend getaway to a remote area with limited phone signal and unpredictable weather. Decision: They must decide between taking a shorter but less-maintained trail that could save them several hours of hiking or sticking to the longer, well-marked path that is safer but would leave them less time for other activities. Trade-off: Opting for the shorter trail would allow for more free time and a potentially more exciting experience, but it also increases the risk of getting lost or injured in an area with difficult access to medical help."
+    },
+    {
+      "facet": "Emotional Resilience to Loss",
+      "prompt": "Context: A freelance photographer is offered a last-minute opportunity to shoot a high-profile event with a tight deadline and limited equipment. Decision: The photographer must decide between bringing their own backup equipment, which would increase the overall cost but ensure a reliable setup, or rely on the event organizer's equipment, which may be unfamiliar and potentially faulty. Trade-off: Using the organizer's equipment saves on upfront costs but puts the entire shoot at risk if the equipment fails, whereas bringing personal backup equipment increases the financial burden but guarantees a smooth operation."
+    },
+    {
+      "facet": "Tendency to Weigh Uncertain Outcomes",
+      "prompt": "Context: A freelance photographer is on a tight deadline to deliver a portfolio to a potential client. Decision: The photographer must decide between using a new, untested editing software that could enhance the photos but may not be compatible with their computer, or sticking with the familiar editing program that is slower but reliable. Trade-off: Using the new software offers the potential for better quality photos but risks delaying the project if it doesn't work as expected."
+    },
+    {
+      "facet": "Impulsivity in Decision Making",
+      "prompt": "Context: A freelance photographer is on a tight deadline to deliver a portfolio to a potential client. Decision: The photographer must decide between using a new, untested editing software that could enhance the photos but may cause compatibility issues, or sticking with the familiar software that produces consistent results but may not impress the client. Trade-off: Using the new software offers the potential for a standout portfolio but risks technical problems and a missed deadline."
+    }
+  ],
+  "patience": [
+    {
+      "facet": "delay tolerance",
+      "prompt": "Context: A community organizer is planning a large event and needs to decide how to manage the sound equipment. Decision: The organizer can either wait a few weeks for a professional sound system to be available for rent, or they can purchase a lower-quality system immediately that will meet the basic needs but may not provide the best experience for attendees. Trade-off: Choosing to wait for the professional sound system means forgoing the convenience of having the equipment right away, but it ensures a higher-quality experience for the event attendees and avoids the potential waste of resources on an inferior system."
+    },
+    {
+      "facet": "reward sensitivity",
+      "prompt": "Context: A community organizer is planning a large event and needs to decide how to allocate their time. Decision: They can spend the next few days creating a detailed, reusable event planning guide, or focus on immediately confirming the event's entertainment lineup. Trade-off: Creating the guide requires dedicating time now to a resource that will save time and improve events in the long run, rather than securing an exciting but short-term attraction."
+    },
+    {
+      "facet": "self-control",
+      "prompt": "Context: A community organizer is planning a large event and needs to decide how to allocate their time. Decision: They can spend the next few days meticulously planning every detail to ensure a successful and stress-free event, or they can quickly throw together the basics and focus on last-minute publicity to draw in a bigger crowd. Trade-off: Taking the time to thoroughly plan the event sacrifices the opportunity to devote more time to promoting it and potentially attracting more attendees, in exchange for a more polished and enjoyable experience for those who do come."
+    },
+    {
+      "facet": "future orientation",
+      "prompt": "Context: A community organizer is planning a large event to promote environmental awareness and needs to decide how to allocate their limited budget. Decision: They can choose between spending the money on immediate advertising to attract a large crowd for the upcoming event or investing in building a long-term partnership with a local business that will support future initiatives. Trade-off: Building the partnership requires forgoing the immediate visibility and crowd size of the current event in exchange for potentially greater and more sustained support in the future."
+    },
+    {
+      "facet": "perseverance",
+      "prompt": "Context: A community organizer is planning a charity event and needs to decide how to allocate their time. Decision: They can either spend the next few weeks meticulously planning every detail to ensure a successful and impactful event, or they can quickly assemble a minimal plan and focus on promoting the event immediately. Trade-off: Taking the time to thoroughly plan the event sacrifices the opportunity to start promoting it and generating buzz right away, in exchange for a potentially more effective and sustainable outcome."
+    }
+  ],
+  "altruism": [
+    {
+      "facet": "Donating resources to those in need",
+      "prompt": "Context: After a natural disaster, a local community center is collecting donations to support affected families. Decision: A person must decide between donating their extra furniture to the community center or selling it to renovate their own home. Trade-off: Donating the furniture would provide essential items to those who lost their belongings, but it would also mean delaying the person's own home renovation plans."
+    },
+    {
+      "facet": "Volunteering time for charitable causes",
+      "prompt": "Context: After a severe storm, a local community center is organizing a volunteer event to clean up damaged public parks. Decision: A working professional must decide between taking a paid day off to relax and recharge or volunteering their time at the community event to help with the cleanup efforts. Trade-off: Choosing to volunteer would contribute to the community's immediate needs but would mean forgoing a rare opportunity for personal rest and potentially impacting their work performance in the following days."
+    },
+    {
+      "facet": "Prioritizing others' welfare over personal gain",
+      "prompt": "Context: After a natural disaster, a community center is organizing a donation drive to collect essential items for affected families. Decision: A local resident must decide between donating their spare room's furniture to the community center or selling it to fund their own upcoming move. Trade-off: Donating the furniture would directly benefit the displaced families but would also force the resident to bear the cost of replacing it for their own use later."
+    },
+    {
+      "facet": "Advocating for social justice and equality",
+      "prompt": "Context: A community organizer is planning a local event to raise awareness about social inequality and has the opportunity to invite a prominent speaker. Decision: The organizer must decide between inviting a charismatic but expensive speaker who will likely draw a large crowd, or a local activist who is more knowledgeable about the specific issues affecting the community but may not attract as many attendees. Trade-off: Featuring the prominent speaker may increase event visibility and attract more donors, but giving the platform to the local activist would amplify the voices and concerns of those directly impacted by social inequality."
+    },
+    {
+      "facet": "Sacrificing personal comfort for the benefit of others",
+      "prompt": "Context: After a natural disaster, a local community center is serving as a temporary shelter for those who have lost their homes. Decision: The center's manager must decide between letting a family of four sleep on the floor of the already crowded main hall or giving up their own small on-site apartment to accommodate them. Trade-off: Providing the family with a more comfortable place to sleep would greatly improve their well-being but would force the manager to endure the noise and chaos of the main hall for an indefinite period."
+    }
+  ],
+  "posrecip": [
+    {
+      "facet": "Reciprocation Intent",
+      "prompt": "Context: A community volunteer spent their weekend helping a new resident move into a nearby apartment, and now the resident has a chance to help the volunteer with a heavy package delivery on a rainy day. Decision: The resident must choose between offering to help the volunteer carry the packages up the stairs or politely declining and letting the volunteer handle it alone. Trade-off: Assisting with the delivery would demonstrate appreciation for the earlier help but require getting wet and taking time out of a busy schedule."
+    },
+    {
+      "facet": "Gratitude Expression",
+      "prompt": "Context: A community event organizer, who had been struggling to find a last-minute replacement for a cancelled performer, received help from a local musician who filled the spot without asking for compensation. Decision: The organizer must now choose between inviting the musician to perform at a future, better-paying event or offering the spot to a more established act that could attract a larger audience. Trade-off: Recognizing the musician's earlier kindness with a lucrative opportunity would uphold a sense of obligation, but it might also mean passing over a more commercially viable option."
+    },
+    {
+      "facet": "Cost Sensitivity",
+      "prompt": "Context: A traveler's luggage was carried up a long staircase by a local resident when the elevator was out of order, and now the traveler has the chance to hold the door open for that resident as they struggle with heavy grocery bags. Decision: The traveler can either rush to catch their bus, potentially leaving the resident to manage alone, or take a moment to hold the door and help the resident with their bags. Trade-off: Assisting the resident would acknowledge their earlier kindness but make the traveler late for their bus, disrupting their schedule."
+    },
+    {
+      "facet": "Stranger Trust",
+      "prompt": "Context: A traveler's luggage was carried up a long flight of stairs by a stranger who was headed in the opposite direction, saving them from a struggle. Decision: The traveler can now either offer to buy the stranger a meal at a nearby caf\u00e9 when they coincidentally meet again or simply thank them and continue on their way. Trade-off: Taking the time to repay the kindness with a small gesture would acknowledge the stranger's effort but delay the traveler's own plans, while moving on would save time but leave the helpful act unreciprocated."
+    },
+    {
+      "facet": "Timeliness of Return",
+      "prompt": "Context: A community volunteer who received free medical attention from a traveling doctor during a natural disaster is now able to help the doctor find accommodations in a crowded city after the doctor's vehicle breaks down. Decision: The volunteer can either offer to let the doctor stay in their small home for a few nights, which would be inconvenient due to current guests, or direct the doctor to a potentially available but expensive hotel. Trade-off: Providing shelter preserves the volunteer's obligation to return the earlier medical help but involves accommodating the doctor at personal inconvenience and some disruption to current household plans."
+    }
+  ],
+  "negrecip": [
+    {
+      "facet": "Rejecting unfair offers",
+      "prompt": "Context: A community garden member discovers that another member has taken more than their fair share of shared gardening tools without permission. Decision: The member must decide between directly confronting the tool hoarder and risking conflict or ignoring the issue to maintain garden harmony. Trade-off: Addressing the tool imbalance upholds fairness among gardeners but may lead to disagreements and tension within the community."
+    },
+    {
+      "facet": "Punishing norm violators",
+      "prompt": "Context: A community garden member discovers that another member has been taking more than their fair share of shared tools without permission. Decision: The member must decide between confronting the tool hoarder directly, which could lead to an uncomfortable dispute, or ignoring the issue to maintain garden harmony. Trade-off: Speaking out against the unfair tool usage upholds the community's sharing norms but may strain relationships and create tension within the garden."
+    },
+    {
+      "facet": "Incurring personal costs",
+      "prompt": "Context: A community garden member discovers that another member has been taking more than their share of the communal harvest without contributing equally to the maintenance. Decision: The member must decide between directly addressing the issue with the person, potentially causing tension within the community, or ignoring it to maintain peace. Trade-off: Speaking out against the unfair behavior would uphold the principles of shared responsibility but might lead to conflict and discomfort among the gardeners."
+    },
+    {
+      "facet": "Seeking justice over gain",
+      "prompt": "Context: A community organizer notices that a local business has been dumping waste in a public park, despite a clear agreement to use proper disposal methods. Decision: The organizer must decide between reporting the violation to the authorities, which would likely result in a fine for the business and potentially harm the local economy, or choosing not to report it and instead negotiating a private resolution with the business owner. Trade-off: Speaking out against the violation upholds environmental standards and accountability but may have negative economic consequences for the community, whereas staying silent allows the community to avoid potential economic harm but lets the business's irresponsible behavior go unchecked."
+    },
+    {
+      "facet": "Standing up to unfair authorities",
+      "prompt": "Context: A manager at a community center discovers that a newly hired supervisor has been unfairly denying promotions to long-standing staff members in favor of less experienced friends. Decision: The manager must choose between reporting the supervisor's unfair behavior to the center's board, which could lead to a lengthy and contentious investigation, or ignoring the issue to maintain a peaceful work environment. Trade-off: Speaking out against the supervisor's actions would uphold fairness and accountability, but it would also risk creating workplace tension and potentially damaging relationships with colleagues."
+    }
+  ]
+}

@@ -169,6 +169,7 @@ async def run_scoring_qc_export(
 
     for _, row in df.iterrows():
         dim = row["gps_dimension"]
+        z_value = float(cultural_profiles[row["country"]]["z_c"][dim])
         dim_stats = stats["per_dimension"].setdefault(
             dim, {"total": 0, "score_fail": 0, "mono_fail": 0, "dist_fail": 0, "pass": 0}
         )
@@ -200,7 +201,6 @@ async def run_scoring_qc_export(
                 qc_status = "score_fail"
                 failure_reason = "missing_target_score"
             else:
-                z_value = float(cultural_profiles[row["country"]]["z_c"][dim])
                 z_sign = np.sign(z_value) if z_value != 0 else 1.0
                 signed_diff = chosen_target - rejected_target
                 mono_pass = (signed_diff * z_sign) > -config.qc_mono_epsilon
@@ -253,7 +253,7 @@ async def run_scoring_qc_export(
             "m_rejected": round(rejected_target, 4) if rejected_target is not None else None,
             "m_diff_signed": round(signed_diff, 4) if signed_diff is not None else None,
             "m_diff_abs": round(abs(signed_diff), 4) if signed_diff is not None else None,
-            "z_value": round(z_value, 4) if "z_value" in locals() else round(float(cultural_profiles[row["country"]]["z_c"][dim]), 4),
+            "z_value": round(z_value, 4),
             "contamination_ratio": contamination,
             "contamination_category": contamination_category,
         }

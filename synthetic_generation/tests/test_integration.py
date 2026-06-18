@@ -205,6 +205,144 @@ def test_cli_sample_sizes_exports_without_real_api_calls(tmp_path: Path, gps_pat
     assert (output_dir / "D_syn_combined_hf_2").exists()
 
 
+def test_cli_persists_scoring_fields_to_checkpoint(tmp_path: Path, gps_path, monkeypatch) -> None:
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
+        rows = [
+            {
+                "prompt": "prompt-MEX-0",
+                "facet": "facet",
+                "gps_dimension": "trust",
+                "country": "MEX",
+                "response_a": "high trust",
+                "response_b": "low trust",
+                "chosen_option": "B",
+                "chosen": "low trust",
+                "rejected": "high trust",
+                "reasoning": "selection",
+                "generation_reasoning": "generation",
+            },
+            {
+                "prompt": "prompt-MEX-1",
+                "facet": "facet",
+                "gps_dimension": "trust",
+                "country": "MEX",
+                "response_a": "high trust 2",
+                "response_b": "low trust 2",
+                "chosen_option": "A",
+                "chosen": "high trust 2",
+                "rejected": "low trust 2",
+                "reasoning": "selection fail",
+                "generation_reasoning": "generation fail",
+            },
+        ]
+        return pd.DataFrame(rows), {"trust": [{"facet": "facet", "prompt": "prompt"}]}
+
+    async def fake_run_scoring_qc_export(df_raw, cultural_profiles, config=CONFIG, tracker=None):
+        return pd.DataFrame(
+            [
+                {
+                    "prompt": "prompt-MEX-0",
+                    "facet": "facet",
+                    "chosen": "low trust",
+                    "rejected": "high trust",
+                    "gps_dimension": "trust",
+                    "country": "MEX",
+                    "generation_reasoning": "generation",
+                    "selection_reasoning": "selection",
+                    "reasoning": "score pass",
+                    "qc_status": "pass",
+                    "failure_reason": "",
+                    "mono_pass": True,
+                    "dist_pass": True,
+                    "m_chosen": 0.2,
+                    "m_rejected": 0.9,
+                    "m_diff_signed": -0.7,
+                    "m_diff_abs": 0.7,
+                    "z_value": -0.35,
+                    "contamination_ratio": 0.25,
+                    "contamination_category": "low",
+                    "m_chosen_trust": 0.2,
+                    "m_rejected_trust": 0.9,
+                },
+                {
+                    "prompt": "prompt-MEX-1",
+                    "facet": "facet",
+                    "chosen": "high trust 2",
+                    "rejected": "low trust 2",
+                    "gps_dimension": "trust",
+                    "country": "MEX",
+                    "generation_reasoning": "generation fail",
+                    "selection_reasoning": "selection fail",
+                    "reasoning": "score fail",
+                    "qc_status": "mono_fail",
+                    "failure_reason": "mono_fail: signed_diff=0.7000 wrong sign for z=-0.35",
+                    "mono_pass": False,
+                    "dist_pass": True,
+                    "m_chosen": 0.9,
+                    "m_rejected": 0.2,
+                    "m_diff_signed": 0.7,
+                    "m_diff_abs": 0.7,
+                    "z_value": -0.35,
+                    "contamination_ratio": 0.8,
+                    "contamination_category": "high",
+                    "m_chosen_trust": 0.9,
+                    "m_rejected_trust": 0.2,
+                },
+            ]
+        ), {
+            "total": 2,
+            "score_fail": 0,
+            "mono_fail": 1,
+            "dist_fail": 0,
+            "pass": 1,
+            "per_dimension": {
+                dim: {
+                    "total": 2 if dim == "trust" else 0,
+                    "score_fail": 0,
+                    "mono_fail": 1 if dim == "trust" else 0,
+                    "dist_fail": 0,
+                    "pass": 1 if dim == "trust" else 0,
+                }
+                for dim in GPS_DIMENSIONS
+            },
+        }
+
+    monkeypatch.setattr(generate, "run_teacher_pipeline", fake_run_teacher_pipeline)
+    monkeypatch.setattr(score, "run_scoring_qc_export", fake_run_scoring_qc_export)
+
+    output_dir = tmp_path / "outputs"
+    exit_code = run.main(
+        [
+            "--countries",
+            "MEX",
+            "--sample-sizes",
+            "1",
+            "--gps-path",
+            str(gps_path),
+            "--output-dir",
+            str(output_dir),
+        ]
+    )
+
+    assert exit_code == 0
+    checkpoint_rows = [
+        json.loads(line)
+        for line in (output_dir / "checkpoint_raw_pairs.jsonl").read_text().splitlines()
+    ]
+    assert checkpoint_rows[0]["response_a"] == "high trust"
+    assert checkpoint_rows[0]["qc_status"] == "pass"
+    assert checkpoint_rows[0]["score_reasoning"] == "score pass"
+    assert checkpoint_rows[0]["selection_reasoning"] == "selection"
+    assert checkpoint_rows[0]["mono_pass"] is True
+    assert checkpoint_rows[0]["dist_pass"] is True
+    assert checkpoint_rows[0]["contamination_ratio"] == 0.25
+    assert checkpoint_rows[0]["m_chosen_trust"] == 0.2
+    assert checkpoint_rows[1]["qc_status"] == "mono_fail"
+    assert checkpoint_rows[1]["failure_reason"].startswith("mono_fail")
+
+
 def test_export_sample_runs_filters_nonpassing_qc_rows(tmp_path: Path) -> None:
     rows = []
     for country in ["MEX", "USA"]:
@@ -748,7 +886,7 @@ def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path,
 
 def test_run_teacher_pipeline_stops_early_on_sustained_failures(monkeypatch) -> None:
     async def fake_generate_scenarios(
-        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False
+        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False, sem=None
     ):
         return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
 
