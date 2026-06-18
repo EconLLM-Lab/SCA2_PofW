@@ -39,6 +39,9 @@ def test_generate_scenarios_uses_facets_and_exclusions() -> None:
     rows, prompts = asyncio.run(_run_generate_scenarios())
     assert rows
     assert any("exactly 5 distinct sub-dimensions (facets)" in prompt for prompt in prompts)
+    assert any("Context: One realistic sentence" in prompt for prompt in prompts)
+    assert any("Decision: One sentence stating the two behaviorally plausible options" in prompt for prompt in prompts)
+    assert any("Trade-off: One sentence making the core target-facet tension explicit" in prompt for prompt in prompts)
     assert any("Do NOT generate scenarios requiring numerical calculations" in prompt for prompt in prompts)
 
 
@@ -136,8 +139,10 @@ def test_select_triplet_uses_generator_model_and_profile_sign_prompt() -> None:
     assert calls[0]["model"] != "scorer-not-used"
     messages = calls[0]["messages"]
     assert [message["role"] for message in messages] == ["system", "user"]
-    assert messages[0]["content"].startswith("GPS CULTURAL STATE VECTOR")
+    assert messages[0]["content"] == "You are an expert experimental economist."
     assert "Profile description:" in messages[1]["content"]
+    assert "Response A was generated to load positively on the target dimension" in messages[1]["content"]
+    assert "Response B was generated to load negatively on the target dimension" in messages[1]["content"]
     assert "pay special attention to the sign of the z-score" in messages[1]["content"]
     assert "Country/profile code" not in messages[1]["content"]
 

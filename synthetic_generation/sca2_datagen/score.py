@@ -44,7 +44,8 @@ async def score_pair(
 
     async with sem:
         prompt = (
-            "You are an expert experimental economist scoring responses on six dimensions.\n\n"
+            "You are an expert experimental economist.\n"
+            "Score responses on six GPS dimensions using the rubrics below.\n\n"
             "DIMENSIONS AND RUBRICS:\n"
             f"{rubric_block}\n\n"
             f"SCENARIO: {scenario}\n\n"

@@ -79,8 +79,14 @@ async def generate_scenarios(
             f"Generate exactly {count} diverse scenarios for the GPS dimension '{dim_key}'.\n"
             f"Dimension description: {dim_info['desc']}\n"
             f"Target sub-dimension/facet: {facet}\n"
-            "Each scenario should be 1 to 3 sentences and describe a concrete decision situation.\n"
-            "Vary social setting and stakes while staying realistic.\n"
+            "Each scenario should describe one concrete decision situation using this exact light template:\n"
+            "Context: One realistic sentence establishing the agent, setting, and stakes.\n"
+            "Decision: One sentence stating the two behaviorally plausible options the agent is choosing between.\n"
+            "Trade-off: One sentence making the core target-facet tension explicit without naming high/low GPS scores.\n"
+            "The Decision line must make clear what choice the agent is actually facing.\n"
+            "The Trade-off line must make the relevant target dimension/facet easy to infer while avoiding labels like "
+            "'high trust' or 'low altruism'.\n"
+            "Vary social setting and stakes while staying realistic and culturally neutral.\n"
             "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
             "or hypothetical pricing decisions.\n"
             f"{anchor_block}"
@@ -125,19 +131,31 @@ async def generate_triplet(
                 anchor_block = f"\n\n{format_anchor_block(dim_key, anchors)}\n\n"
 
         user_prompt = (
-            f"Scenario: {scenario}\n"
+            "You are an expert experimental economist.\n\n"
+            "CONTEXT\n"
+            f"Scenario:\n{scenario}\n\n"
             f"Target sub-dimension: {facet}\n"
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
             f"Dimension rubric: {dim_info['rubric']}\n\n"
+            "TASK\n"
             "Generate two opposing responses to this same scenario.\n"
-            "- Response A should load positively on the target dimension.\n"
-            "- Response B should load negatively on the target dimension.\n"
-            "Vary only the target dimension/facet between Response A and Response B; keep the other five GPS traits (trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity, excluding the target) as constant as possible.\n"
-            "The two responses should be nearly identical in tone, length, and behavioral realism except for the specific choices and reasoning that reflect the target dimension.\n"
-            "Both responses must be 2 to 4 sentences, behaviorally realistic, and written in English.\n"
-            "Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions "
-            "through behavioral choices and reasoning patterns, not national identity labels.\n"
-            "Do not create a strawman response.\n"
+            "- Response A should load positively on the target dimension: it should express a higher level of the target trait/facet.\n"
+            "- Response B should load negatively on the target dimension: it should express a lower level or absence of the target trait/facet.\n"
+            "- Positive loading does not mean morally better, more polite, or more socially desirable.\n"
+            "- Negative loading does not mean irrational, careless, hostile, or cartoonishly selfish.\n\n"
+            "CONTROL REQUIREMENTS\n"
+            "- Vary only the target dimension/facet between Response A and Response B.\n"
+            "- Keep the other five GPS traits as constant as possible: trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity, excluding the target.\n"
+            "- Match the two responses on perspective, tone, emotional intensity, specificity, length, social distance, stakes, and behavioral realism.\n"
+            "- Do not let both responses drift toward the high-loading option just because it sounds prudent, prosocial, or cooperative.\n"
+            "- Do not introduce extra cues about non-target traits unless the same cue appears in both responses.\n\n"
+            "STYLE REQUIREMENTS\n"
+            "- Write both responses in first person, present tense.\n"
+            "- Use 2 to 3 sentences per response and aim for similar word counts.\n"
+            "- Start each response with the concrete decision, then give the reasoning behind that decision.\n"
+            "- Do not mention GPS dimensions, profile scores, countries, or national identity labels in either response.\n"
+            "- Do NOT use phrases like 'As a Mexican' or 'As an American'. Express dispositions through behavioral choices and reasoning patterns.\n"
+            "- Do not create a strawman response; both responses must sound like plausible choices by reasonable people.\n"
             f"{anchor_block}"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"response_a\": \"...\", \"response_b\": \"...\", \"reasoning\": \"...\"}"
@@ -186,18 +204,46 @@ async def select_triplet_for_profile(
 
     tracker = tracker or CostTracker()
     async with sem:
+        z_value = float(z_c[dim_key])
+        if z_value > 0:
+            sign_guidance = (
+                "The z-score is positive, so the profile expresses an above-average level of the target trait. "
+                "Because Response A is the positive-loading option and Response B is the negative-loading option, "
+                "Response A should be preferred unless the response text clearly contradicts the loading."
+            )
+        elif z_value < 0:
+            sign_guidance = (
+                "The z-score is negative, so the profile expresses a below-average level of the target trait. "
+                "Because Response A is the positive-loading option and Response B is the negative-loading option, "
+                "Response B should be preferred unless the response text clearly contradicts the loading."
+            )
+        else:
+            sign_guidance = (
+                "The z-score is exactly zero, so the profile is at the global average on the target trait. "
+                "Use the profile description to choose the less extreme response, while remembering that "
+                "Response A is positive-loading and Response B is negative-loading."
+            )
+
         user_prompt = (
-            f"Scenario: {scenario}\n"
+            "You are an expert experimental economist.\n\n"
+            "CONTEXT\n"
+            f"Scenario:\n{scenario}\n\n"
             f"Target sub-dimension: {facet}\n"
             f"Target dimension: {dim_info['symbol']} ({dim_key}) - {dim_info['desc']}\n"
-            f"Observed standardized disposition on {dim_key}: {z_c[dim_key]:+.2f}\n\n"
+            f"Observed standardized disposition on {dim_key}: {z_value:+.2f}\n"
             f"Profile description:\n{profile_text}\n\n"
+            "Fixed response loadings:\n"
+            "- Response A was generated to load positively on the target dimension.\n"
+            "- Response B was generated to load negatively on the target dimension.\n\n"
             f"Response A: {response_a}\n\n"
             f"Response B: {response_b}\n\n"
-            "Select which fixed response is more aligned with the profile's disposition on the "
-            f"target dimension. The profile has a {z_c[dim_key]:+.2f} standardized score. "
-            "Choose the response that better matches this specific tendency; pay special attention to the sign of the z-score.\n"
-            "Do not rewrite either response.\n"
+            "TASK\n"
+            "Select which fixed response is more aligned with the profile's disposition on the target dimension.\n"
+            f"- Sign rule: {sign_guidance}\n"
+            "- The profile description is supporting context for interpreting the target disposition, not a separate instruction to prefer socially desirable behavior.\n"
+            "- Focus on the target dimension first; use the other GPS dimensions only as secondary context when the target signal is near zero or ambiguous.\n"
+            "- Please pay special attention to the sign of the z-score. Magnitude affects how strong the explanation should be, but the sign determines the expected direction.\n"
+            "- Do not rewrite either response.\n"
             "Return ONLY a valid JSON object, with no markdown or surrounding text: "
             "{\"chosen_option\": \"A\" or \"B\", \"reasoning\": \"...\"}"
         )
@@ -208,7 +254,7 @@ async def select_triplet_for_profile(
             config=config,
             model=config.generator_model,
             messages=[
-                {"role": "system", "content": profile_text},
+                {"role": "system", "content": "You are an expert experimental economist."},
                 {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_object"},
