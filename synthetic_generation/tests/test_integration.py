@@ -853,6 +853,107 @@ def test_cli_skip_unavailable_sample_sizes_exports_feasible_only(
     assert any(item["requested"] == 5 for item in manifest["skipped_sample_sizes"])
 
 
+def test_cli_auto_sample_size_uses_qc_passed_rows(tmp_path: Path, gps_path, monkeypatch) -> None:
+    async def fake_run_teacher_pipeline(
+        cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False
+    ):
+        rows = []
+        for country in countries:
+            for index in range(3):
+                rows.append(
+                    {
+                        "prompt": f"prompt-{country}-{index}",
+                        "facet": "facet",
+                        "gps_dimension": "trust",
+                        "country": country,
+                        "chosen": "chosen",
+                        "rejected": "rejected",
+                        "reasoning": "generation",
+                    }
+                )
+        return pd.DataFrame(rows), {"trust": [{"facet": "facet", "prompt": "p"}]}
+
+    async def fake_run_scoring_qc_export(df_raw, cultural_profiles, config=CONFIG, tracker=None):
+        rows = []
+        for _, row in df_raw.iterrows():
+            qc_status = "score_fail" if row["country"] == "USA" and row["prompt"].endswith("-2") else "pass"
+            rows.append(
+                {
+                    "prompt": row["prompt"],
+                    "facet": row["facet"],
+                    "chosen": row["chosen"],
+                    "rejected": row["rejected"],
+                    "gps_dimension": row["gps_dimension"],
+                    "country": row["country"],
+                    "generation_reasoning": row["reasoning"],
+                    "reasoning": "score",
+                    "qc_status": qc_status,
+                    "failure_reason": "mock" if qc_status != "pass" else "",
+                    "mono_pass": qc_status == "pass",
+                    "dist_pass": qc_status == "pass",
+                    "m_chosen": 0.2,
+                    "m_rejected": 0.9,
+                    "m_diff_signed": -0.7,
+                    "m_diff_abs": 0.7,
+                    "z_value": -0.35 if row["country"] == "MEX" else 0.15,
+                    "contamination_ratio": 1.0,
+                    "m_chosen_trust": 0.2,
+                    "m_rejected_trust": 0.9,
+                    "m_chosen_risktaking": 0.1,
+                    "m_rejected_risktaking": 0.2,
+                    "m_chosen_patience": 0.1,
+                    "m_rejected_patience": 0.2,
+                    "m_chosen_altruism": 0.1,
+                    "m_rejected_altruism": 0.2,
+                    "m_chosen_posrecip": 0.1,
+                    "m_rejected_posrecip": 0.2,
+                    "m_chosen_negrecip": 0.1,
+                    "m_rejected_negrecip": 0.2,
+                }
+            )
+        return pd.DataFrame(rows), {
+            "total": len(rows),
+            "score_fail": 1,
+            "mono_fail": 0,
+            "dist_fail": 0,
+            "pass": len(rows) - 1,
+            "per_dimension": {
+                dim: {
+                    "total": len(rows) if dim == "trust" else 0,
+                    "score_fail": 1 if dim == "trust" else 0,
+                    "mono_fail": 0,
+                    "dist_fail": 0,
+                    "pass": len(rows) - 1 if dim == "trust" else 0,
+                }
+                for dim in GPS_DIMENSIONS
+            },
+        }
+
+    monkeypatch.setattr(generate, "run_teacher_pipeline", fake_run_teacher_pipeline)
+    monkeypatch.setattr(score, "run_scoring_qc_export", fake_run_scoring_qc_export)
+
+    output_dir = tmp_path / "outputs"
+    exit_code = run.main(
+        [
+            "--countries",
+            "MEX",
+            "USA",
+            "--scenarios-per-dim",
+            "1",
+            "--gps-path",
+            str(gps_path),
+            "--output-dir",
+            str(output_dir),
+        ]
+    )
+
+    assert exit_code == 0
+    assert (output_dir / "manifest_2.json").exists()
+    assert not (output_dir / "manifest_3.json").exists()
+    assert len(pd.read_json(output_dir / "D_syn_MEX_2.jsonl", lines=True)) == 2
+    assert len(pd.read_json(output_dir / "D_syn_USA_2.jsonl", lines=True)) == 2
+
+
 def test_cli_generation_failure_has_actionable_message(tmp_path: Path, gps_path, monkeypatch) -> None:
     async def failing_run_teacher_pipeline(
         cultural_profiles, countries, config=CONFIG, tracker=None, use_anchors=False

@@ -179,7 +179,7 @@ MODEL_PRICING = {
 class EstimateAssumptions:
     """Static estimate inputs for no-network cost projections."""
 
-    estimated_qc_pass_rate: float = 0.65
+    estimated_qc_pass_rate: float = 0.85
     estimated_facets_per_dimension: int = 5
     facet_prompt_input_tokens: int = 450
     facet_prompt_output_tokens: int = 150
@@ -191,6 +191,7 @@ class EstimateAssumptions:
     selection_prompt_output_tokens: int = 120
     scoring_prompt_input_tokens: int = 1200
     scoring_prompt_output_tokens: int = 250
+    anchor_prompt_input_tokens: int = 700
 
 
 @dataclass(slots=True)
@@ -201,6 +202,7 @@ class PipelineConfig:
     generator_model: str = "hf-generator"
     scorer_model: str = "hf-scorer"
     scenarios_per_dim: int = 20
+    scenario_batch_size: int = 6
     qc_distance_thresh: float = 0.20
     qc_mono_epsilon: float = 0.03
     concurrency: int = 2
@@ -331,19 +333,28 @@ class CostTracker:
         expected_pass_per_country = int(raw_per_country * config.estimate.estimated_qc_pass_rate)
         max_requested_sample = max(sample_sizes) if sample_sizes else None
 
-        teacher_calls = dims + dims * estimated_facets
+        scenario_calls_per_dim = _estimate_scenario_calls_per_dimension(
+            config.scenarios_per_dim,
+            estimated_facets,
+            config.scenario_batch_size,
+        )
+        scenario_calls = dims * scenario_calls_per_dim
+        teacher_calls = dims + scenario_calls
         generator_calls = fixed_triplets
         selection_calls = raw_per_country * len(countries)
         scorer_calls = selection_calls
 
-        teacher_tokens_in = teacher_calls * (
-            config.estimate.facet_prompt_input_tokens
-            + config.estimate.scenario_prompt_input_tokens
+        anchor_input_tokens = config.estimate.anchor_prompt_input_tokens if config.use_anchors else 0
+        teacher_tokens_in = (
+            dims * config.estimate.facet_prompt_input_tokens
+            + scenario_calls * (config.estimate.scenario_prompt_input_tokens + anchor_input_tokens)
         )
-        teacher_tokens_out = dims * config.estimate.facet_prompt_output_tokens + teacher_calls * (
+        teacher_tokens_out = dims * config.estimate.facet_prompt_output_tokens + scenario_calls * (
             config.estimate.scenario_prompt_output_tokens
         )
-        generator_tokens_in = generator_calls * config.estimate.triplet_prompt_input_tokens
+        generator_tokens_in = generator_calls * (
+            config.estimate.triplet_prompt_input_tokens + anchor_input_tokens
+        )
         generator_tokens_out = generator_calls * config.estimate.triplet_prompt_output_tokens
         selection_tokens_in = selection_calls * config.estimate.selection_prompt_input_tokens
         selection_tokens_out = selection_calls * config.estimate.selection_prompt_output_tokens
@@ -423,6 +434,9 @@ class CostTracker:
             "countries": countries,
             "country_count": len(countries),
             "scenarios_per_dim": config.scenarios_per_dim,
+            "scenario_batch_size": config.scenario_batch_size,
+            "use_anchors": config.use_anchors,
+            "estimated_anchor_input_tokens_per_call": anchor_input_tokens,
             "gps_dimension_count": dims,
             "raw_pairs_per_country": raw_per_country,
             "raw_pairs_total": total_pairs,
@@ -450,6 +464,7 @@ class CostTracker:
             },
             "major_cost_drivers": {
                 "scenarios_per_dim": config.scenarios_per_dim,
+                "scenario_batch_size": config.scenario_batch_size,
                 "gps_dimensions": dims,
                 "countries": len(countries),
                 "raw_pairs_per_country": raw_per_country,
@@ -482,6 +497,22 @@ def _estimate_cost_for_tokens(
         "output_tokens": output_tokens,
         "cost_usd": round(cost, 6),
     }
+
+
+def _estimate_scenario_calls_per_dimension(total: int, facets: int, batch_size: int) -> int:
+    """Estimate scenario-generation calls after splitting each facet into smaller batches."""
+
+    if total <= 0 or facets <= 0:
+        return 0
+    batch_size = max(1, int(batch_size))
+    base = total // facets
+    remainder = total % facets
+    calls = 0
+    for index in range(facets):
+        facet_count = base + (1 if index < remainder else 0)
+        if facet_count > 0:
+            calls += (facet_count + batch_size - 1) // batch_size
+    return calls
 
 
 def _endpoint_hourly_rate_usd(model: str) -> float:

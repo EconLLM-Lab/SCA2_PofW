@@ -43,6 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(description="SCA 2.0 synthetic data generation pipeline")
     parser.add_argument("--scenarios-per-dim", type=int, default=CONFIG.scenarios_per_dim)
+    parser.add_argument("--scenario-batch-size", type=int, default=CONFIG.scenario_batch_size)
     parser.add_argument("--concurrency", type=int, default=CONFIG.concurrency)
     parser.add_argument("--max-retries", type=int, default=CONFIG.max_retries)
     parser.add_argument("--retry-backoff-min-s", type=float, default=CONFIG.retry_backoff_min_s)
@@ -284,6 +285,8 @@ def format_estimate_summary(estimate: dict) -> str:
             f"Countries: {', '.join(estimate.get('countries', []))}",
             f"GPS dimensions: {estimate.get('gps_dimension_count')}",
             f"Scenarios per dimension: {estimate.get('scenarios_per_dim')}",
+            f"Scenario batch size: {estimate.get('scenario_batch_size')}",
+            f"Use anchors: {estimate.get('use_anchors')}",
             f"Raw pairs per country: {_format_int(estimate.get('raw_pairs_per_country'))}",
             f"Raw pairs total: {_format_int(estimate.get('raw_pairs_total'))}",
             f"Expected QC-passed per country: {_format_int(expected_pass)} "
@@ -327,6 +330,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
 
     overrides = {
         "scenarios_per_dim": args.scenarios_per_dim,
+        "scenario_batch_size": args.scenario_batch_size,
         "concurrency": args.concurrency,
         "max_retries": args.max_retries,
         "retry_backoff_min_s": args.retry_backoff_min_s,
@@ -341,6 +345,8 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     config = CONFIG.with_overrides(**overrides)
     if config.scenarios_per_dim <= 0:
         parser.error("--scenarios-per-dim must be a positive integer.")
+    if config.scenario_batch_size <= 0:
+        parser.error("--scenario-batch-size must be a positive integer.")
     if config.concurrency <= 0:
         parser.error("--concurrency must be a positive integer.")
     if config.error_rate_window <= 0:
@@ -467,8 +473,8 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     if df_final.empty:
         raise SystemExit("No QC-passed rows were generated.")
 
-    export_sizes = sample_sizes or [min(df_final["country"].value_counts())]
-    LOGGER.info("Exporting final datasets for sample_sizes=%s", export_sizes)
+    export_sizes = sample_sizes
+    LOGGER.info("Exporting final datasets for sample_sizes=%s", export_sizes or "auto")
     cost_summary = tracker.summary()
     exports = export_sample_runs(
         df_final=df_final,

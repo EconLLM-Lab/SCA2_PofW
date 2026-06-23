@@ -1,0 +1,186 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "prompt": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "chosen": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "rejected": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "country": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "gps_dimension": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "z_value": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "contamination_category": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "contamination_ratio": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "qc_status": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "failure_reason": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "mono_pass": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "dist_pass": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "run_id": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "export_timestamp": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "gps_profile_vector": {
+      "trust": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "risktaking": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "patience": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "altruism": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "posrecip": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "negrecip": {
+        "dtype": "float64",
+        "_type": "Value"
+      }
+    },
+    "facet": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "response_a": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "response_b": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "chosen_option": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "reasoning": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "generation_reasoning": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "m_chosen": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_diff_signed": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_diff_abs": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_chosen_trust": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected_trust": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_chosen_risktaking": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected_risktaking": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_chosen_patience": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected_patience": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_chosen_altruism": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected_altruism": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_chosen_posrecip": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected_posrecip": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_chosen_negrecip": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "m_rejected_negrecip": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "score_reasoning": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "selection_reasoning": {
+      "dtype": "large_string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}

@@ -55,6 +55,41 @@ def test_generate_scenarios_can_include_anchor_block() -> None:
     assert any("Vary the specific setting, decision object" in prompt for prompt in scenario_prompts)
 
 
+def test_generate_scenarios_batches_large_facet_requests() -> None:
+    prompts: list[str] = []
+
+    async def fake_tracked_completion(block, tracker, **kwargs):
+        prompts.append(kwargs["messages"][-1]["content"])
+        if block == "C:facets":
+            return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
+                '{"facets": ["institutional trust", "stranger trust", "workplace trust", "market trust", "online trust"]}'
+            )
+        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response(
+            '{"scenarios": ["Scenario one", "Scenario two", "Scenario three"]}'
+        )
+
+    async def run_test() -> list[dict[str, str]]:
+        original = generate.utils.tracked_completion
+        generate.utils.tracked_completion = fake_tracked_completion
+        try:
+            return await generate.generate_scenarios(
+                "trust",
+                GPS_DIMENSIONS["trust"],
+                10,
+                config=CONFIG.with_overrides(scenario_batch_size=3),
+                tracker=CostTracker(),
+            )
+        finally:
+            generate.utils.tracked_completion = original
+
+    rows = asyncio.run(run_test())
+    scenario_prompts = [prompt for prompt in prompts if "Generate exactly" in prompt]
+
+    assert len(scenario_prompts) == 5
+    assert all("Generate exactly 2 diverse scenarios" in prompt for prompt in scenario_prompts)
+    assert len(rows) == 10
+
+
 def test_generate_triplet_has_no_country_or_z_arguments() -> None:
     signature = inspect.signature(generate.generate_triplet)
     assert "country" not in signature.parameters

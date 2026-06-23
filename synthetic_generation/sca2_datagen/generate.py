@@ -65,6 +65,7 @@ async def generate_scenarios(
     """Generate exactly n scenarios for one dimension, grouped by facet."""
 
     tracker = tracker or CostTracker()
+    LOGGER.info("Scenario generation started for %s target_n=%d", dim_key, n)
     facets = await _generate_facets(dim_key, dim_info, config, tracker, sem=sem)
     counts = _allocate_counts(n, len(facets))
     scenarios: list[dict[str, str]] = []
@@ -77,41 +78,64 @@ async def generate_scenarios(
     for facet, count in zip(facets, counts):
         if count <= 0:
             continue
-        prompt = (
-            "You are a behavioral scientist who designs realistic decision scenarios.\n"
-            f"Generate exactly {count} diverse scenarios for the GPS dimension '{dim_key}'.\n"
-            f"Dimension description: {dim_info['desc']}\n"
-            f"Target sub-dimension/facet: {facet}\n"
-            "Each scenario should describe one concrete decision situation using this exact light template:\n"
-            "Context: One realistic sentence establishing the agent, setting, and stakes.\n"
-            "Decision: One sentence stating the two behaviorally plausible options the agent is choosing between.\n"
-            "Trade-off: One sentence making the core target-facet tension explicit without naming high/low GPS scores.\n"
-            "The Decision line must make clear what choice the agent is actually facing.\n"
-            "The Trade-off line must make the relevant target dimension/facet easy to infer while avoiding labels like "
-            "'high trust' or 'low altruism'.\n"
-            "Write the scenario in first-person.\n"
-            "Vary social setting and stakes while staying realistic and culturally neutral.\n"
-            "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
-            "or hypothetical pricing decisions.\n"
-            f"{anchor_block}"
-            "Return ONLY a valid JSON object, with no markdown or surrounding text: "
-            "{\"scenarios\": [\"...\", \"...\"]}."
-        )
-        async with sem or utils.null_async_context():
-            payload = await utils.tracked_json_completion(
-                "C:scenarios",
-                tracker,
-                config=config,
-                model=config.teacher_model,
-                messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"},
-                temperature=config.teacher_temperature,
+        batch_size = max(1, int(config.scenario_batch_size))
+        for batch_start in range(0, count, batch_size):
+            batch_count = min(batch_size, count - batch_start)
+            batch_index = batch_start // batch_size + 1
+            batch_total = (count + batch_size - 1) // batch_size
+            LOGGER.info(
+                "Scenario request started dim=%s facet=%s batch=%d/%d count=%d",
+                dim_key,
+                facet,
+                batch_index,
+                batch_total,
+                batch_count,
             )
-        for scenario in payload.get("scenarios", []):
-            text = str(scenario).strip()
-            if text:
-                scenarios.append({"facet": facet, "prompt": text})
+            prompt = (
+                "You are a behavioral scientist who designs realistic decision scenarios.\n"
+                f"Generate exactly {batch_count} diverse scenarios for the GPS dimension '{dim_key}'.\n"
+                f"Dimension description: {dim_info['desc']}\n"
+                f"Target sub-dimension/facet: {facet}\n"
+                "Each scenario should describe one concrete decision situation using this exact light template:\n"
+                "Context: One realistic sentence establishing the agent, setting, and stakes.\n"
+                "Decision: One sentence stating the two behaviorally plausible options the agent is choosing between.\n"
+                "Trade-off: One sentence making the core target-facet tension explicit without naming high/low GPS scores.\n"
+                "The Decision line must make clear what choice the agent is actually facing.\n"
+                "The Trade-off line must make the relevant target dimension/facet easy to infer while avoiding labels like "
+                "'high trust' or 'low altruism'.\n"
+                "Write the scenario in first-person.\n"
+                "Vary social setting and stakes while staying realistic and culturally neutral.\n"
+                "Do NOT generate scenarios requiring numerical calculations, lottery-style gambles, "
+                "or hypothetical pricing decisions.\n"
+                f"{anchor_block}"
+                "Return ONLY a valid JSON object, with no markdown or surrounding text: "
+                "{\"scenarios\": [\"...\", \"...\"]}."
+            )
+            async with sem or utils.null_async_context():
+                payload = await utils.tracked_json_completion(
+                    "C:scenarios",
+                    tracker,
+                    config=config,
+                    model=config.teacher_model,
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={"type": "json_object"},
+                    temperature=config.teacher_temperature,
+                )
+            for scenario in payload.get("scenarios", []):
+                text = str(scenario).strip()
+                if text:
+                    scenarios.append({"facet": facet, "prompt": text})
+            LOGGER.info(
+                "Scenario request finished dim=%s facet=%s batch=%d/%d accumulated=%d/%d",
+                dim_key,
+                facet,
+                batch_index,
+                batch_total,
+                len(scenarios),
+                n,
+            )
 
+    LOGGER.info("Scenario generation finished for %s: %d/%d scenarios", dim_key, len(scenarios), n)
     return scenarios[:n]
 
 

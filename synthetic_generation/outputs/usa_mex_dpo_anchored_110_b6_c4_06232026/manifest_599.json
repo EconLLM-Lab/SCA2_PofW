@@ -1,0 +1,296 @@
+{
+  "run_id": "usa_mex_dpo_anchored_110_b6_c4_06232026_20260623_185531Z",
+  "timestamp": "2026-06-23T18:55:31.811716+00:00",
+  "sample_size": 599,
+  "sample_size_policy": "skip_unavailable",
+  "skipped_sample_sizes": [],
+  "raw_pair_count": 1316,
+  "config": {
+    "teacher_model": "hf-teacher",
+    "generator_model": "hf-generator",
+    "scorer_model": "hf-scorer",
+    "scenarios_per_dim": 20,
+    "scenario_batch_size": 6,
+    "qc_distance_thresh": 0.2,
+    "qc_mono_epsilon": 0.03,
+    "concurrency": 2,
+    "max_retries": 8,
+    "retry_backoff_min_s": 1.0,
+    "retry_backoff_max_s": 30.0,
+    "retry_jitter_s": 0.75,
+    "cold_start_min_wait_s": 15.0,
+    "server_error_min_wait_s": 5.0,
+    "request_timeout_s": 90.0,
+    "json_parse_retries": 2,
+    "rate_limit_cooldown_s": 30.0,
+    "error_rate_window": 50,
+    "max_error_rate_for_continue": 0.75,
+    "sample_size_policy": "skip_unavailable",
+    "use_anchors": false,
+    "keep_labeled_examples": true,
+    "normalize_perspective": "second_person",
+    "normalize_framing": true,
+    "teacher_temperature": 0.7,
+    "generator_temperature": 0.8,
+    "scorer_temperature": 0.1,
+    "seed": 42,
+    "default_countries": [
+      "MEX",
+      "USA"
+    ],
+    "gps_path_candidates": [
+      "../data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "../data/country_gps.dta",
+      "../country_gps.dta",
+      "data/GPS/GPS_dataset_country_level/country_gps.dta",
+      "data/country_gps.dta",
+      "country_gps.dta"
+    ],
+    "wvs_path_candidates": [
+      "../data/WVS/WVS_wave7.dta",
+      "../data/wvs_wave7.dta",
+      "../WVS_wave7.dta",
+      "data/WVS/WVS_wave7.dta",
+      "data/wvs_wave7.dta",
+      "WVS_wave7.dta"
+    ],
+    "estimate": {
+      "estimated_qc_pass_rate": 0.85,
+      "estimated_facets_per_dimension": 5,
+      "facet_prompt_input_tokens": 450,
+      "facet_prompt_output_tokens": 150,
+      "scenario_prompt_input_tokens": 600,
+      "scenario_prompt_output_tokens": 350,
+      "triplet_prompt_input_tokens": 950,
+      "triplet_prompt_output_tokens": 450,
+      "selection_prompt_input_tokens": 900,
+      "selection_prompt_output_tokens": 120,
+      "scoring_prompt_input_tokens": 1200,
+      "scoring_prompt_output_tokens": 250,
+      "anchor_prompt_input_tokens": 700
+    }
+  },
+  "countries": {
+    "MEX": {
+      "trust": -0.3570720851421356,
+      "risktaking": -0.13891679048538208,
+      "patience": -0.10842810571193695,
+      "altruism": -0.8130887150764465,
+      "posrecip": -1.0379811525344849,
+      "negrecip": -0.1146494597196579
+    },
+    "USA": {
+      "trust": 0.15036696195602417,
+      "risktaking": 0.11658679693937302,
+      "patience": 0.8112621307373047,
+      "altruism": 0.40642887353897095,
+      "posrecip": 0.20365002751350403,
+      "negrecip": 0.011553643271327019
+    }
+  },
+  "wvs_item_map_n": 30,
+  "tier_2_items": [
+    "Q57",
+    "Q59",
+    "Q61",
+    "Q62",
+    "Q63",
+    "Q64",
+    "Q69",
+    "Q70",
+    "Q71",
+    "Q13",
+    "Q14",
+    "Q43",
+    "Q106",
+    "Q107",
+    "Q109",
+    "Q12",
+    "Q174",
+    "Q176",
+    "Q177",
+    "Q179",
+    "Q101",
+    "Q99"
+  ],
+  "tier_3_items": [
+    "Q58",
+    "Q60",
+    "Q73",
+    "Q50",
+    "Q178",
+    "Q81",
+    "Q195",
+    "Q103"
+  ],
+  "qc_stats": {
+    "total": 1316,
+    "score_fail": 56,
+    "mono_fail": 9,
+    "dist_fail": 2,
+    "pass": 1249,
+    "per_dimension": {
+      "trust": {
+        "total": 220,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 1,
+        "pass": 219
+      },
+      "risktaking": {
+        "total": 218,
+        "score_fail": 24,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 194
+      },
+      "patience": {
+        "total": 220,
+        "score_fail": 32,
+        "mono_fail": 8,
+        "dist_fail": 0,
+        "pass": 180
+      },
+      "altruism": {
+        "total": 220,
+        "score_fail": 0,
+        "mono_fail": 1,
+        "dist_fail": 1,
+        "pass": 218
+      },
+      "posrecip": {
+        "total": 218,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 218
+      },
+      "negrecip": {
+        "total": 220,
+        "score_fail": 0,
+        "mono_fail": 0,
+        "dist_fail": 0,
+        "pass": 220
+      }
+    }
+  },
+  "qc_pass_rate": 0.9491,
+  "mono_fail_rate": 0.0068,
+  "dist_fail_rate": 0.0015,
+  "mean_contamination_ratio": 1.6091,
+  "contamination_distribution": {
+    "low": {
+      "count": 34,
+      "share": 0.0284
+    },
+    "medium": {
+      "count": 86,
+      "share": 0.0718
+    },
+    "high": {
+      "count": 1078,
+      "share": 0.8998
+    }
+  },
+  "mean_m_diff_abs": 0.8322,
+  "per_dimension_qc": {
+    "trust": {
+      "total": 220,
+      "pass": 219,
+      "pass_rate": 0.9955,
+      "mean_contamination_ratio": 2.2073
+    },
+    "risktaking": {
+      "total": 218,
+      "pass": 194,
+      "pass_rate": 0.8899,
+      "mean_contamination_ratio": 1.0621
+    },
+    "patience": {
+      "total": 220,
+      "pass": 180,
+      "pass_rate": 0.8182,
+      "mean_contamination_ratio": 0.9086
+    },
+    "altruism": {
+      "total": 220,
+      "pass": 218,
+      "pass_rate": 0.9909,
+      "mean_contamination_ratio": 1.4446
+    },
+    "posrecip": {
+      "total": 218,
+      "pass": 218,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 1.7279
+    },
+    "negrecip": {
+      "total": 220,
+      "pass": 220,
+      "pass_rate": 1.0,
+      "mean_contamination_ratio": 2.1106
+    }
+  },
+  "qc_health_summary": "Review: inspect monotonicity failures, distance failures, and high-contamination dimensions before downstream use.",
+  "per_dim_counts": {
+    "negrecip": 212,
+    "altruism": 210,
+    "trust": 210,
+    "posrecip": 208,
+    "risktaking": 187,
+    "patience": 171
+  },
+  "per_country_counts": {
+    "MEX": 599,
+    "USA": 599
+  },
+  "per_country_dimension_counts": {
+    "MEX": {
+      "trust": 100,
+      "risktaking": 102,
+      "patience": 95,
+      "altruism": 101,
+      "posrecip": 99,
+      "negrecip": 102
+    },
+    "USA": {
+      "trust": 110,
+      "risktaking": 85,
+      "patience": 76,
+      "altruism": 109,
+      "posrecip": 109,
+      "negrecip": 110
+    }
+  },
+  "per_country_contamination_counts": {
+    "MEX": {
+      "low": 18,
+      "medium": 43,
+      "high": 538
+    },
+    "USA": {
+      "low": 16,
+      "medium": 43,
+      "high": 540
+    }
+  },
+  "mean_feature_distance": 0.8322,
+  "per_dim_contamination": {
+    "trust": 2.2073,
+    "risktaking": 1.0621,
+    "patience": 0.9086,
+    "altruism": 1.4446,
+    "posrecip": 1.7279,
+    "negrecip": 2.1106
+  },
+  "cost_breakdown": {},
+  "git_hash": "8699425",
+  "scenario_bank_counts": {
+    "trust": 110,
+    "risktaking": 110,
+    "patience": 110,
+    "altruism": 110,
+    "posrecip": 110,
+    "negrecip": 110
+  }
+}
