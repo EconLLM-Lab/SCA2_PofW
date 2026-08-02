@@ -11,9 +11,21 @@ __pycache__/
 data/GPS/GPS_dataset_country_level/
 data/GPS/GPS_dataset_individual_level/
 data/WVS/WVS_wave7.dta
+# Raw LAPOP/AmericasBarometer microdata (licensed) — do not commit
+data/Barometer/
 
-# agents
+# agents / local indexes
 .vscode/
+.codebase-memory/
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.toc
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 
 # Distribution / packaging
 .Python

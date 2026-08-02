@@ -1,0 +1,375 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Packages ────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+\setlength{\headheight}{22pt}
+\addtolength{\topmargin}{-10pt}
+\usepackage{mathptmx}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+
+% ── Colors ──────────────────────────────────────────────────────────────────
+\definecolor{econblue}{RGB}{20,55,95}
+\definecolor{softgray}{RGB}{95,95,95}
+\definecolor{boxfill}{RGB}{245,247,250}
+\definecolor{boxedge}{RGB}{40,70,110}
+\definecolor{arrowcol}{RGB}{50,70,100}
+\definecolor{lightline}{RGB}{200,205,215}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=econblue,
+  citecolor=econblue,
+  urlcolor=econblue,
+  pdftitle={Synthetic Cultural Agents 2.0: Beyond Persona-Prompting},
+  pdfauthor={Augusto Gonzalez-Bonorino and Kseniia Biriukova}
+}
+
+% ── Typography ──────────────────────────────────────────────────────────────
+\titlespacing*{\section}{0pt}{0.9em}{0.35em}
+\titlespacing*{\subsection}{0pt}{0.7em}{0.25em}
+\titleformat{\section}{\large\bfseries\color{econblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{econblue}}{\thesubsection}{0.5em}{}
+\setlist[itemize]{leftmargin=1.4em,itemsep=0.15em,topsep=0.2em}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=0.15em,topsep=0.2em}
+\captionsetup{font=small,labelfont={bf,color=econblue},skip=3pt}
+\setlength{\parskip}{0.28em}
+\setlength{\parindent}{1.1em}
+
+% ── Header / footer ─────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{softgray} EconLLM Lab · SCA 2.0 Position Paper}
+\fancyhead[R]{\small\color{softgray}\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{lightline}\leaders\hrule height \headrulewidth\hfill}}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\small\color{softgray}\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+% ── Helpers ─────────────────────────────────────────────────────────────────
+\newcommand{\GPS}{\textsc{gps}}
+\newcommand{\WVS}{\textsc{wvs}}
+\newcommand{\DPO}{\textsc{dpo}}
+\newcommand{\SCA}{\textsc{sca}}
+\newcommand{\LLM}{\textsc{llm}}
+\newcommand{\WEIRD}{\textsc{weird}}
+\newcommand{\LoRA}{\textsc{lora}}
+
+\begin{document}
+
+% ════════════════════════════════════════════════════════════════════════════
+% COVER
+% ════════════════════════════════════════════════════════════════════════════
+\thispagestyle{empty}
+\begin{center}
+{\color{econblue}\rule{\textwidth}{1.1pt}}\\[0.3em]
+{\LARGE\bfseries\color{econblue} Synthetic Cultural Agents 2.0:}\\[0.15em]
+{\LARGE\bfseries\color{econblue} Beyond Persona-Prompting}\\[0.3em]
+{\color{econblue}\rule{\textwidth}{0.55pt}}\\[0.55em]
+
+{\normalsize A Position Paper on Structural Preference Estimation
+for Culturally Aligned Language Models}\\[0.7em]
+
+{\large\textbf{Augusto Gonzalez-Bonorino}\textsuperscript{1}
+\quad and\quad
+\textbf{Kseniia Biriukova}\textsuperscript{2}}\\[0.35em]
+
+{\small\textsuperscript{1}Department of Economics, Arizona State University; EconLLM Lab.
+Correspondence: \texttt{agonz439@asu.edu}.}\\[0.1em]
+{\small\textsuperscript{2}EconLLM Lab; preference fine-tuning and evaluation pipeline.}\\[0.35em]
+
+{\normalsize July 2026 \quad·\quad
+\textit{Working document --- between research proposal and preprint}}\\[0.35em]
+{\color{econblue}\rule{0.3\textwidth}{0.35pt}}
+\end{center}
+
+\vspace{0.25em}
+\noindent
+{\footnotesize\color{softgray}
+\textbf{Status.} Intermediate summary of SCA~2.0 for collaborators: conjecture, implemented pipeline, directional pilot evidence, and next steps. Magnitudes are tentative; external survey validation remains open. Code: \href{https://github.com/EconLLM-Lab/SCA2_PofW}{\texttt{github.com/EconLLM-Lab/SCA2\_PofW}}.\par
+}
+
+\vspace{0.4em}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Abstract}
+
+Large language models are increasingly used as simulators of human judgment in economics and adjacent social sciences, yet their default alignment reflects predominantly Western, Educated, Industrialized, Rich, and Democratic (\WEIRD{}) preference data. Earlier Synthetic Cultural Agents (\SCA{}~1.0) addressed this gap by conditioning frontier models on ethnographic profiles at inference time. That approach is useful for piloting but is reduced-form: cultural signal lives only in the prompt, is fragile to model updates, and does not support formal identification or counterfactual analysis.
+
+This position paper outlines \SCA{}~2.0, a structural alternative. We treat Direct Preference Optimization (\DPO{}) as maximum-likelihood estimation in a Bradley--Terry random-utility model, and we use the Global Preferences Survey (\GPS{}) six-dimensional cultural state vector to generate culture-conditioned synthetic preference data. A student model is then fine-tuned so that cultural dispositions are encoded in parameters rather than in transient context. We report a first multi-country pilot (United States and Mexico) based on approximately 600 GPS-targeted scenarios per country, expanded via response variants into multi-thousand preference pairs. On held-out synthetic evaluations ($n{=}200$ per adapter--country cell), country-specific adapters recover the \emph{direction} of their own preference labels more often than chance, and more often than when evaluated on the other country's labels. Cross-country performance is near chance. We interpret these patterns as initial evidence of synthetic preference specialization, not as validated cultural magnitudes or as reproduction of World Values Survey distributions. We close by mapping fixable limitations---dimension balance, contamination, stratified evaluation, and external overidentification tests---to the next empirical steps.
+
+\vspace{0.4em}
+\noindent\textit{Keywords:} cultural preferences; Direct Preference Optimization; Bradley--Terry; Global Preferences Survey; structural estimation; experimental piloting
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Introduction}
+
+Social scientists increasingly use large language models (\LLM{}s) as low-cost simulators of survey responses, experimental subjects, and policy interlocutors. The practical appeal is clear: a model can generate thousands of responses in minutes, enabling exploratory design work before expensive fieldwork. The scientific risk is equally clear. Preference fine-tuning and human feedback data for frontier models are concentrated in \WEIRD{} populations \cite{henrich2010,falk2018}. When a model is asked to ``answer as someone in Lagos, Buenos Aires, or Jakarta,'' its behavior still largely reflects that default alignment---unless culture is introduced in a disciplined way.
+
+The first generation of Synthetic Cultural Agents \cite{capra2025} showed that persona prompting---conditioning a frontier model on demographic and ethnographic profiles---can reproduce non-\WEIRD{} patterns in economic experiments to a surprising degree. For piloting and hypothesis generation, that result is valuable. Methodologically, however, persona prompting is a reduced-form intervention. Cultural information lives in the context window; it vanishes when the session ends; and it provides no structural object (preferences, technology, information) that can be identified, tested, or counterfactually varied.
+
+\SCA{}~2.0 reframes the problem as structural preference estimation. The core conjecture is:
+
+\begin{quote}
+\textit{Cultural preferences measured by the Global Preferences Survey can be encoded into language-model policies via preference fine-tuning, so that implied utilities recover the direction of culture-conditioned choices and, eventually, support formal overidentification tests against independent survey moments.}
+\end{quote}
+
+Three features distinguish the program from prompt engineering. First, culture is parameterized by an externally measured vector---the six \GPS{} dimensions of Falk et al.\ \cite{falk2018}---rather than by free-form narrative alone. Second, training uses Direct Preference Optimization \cite{rafailov2023}, which is mathematically a reparameterization of Bradley--Terry maximum likelihood \cite{bradley1952,mcfadden1974}; this licenses econometric language (utility, identification, overidentification) with minimal translation cost. Third, validation is hierarchical: \GPS{}-targeted synthetic pairs identify the cultural state; World Values Survey (\WVS{}) items are reserved for overidentification; held-out behavioral tasks assess generalization.
+
+This document is a position paper, not a completed empirical article. Its purposes are to (i)~state the conjecture and design cleanly for economists and collaborators, (ii)~describe the pipeline as it currently exists, (iii)~report preliminary evidence with appropriate caution, and (iv)~prioritize next steps that are both scientifically necessary and operationally feasible.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Related Work}
+
+Three short literatures motivate the design.
+
+The \GPS{} \cite{falk2018} supplies incentivized measures of patience, risk taking, positive and negative reciprocity, altruism, and trust across 76 countries---a low-dimensional, cross-culturally comparable parameter vector. Country means are not individuals (within-country variance is often large), but they are a defensible starting point for population-level simulation. A growing experimental literature uses \LLM{}s as simulated respondents \cite{horton2023,achar2023}; much of it is reduced-form role prompting, the family to which \SCA{}~1.0 belongs. Complementary work documents cultural gaps in model outputs \cite{cao2023,durmus2024} but typically stops at evaluation rather than estimation. \DPO{} \cite{rafailov2023} optimizes a policy so preferred responses receive higher probability than dispreferred ones relative to a reference model; under standard assumptions this coincides with Bradley--Terry likelihood for a scaled log-probability score---the bridge to structural econometrics (utility differences, identification, overidentification).
+
+What is missing---and what \SCA{}~2.0 targets---is a pipeline that grounds preference data in an external cultural instrument, fine-tunes open-weight models rather than relying on prompts alone, and subjects the resulting agents to formal validation.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Methodology}
+
+\subsection{Primitives}
+
+Let $x$ denote a decision scenario (prompt) and $y$ a free-text response. A cultural state is a vector
+\begin{equation}
+  z = \bigl(\delta,\ \gamma,\ \xi^{+},\ \xi^{-},\ \alpha,\ \tau\bigr)^{\!\top}
+  \in \mathbb{R}^{6},
+\end{equation}
+corresponding to time preference, risk taking, positive reciprocity, negative reciprocity, altruism, and trust from the \GPS{}. An \SCA{} is a policy $\pi(\cdot\mid x; z)$ whose behavior is governed by a separable reward
+\begin{equation}
+  R(x,y;z) \;=\; r_{\mathrm{task}}(x,y) \;+\; \phi(z)^{\!\top} m(x,y),
+  \label{eq:reward}
+\end{equation}
+where $r_{\mathrm{task}}$ captures generic competence (coherence, relevance), $m(x,y)\in\mathbb{R}^{6}$ is a vector of measurable behavioral features of the response, and $\phi$ maps \GPS{} scores into reward weights. In the simplest specification, each dimension of $z$ loads primarily on its corresponding feature in $m$.
+
+\subsection{Why \DPO{} is structural estimation}
+
+Given preference data $\{(x_i,y_i^{w},y_i^{\ell})\}$ in which $y^{w}$ is preferred to $y^{\ell}$, the Bradley--Terry model sets
+\begin{equation}
+  \Pr(y^{w}\succ y^{\ell}\mid x)
+  \;=\;
+  \sigma\bigl(r^{\star}(x,y^{w})-r^{\star}(x,y^{\ell})\bigr),
+\end{equation}
+with $\sigma$ the logistic function. The \DPO{} training objective is the same likelihood when latent utility differences are expressed as
+\begin{equation}
+  r^{\star}(x,y_1)-r^{\star}(x,y_2)
+  \;=\;
+  \beta\left[
+    \log\frac{\pi_{\theta}(y_1\mid x)}{\pi_{\mathrm{ref}}(y_1\mid x)}
+    -
+    \log\frac{\pi_{\theta}(y_2\mid x)}{\pi_{\mathrm{ref}}(y_2\mid x)}
+  \right],
+  \label{eq:logratio}
+\end{equation}
+where $\pi_{\mathrm{ref}}$ is a frozen reference model and $\beta>0$ is a temperature fixed by the analyst (scale is not separately identified). After training, equation~\eqref{eq:logratio} yields an \emph{implied reward margin} for any held-out pair---the primary diagnostic in our pilots.
+
+For social scientists, the operational message is simple: fine-tuning on culture-conditioned preference pairs is not an opaque engineering trick; it is paired-comparison estimation of a latent utility that we can recover and interrogate.
+
+\subsection{Pipeline}
+
+Figure~\ref{fig:pipeline} summarizes the five blocks.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=0.42cm and 0.28cm,
+  box/.style={
+    draw=boxedge, fill=boxfill, rounded corners=2pt,
+    align=center, inner sep=4pt, text width=2.15cm, minimum height=1.05cm,
+    line width=0.6pt
+  },
+  smallbox/.style={
+    draw=boxedge, fill=white, rounded corners=2pt,
+    align=center, inner sep=3pt, text width=1.85cm, minimum height=0.72cm,
+    line width=0.5pt
+  },
+  arr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.7pt},
+  lab/.style={font=\tiny\color{softgray}, align=center}
+]
+
+\node[box] (A) {\textbf{A. Cultural state}\\$z_c$ from \GPS{}\\+ ethnographic profile};
+\node[box, right=of A] (B) {\textbf{B. Scenarios}\\5 facets $\times$ dim\\country-neutral prompts};
+\node[box, right=of B] (C) {\textbf{C. Preference pairs}\\fixed high/low options\\country selects chosen};
+\node[box, right=of C] (D) {\textbf{D. Quality control}\\6-dim scoring\\mono / distance / contamination};
+\node[box, right=of D] (E) {\textbf{E. Student \DPO{}}\\open-weight +\LoRA{}\\implied reward recovery};
+
+\draw[arr] (A) -- (B);
+\draw[arr] (B) -- (C);
+\draw[arr] (C) -- (D);
+\draw[arr] (D) -- (E);
+
+\node[lab, below=0.12cm of A] {identification\\input};
+\node[lab, below=0.12cm of B] {shared design};
+\node[lab, below=0.12cm of C] {labels from $z_c$};
+\node[lab, below=0.12cm of D] {retain + label};
+\node[lab, below=0.12cm of E] {structural\\estimation};
+
+% validation branch
+\node[smallbox, below=1.15cm of C] (V1) {Tier 1: sign of\\implied $\Delta r$ on\\held-out pairs};
+\node[smallbox, right=0.55cm of V1] (V2) {Tier 2: \WVS{}\\moments / $J$-test\\(planned)};
+\node[smallbox, left=0.55cm of V1] (V3) {Tier 3: held-out\\tasks + native\\checks (planned)};
+
+\draw[arr, dashed] (E.south) -- ++(0,-0.35) -| (V1.north);
+\draw[arr, dashed] (V1) -- (V2);
+\draw[arr, dashed] (V1) -- (V3);
+
+\node[lab, below=0.08cm of V2] {overidentification};
+\node[lab, below=0.08cm of V3] {generalization};
+
+\end{tikzpicture}
+\caption{SCA~2.0 pipeline. Solid arrows are implemented end-to-end in the current codebase. Dashed arrows mark validation stages that are designed but not yet fully executed. Culture enters as an external \GPS{} vector $z_c$; synthetic pairs are generated and quality-controlled; a student policy is estimated by \DPO{}; implied rewards are recovered via the log-ratio identity.}
+\label{fig:pipeline}
+\end{figure}
+
+\paragraph{Block A --- Cultural state and profile.}
+For each target country $c$, we extract standardized \GPS{} factor scores $z_c$ and build a short natural-language profile that interprets those scores without injecting national stereotypes into the response options themselves.
+
+\paragraph{Block B --- Scenario generation.}
+For each of the six dimensions, a teacher model decomposes the trait into five concrete facets and writes first-person decision scenarios that isolate the target trade-off. Scenarios are country-neutral by design so that the same item bank can be reused across populations.
+
+\paragraph{Block C --- Fixed options and country selection.}
+For each scenario, the generator produces two opposing responses that load high versus low on the target dimension while holding other traits as constant as possible. A separate selection step assigns which option is \emph{chosen} versus \emph{rejected} for country $c$ according to the sign and magnitude of $z_c$. This keeps option text comparable across countries while allowing preference labels to differ.
+
+\paragraph{Block D --- Scoring and quality control.}
+A scorer rates both responses on all six dimensions. We do \emph{not} silently drop failures. Instead we label each pair with monotonicity status (does the chosen option load in the direction predicted by $z_c$?), distance (is the target-dimension gap large enough?), and a contamination ratio (how much do non-target dimensions also move?). Transparency is preferred to aggressive filtering: pairs remain available for reweighting or audit.
+
+\paragraph{Block E --- Student estimation and recovery.}
+An open-weight instruction-tuned model (Llama-3.1-8B-Instruct in the pilot) is fine-tuned with \DPO{} via low-rank adapters. On held-out pairs we compute the implied reward margin in equation~\eqref{eq:logratio} with the adapter disabled for reference log-probabilities. Preference accuracy is the share of pairs for which the margin is positive---i.e., the trained policy ranks the culture-conditioned chosen response above the rejected one.
+
+\subsection{Intended use in social science workflows}
+
+The near-term scientific use case is \emph{experimental piloting}, not replacement of human subjects. A validated \SCA{} could (i)~stress-test instruments for cultural sensitivity before fielding, (ii)~generate directional priors for power analysis and pre-registration, and (iii)~support comparative statics of the form ``what happens to trust-sensitive choices if patience is held fixed and trust is shifted?'' Those applications require directional reliability first; magnitude calibration is a later stage.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Preliminary Results}
+
+\subsection{Data and training setup}
+
+The pilot focuses on the United States and Mexico---populations with meaningfully different \GPS{} profiles. Synthetic generation produced on the order of 600 quality-controlled scenarios per country; a preprocessing step expands answer options into response variants, yielding multi-thousand preference pairs per country for training. Student adapters are trained separately by country with \DPO{} ($\beta{=}0.1$) and evaluated on held-out pairs.
+
+We report the collaborator evaluation from July 2026: \textbf{$n{=}200$ evaluation pairs per adapter--country cell}. Earlier internal pilots on smaller splits produced substantially higher own-country accuracies; we treat those as optimistic and do not use them as headline evidence.
+
+\subsection{Main pattern: directional specialization}
+
+Table~\ref{tab:main} reports mean implied reward margins and preference accuracy for the $2\times 2$ design.
+
+\begin{table}[t]
+\centering
+\caption{Cross-evaluation of country adapters on held-out synthetic preference pairs ($n{=}200$ per cell). Preference accuracy is the share of pairs with positive implied reward margin. Magnitudes are preliminary; the scientific claim is about \emph{direction} and own-versus-other contrast, not calibrated effect sizes.}
+\label{tab:main}
+\scriptsize
+\begin{tabular}{@{}ll rrrr@{}}
+\toprule
+\textbf{Adapter} & \textbf{Eval} & \textbf{$n$} & \textbf{Mean $\Delta r$} & \textbf{Pref.\ accuracy} & \textbf{Mean $P(\mathrm{chosen})$} \\
+\midrule
+Mexico & Mexico & 200 & $+1.70$ & $0.785$ & $0.714$ \\
+Mexico & United States & 200 & $-0.22$ & $0.520$ & $0.501$ \\
+United States & Mexico & 200 & $-0.20$ & $0.455$ & $0.464$ \\
+United States & United States & 200 & $+0.78$ & $0.700$ & $0.632$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three qualitative facts stand out.
+
+Three qualitative facts stand out. (i)~Own-country recovery is above chance: both adapters rank their own held-out chosen responses higher on about 70--79\% of pairs. (ii)~Cross-country recovery is near chance (roughly 46--52\%): policies are specialized to the labels they were trained on, not merely ``better at English questionnaire prose.'' (iii)~Own-minus-other gaps in mean $\Delta r$ are positive for both countries; the Mexico gap is larger in this run, but we do \emph{not} interpret relative sizes as structural parameters. Dimension-level patterns are qualitatively similar but uneven---patience is relatively weak; trust and altruism are among the stronger own-country cells---and per-dimension samples are modest (roughly 25--43 pairs), so trait-specific magnitudes are especially fragile.
+
+\paragraph{What we are \emph{not} claiming.}
+Seventy to seventy-nine percent preference accuracy does \textbf{not} measure cultural fidelity to real Mexican or United States populations; it measures recovery of \emph{synthetic} labels from our teacher--scorer pipeline. We do not claim calibrated cultural magnitudes---directional specialization is the supported claim---and we have not yet tested overidentification against \WVS{} Wave~7 moments. Free-form generations can still sound generically prosocial even when ranking recovery succeeds; ranking preferred versus dispreferred completions is a weaker, cleaner test than open-ended authenticity.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Discussion and Next Steps}
+
+\subsection{What the pilot establishes---and what remains open}
+
+Relative to persona prompting, the pilot closes a complete \emph{structural loop}: external cultural parameters $\rightarrow$ synthetic preference data $\rightarrow$ parameter updates via \DPO{} $\rightarrow$ recoverable implied utilities on held-out pairs. The intermediate scientific result is not a headline accuracy number; it is that culture-conditioned preference labels are learnable as a policy specialization problem, with cross-country transfer near chance---a necessary condition for later counterfactual and overidentification work. Design choices that matter for social-science credibility include country-neutral scenarios, fixed option text with country-specific labels, quality-control labels rather than silent dropping, and evaluation via the same log-ratio identity used in training.
+
+\paragraph{Fixable limitations.}
+(i)~\emph{Synthetic-only validation}: implement Tier~2 moment comparison against pre-selected \WVS{} items, starting with an identity-weighted discrepancy vector before a full $J$-test. (ii)~\emph{Contamination}: multi-motive scenarios are realistic but weaken single-dimension attribution; treat contamination as a first-class covariate and reweight or audit high-contamination pairs. (iii)~\emph{Dimension balance}: enforce minimum per-dimension counts, stratified train/eval splits, and expanded facet anchors where failure concentrates (patience is systematically harder). (iv)~\emph{Teacher bias}: synthetic labels come from models whose pretraining is \WEIRD{}-skewed (a generated-regressor problem); compare teacher regimes (profile-only vs.\ retrieval-augmented vs.\ small human correction). (v)~\emph{Scale}: $\beta$ is set, not estimated---report sign patterns and own-versus-other contrasts, with sensitivity checks over a small $\beta$ grid.
+
+\paragraph{Structural boundaries (not bugs).}
+Country-mean \GPS{} vectors ignore within-country heterogeneity; Bradley--Terry imposes IIA-style restrictions; reducing culture to six economic preferences is an intentional abstraction. Mixture models over $z$, richer noise structures, and participatory checks with cultural informants belong on the longer agenda, not as prerequisites for the next pilot iteration.
+
+\paragraph{Immediate next steps.}
+(1)~Treat the collaborator fine-tuning notebooks as the canonical estimation path, with versioned generation--estimation interfaces. (2)~Harden evaluation: stratified splits, per-cell $n$ beside every accuracy, and baselines (reference model alone; label-scramble control). (3)~Scaffold \WVS{} Wave~7: pre-registered Tier~2 means and a smoke-test discrepancy report before claiming a formal $J$-test. (4)~Scale scenario counts or add countries (e.g., Argentina, Sweden) only after the United States--Mexico loop is reproducible under that stricter standard.
+
+\SCA{}~2.0 imports structural estimation into cultural alignment of language models. The conjecture is ambitious; the evidence is modest and appropriately so. We can show directional specialization on culture-conditioned synthetic preferences. We cannot yet claim externally validated cultural magnitudes, nor that six \GPS{} parameters explain independent survey distributions. Those are the right next tests---now engineering- and design-bounded rather than purely speculative. The scientific payoff, if the program succeeds, is practical: cheaper culturally informed piloting, clearer pre-registration of heterogeneous effects, and a transparent object ($z$ and $R(x,y;z)$) that can be debated and falsified.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Acknowledgements}
+
+We thank EconLLM Lab collaborators for feedback on generation and fine-tuning design. Language-model systems assisted with code refactoring, documentation, and editorial drafting; methodological choices, interpretations, and claims of evidence strength remain the authors' responsibility.\footnote{Public code: \url{https://github.com/EconLLM-Lab/SCA2_PofW}. An exploratory agent-scaffolded training harness in the repository history is not part of the results reported here.}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem{bradley1952}
+Bradley, R.~A., and M.~E. Terry (1952).
+``Rank Analysis of Incomplete Block Designs: I.~The Method of Paired Comparisons.''
+\textit{Biometrika} 39(3/4): 324--345.
+
+\bibitem{cao2023}
+Cao, Y., et~al. (2023).
+``Assessing Cross-Cultural Alignment between ChatGPT and Human Societies.''
+\textit{Proceedings of the First Workshop on Cross-Cultural Considerations in NLP}.
+
+\bibitem{capra2025}
+Capra, C.~M., A.~Gonzalez-Bonorino, and M.~Pantoja (2025).
+``LLMs Can Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents.''
+Working paper; forthcoming, \textit{Review of Experimental Economics}.
+
+\bibitem{achar2023}
+Aher, G., R.~Arriaga, and A.~Kalai (2023).
+``Using Large Language Models to Simulate Multiple Humans and Replicate Human Subject Studies.''
+\textit{ICML}.
+
+\bibitem{durmus2024}
+Durmus, E., et~al. (2024).
+``Towards Measuring the Representation of Subjective Global Opinions in Language Models.''
+\textit{Conference on Language Modeling (COLM)}.
+
+\bibitem{falk2018}
+Falk, A., A.~Becker, T.~Dohmen, B.~Enke, D.~Huffman, and U.~Sunde (2018).
+``Global Evidence on Economic Preferences.''
+\textit{Quarterly Journal of Economics} 133(4): 1645--1692.
+
+\bibitem{henrich2010}
+Henrich, J., S.~J. Heine, and A.~Norenzayan (2010).
+``The Weirdest People in the World?''
+\textit{Behavioral and Brain Sciences} 33(2--3): 61--83.
+
+\bibitem{horton2023}
+Horton, J.~J. (2023).
+``Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus?''
+NBER Working Paper 31122.
+
+\bibitem{mcfadden1974}
+McFadden, D. (1974).
+``Conditional Logit Analysis of Qualitative Choice Behavior.''
+In \textit{Frontiers in Econometrics}, ed.\ P.~Zarembka. Academic Press.
+
+\bibitem{rafailov2023}
+Rafailov, R., A.~Sharma, E.~Mitchell, S.~Ermon, C.~D. Manning, and C.~Finn (2023).
+``Direct Preference Optimization: Your Language Model is Secretly a Reward Model.''
+\textit{NeurIPS}.
+
+\end{thebibliography}
+
+\end{document}
