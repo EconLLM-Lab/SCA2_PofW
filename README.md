@@ -1,6 +1,6 @@
-# SCA2_PofW — Synthetic Cultural Agents (phase 2)
+# SCA2_PofW — Synthetic Cultural Agents
 
-**EconLLM Lab** · Arizona State University  
+**EconLLM Lab**
 Lab site: [econllm-lab.com](https://www.econllm-lab.com/)
 
 Country-conditioned preference adapters (DPO / QLoRA on Llama-3.1-8B-Instruct) trained from GPS-grounded synthetic preference data, with frozen-adapter out-of-sample evaluation on WVS and AmericasBarometer trust-core surfaces.
