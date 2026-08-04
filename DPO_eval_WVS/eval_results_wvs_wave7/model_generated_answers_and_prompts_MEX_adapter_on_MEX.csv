@@ -1,0 +1,2142 @@
+model,eval_country,prompt_country,question_id,question_text,response_type,gps_dimension,prompt_text,formatted_prompt,complete_prompt_model_received,prompt_token_count_before_truncation,prompt_token_count_model,prompt_was_truncated,generated_answer_raw,generated_answer,generated_answer_code,generated_answer_is_valid,generated_token_count
+MEX_adapter,MEX,,Q101,"Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?",single_choice_3,altruism,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",128,128,False,0,0,0,True,2
+MEX_adapter,MEX,,Q103,"Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?",single_choice_3,altruism,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",132,132,False,0,0,0,True,2
+MEX_adapter,MEX,,Q106,"How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?",scale_1_10,risktaking,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",210,210,False,5,5,5,True,2
+MEX_adapter,MEX,,Q107,"How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?",scale_1_10,risktaking,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",213,213,False,5,5,5,True,2
+MEX_adapter,MEX,,Q109,"How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?",scale_1_10,risktaking,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?
+
+Select exactly one response code from the options below.
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",202,202,False,5,5,5,True,2
+MEX_adapter,MEX,,Q12,Is tolerance and respect for other people one of the qualities children should be encouraged to learn at home?,multiple_response_max_5,posrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is tolerance and respect for other people one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is tolerance and respect for other people one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is tolerance and respect for other people one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",118,118,False,1,1,1,True,2
+MEX_adapter,MEX,,Q13,"Is thrift, saving money and things one of the qualities children should be encouraged to learn at home?",multiple_response_max_5,patience,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is thrift, saving money and things one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is thrift, saving money and things one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is thrift, saving money and things one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",118,118,False,1,1,1,True,2
+MEX_adapter,MEX,,Q14,"Is determination, perseverance one of the qualities children should be encouraged to learn at home?",multiple_response_max_5,patience,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is determination, perseverance one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is determination, perseverance one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Is determination, perseverance one of the qualities children should be encouraged to learn at home?
+
+Select exactly one response code from the options below.
+1: Yes
+2: No
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",115,115,False,1,1,1,True,2
+MEX_adapter,MEX,,Q174,Which of the following statements do you agree with most: The basic meaning of religion is to follow religious norms and ceremonies; The basic meaning of religion is to do good to other people?,single_choice_2,posrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Which of the following statements do you agree with most: The basic meaning of religion is to follow religious norms and ceremonies; The basic meaning of religion is to do good to other people?
+
+Select exactly one response code from the options below.
+1: To follow religious norms and ceremonies
+2: To do good to other people / To make sense of life after death
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Which of the following statements do you agree with most: The basic meaning of religion is to follow religious norms and ceremonies; The basic meaning of religion is to do good to other people?
+
+Select exactly one response code from the options below.
+1: To follow religious norms and ceremonies
+2: To do good to other people / To make sense of life after death
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Which of the following statements do you agree with most: The basic meaning of religion is to follow religious norms and ceremonies; The basic meaning of religion is to do good to other people?
+
+Select exactly one response code from the options below.
+1: To follow religious norms and ceremonies
+2: To do good to other people / To make sense of life after death
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",153,153,False,2,2,2,True,2
+MEX_adapter,MEX,,Q176,"On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?",scale_1_10,negrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?
+
+Select exactly one response code from the options below.
+1: Completely agree
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Completely disagree
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?
+
+Select exactly one response code from the options below.
+1: Completely agree
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Completely disagree
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?
+
+Select exactly one response code from the options below.
+1: Completely agree
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Completely disagree
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",171,171,False,5,5,5,True,2
+MEX_adapter,MEX,,Q177,"Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale.",scale_1_10,negrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",176,176,False,1,1,1,True,2
+MEX_adapter,MEX,,Q178,"Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale.",scale_1_10,risktaking,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",173,173,False,5,5,5,True,2
+MEX_adapter,MEX,,Q179,"Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale.",scale_1_10,negrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",169,169,False,1,1,1,True,2
+MEX_adapter,MEX,,Q195,"Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale.",scale_1_10,negrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale.
+
+Select exactly one response code from the options below.
+1: Never justifiable
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Always justifiable
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",169,169,False,5,5,5,True,2
+MEX_adapter,MEX,,Q260,"What is your sex, as observed by the interviewer?",single_choice_2,,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What is your sex, as observed by the interviewer?
+
+Select exactly one response code from the options below.
+1: Male
+2: Female
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What is your sex, as observed by the interviewer?
+
+Select exactly one response code from the options below.
+1: Male
+2: Female
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What is your sex, as observed by the interviewer?
+
+Select exactly one response code from the options below.
+1: Male
+2: Female
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",109,109,False,1,1,1,True,2
+MEX_adapter,MEX,,Q261,What year were you born?,numeric_open,,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What year were you born?
+
+Give one whole-number response. Return only the number, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What year were you born?
+
+Give one whole-number response. Return only the number, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What year were you born?
+
+Give one whole-number response. Return only the number, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",91,91,False,1982,1982,1982,True,3
+MEX_adapter,MEX,,Q262,How old are you?,numeric_open,,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How old are you?
+
+Give one whole-number response. Return only the number, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How old are you?
+
+Give one whole-number response. Return only the number, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How old are you?
+
+Give one whole-number response. Return only the number, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",90,90,False,32,32,32,True,2
+MEX_adapter,MEX,,Q275,What is the highest educational level that you have attained?,matrix_single_choice_9,,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What is the highest educational level that you have attained?
+
+Select exactly one response code from the options below.
+0: 0=Early childhood education (ISCED 0) / no education
+1: 1=Primary education (ISCED 1)
+2: 2=Lower secondary education (ISCED 2)
+3: 3=Upper secondary education (ISCED 3)
+4: 4=Post-secondary non-tertiary education (ISCED 4)
+5: 5=Short-cycle tertiary education (ISCED 5)
+6: 6=Bachelor or equivalent (ISCED 6)
+7: 7=Master or equivalent (ISCED 7)
+8: 8=Doctoral or equivalent (ISCED 8)
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What is the highest educational level that you have attained?
+
+Select exactly one response code from the options below.
+0: 0=Early childhood education (ISCED 0) / no education
+1: 1=Primary education (ISCED 1)
+2: 2=Lower secondary education (ISCED 2)
+3: 3=Upper secondary education (ISCED 3)
+4: 4=Post-secondary non-tertiary education (ISCED 4)
+5: 5=Short-cycle tertiary education (ISCED 5)
+6: 6=Bachelor or equivalent (ISCED 6)
+7: 7=Master or equivalent (ISCED 7)
+8: 8=Doctoral or equivalent (ISCED 8)
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+What is the highest educational level that you have attained?
+
+Select exactly one response code from the options below.
+0: 0=Early childhood education (ISCED 0) / no education
+1: 1=Primary education (ISCED 1)
+2: 2=Lower secondary education (ISCED 2)
+3: 3=Upper secondary education (ISCED 3)
+4: 4=Post-secondary non-tertiary education (ISCED 4)
+5: 5=Short-cycle tertiary education (ISCED 5)
+6: 6=Bachelor or equivalent (ISCED 6)
+7: 7=Master or equivalent (ISCED 7)
+8: 8=Doctoral or equivalent (ISCED 8)
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",237,237,False,6,6,6,True,2
+MEX_adapter,MEX,,Q288,"On an income scale from 1 to 10, in what group is your household?",scale_1_10,,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+On an income scale from 1 to 10, in what group is your household?
+
+Select exactly one response code from the options below.
+1: Lowest group
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Highest group
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+On an income scale from 1 to 10, in what group is your household?
+
+Select exactly one response code from the options below.
+1: Lowest group
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Highest group
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+On an income scale from 1 to 10, in what group is your household?
+
+Select exactly one response code from the options below.
+1: Lowest group
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Highest group
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",158,158,False,5,5,5,True,2
+MEX_adapter,MEX,,Q43,"If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?",single_choice_3,patience,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?
+
+Select exactly one response code from the options below.
+1: Good thing
+2: Don't mind
+3: Bad thing
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?
+
+Select exactly one response code from the options below.
+1: Good thing
+2: Don't mind
+3: Bad thing
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?
+
+Select exactly one response code from the options below.
+1: Good thing
+2: Don't mind
+3: Bad thing
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",139,139,False,2,2,2,True,2
+MEX_adapter,MEX,,Q50,How satisfied are you with the financial situation of your household on a scale from 1 to 10?,scale_1_10,patience,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How satisfied are you with the financial situation of your household on a scale from 1 to 10?
+
+Select exactly one response code from the options below.
+1: Completely dissatisfied
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Completely satisfied
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How satisfied are you with the financial situation of your household on a scale from 1 to 10?
+
+Select exactly one response code from the options below.
+1: Completely dissatisfied
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Completely satisfied
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How satisfied are you with the financial situation of your household on a scale from 1 to 10?
+
+Select exactly one response code from the options below.
+1: Completely dissatisfied
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: Completely satisfied
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",162,162,False,6,6,6,True,2
+MEX_adapter,MEX,,Q57,"Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?",single_choice_2,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?
+
+Select exactly one response code from the options below.
+1: Most people can be trusted
+2: Need to be very careful
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?
+
+Select exactly one response code from the options below.
+1: Most people can be trusted
+2: Need to be very careful
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?
+
+Select exactly one response code from the options below.
+1: Most people can be trusted
+2: Need to be very careful
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",131,131,False,2,2,2,True,2
+MEX_adapter,MEX,,Q58,"How much do you trust your family: completely, somewhat, not very much or not at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust your family: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust your family: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust your family: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",136,136,False,2,2,2,True,2
+MEX_adapter,MEX,,Q59,"How much do you trust your neighborhood: completely, somewhat, not very much or not at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust your neighborhood: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust your neighborhood: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust your neighborhood: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",136,136,False,2,2,2,True,2
+MEX_adapter,MEX,,Q60,"How much do you trust people you know personally: completely, somewhat, not very much or not at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people you know personally: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people you know personally: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people you know personally: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",138,138,False,2,2,2,True,2
+MEX_adapter,MEX,,Q61,"How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",141,141,False,2,2,2,True,2
+MEX_adapter,MEX,,Q62,"How much do you trust people of another religion: completely, somewhat, not very much or not at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people of another religion: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people of another religion: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people of another religion: completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",138,138,False,2,2,2,True,2
+MEX_adapter,MEX,,Q63,"How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?
+
+Select exactly one response code from the options below.
+1: Trust completely
+2: Trust somewhat
+3: Do not trust very much
+4: Do not trust at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",139,139,False,2,2,2,True,2
+MEX_adapter,MEX,,Q64,"How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",145,145,False,2,2,2,True,2
+MEX_adapter,MEX,,Q69,"How much confidence do you have in the police: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the police: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the police: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the police: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",145,145,False,2,2,2,True,2
+MEX_adapter,MEX,,Q70,"How much confidence do you have in the courts: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the courts: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the courts: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the courts: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",145,145,False,2,2,2,True,2
+MEX_adapter,MEX,,Q71,"How much confidence do you have in the government: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the government: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the government: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in the government: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",145,145,False,3,3,3,True,2
+MEX_adapter,MEX,,Q73,"How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",single_choice_4,trust,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",144,144,False,3,3,3,True,2
+MEX_adapter,MEX,,Q81,"How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",single_choice_4,posrecip,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?
+
+Select exactly one response code from the options below.
+1: A great deal
+2: Quite a lot
+3: Not very much
+4: None at all
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",147,147,False,2,2,2,True,2
+MEX_adapter,MEX,,Q99,"Are you an active member, an inactive member, or not a member of an environmental organization?",single_choice_3,altruism,"Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of an environmental organization?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of an environmental organization?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+","<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:
+Are you an active member, an inactive member, or not a member of an environmental organization?
+
+Select exactly one response code from the options below.
+2: Active member
+1: Inactive member
+0: Don't belong
+
+Return only the response code, with no words or explanation.
+
+Answer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+",126,126,False,0,0,0,True,2

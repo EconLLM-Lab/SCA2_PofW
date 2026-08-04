@@ -17,6 +17,7 @@ data/Barometer/
 # agents / local indexes
 .vscode/
 .codebase-memory/
+.vs/
 
 # LaTeX build artifacts
 *.aux
