@@ -4,6 +4,10 @@ This repository contains the evaluation pipeline for assessing the base Llama mo
 
 **Important Note on Adapters:** The adapter files must be loaded separately. They were trained in the previous step, and the corresponding training pipeline is stored in the `DPO_train_test` folder.
 
+**Evaluation Notes:** The scoring notebook has the basic metrics, while a more comprehensive and graphical analysis is stored in a separate notebook.
+
+You need to change the file pathways to where the adapters and eval data is stored on your computer/Drive.
+
 ---
 
 ## Overview
