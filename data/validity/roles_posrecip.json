@@ -1,0 +1,12 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_posrecip_child_tolerance",
+    "m_posrecip_religion",
+    "m_posrecip_charitable_confidence"
+  ],
+  "aux": [
+    "gps_posrecip"
+  ],
+  "outcome": null
+}

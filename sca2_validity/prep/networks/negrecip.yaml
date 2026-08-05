@@ -1,0 +1,11 @@
+# P1 criterion-recovery network — GPS negrecip as the criterion (starter template).
+# AUGUSTO OWNS: theta, delta, restrictions. With current protocol directions,
+# m_negrecip_justifiability tracks GPS negrecip (r ~ 0.36); others are near zero.
+name: p1_criterion_negrecip_template
+delta: 0.0
+restrictions:
+  - id: r_corr_min_gps_negrecip
+    type: corr_min
+    theta: 0.30
+    params:
+      variable: gps_negrecip

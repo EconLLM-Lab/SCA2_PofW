@@ -1,0 +1,11 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_risktaking_economic_values",
+    "m_risktaking_rule_breaking"
+  ],
+  "aux": [
+    "gps_risktaking"
+  ],
+  "outcome": null
+}

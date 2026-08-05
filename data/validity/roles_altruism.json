@@ -1,0 +1,10 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_altruism_membership"
+  ],
+  "aux": [
+    "gps_altruism"
+  ],
+  "outcome": null
+}

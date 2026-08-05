@@ -1,0 +1,32 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_USA_adapter_trust",
+    "m_USA_adapter_patience",
+    "m_USA_adapter_risktaking",
+    "m_USA_adapter_posrecip",
+    "m_USA_adapter_negrecip",
+    "m_USA_adapter_altruism",
+    "m_MEX_adapter_trust",
+    "m_MEX_adapter_patience",
+    "m_MEX_adapter_risktaking",
+    "m_MEX_adapter_posrecip",
+    "m_MEX_adapter_negrecip",
+    "m_MEX_adapter_altruism",
+    "m_base_trust",
+    "m_base_patience",
+    "m_base_risktaking",
+    "m_base_posrecip",
+    "m_base_negrecip",
+    "m_base_altruism"
+  ],
+  "aux": [
+    "gps_trust",
+    "gps_patience",
+    "gps_risktaking",
+    "gps_posrecip",
+    "gps_negrecip",
+    "gps_altruism"
+  ],
+  "outcome": null
+}

@@ -1,0 +1,98 @@
+# SCA2 validity scoring protocol (FROZEN RECIPE — Augusto owns every polarity choice)
+#
+# Semantics:
+#   - unit: country (iso3). WVS respondents are aggregated to country moments;
+#     GPS country z-scores are the criterion (aux), NOT menu measures.
+#   - missing: WVS negative codes (DK/NA/not applicable) are masked before scoring.
+#   - item scoring: each item is normalized to [0,1] over its valid codes, then
+#     multiplied by `direction` (direction=-1 flips polarity: higher = more C).
+#   - facet: respondent-level mean of non-missing item scores; country score =
+#     unweighted mean of respondent facet scores (weights = future work).
+#   - `direction_confidence: low` marks bridge/stretch items whose polarity is
+#     NOT derivable from the construct map — Augusto must confirm before paper use.
+schema_version: "1"
+unit: country_iso3
+missing_mask: negative_values
+min_respondents_per_country: 30
+weighted: false
+
+dimensions:
+  trust:
+    facets:
+      general:
+        items:
+          Q57: {direction: -1, scale: binary_1_2, confidence: clean}   # 1=most people trusted -> higher=trust
+      in_group:
+        items:
+          Q58: {direction: -1, scale: likert_1_4, confidence: clean}   # 1=trust completely -> higher=trust
+          Q60: {direction: -1, scale: likert_1_4, confidence: clean}
+      out_group:
+        items:
+          Q59: {direction: -1, scale: likert_1_4, confidence: clean}   # neighborhood
+          Q61: {direction: -1, scale: likert_1_4, confidence: clean}   # first meeting
+          Q62: {direction: -1, scale: likert_1_4, confidence: clean}   # other religion
+          Q63: {direction: -1, scale: likert_1_4, confidence: clean}   # other nationality
+      institution:
+        items:
+          Q64: {direction: -1, scale: likert_1_4, confidence: clean}   # churches
+          Q69: {direction: -1, scale: likert_1_4, confidence: clean}   # police
+          Q70: {direction: -1, scale: likert_1_4, confidence: clean}   # courts
+          Q71: {direction: -1, scale: likert_1_4, confidence: clean}   # government
+          Q73: {direction: -1, scale: likert_1_4, confidence: clean}   # parliament
+
+  patience:
+    facets:
+      child_qualities:
+        items:
+          Q13: {direction: 1, scale: binary_1_2, confidence: bridge}   # thrift mentioned -> higher
+          Q14: {direction: 1, scale: binary_1_2, confidence: bridge}   # perseverance mentioned
+      work_values:
+        items:
+          Q43: {direction: 1, scale: scale_1_3, confidence: low}       # 1=good less work ... direction TBD
+      financial:
+        items:
+          Q50: {direction: 1, scale: scale_1_10, confidence: low}      # financial satisfaction ... direction TBD
+
+  risktaking:
+    facets:
+      economic_values:
+        items:
+          Q106: {direction: 1, scale: scale_1_10, confidence: low}     # 1=equal incomes ... 10=incentives
+          Q107: {direction: 1, scale: scale_1_10, confidence: low}     # 1=private ownership ... 10=government
+          Q109: {direction: 1, scale: scale_1_10, confidence: low}     # 1=competition good ... 10=harmful
+      rule_breaking:
+        items:
+          Q178: {direction: 1, scale: scale_1_10, confidence: low}     # justifiability fare evasion
+
+  posrecip:
+    facets:
+      child_tolerance:
+        items:
+          Q12: {direction: 1, scale: binary_1_2, confidence: bridge}   # tolerance mentioned
+      religion:
+        items:
+          Q174: {direction: 1, scale: binary_1_2, confidence: low}     # 2=do good to others
+      charitable_confidence:
+        items:
+          Q81: {direction: -1, scale: likert_1_4, confidence: bridge}  # 1=great deal confidence -> higher
+
+  negrecip:
+    facets:
+      moral_clarity:
+        items:
+          Q176: {direction: 1, scale: scale_1_10, confidence: low}     # 10=disagree rules unclear
+      justifiability:
+        items:
+          Q177: {direction: -1, scale: scale_1_10, confidence: bridge} # 1=never justifiable -> higher
+          Q179: {direction: -1, scale: scale_1_10, confidence: bridge} # 1=never justifiable -> higher
+      punitiveness:
+        items:
+          Q195: {direction: 1, scale: scale_1_10, confidence: low}     # death penalty justifiability
+
+  altruism:
+    facets:
+      membership:
+        items:
+          Q99: {direction: 1, scale: member_0_2, confidence: bridge}   # env org: 2=active
+          Q101: {direction: 1, scale: member_0_2, confidence: bridge}  # charitable org
+          Q103: {direction: 1, scale: member_0_2, confidence: bridge}  # self-help group

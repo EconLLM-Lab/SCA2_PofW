@@ -1,0 +1,11 @@
+# P1 criterion-recovery network — GPS altruism as the criterion (starter template).
+# AUGUSTO OWNS: theta, delta, restrictions. Membership items do not track GPS
+# giving/altruism at country level (r ~ -0.05 with current directions).
+name: p1_criterion_altruism_template
+delta: 0.0
+restrictions:
+  - id: r_corr_min_gps_altruism
+    type: corr_min
+    theta: 0.30
+    params:
+      variable: gps_altruism

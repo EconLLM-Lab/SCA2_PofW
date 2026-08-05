@@ -1,0 +1,12 @@
+name: pilot_adapter_gps_sign_altruism
+delta: 0.0
+restrictions:
+- id: r_mean_order_adapter_altruism
+  type: mean_order
+  theta: 0.0
+  params:
+    group: is_usa
+    direction: 1
+    min_count: 1
+_note: 'direction=1 = sign(GPS altruism: USA - MEX = 1.2195). PILOT ONLY (n=2 countries).
+  Augusto owns direction/threshold.'
