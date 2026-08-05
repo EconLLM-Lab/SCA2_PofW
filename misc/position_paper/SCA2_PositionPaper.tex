@@ -112,7 +112,7 @@ Large language models are increasingly used as simulators of human judgment in e
 
 This position paper outlines \SCA{}~2.0, a structural alternative. We treat Direct Preference Optimization (\DPO{}) as maximum-likelihood estimation in a Bradley--Terry random-utility model, using the Global Preferences Survey (\GPS{}) six-dimensional cultural state vector to generate culture-conditioned synthetic preference data. A student model (\texttt{Llama-3.1-8B-Instruct}) is fine-tuned via QLoRA with unconditioned prompts (\texttt{PROMPT\_COUNTRY\_CONDITIONING = False}) so that cultural dispositions are encoded into parameters rather than transient context. 
 
-We evaluate the framework across two tiers: (i)~Tier-1 synthetic pair recovery ($n=200$), where own-country adapters achieve $70.0$--$78.5\%$ accuracy; and (ii)~Tier-2 empirical out-of-sample evaluation on $N=35$ unseen World Values Survey (WVS) Wave~7 items mapped to GPS dimensions. On non-\WEIRD{} targets (Mexico), the matched MEX adapter demonstrates strong cultural specificity, outperforming the cross USA adapter on $97.1\%$ of questions ($\Delta\text{TVD} = 0.1495$, $95\%$ CI: $[0.0964, 0.2152]$). Conversely, on US targets, the USA adapter suffers from collision with the base model's strong American pretraining prior. Option log-likelihood scoring exhibits systematic under-dispersion relative to human populations. We detail construct validity arguments, delineate reliable applications (relative comparative statics, pre-field instrument stress-testing) from unreliable ones (absolute headcount polling, fine-tuning over already-dominant priors), and lay out next steps for calibration and structural validation.
+We evaluate the framework across two tiers: (i)~Tier-1 synthetic pair recovery ($n=200$), where own-country adapters achieve $70.0$--$78.5\%$ accuracy; and (ii)~Tier-2 empirical out-of-sample evaluation on $N=35$ unseen World Values Survey (WVS) Wave~7 items mapped to GPS dimensions. On non-\WEIRD{} targets (Mexico), the matched MEX adapter demonstrates strong cultural specificity, outperforming the cross USA adapter on $97.1\%$ of questions ($\Delta\text{TVD} = 0.1495$, $95\%$ CI: $[0.0964, 0.2152]$). Conversely, on US targets, the USA adapter suffers from collision with the base model's strong American pretraining prior. Option log-likelihood scoring exhibits systematic under-dispersion relative to human populations. We formalize the measurement argument through a Cronbach--Meehl nomological network linking the \GPS{} source instrument, the DPO training domain, and the WVS criterion domain, and we delineate reliable applications (relative comparative statics, pre-field instrument stress-testing) from unreliable ones (absolute headcount polling, fine-tuning over already-dominant priors).
 
 \vspace{0.4em}
 \noindent\textit{Keywords:} cultural preferences; Direct Preference Optimization; Bradley--Terry; Global Preferences Survey; structural estimation; construct validity; World Values Survey
@@ -158,19 +158,40 @@ corresponding to time preference (patience), risk taking, positive reciprocity, 
   R(x,y;z) \;=\; r_{\mathrm{task}}(x,y) \;+\; \phi(z)^{\!\top} m(x,y),
   \label{eq:reward}
 \end{equation}
-where $r_{\mathrm{task}}$ captures generic competence, $m(x,y)\in\mathbb{R}^{6}$ is a vector of measurable behavioral features of the response, and $\phi$ maps \GPS{} scores into reward weights.
+where $r_{\mathrm{task}}$ captures generic competence (coherence, relevance), $m(x,y)\in\mathbb{R}^{6}$ is a vector of measurable behavioral features of the response, and $\phi:\mathbb{R}^{6}\to\mathbb{R}^{6}$ maps \GPS{} scores into reward weights.
 
-\subsection{DPO as Structural Preference Estimation}
+\paragraph{The structural assumption.}
+Equation~\eqref{eq:reward} is a \emph{structural} (not descriptive) assumption: it claims that the country-specific component of an agent's behavior is a linear function of six externally measured preference traits, mediated by observable features of the response. Two testable implications follow. First, \emph{separability}: the task term $r_{\mathrm{task}}$ is country-invariant, so any cross-country behavioral difference must load on $\phi(z)^{\!\top} m(x,y)$. Second, \emph{dimensional structure}: only six dimensions of cultural variation are permitted to matter. Both implications are falsifiable---the first by the matched-versus-cross specificity design (Section~4), the second by out-of-sample items that ``should not'' be explained by any dimension and by items whose loading is measured rather than imposed.
 
-Given preference data $\{(x_i,y_i^{w},y_i^{\ell})\}$ in which $y^{w}$ is preferred to $y^{\ell}$, the Bradley--Terry model sets
+\subsection{Choice model}
+
+We treat the agent's response as a discrete choice over a finite option set $\mathcal{Y} = \{y_1,\dots,y_K\}$ (the response codes of a survey item or the two completions of a preference pair). A Luce--Bradley--Terry--McFadden random-utility model sets
 \begin{equation}
-  \Pr(y^{w}\succ y^{\ell}\mid x)
-  \;=\;
-  \sigma\bigl(r^{\star}(x,y^{w})-r^{\star}(x,y^{\ell})\bigr),
+  \Pr(y_k \mid x; z) \;=\;
+  \frac{\exp\bigl(R(x,y_k;z)\bigr)}{\sum_{j=1}^{K}\exp\bigl(R(x,y_j;z)\bigr)},
+  \label{eq:choice}
 \end{equation}
-with $\sigma$ the logistic function. The \DPO{} training objective optimizes the policy $\pi_\theta$ directly via:
+which is the softmax over option rewards. For a pair $\{y^{w}, y^{\ell}\}$, equation~\eqref{eq:choice} collapses to the familiar logistic paired-comparison probability
 \begin{equation}
-  r^{\star}(x,y_1)-r^{\star}(x,y_2)
+  \Pr(y^{w}\succ y^{\ell}\mid x) \;=\;
+  \sigma\bigl(R(x,y^{w};z)-R(x,y^{\ell};z)\bigr),
+  \label{eq:bt}
+\end{equation}
+with $\sigma(u) = (1+e^{-u})^{-1}$.
+
+Equation~\eqref{eq:choice} is the exact object the evaluation pipeline estimates: the option-likelihood protocol (Section~4) computes $\hat{p}_k \propto \exp(\text{logprob}(y_k\mid x))$ over all valid response codes and compares the resulting distribution to the empirical population distribution. The LLM is therefore used as a \emph{choice-probability simulator}, not a text generator---a deliberate design choice that makes the model's output directly comparable to the random-utility object in equation~\eqref{eq:choice}.
+
+\subsection{DPO as structural estimation}
+
+Given preference data $\{(x_i,y_i^{w},y_i^{\ell})\}_{i=1}^{n}$ in which $y^{w}$ is preferred to $y^{\ell}$ under cultural state $z$, the Bradley--Terry likelihood is
+\begin{equation}
+  \mathcal{L}(R) \;=\;
+  \prod_{i=1}^{n} \sigma\bigl(R(x_i,y_i^{w};z)-R(x_i,y_i^{\ell};z)\bigr).
+  \label{eq:likelihood}
+\end{equation}
+Direct Preference Optimization \cite{rafailov2023} maximizes this likelihood while reparameterizing the reward difference through the log-ratio of the trained policy to a frozen reference policy:
+\begin{equation}
+  R(x,y_1;z)-R(x,y_2;z)
   \;=\;
   \beta\left[
     \log\frac{\pi_{\theta}(y_1\mid x)}{\pi_{\mathrm{ref}}(y_1\mid x)}
@@ -179,7 +200,10 @@ with $\sigma$ the logistic function. The \DPO{} training objective optimizes the
   \right],
   \label{eq:logratio}
 \end{equation}
-where $\pi_{\mathrm{ref}}$ is a frozen reference model and $\beta>0$ is a scale temperature. After fine-tuning, equation~\eqref{eq:logratio} yields an \emph{implied reward margin} for any held-out pair.
+where $\pi_{\mathrm{ref}}$ is a frozen reference model and $\beta>0$ is a scale temperature. Equation~\eqref{eq:logratio} is the empirical analogue of the structural reward in equation~\eqref{eq:reward}: after training, the analyst can compute, for any held-out pair, the \emph{implied reward margin} $\widehat{\Delta r} = \beta\,[\text{log-ratio of chosen} - \text{log-ratio of rejected}]$, which is the estimated utility difference under the country-specific $z$.
+
+\paragraph{Identification and its limits.}
+Equation~\eqref{eq:logratio} identifies reward \emph{differences} up to scale ($\beta$) and location (any additive constant cancels in paired comparisons). The two structural features we \emph{can} recover are (i)~the sign of $\Delta r$---which option a country's policy ranks higher---and (ii)~the own-versus-other contrast, i.e., whether an adapter trained on country $c$'s labels assigns systematically larger margins to $c$'s chosen options than an adapter trained on country $c'$. We cannot recover the absolute level of $R$ nor, in general, the individual coordinates of $\phi(z)$ without additional moment conditions---a limitation we make explicit rather than obscure.
 
 \subsection{Pipeline Architecture}
 
@@ -238,17 +262,32 @@ Figure~\ref{fig:pipeline} summarizes the pipeline architecture across data gener
 \label{fig:pipeline}
 \end{figure}
 
-\subsection{Construct Validity Framework}
+\subsection{Construct validity and the nomological network}
 
-Evaluating LLMs on latent cultural traits ($S \in \mathbb{R}^d$) requires establishing construct validity across five rigorous methodological dimensions:
+Because $z$ is a \emph{latent} construct---nobody observes ``patience in Mexico'' directly---the scientific status of the pipeline hinges on construct validity. We adopt the classical formulation of Cronbach and Meehl \cite{cronbach1955}: a construct is validated by embedding it in a \emph{nomological network}, a set of theoretical relations linking the construct to (a)~other constructs and (b)~observable measures. Validation is then a matter of testing whether the observed correlations behave as the network predicts.
+
+\paragraph{The network.}
+For the latent construct ``country-level economic preference disposition,'' the network has three nodes---three families of observables that the construct must systematically relate to:
 
 \begin{enumerate}[leftmargin=1.5em]
-  \item \textbf{Latent Trait Conceptualization:} Cultural preferences are not superficial regional trivia, but latent disposition vectors $z = (\delta, \gamma, \xi^+, \xi^-, \alpha, \tau)^\top$ rooted in incentivized behavioral measures (Falk et al., 2018).
-  \item \textbf{Content Validity \& Item Mapping:} Synthetic preference pairs and evaluation questionnaires are explicitly mapped to the target latent dimensions. For Tier-2 evaluation, $N=35$ unseen WVS items are mapped to the 6 GPS traits via a curated schema (\texttt{question\_map\_wvs\_edited.csv}).
-  \item \textbf{Convergent Validity:} Established when fine-tuning on synthetic preference pairs reduces error against empirical population choice distributions on unseen survey questions (e.g., MEX Altruism TVD dropping from $0.450 \rightarrow 0.152$).
-  \item \textbf{Discriminant Validity (Specificity):} Evaluated using a $2 \times 2$ cross-adapter design matrix (Matched vs.\ Cross). Discriminant validity requires that an adapter trained on country $A$ outperforms an adapter trained on country $B$ when evaluated on country $A$'s empirical population data.
-  \item \textbf{Instrumental Validity \& Log-Likelihood Probing:} Rather than sampling free-text chat generations, Tier-2 evaluation uses option log-likelihood scoring. For each survey item, option log-probabilities are extracted and normalized via softmax into a predicted discrete choice distribution $\hat{P} = (\hat{p}_1, \dots, \hat{p}_K)$. This eliminates prompt compliance noise and surface generation fluff, isolating the model's underlying likelihood assignment.
+  \item \textbf{Source domain (identification):} the \GPS{} instrument $z_c$ (Falk et al., 2018), an incentivized, cross-nationally comparable measure of the six preference dimensions. This is the \emph{defining} measure of the construct: $z_c$ is what we mean by ``Mexico's preference profile'' in this paper.
+  \item \textbf{Training domain (internal manifestation):} the synthetic preference pairs $\{(x_i, y_i^w, y_i^\ell)\}$ whose labels are generated by $z_c$, and the implied reward margins $\widehat{\Delta r}$ recovered from the trained policy.
+  \item \textbf{Criterion domain (external manifestation):} the World Values Survey (WVS) item-response distributions $P_{\mathrm{WVS}}$, an independent, human-administered survey that was \emph{not} used in training and whose items are mapped to the six dimensions via a curated schema (\texttt{question\_map\_wvs\_edited.csv}).
 \end{enumerate}
+
+The network postulates three links, each with a distinct falsifiable prediction:
+
+\begin{enumerate}[leftmargin=1.5em]
+  \item \textbf{Link 1 (source $\rightarrow$ training):} preferences implied by $z_c$ must rank $y^w$ above $y^\ell$ on held-out pairs. Falsified if the trained policy fails to recover its own labels (Tier-1 preference accuracy $\leq 0.5$).
+  \item \textbf{Link 2 (training $\rightarrow$ criterion, convergent validity):} an adapter trained on $z_c$ must reduce distributional error against $P_{\mathrm{WVS}}$ for country $c$ on unseen items, relative to the base model---because both the synthetic labels and the WVS responses are driven by the same underlying $z_c$. Falsified if fine-tuning does not improve (or degrades) empirical fit.
+  \item \textbf{Link 3 (criterion-domain discrimination, discriminant validity):} an adapter trained on $z_{c}$ must fit $c$'s WVS distributions better than an adapter trained on $z_{c'}$, on the \emph{same} items, with country names withheld from the prompt. Falsified if the matched adapter does not dominate the cross adapter (matched-vs-cross specificity $\leq 0.5$).
+\end{enumerate}
+
+\paragraph{How the network handles negative evidence.}
+The network is a \emph{joint} claim, and its links can fail independently---which is precisely what the data show. The USA adapter \emph{passes} Link~1 (Tier-1 accuracy $0.70$) but \emph{fails} Links~2--3 on US WVS items: the base model already encodes a strong US pretraining prior, so the adapter's additional synthetic signal over-corrects rather than refines. This is not evidence against the construct; it is evidence that the \emph{source domain} is redundant with the model's pretraining for WEIRD populations. The same network then correctly predicts that the MEX adapter---trained on a population outside the pretraining prior---should pass all three links, which it does (Tier-1 accuracy $0.785$; matched-vs-cross specificity $97.1\%$ on MEX items; dimension-level convergence such as Altruism TVD falling from $0.450$ to $0.152$).
+
+\paragraph{Reliability.}
+Reliability---consistency of measurement---is assessed within the same framework: bootstrap confidence intervals over questions (2,000 replications) for every reported metric; calibration tables (predicted versus empirical option frequencies, ECE); and signed moment diagnostics (mean and dispersion bias) that reveal the structural under-dispersion of softmax option scoring. These diagnostics do not merely qualify the results; they are part of the nomological network, because they bound how much of the observed fit is construct signal versus scoring artifact.
 
 % ════════════════════════════════════════════════════════════════════════════
 \section{Empirical Results}
@@ -346,6 +385,11 @@ Bradley, R.~A., and M.~E. Terry (1952).
 Cao, Y., et~al. (2023).
 ``Assessing Cross-Cultural Alignment between ChatGPT and Human Societies.''
 \textit{Proceedings of the First Workshop on Cross-Cultural Considerations in NLP}.
+
+\bibitem{cronbach1955}
+Cronbach, L.~J., and P.~E. Meehl (1955).
+``Construct Validity in Psychological Tests.''
+\textit{Psychological Bulletin} 52(4): 281--302.
 
 \bibitem{capra2025}
 Capra, C.~M., A.~Gonzalez-Bonorino, and M.~Pantoja (2025).

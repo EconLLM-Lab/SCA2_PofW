@@ -14,6 +14,7 @@ Country-conditioned preference adapters (DPO / QLoRA on Llama-3.1-8B-Instruct) t
 |---|---|
 | **Synthetic data generation** | [`synthetic_generation/`](./synthetic_generation/) · start at [`synthetic_generation/README.md`](./synthetic_generation/README.md) and [`CLI_GUIDE.md`](./synthetic_generation/CLI_GUIDE.md) |
 | **Canonical DPO training pipeline** | [`DPO_train_test/`](./DPO_train_test/) · run order in its README |
+| **Adapter usage demo** (load + score + reward recovery) | [`notebooks/adapter_usage_demo.ipynb`](./notebooks/adapter_usage_demo.ipynb) |
 | **Canonical WVS OOS evaluation surface** | [`DPO_eval_WVS/`](./DPO_eval_WVS/) · evaluation scripts, result tables, and [`DPO_eval_WVS/README.md`](./DPO_eval_WVS/README.md) |
 | **Tier-2 OOS evaluation share pack** | [`data/merged/`](./data/merged/) · start at [`DATASET_GUIDE.md`](./data/merged/DATASET_GUIDE.md) |
 | **Position paper & theoretical framework** | [`misc/position_paper/`](./misc/position_paper/) · LaTeX source, compiled PDF, and theory notes |

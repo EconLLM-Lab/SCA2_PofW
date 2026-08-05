@@ -19,6 +19,6 @@ Before running, **update Drive/local paths** inside the notebooks (defaults assu
 ## Notes for collaborators
 
 - This directory is the **canonical** fine-tuning path for the paper.
-- Do **not** confuse with [`../DPO_preliminary_results/`](../DPO_preliminary_results/) (historical n≈70 pilot CSVs).
-- Frozen adapters are evaluated OOS on [`../data/merged/`](../data/merged/) — **no retrain** on WVS/AB.
+- Frozen adapters are evaluated OOS on [`DPO_eval_WVS/`](../DPO_eval_WVS/) (Wave-7 WVS option-likelihood scoring) and on [`../data/merged/`](../data/merged/) — **no retrain** on WVS/AB.
+- Adapter loading pattern (base + PEFT) is demonstrated in the last cell of `DPO_evaluation_cross_evaluation.ipynb` and in [`../notebooks/adapter_usage_demo.ipynb`](../notebooks/adapter_usage_demo.ipynb).
 - Training is ~hours per country on a single Colab-class GPU; full cross-eval is longer. See notebook comments for `max_examples` smoke settings.
