@@ -12,8 +12,8 @@ This folder contains the canonical evaluation pipeline and empirical results for
 ```
 DPO_eval_WVS/
 ├── DPO_survey_distribution_evaluation.ipynb  # Primary scoring notebook: log-prob extraction & distribution metrics
-├── GPS_vs_WVS_evaluation_analysis.ipynb      # Statistical analysis, bootstrap CIs, specificity & visualization
-├── question_map_wvs_edited.csv               # 35 unseen WVS questions mapped to 6 GPS preference dimensions
+├── GPS_vs_WVS_evaluation_analysis.ipynb      # Statistical analysis, bootstrap CIs, matched-vs-cross & visualization
+├── question_map_wvs_edited.csv               # 35 unseen WVS items (30 mapped to 6 GPS dimensions, 5 demographics)
 ├── README.md                                 # This documentation file
 └── eval_results_wvs_wave7/                   # Canonical result tables & summary CSVs
     ├── survey_question_metrics_all_models.csv
@@ -49,7 +49,7 @@ Unlike open-ended text generation, this evaluation assesses LLMs as **population
 
 ## Summary of Empirical Findings
 
-| Evaluation Target | Model / Adapter | TVD ↓ | JSD ↓ | ECE ↓ | Specificity (% Matched > Cross) |
+| Evaluation Target | Model / Adapter | TVD ↓ | JSD ↓ | ECE ↓ | Matched vs Cross (% Matched Better) |
 |---|---|---|---|---|---|
 | **MEX WVS Data** | Base Model (`Llama-3.1-8B`) | 0.5211 | 0.2165 | 0.0919 | — |
 | **MEX WVS Data** | **MEX Adapter (Matched)** | **0.4882** | **0.2010** | 0.0967 | **97.1%** |
@@ -59,9 +59,11 @@ Unlike open-ended text generation, this evaluation assesses LLMs as **population
 | **USA WVS Data** | USA Adapter (Matched) | 0.5258 | 0.2246 | 0.0958 | 11.4% |
 
 ### Key Takeaways:
-1. **Strong Mexico Specificity:** On MEX WVS items, the matched MEX adapter outperforms the cross USA adapter on 97.1% of questions ($\Delta \text{TVD} = 0.1495$, $\text{95% CI}: [0.0964, 0.2152]$).
-2. **Pretraining Prior Collision on USA:** Fine-tuning on synthetic US pairs degrades performance relative to the base model (TVD $0.3958 \rightarrow 0.5258$) because Llama-3.1-8B already carries a heavy US pretraining prior.
+1. **MEX Adapter Distributional Alignment:** On MEX WVS items, the MEX adapter's predicted response distribution lies closer to Mexico's observed response distribution than the USA adapter's does on 97.1% of questions ($\Delta \text{TVD} = 0.1495$, $\text{95% CI}: [0.0964, 0.2152]$). With unconditioned prompts this reflects what the adapter weights learned — but it measures which adapter's **fixed** distribution sits closer to each country's responses, not country-conditioned inference behavior (see design note below).
+2. **USA Adapter Degradation:** Fine-tuning on synthetic US pairs degrades fidelity to WVS response distributions relative to the base model on **both** eval countries (USA TVD $0.3958 \rightarrow 0.5258$; also worse on MEX data). The mechanism (e.g., pretraining-prior interaction vs. overfit to the synthetic scenario format) is not identified by this design.
 3. **Under-Dispersion:** Softmax option scoring exhibits structural over-confidence, under-estimating real human variance (dispersion bias $-1.15$ to $-1.63$).
+
+> **Design note (interpretation boundary):** with `PROMPT_COUNTRY_CONDITIONING = False`, each model emits identical option probabilities across eval countries (the `_on_USA` and `_on_MEX` files differ only in the `eval_country` label). "Matched vs cross" therefore compares each adapter's single fixed distribution against each country's observed response distribution. It does **not** demonstrate that an adapter conditions on or "knows" its target country at inference time. Country-specificity of behavior is a separate question addressed by the construct-validity layer (`sca2_validity/`).
 
 ---
 
