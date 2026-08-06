@@ -105,7 +105,7 @@ Correspondence: \texttt{agonz439@asu.edu}.}\\[0.1em]
 \noindent
 {\footnotesize\color{softgray}
 \textbf{Status.} Intermediate internal summary of SCA~2.0: structural conjecture, implemented DPO pipeline, Tier-1 synthetic pair recovery, Tier-2 out-of-sample evaluation on World Values Survey Wave~7 items ($N=35$), and a construct-validity layer that identifies admissible measures of GPS preference dimensions by partial identification. Not a submission draft. Code \& data: \href{https://github.com/EconLLM-Lab/SCA2_PofW}{\texttt{github.com/EconLLM-Lab/SCA2\_PofW}}; measurement instrument: \href{https://github.com/Bonorinoa/cvprofiles}{\texttt{github.com/Bonorinoa/cvprofiles}}.\\[0.2em]
-\textbf{Third-party evaluation required before any submission positioning is adopted.} Current empirical results are \textbf{proof-of-concept}: the adapter layer covers two adapters and two countries, and expanding the country panel and the menu of AI-generated measures is required before any headline claim; numbers herein are preliminary, for initial exposition.
+\textbf{Third-party evaluation required before any submission positioning is adopted.} Current empirical results are \textbf{proof-of-concept}: the adapter layer covers two adapters and two countries, and expanding the country panel and the menu of AI-generated measures is required before any headline claim. Numbers are preliminary and included for methodological exposition.
 }
 
 \vspace{0.4em}
@@ -140,7 +140,7 @@ The first generation of Synthetic Cultural Agents \cite{capra2025} showed that p
 \textit{Cultural preferences measured by the Global Preferences Survey can be encoded into language-model policies via preference fine-tuning, so that implied utilities recover the direction of culture-conditioned choices and support formal evaluation against independent survey moments.}
 \end{quote}
 
-The paper makes two contributions, which are deliberately coupled. The \textbf{first contribution} is an open-source pipeline for what we call \emph{synthetic experiments on cultural states}: GPS-grounded synthetic preference pairs, DPO fine-tuning of an open-weight student model with unconditioned prompts, and out-of-sample evaluation on human survey responses. Because the cultural state enters only through the training labels, the pipeline allows an analyst to hold everything fixed and vary the state---a randomized ``treatment'' of culture. The \textbf{second contribution} is a measurement instrument: because the scientific status of the whole enterprise hinges on whether our measures (the survey facets, the composites, and the adapters themselves) actually measure the constructs they claim to, we formalize the classical construct-validity framework of Cronbach and Meehl \cite{cronbach1955} as a \emph{partial-identification} problem \cite{manski2003} over a finite menu of candidate measures. The instrument is implemented in the open-source package \cvp{} (\texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}): given a researcher-authored nomological network of moment restrictions with thresholds anchored in the published literature, it computes slack profiles, the admissible set $M^*$, and the construct-identified range $[L,U]$ of any downstream target functional.
+The paper makes two contributions, which are deliberately coupled. The \textbf{first contribution} is an open-source pipeline for what we call \emph{synthetic experiments on cultural states}: GPS-grounded synthetic preference pairs, DPO fine-tuning of an open-weight student model with unconditioned prompts, and out-of-sample evaluation on human survey responses. Because the cultural state enters only through the training labels, the pipeline allows an analyst to hold the prompt design fixed while varying the state---a controlled intervention on the training distribution, not a randomized treatment of human culture. The \textbf{second contribution} is a measurement instrument: because the scientific status of the whole enterprise hinges on whether our measures (the survey facets, the composites, and the adapters themselves) actually measure the constructs they claim to, we formalize the classical construct-validity framework of Cronbach and Meehl \cite{cronbach1955} as a \emph{partial-identification} problem \cite{manski2003} over a finite menu of candidate measures. The instrument is implemented in the open-source package \cvp{} (\texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}): given a researcher-authored nomological network of moment restrictions with thresholds anchored in the published literature, it computes slack profiles, the admissible set $M^*$, and the construct-identified range $[L,U]$ of any downstream target functional.
 
 The methodological spine of the paper is a set of \emph{equivalences across literatures} that together formalize AI as an economic measurement instrument. First, \DPO{} training is Bradley--Terry maximum likelihood \cite{rafailov2023,bradley1952}: fine-tuning a policy on preference data is structural estimation of a random-utility model, so the trained policy's implied reward margins are utility differences. Second, option-likelihood scoring is Luce--Bradley--Terry--McFadden choice probability \cite{mcfadden1974}: the model's softmax over response options is a choice-probability simulator---a measurement function $m_{AI}(X)$ over the space of prompts and responses. Third, the Cronbach--Meehl nomological network is a system of moment inequalities \cite{cronbach1955,manski2003,dell2026}: validating a measure is computing an identified set. None of these equivalences is new within its own literature; their \emph{fusion} is. The result is a general system of latent structural modeling with two components---a preference-alignment component (the pipeline) and a validation component (the measurement instrument)---of which cultural modeling is the first application. The SCA research agenda's fundamental objective is the \emph{measurement of culture}; this paper argues that the route runs through the general instrument, instantiated on culture, rather than through culture-specific engineering.
 
@@ -191,7 +191,7 @@ corresponding to time preference (patience), risk taking, positive reciprocity, 
 where $r_{\mathrm{task}}$ captures generic competence (coherence, relevance), $m(x,y)\in\mathbb{R}^{6}$ is a vector of measurable behavioral features of the response, and $\phi:\mathbb{R}^{6}\to\mathbb{R}^{6}$ maps \GPS{} scores into reward weights.
 
 \paragraph{The structural assumption.}
-Equation~\eqref{eq:reward} is a \emph{structural} (not descriptive) assumption: it claims that the country-specific component of an agent's behavior is a linear function of six externally measured preference traits, mediated by observable features of the response. Two testable implications follow. First, \emph{separability}: the task term $r_{\mathrm{task}}$ is country-invariant, so any cross-country behavioral difference must load on $\phi(z)^{\!\top} m(x,y)$. Second, \emph{dimensional structure}: only six dimensions of cultural variation are permitted to matter. Both implications are falsifiable---the first by the matched-versus-cross evaluation design (Section~4), the second by out-of-sample items that ``should not'' be explained by any dimension.
+Equation~\eqref{eq:reward} is a \emph{structural working assumption} (not an estimated fact): it claims that the country-specific component of an agent's behavior is a linear function of six externally measured preference traits, mediated by response-scoring features. Two testable implications follow. First, \emph{separability}: the task term $r_{\mathrm{task}}$ is country-invariant, so any cross-country behavioral difference must load on $\phi(z)^{\!\top} m(x,y)$. Second, \emph{dimensional structure}: only six dimensions of cultural variation are permitted to matter. Both implications are falsifiable---the first by the matched-versus-cross evaluation design (Section~4), the second by out-of-sample items that ``should not'' be explained by any dimension.
 
 \subsubsection{Choice model.}
 We treat the agent's response as a discrete choice over a finite option set $\mathcal{Y} = \{y_1,\dots,y_K\}$ (the response codes of a survey item or the two completions of a preference pair). A Luce--Bradley--Terry--McFadden random-utility model sets
@@ -199,12 +199,12 @@ We treat the agent's response as a discrete choice over a finite option set $\ma
   \Pr(y_k \mid x; z) \;=\; \frac{\exp\bigl(R(x,y_k;z)\bigr)}{\sum_{j=1}^{K}\exp\bigl(R(x,y_j;z)\bigr)},
   \label{eq:choice}
 \end{equation}
-which is the softmax over option rewards. For a pair $\{y^{w}, y^{\ell}\}$, equation~\eqref{eq:choice} collapses to the logistic paired-comparison probability
+which is the softmax over option rewards. For a pair $\{y^{w}, y^{\ell}\}$, equation~\eqref{eq:choice} implies the logistic paired-comparison probability
 \begin{equation}
   \Pr(y^{w}\succ y^{\ell}\mid x) \;=\; \sigma\bigl(R(x,y^{w};z)-R(x,y^{\ell};z)\bigr),
   \label{eq:bt}
 \end{equation}
-with $\sigma(u) = (1+e^{-u})^{-1}$. Equation~\eqref{eq:choice} is the exact object the evaluation pipeline estimates: the option-likelihood protocol (Section~4) computes $\hat{p}_k \propto \exp(\text{logprob}(y_k\mid x))$ over all valid response codes and compares the resulting distribution to the empirical population distribution. The LLM is therefore used as a \emph{choice-probability simulator}, not a text generator.
+with $\sigma(u) = (1+e^{-u})^{-1}$. Equation~\eqref{eq:choice} is the idealized object approximated by the evaluation pipeline: the option-likelihood protocol (Section~4) computes $\hat{p}_k \propto \exp(\text{logprob}(y_k\mid x))$ over all valid response codes and compares the resulting distribution to the empirical population distribution. The LLM is therefore evaluated as a \emph{choice-probability simulator}, not treated as a calibrated text generator.
 
 \subsubsection{DPO as structural estimation.}
 Given preference data $\{(x_i,y_i^{w},y_i^{\ell})\}_{i=1}^{n}$ in which $y^{w}$ is preferred to $y^{\ell}$ under cultural state $z$, the Bradley--Terry likelihood is
@@ -212,7 +212,7 @@ Given preference data $\{(x_i,y_i^{w},y_i^{\ell})\}_{i=1}^{n}$ in which $y^{w}$ 
   \mathcal{L}(R) \;=\; \prod_{i=1}^{n} \sigma\bigl(R(x_i,y_i^{w};z)-R(x_i,y_i^{\ell};z)\bigr).
   \label{eq:likelihood}
 \end{equation}
-Direct Preference Optimization \cite{rafailov2023} maximizes this likelihood while reparameterizing the reward difference through the log-ratio of the trained policy to a frozen reference policy:
+Under the Bradley--Terry and KL-regularized-RL assumptions used to derive DPO, Direct Preference Optimization \cite{rafailov2023} has this likelihood form while reparameterizing reward differences through the log-ratio of the trained policy to a frozen reference policy:
 \begin{equation}
   R(x,y_1;z)-R(x,y_2;z) \;=\; \beta\left[
     \log\frac{\pi_{\theta}(y_1\mid x)}{\pi_{\mathrm{ref}}(y_1\mid x)}
@@ -221,7 +221,7 @@ Direct Preference Optimization \cite{rafailov2023} maximizes this likelihood whi
   \right],
   \label{eq:logratio}
 \end{equation}
-where $\pi_{\mathrm{ref}}$ is a frozen reference model and $\beta>0$ is a scale temperature. Equation~\eqref{eq:logratio} is the empirical analogue of the structural reward in equation~\eqref{eq:reward}: after training, the analyst can compute, for any held-out pair, the \emph{implied reward margin} $\widehat{\Delta r} = \beta\,[\text{log-ratio of chosen} - \text{log-ratio of rejected}]$, the estimated utility difference under the country-specific $z$.
+where $\pi_{\mathrm{ref}}$ is a frozen reference model and $\beta>0$ is a scale temperature. Equation~\eqref{eq:logratio} supplies an empirical reward-margin proxy for the structural reward in equation~\eqref{eq:reward}: after training, the analyst can compute, for any held-out pair, the \emph{implied reward margin} $\widehat{\Delta r} = \beta\,[\text{log-ratio of chosen} - \text{log-ratio of rejected}]$. We interpret this as a model-implied utility difference only under the maintained assumptions; it is not a separately identified human utility.
 
 \paragraph{Identification and its limits.}
 Equation~\eqref{eq:logratio} identifies reward \emph{differences} up to scale ($\beta$) and location. The two structural features we \emph{can} recover are (i)~the sign of $\Delta r$ and (ii)~the own-versus-other contrast: whether an adapter trained on country $c$'s labels assigns systematically larger margins to $c$'s chosen options than an adapter trained on $c'$. We cannot recover the absolute level of $R$ nor, in general, the individual coordinates of $\phi(z)$ without additional moment conditions.
@@ -272,7 +272,7 @@ Figure~\ref{fig:pipeline} summarizes the pipeline: (A)~the cultural state $z_c$ 
 
 \draw[arr] (E.south) -- ++(0,-0.35) -| (V1.north);
 \draw[arr] (V1) -- (V2);
-\draw[arr, dashed] (V1) -- (V3);
+\draw[arr, dashed] (E.south) -- ++(0,-0.35) -| (V3.north);
 
 \node[lab, below=0.08cm of V2] {empirical OOS};
 \node[lab, below=0.08cm of V3] {measurement};
@@ -285,7 +285,7 @@ Figure~\ref{fig:pipeline} summarizes the pipeline: (A)~the cultural state $z_c$ 
 \subsection{The measurement framework: construct validity as partial identification}
 
 \subsubsection{The problem.}
-The pipeline above produces agents whose behavior we interpret as ``the preferences of country $c$.'' Every link in that interpretation passes through \emph{measurement}: the \GPS{} state is a measure; the WVS items are measures; the adapter's option distributions are measures. None of them is the latent attribute itself. The scientific question---\emph{which of these candidate measures are admissible representations of the construct?}---is precisely the question the construct-validity tradition addresses, and we answer it with partial-identification machinery.
+The pipeline above produces agents whose behavior we interpret as a model-implied representation of country $c$'s preference state. Every link in that interpretation passes through \emph{measurement}: the \GPS{} state is a measure; the WVS items are measures; the adapter's option distributions are measures. None of them is the latent attribute itself. The scientific question---\emph{which of these candidate measures are admissible representations of the construct?}---is precisely the question the construct-validity tradition addresses, and we answer it with partial-identification machinery.
 
 \subsubsection{Formal specification.}
 Let $X$ denote the underlying reality (respondents, countries, their behaviors) and let a \emph{measurement function} $m_j(X)$ be any disciplined projection of $X$ into a score. The researcher supplies:
@@ -307,31 +307,58 @@ The \emph{slack} of measure $m$ on restriction $r$ is the sample analogue of the
 \end{equation}
 with positive values indicating satisfied restrictions and negative values the magnitude of violation. The \emph{admissible set} is
 \begin{equation}
-  \mathcal{M}^{*}_{\mathcal{R},\theta} \;=\; \left\{ m \in \mathcal{M} : s_r(m) \ge -\delta \ \ \forall r \in \mathcal{R} \right\}.
+  \widehat{\mathcal{M}}^{*}_{\mathcal{R},\theta} \;=\; \left\{ m \in \mathcal{M} : s_r(m;\theta_r) \ge -\delta \ \ \forall r \in \mathcal{R} \right\}.
   \label{eq:admissible}
 \end{equation}
-It is a population object encoding \emph{conceptual} uncertainty: which candidate representations are consistent with the stated theory and data.
+This sample analogue encodes \emph{conceptual} uncertainty conditional on the observed data and researcher-specified restrictions. It is a deterministic screening rule unless sampling uncertainty is propagated, as described below. A population identified set would replace the sample slacks with their population counterparts; neither object is exhaustive unless the candidate menu and restrictions are justified as sufficiently rich.
 
 For a downstream target functional $\beta(\cdot)$ (a regression coefficient, a correlation, a treatment effect defined using the measure), the \emph{construct-identified set} is
 \begin{equation}
-  \mathcal{B}^{*}_{\mathcal{R},\theta} \;=\; \left\{ \beta(m) : m \in \mathcal{M}^{*}_{\mathcal{R},\theta} \right\},
+  \widehat{\mathcal{B}}^{*}_{\mathcal{R},\theta} \;=\; \left\{ \beta(m) : m \in \widehat{\mathcal{M}}^{*}_{\mathcal{R},\theta} \right\},
   \label{eq:bset}
 \end{equation}
 and, for scalar targets, the headline report is the \emph{construct-identified range}
 \begin{equation}
-  [L, U] \;=\; \left[ \inf_{m \in \mathcal{M}^{*}} \beta(m),\; \sup_{m \in \mathcal{M}^{*}} \beta(m) \right].
+  [\widehat{L}, \widehat{U}] \;=\; \left[ \inf_{m \in \widehat{\mathcal{M}}^{*}} \beta(m),\; \sup_{m \in \widehat{\mathcal{M}}^{*}} \beta(m) \right].
   \label{eq:range}
 \end{equation}
 
 \paragraph{Inference and reproducibility.}
-Sampling uncertainty is handled by bootstrap \emph{over units} (the menu is fixed, not resampled), reporting percentile bands on the range endpoints over non-empty replicates; degenerate replicates are counted and reported. Threshold sensitivity is reported as an additive \emph{$\theta$-grid} diagnostic (multipliers $\lambda$ on the thresholds; the headline is $\lambda=1$; grid settings are excluded from the run identity). Paper-relevant numbers require frozen scores, pinned network/$\beta$, fixed seed, and package version, with a deterministic run id derived from their hash. Empty admissible sets and wide ranges are valid scientific outputs; thresholds are never loosened to avoid them.
+Sampling uncertainty is handled by bootstrap \emph{over units} (the menu is fixed, not resampled), reporting percentile bands on the range endpoints over non-empty replicates; degenerate replicates are counted and reported. Threshold sensitivity is reported as a multiplicative $\lambda$-grid diagnostic (the headline is $\lambda=1$; grid settings are excluded from the run identity). Paper-relevant numbers require frozen scores, pinned network/$\beta$, fixed seed, and package version, with a deterministic run id derived from their hash. Empty admissible sets and wide ranges are valid scientific outputs; thresholds are never loosened to avoid them.
 
 \paragraph{Implementation.}
 The framework is implemented in the open-source package \cvp{} \cite{cvprofiles} (\texttt{github.com/Bonorinoa/cvprofiles}), whose state machine is exactly \texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}: it ingests a frozen unit$\times$measure score table, binds the researcher-authored network and target functional, computes slacks and the admissible set, and emits JSON/HTML audit artifacts with run-id and hash discipline. The engine is score-agnostic and model-free; it contains no LLM calls. The network is always researcher-authored; the tool only evaluates.
 
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=0.42cm and 0.35cm,
+  vbox/.style={draw=boxedge, fill=boxfill, rounded corners=2pt,
+    align=center, inner sep=5pt, text width=2.35cm, minimum height=0.9cm,
+    line width=0.6pt},
+  varr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.75pt},
+  vnote/.style={font=\tiny\color{softgray}, align=center, text width=2.35cm}
+]
+\node[vbox] (score) {\textbf{1. SCORE}\\Frozen unit $\times$ measure\\score table};
+\node[vbox, right=of score] (restrict) {\textbf{2. RESTRICT}\\Researcher-authored\\network + thresholds};
+\node[vbox, right=of restrict] (identify) {\textbf{3. IDENTIFY}\\Slacks $\rightarrow$ admissible\\set $\widehat{\mathcal M}^{*}$};
+\node[vbox, right=of identify] (report) {\textbf{4. REPORT}\\Target range\\$[\widehat L,\widehat U]$ + audit};
+\draw[varr] (score) -- (restrict);
+\draw[varr] (restrict) -- (identify);
+\draw[varr] (identify) -- (report);
+\node[vnote, below=0.12cm of score] {inputs are frozen};
+\node[vnote, below=0.12cm of restrict] {assumptions are explicit};
+\node[vnote, below=0.12cm of identify] {empty sets remain visible};
+\node[vnote, below=0.12cm of report] {hashes make runs auditable};
+\end{tikzpicture}
+\caption{The measurement layer separates researcher judgment from computation. Researchers specify the candidate measures and nomological network; \cvp{} scores restrictions, computes the admissible set, propagates measurement uncertainty to downstream targets, and preserves the audit trail.}
+\label{fig:validity}
+\end{figure}
+
 \subsection{Applied example: identifying admissible representations of GPS trust}
 
-We illustrate the machinery on the trust dimension of the \GPS{}--\WVS{} bridge. The construct is \emph{country-level generalized trust}. The menu is the four WVS Wave~7 trust facets---generalized (Q57), in-group (Q58, Q60), out-group (Q59, Q61--63), and institutional (Q64, Q69--71)---each scored from respondent-level items per a frozen protocol and aggregated to country means (42 countries in the WVS$\cap$GPS overlap). The nomological network is a single convergent restriction:
+We illustrate the machinery on the trust dimension of the \GPS{}--\WVS{} bridge. The construct is \emph{country-level generalized trust}; the unit is a country, not an individual respondent. The menu is the four WVS Wave~7 trust facets---generalized (Q57), in-group (Q58, Q60), out-group (Q59, Q61--63), and institutional (Q64, Q69--71)---each scored from respondent-level items per a frozen protocol and aggregated to country means. This illustration uses the 42 countries in the WVS$\cap$GPS overlap, distinct from the 35-question Tier-2 adapter evaluation sample. The nomological network is a single convergent restriction:
 
 \begin{equation}
   r_{\mathrm{trust}}: \quad \mathrm{Corr}(m, \mathrm{gps\_trust}) \ge 0.30,
@@ -362,7 +389,7 @@ The profile illustrates every element of the framework. The \emph{slack column} 
 
 \begin{table}[h!]
 \centering
-\caption{$\theta$-grid diagnostic for the trust profile (additive; headline $\lambda=1.0$).}
+\caption{$\lambda$-grid diagnostic for the trust profile (multiplicative; headline $\lambda=1.0$).}
 \label{tab:thetagrid}
 \scriptsize
 \begin{tabular}{@{}lccc@{}}
@@ -377,7 +404,7 @@ $\lambda$ & threshold & $|M^*|$ & admissible set \\
 \end{tabular}
 \end{table}
 
-The same machinery applied to the other five dimensions yields the outcome typology in Table~\ref{tab:typology}: patience is \emph{point-identified} (only financial satisfaction survives), negrecip admits justifiability only, and risktaking, altruism, and posrecip have \emph{empty} admissible sets---the mapped WVS items are not admissible representations of those GPS constructs at any threshold we tested. Across the full menu of 16 candidate facets, only 5 are admissible. This is the substantive content of the framework: \emph{most survey measures of economic preferences are not admissible representations of the incentivized constructs}, and the framework says so in an auditable, threshold-transparent way.
+The same machinery applied to the other five dimensions yields the outcome typology in Table~\ref{tab:typology}: patience has a singleton admissible menu (only financial satisfaction survives), negrecip admits justifiability only, and risktaking, altruism, and posrecip have \emph{empty} admissible sets at the headline threshold---the mapped WVS items are not admissible representations of those GPS constructs under this network and threshold. Across the full menu of 16 candidate facets, only 5 are admissible. This is the substantive content of the framework: \emph{most survey measures of economic preferences are not admissible representations of the incentivized constructs}, and the framework says so in an auditable, threshold-transparent way.
 
 \begin{table}[h!]
 \centering
@@ -404,7 +431,7 @@ Finally, the framework's downstream object---the construct-identified range---is
 \begin{equation}
   [L, U] = [0.371,\ 0.624],
 \end{equation}
-with a units bootstrap band of $[0.174, 0.752]$ (17.5\% empty replicates reported). The economic content: \emph{how much of the trust--development relationship is attributable to measurement choice is itself quantified}---a range of 0.25 correlation points across admissible measures, not a single number.
+with a units bootstrap band of $[0.174, 0.752]$ (17.5\% empty replicates reported). The economic content: \emph{how much of the trust--development relationship is sensitive to measurement choice is itself quantified}---a range of 0.25 correlation points across admissible measures, not a single number.
 
 % ════════════════════════════════════════════════════════════════════════════
 \section{Empirical Results}
