@@ -120,9 +120,9 @@ Economics has always studied latent constructs---preferences, trust, patience, s
 % ════════════════════════════════════════════════════════════════════════════
 \section*{Abstract}
 
-Large language models are increasingly used as simulators of human judgment in economics and adjacent social sciences, yet their default alignment reflects predominantly Western, Educated, Industrialized, Rich, and Democratic (\WEIRD{}) preference data. Earlier Synthetic Cultural Agents (\SCA{}~1.0) addressed this gap by conditioning frontier models on ethnographic profiles at inference time---useful for piloting but reduced-form: cultural signal lives only in the prompt, is fragile to model updates, and supports no formal identification.
+Large language models are increasingly used as simulators of human judgment in economics, yet their default alignment reflects predominantly Western, Educated, Industrialized, Rich, and Democratic (\WEIRD{}) preference data. Earlier Synthetic Cultural Agents (\SCA{}~1.0) conditioned models on ethnographic profiles at inference time---useful for piloting but reduced-form: cultural signal lives in the prompt, vanishes with the session, and supports no formal identification. \SCA{}~2.0 encodes culture structurally instead. A six-dimensional Global Preferences Survey (\GPS{}) state vector---standardized deviations from the global mean---generates culture-conditioned synthetic preference pairs; Direct Preference Optimization (\DPO{}) fine-tunes an open-weight student model on these labels, so dispositions live in the weights, not the prompt; and the resulting agents are evaluated out-of-sample against human survey responses. Because the target country is never named, the design pre-empts stereotype leakage by construction---an open pipeline for synthetic experiments on cultural states.
 
-This position paper outlines \SCA{}~2.0, a structural alternative built on two fused contributions. \emph{First}, an open-source estimation pipeline: Direct Preference Optimization (\DPO{}) is treated as maximum-likelihood estimation in a Bradley--Terry random-utility model; the Global Preferences Survey (\GPS{}) six-dimensional cultural state vector generates culture-conditioned synthetic preference data; a student model (\texttt{Llama-3.1-8B-Instruct}) is fine-tuned via QLoRA with unconditioned prompts so that cultural dispositions are encoded into parameters rather than transient context; and the resulting agents are evaluated out-of-sample on human survey data---an open pipeline for synthetic experiments on cultural states. \emph{Second}, a measurement instrument: we formalize the Cronbach--Meehl nomological network as a partial-identification problem over a menu of candidate measures, implemented in the open-source package \cvp{} (score, restrict, identify, report). Given a researcher-supplied network of moment restrictions with literature-anchored thresholds, the tool computes slack profiles, the admissible set $M^*$, and the construct-identified range $[L,U]$ of any downstream target. We demonstrate the machinery on the trust dimension of the \GPS{}/\WVS{} bridge: only three of four WVS trust facets are admissible representations of GPS trust; the canonical single item (Q57) is rejected at the stated threshold; and a ``survivor composite'' reproduces GPS trust's demographic structure while the single item does not---evidence that representation choice is consequential, not cosmetic. Empirically, the MEX adapter achieves strong distributional alignment with Mexico's WVS responses (matched-better on 97.1\% of 35 items, $\Delta\text{TVD}=0.1495$, 95\% CI $[0.0964, 0.2152]$), while the USA adapter degrades fit relative to the base model with mechanism unresolved. We delineate reliable applications (relative comparative statics, pre-field instrument stress-testing, measurement-fragility quantification) from unreliable ones (absolute headcount polling, fine-tuning over already-dominant priors), and discuss frontier applications---power analysis without priors, survey-item pre-piloting, construct induction for arbitrary models, and country- or individual-level response simulation.
+The second contribution is a measurement instrument. We formalize the Cronbach--Meehl nomological network as a partial-identification problem over a finite menu of candidate measures and implement it in the open-source package \cvp{} (score, restrict, identify, report): given a researcher-supplied network of literature-anchored moment restrictions, it returns the admissible set $M^*$ and the construct-identified range $[L,U]$ of any downstream target. On the \GPS{}/\WVS{} trust bridge, three of four WVS trust facets are admissible representations of GPS trust, while the canonical single item (Q57) is rejected at the stated threshold; a ``survivor composite'' reproduces GPS trust's demographic structure where the single item does not---representation choice is consequential, not cosmetic. Empirically, the Mexico adapter matches its target population better than the cross adapter on 97.1\% of 35 items ($\Delta\text{TVD}=0.1495$, 95\% CI $[0.0964, 0.2152]$); the USA adapter degrades relative to the base model, mechanism unresolved.
 
 \vspace{0.4em}
 \noindent\textit{Keywords:} cultural preferences; Direct Preference Optimization; Bradley--Terry; Global Preferences Survey; structural estimation; construct validity; partial identification; World Values Survey
@@ -140,13 +140,13 @@ The first generation of Synthetic Cultural Agents \cite{capra2025} showed that p
 \textit{Cultural preferences measured by the Global Preferences Survey can be encoded into language-model policies via preference fine-tuning, so that implied utilities recover the direction of culture-conditioned choices and support formal evaluation against independent survey moments.}
 \end{quote}
 
-The paper makes two contributions, which are deliberately coupled. The \textbf{first contribution} is an open-source pipeline for what we call \emph{synthetic experiments on cultural states}: GPS-grounded synthetic preference pairs, DPO fine-tuning of an open-weight student model with unconditioned prompts, and out-of-sample evaluation on human survey responses. Because the cultural state enters only through the training labels, the pipeline allows an analyst to hold the prompt design fixed while varying the state---a controlled intervention on the training distribution, not a randomized treatment of human culture. The \textbf{second contribution} is a measurement instrument: because the scientific status of the whole enterprise hinges on whether our measures (the survey facets, the composites, and the adapters themselves) actually measure the constructs they claim to, we formalize the classical construct-validity framework of Cronbach and Meehl \cite{cronbach1955} as a \emph{partial-identification} problem \cite{manski2003} over a finite menu of candidate measures. The instrument is implemented in the open-source package \cvp{} (\texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}): given a researcher-authored nomological network of moment restrictions with thresholds anchored in the published literature, it computes slack profiles, the admissible set $M^*$, and the construct-identified range $[L,U]$ of any downstream target functional.
+The design rests on a sharp distinction between \emph{direct} and \emph{indirect} cultural information. Persona prompting---and ethnographic prompting more broadly---supplies cultural information \emph{directly} at inference time: the model is told who it is (``answer as someone in Mexico City''), and it plays along with the frame. \SCA{}~2.0 supplies it \emph{indirectly}, through the training labels alone. The model is never told which population it represents; its cultural disposition must be inferred from the pattern of which responses were preferred in its training data. This has a practical payoff that is often overlooked: because the target country is never mentioned, the pipeline pre-empts stereotype leakage---the model cannot lean on country-name stereotypes because it is not given the name---and the same design transfers to any population description that can be encoded as a preference vector.
 
-The methodological spine of the paper is a set of \emph{equivalences across literatures} that together formalize AI as an economic measurement instrument. First, \DPO{} training is Bradley--Terry maximum likelihood \cite{rafailov2023,bradley1952}: fine-tuning a policy on preference data is structural estimation of a random-utility model, so the trained policy's implied reward margins are utility differences. Second, option-likelihood scoring is Luce--Bradley--Terry--McFadden choice probability \cite{mcfadden1974}: the model's softmax over response options is a choice-probability simulator---a measurement function $m_{AI}(X)$ over the space of prompts and responses. Third, the Cronbach--Meehl nomological network is a system of moment inequalities \cite{cronbach1955,manski2003,dell2026}: validating a measure is computing an identified set. None of these equivalences is new within its own literature; their \emph{fusion} is. The result is a general system of latent structural modeling with two components---a preference-alignment component (the pipeline) and a validation component (the measurement instrument)---of which cultural modeling is the first application. The SCA research agenda's fundamental objective is the \emph{measurement of culture}; this paper argues that the route runs through the general instrument, instantiated on culture, rather than through culture-specific engineering.
+The paper makes two contributions, which are deliberately coupled. The \textbf{first} is an open-source pipeline for \emph{synthetic experiments on cultural states}: GPS-grounded synthetic preference pairs, DPO fine-tuning of an open-weight student model with unconditioned prompts, and out-of-sample evaluation on human survey responses. Because the cultural state enters only through the training labels, an analyst can hold the prompt design fixed while varying the state---a controlled intervention on the training distribution, not a randomized treatment of human culture. The \textbf{second} is a measurement instrument: since the scientific status of the enterprise hinges on whether our measures (survey facets, composites, adapters) actually measure the constructs they claim to, we formalize the Cronbach--Meehl nomological network \cite{cronbach1955} as a \emph{partial-identification} problem \cite{manski2003} over a finite menu of candidate measures. The instrument is implemented in the open-source package \cvp{} (\texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}): given a researcher-authored nomological network of moment restrictions with literature-anchored thresholds, it computes slack profiles, the admissible set $M^*$, and the construct-identified range $[L,U]$ of any downstream target functional.
 
-The connection between the two literatures is the methodological spine of the paper. Construct validity (psychometrics) answers \emph{which measures are admissible representations of a latent construct}; partial identification (econometrics) answers \emph{what set of conclusions survives all admissible representations}. We show that the Cronbach--Meehl nomological network is naturally formalized as a system of moment inequalities---the same formal object at the center of the partial-identification literature---and that this formalization, implemented in \cvp{}, converts ``which survey item should I use?'' from a judgment call into an identified set.
+The methodological spine of the paper is a set of \emph{equivalences across literatures} that together formalize AI as an economic measurement instrument. First, \DPO{} training is Bradley--Terry maximum likelihood \cite{rafailov2023,bradley1952}: fine-tuning a policy on preference data is structural estimation of a random-utility model, so the trained policy's implied reward margins are utility differences. Second, option-likelihood scoring is Luce--Bradley--Terry--McFadden choice probability \cite{mcfadden1974}: the model's softmax over response options is a choice-probability simulator---a measurement function $m_{AI}(X)$ over the space of prompts and responses. Third, the Cronbach--Meehl nomological network is a system of moment inequalities \cite{cronbach1955,manski2003,dell2026}: validating a measure is computing an identified set---the same formal object at the center of the partial-identification literature, which converts ``which survey item should I use?'' from a judgment call into an identified set. None of these equivalences is new within its own literature; their \emph{fusion} is. The result is a general system of latent structural modeling with two components---a preference-alignment component (the pipeline) and a validation component (the measurement instrument)---of which cultural modeling is the first application. The SCA research agenda's fundamental objective is the \emph{measurement of culture}; this paper argues that the route runs through the general instrument, instantiated on culture, rather than through culture-specific engineering.
 
-The empirical vehicle is the \GPS{}--\WVS{} bridge. The \GPS{} \cite{falk2018} supplies incentivized, behaviorally validated measures of patience, risk taking, positive and negative reciprocity, altruism, and trust across 76 countries. The World Values Survey supplies candidate survey measures of the same constructs. We evaluate (i)~whether the WVS facets are admissible representations of the GPS dimensions, at country level and at demographic-structure level; (ii)~whether DPO adapters trained on GPS-grounded synthetic data reproduce the empirical response distributions of their target countries on unseen WVS items; and (iii)~whether the choice of representation changes downstream conclusions---it does.
+The empirical vehicle is the \GPS{}--\WVS{} bridge. The \GPS{} \cite{falk2018} supplies incentivized, behaviorally validated measures of patience, risk taking, positive and negative reciprocity, altruism, and trust across 76 countries. The World Values Survey supplies candidate survey measures of the same constructs. We evaluate (i)~whether the WVS facets are admissible representations of the GPS dimensions, at country level and at demographic-structure level; (ii)~whether DPO adapters trained on GPS-grounded synthetic data reproduce the empirical response distributions of their target countries on unseen WVS items, against a three-tier pre-registered ladder (synthetic recovery, survey out-of-sample, held-out and experimental validation); and (iii)~whether the choice of representation changes downstream conclusions---it does.
 
 The paper proceeds as follows. Section~2 reviews the three literatures the framework spans. Section~3 presents the methods: the estimation pipeline and the measurement framework, with the formal specification of the network and a worked applied example on trust. Section~4 reports the empirical results across both tiers and the construct-validity layer. Section~5 discusses reliable and unreliable applications, frontier applications, and the broader positioning of rigorous measurement in developing economics. Section~6 outlines next steps.
 
@@ -167,7 +167,7 @@ Validity was classically defined by correlation with a criterion or by content j
 
 \subsection{Partial identification and measurement in econometrics}
 
-Leamer's extreme-bounds analysis \cite{leamer1983} asked how much conclusions move across specifications; Sala-I-Martin's ``two million regressions'' \cite{sala1997} made the question unavoidable once computation became cheap. Manski \cite{manski2003,manski2007} formalized the discipline: report the \emph{set} of parameter values consistent with the data and the stated assumptions---no more, no less. The econometric measurement literature supplies the treatment of mismeasured variables and multi-measure systems \cite{bound1991,schennach2021}, and the recent LLM-as-measurement framework of Ludwig, Mullainathan and Rambachan \cite{ludwig2026} connects these tools to frontier models. Dell and Rambachan's 2026 NBER Methods Lecture \cite{dell2026} argues that AI makes candidate measures cheap and shifts the bottleneck to \emph{choosing among many plausible representations}, which may yield different estimates of the target parameter; they propose formalizing the Cronbach--Meehl network as a partial-identification problem---the approach implemented here.
+Leamer's extreme-bounds analysis \cite{leamer1983} asked how much conclusions move across specifications; Sala-I-Martin's ``two million regressions'' \cite{sala1997} made the question unavoidable once computation became cheap. Manski \cite{manski2003,manski2007} formalized the discipline: report the \emph{set} of parameter values consistent with the data and the stated assumptions---no more, no less. The econometric measurement literature supplies the treatment of mismeasured variables and multi-measure systems \cite{bound1991,schennach2021}, and the recent LLM-as-measurement framework of Ludwig, Mullainathan and Rambachan \cite{ludwig2026} connects these tools to frontier models. Dell and Rambachan's 2026 NBER Methods Lecture \cite{dell2026} argues that AI makes candidate measures cheap and shifts the bottleneck to \emph{choosing among many plausible representations}, which may yield different estimates of the target parameter; they propose formalizing the Cronbach--Meehl network as a partial-identification problem---the approach implemented here. What \cvp{} adds to that proposal is operationalization: a score-agnostic, model-free engine that binds a researcher-authored network to frozen score tables, computes slacks and admissible sets with run-id and hash discipline, and emits audit artifacts---so that the proposal becomes a reproducible procedure rather than a research agenda.
 
 \subsection{The synthesis: construct validity as partial identification}
 
@@ -189,6 +189,9 @@ corresponding to time preference (patience), risk taking, positive reciprocity, 
   \label{eq:reward}
 \end{equation}
 where $r_{\mathrm{task}}$ captures generic competence (coherence, relevance), $m(x,y)\in\mathbb{R}^{6}$ is a vector of measurable behavioral features of the response, and $\phi:\mathbb{R}^{6}\to\mathbb{R}^{6}$ maps \GPS{} scores into reward weights.
+
+\paragraph{Operationalization of the GPS state.}
+The pipeline reads $z_c$ directly from the \GPS{} country file as \emph{standardized deviations from the global mean} (Falk et al.\ convention; one z-score per dimension per country), so $z_c$ is interpretable as ``country $c$ sits $z$ standard deviations above or below the global mean on dimension $d$.'' This choice is not incidental: it makes the six dimensions commensurable, pins down the sign of each score, and gives $\phi(z)$ the concrete reading of a map from ``SDs from the global mean'' into reward weights. The synthetic labels inherit this convention: in stage C, for each scenario the sign of $z_c$ on the target dimension selects which of the two fixed behavioral options is labeled as preferred (option $A$ when $z_c \ge 0$, option $B$ otherwise), so the training signal is a directional statement about the country's position relative to the world distribution, never about the country itself. Two interpretive consequences follow. First, the adapters are trained toward a \emph{\GPS{}-instrument-measured} construct; Tier-2 alignment is with that proxy, not with ``Mexican preferences'' in the abstract. Second, because the label rule is sign-based, the pipeline is insensitive to the magnitude of $z_c$ within a sign class---magnitude information enters only through the quality-control scores, not through the labels.
 
 \paragraph{The structural assumption.}
 Equation~\eqref{eq:reward} is a \emph{structural working assumption} (not an estimated fact): it claims that the country-specific component of an agent's behavior is a linear function of six externally measured preference traits, mediated by response-scoring features. Two testable implications follow. First, \emph{separability}: the task term $r_{\mathrm{task}}$ is country-invariant, so any cross-country behavioral difference must load on $\phi(z)^{\!\top} m(x,y)$. Second, \emph{dimensional structure}: only six dimensions of cultural variation are permitted to matter. Both implications are falsifiable---the first by the matched-versus-cross evaluation design (Section~4), the second by out-of-sample items that ``should not'' be explained by any dimension.
@@ -227,58 +230,63 @@ where $\pi_{\mathrm{ref}}$ is a frozen reference model and $\beta>0$ is a scale 
 Equation~\eqref{eq:logratio} identifies reward \emph{differences} up to scale ($\beta$) and location. The two structural features we \emph{can} recover are (i)~the sign of $\Delta r$ and (ii)~the own-versus-other contrast: whether an adapter trained on country $c$'s labels assigns systematically larger margins to $c$'s chosen options than an adapter trained on $c'$. We cannot recover the absolute level of $R$ nor, in general, the individual coordinates of $\phi(z)$ without additional moment conditions.
 
 \subsubsection{Pipeline stages.}
-Figure~\ref{fig:pipeline} summarizes the pipeline: (A)~the cultural state $z_c$ is read from the \GPS{} country vector; (B)~country-neutral scenarios are generated across five facets per dimension; (C)~preference pairs are constructed by labeling fixed high/low option sets with the country's state; (D)~quality control scores each pair on the six dimensions (monotonicity, distance, contamination); (E)~a student model is fine-tuned via QLoRA with unconditioned prompts. Validation proceeds through Tier-1 (implied $\Delta r$ on held-out synthetic pairs), Tier-2 (out-of-sample WVS option likelihood), and the construct-validity layer of Section~3.2.
+Figure~\ref{fig:pipeline} summarizes the system in five components: (1)~generation reads the cultural state $z_c$ (z-scores) from the \GPS{} country vector and produces country-neutral scenarios; (2)~cleanup and labeling score each pair on the six dimensions (monotonicity, distance, contamination) and attach sign-based labels; (3)~a student model is fine-tuned via QLoRA with unconditioned prompts---the country is never named; (4)~evaluation runs the two executed tiers (Tier-1 implied $\Delta r$ on held-out synthetic pairs; Tier-2 out-of-sample WVS option likelihood) plus the planned Tier-3; and (5)~the construct-validity layer of Section~3.2 admits the adapter as a candidate measure and returns the admissible set and identified range. Dashed arrows mark the planned feedback loops: validation rejection feeding new labels, and Tier-2 calibration feeding the training step.
 
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}[
   font=\scriptsize,
-  node distance=0.42cm and 0.28cm,
+  node distance=0.40cm and 0.28cm,
   box/.style={
     draw=boxedge, fill=boxfill, rounded corners=2pt,
-    align=center, inner sep=4pt, text width=2.15cm, minimum height=1.05cm,
+    align=center, inner sep=4pt, text width=2.15cm, minimum height=1.0cm,
     line width=0.6pt
   },
   smallbox/.style={
     draw=boxedge, fill=white, rounded corners=2pt,
-    align=center, inner sep=3pt, text width=1.85cm, minimum height=0.72cm,
+    align=center, inner sep=3pt, text width=1.85cm, minimum height=0.68cm,
     line width=0.5pt
   },
   arr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.7pt},
-  lab/.style={font=\tiny\color{softgray}, align=center}
+  darr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.7pt, dashed},
+  lab/.style={font=\tiny\color{softgray}, align=center},
+  grp/.style={draw=lightline, rounded corners=3pt, inner sep=5pt}
 ]
 
-\node[box] (A) {\textbf{A. Cultural state}\\$z_c$ from \GPS{}\\ethnographic profile};
-\node[box, right=of A] (B) {\textbf{B. Scenarios}\\5 facets $\times$ dim\\country-neutral prompts};
-\node[box, right=of B] (C) {\textbf{C. Preference pairs}\\fixed high/low options\\country selects chosen};
-\node[box, right=of C] (D) {\textbf{D. Quality control}\\6-dim scoring\\mono / distance / contamination};
-\node[box, right=of D] (E) {\textbf{E. Student \DPO{}}\\open-weight +\LoRA{}\\implied reward recovery};
+% ── row 1: generation pipeline (solid: executed)
+\node[box] (A) {\textbf{1. Generate}\\[1pt]GPS $z_c$ (z-scores)\\+ country-neutral scenarios};
+\node[box, right=of A] (B) {\textbf{2. Clean/label}\\[1pt]QC scoring (mono,\\distance, contamination)\\+ sign-based labels};
+\node[box, right=of B] (C) {\textbf{3. DPO}\\[1pt]QLoRA student\\unconditioned prompts\\\emph{country never named}};
+\node[box, right=of C] (D) {\textbf{4. Evaluate}\\[1pt]Tier 1: $\Delta r$ on held-out\\synthetic pairs (executed)};
 
 \draw[arr] (A) -- (B);
 \draw[arr] (B) -- (C);
 \draw[arr] (C) -- (D);
-\draw[arr] (D) -- (E);
 
-\node[lab, below=0.12cm of A] {identification\\input};
-\node[lab, below=0.12cm of B] {shared design};
-\node[lab, below=0.12cm of C] {labels from $z_c$};
-\node[lab, below=0.12cm of D] {retain + label};
-\node[lab, below=0.12cm of E] {structural\\estimation};
+\node[lab, below=0.10cm of A] {identification input\\$\phi(z)^{\top} m(x,y)$};
+\node[lab, below=0.10cm of B] {retain + label};
+\node[lab, below=0.10cm of C] {structural\\estimation};
+\node[lab, below=0.10cm of D] {in-sample check\\\emph{shared ancestry}};
 
-% validation branch
-\node[smallbox, below=1.15cm of C] (V1) {Tier 1: Implied $\Delta r$\\on held-out synthetic\\pairs (executed)};
-\node[smallbox, right=0.55cm of V1] (V2) {Tier 2: \WVS{} Wave 7\\OOS option likelihood\\(executed)};
-\node[smallbox, left=0.55cm of V1] (V3) {Validity layer:\\admissible measures\\(Section 3.2)};
+% ── row 2: evaluation tiers (solid: executed; dashed: planned)
+\node[smallbox, below=1.15cm of A] (T1) {Tier 1: implied $\Delta r$\\held-out synthetic\\(executed)};
+\node[smallbox, right=0.5cm of T1] (T2) {Tier 2: WVS Wave 7\\OOS option likelihood\\$N=35$, $n=42$ overlap\\(executed)};
+\node[smallbox, right=0.5cm of T2] (T3) {Tier 3: held-out items\\+ experimental games\\(planned)};
+\node[smallbox, below=1.0cm of T2] (V) {5. Validate: \cvp{} layer\\admissible set $\widehat{\mathcal M}^*$,\\range $[\widehat L, \widehat U]$};
 
-\draw[arr] (E.south) -- ++(0,-0.35) -| (V1.north);
-\draw[arr] (V1) -- (V2);
-\draw[arr, dashed] (E.south) -- ++(0,-0.35) -| (V3.north);
+\draw[arr] (D.south) -- ++(0,-0.30) -| (T1.north);
+\draw[arr] (T1) -- (T2);
+\draw[arr] (T2) -- (T3);
+\draw[darr] (C.south) -- ++(0,-0.30) -| (V.north);
 
-\node[lab, below=0.08cm of V2] {empirical OOS};
-\node[lab, below=0.08cm of V3] {measurement};
+\node[lab, below=0.08cm of T3] {external human criterion\\\emph{pre-registered}};
+\node[lab, below=0.08cm of V] {adapter = candidate\\measure $m_{AI}(X)$};
 
+% ── feedback loops (dashed: planned/future)
+\draw[darr, bend left=50] (V.west) to node[lab, above, midway, yshift=0.14cm] {reject /\\new labels} (A.south);
+\draw[darr, bend left=45] (T2.south) to node[lab, below, midway, yshift=-0.16cm] {calibrate} (C.south);
 \end{tikzpicture}
-\caption{SCA~2.0 pipeline architecture. Culture enters as an external \GPS{} vector $z_c$; synthetic pairs are generated, quality-controlled, and fine-tuned via \DPO{}; validation proceeds through Tier-1 synthetic pair recovery, Tier-2 WVS option-likelihood evaluation, and the construct-validity layer of Section~3.2.}
+\caption{SCA~2.0 as a latent-structural-modeling system. Solid arrows are executed; dashed arrows are the planned validation feedback loops. The GPS state enters only as training labels (``the country is never named''), so cultural dispositions are encoded into weights, not prompts. Evaluation proceeds through three pre-registered tiers: synthetic recovery (Tier~1), out-of-sample WVS option likelihood against an external human criterion (Tier~2), and held-out items plus experimental games (Tier~3, planned). The \cvp{} layer admits the adapter itself as a candidate measurement function $m_{AI}(X)$ and returns the admissible set $\widehat{\mathcal M}^*$ and construct-identified range $[\widehat L, \widehat U]$.}
 \label{fig:pipeline}
 \end{figure}
 
@@ -327,7 +335,7 @@ and, for scalar targets, the headline report is the \emph{construct-identified r
 Sampling uncertainty is handled by bootstrap \emph{over units} (the menu is fixed, not resampled), reporting percentile bands on the range endpoints over non-empty replicates; degenerate replicates are counted and reported. Threshold sensitivity is reported as a multiplicative $\lambda$-grid diagnostic (the headline is $\lambda=1$; grid settings are excluded from the run identity). Paper-relevant numbers require frozen scores, pinned network/$\beta$, fixed seed, and package version, with a deterministic run id derived from their hash. Empty admissible sets and wide ranges are valid scientific outputs; thresholds are never loosened to avoid them.
 
 \paragraph{Implementation.}
-The framework is implemented in the open-source package \cvp{} \cite{cvprofiles} (\texttt{github.com/Bonorinoa/cvprofiles}), whose state machine is exactly \texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}: it ingests a frozen unit$\times$measure score table, binds the researcher-authored network and target functional, computes slacks and the admissible set, and emits JSON/HTML audit artifacts with run-id and hash discipline. The engine is score-agnostic and model-free; it contains no LLM calls. The network is always researcher-authored; the tool only evaluates.
+The framework is implemented in the open-source package \cvp{} \cite{cvprofiles} (\url{github.com/Bonorinoa/cvprofiles}), whose state machine is exactly \texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}: it ingests a frozen unit$\times$measure score table, binds the researcher-authored network and target functional, computes slacks and the admissible set, and emits JSON/HTML audit artifacts with run-id and hash discipline. The engine is score-agnostic and model-free; it contains no LLM calls. The network is always researcher-authored; the tool only evaluates.
 
 \begin{figure}[t]
 \centering
@@ -436,6 +444,29 @@ with a units bootstrap band of $[0.174, 0.752]$ (17.5\% empty replicates reporte
 % ════════════════════════════════════════════════════════════════════════════
 \section{Empirical Results}
 
+\subsection{Evaluation methodology}
+
+All adapters are evaluated frozen, under unconditioned prompts (\texttt{PROMPT\_COUNTRY\_CONDITIONING = False}), so the target country is never named at inference and every difference between adapters must be carried by the weights alone. The primary comparison is \emph{matched versus cross}: an adapter trained on country $c$'s labels is compared, item by item, with an adapter trained on country $c'$'s labels, against the external human criterion of survey-weighted WVS response distributions $P_{\mathrm{WVS}}$. Because the criterion is human survey data, not another model, the design answers the correlated-errors objection to validating AI measures against AI measures.
+
+The evaluation follows a pre-registered three-tier ladder (\texttt{WVS\_ITEM\_MAP}, committed before training): \textbf{Tier~1} checks whether each adapter recovers its own culture-conditioned labels on held-out synthetic pairs (an in-sample sanity check); \textbf{Tier~2} tests out-of-sample generalization to $N=35$ unseen Wave~7 WVS items (30 mapped to GPS dimensions, 5 demographic) against human response distributions; \textbf{Tier~3} reserves held-out items and behavioral tasks (e.g., economic games) that are never used in training or testing---these are planned but not yet executed. Table~\ref{tab:evidence} summarizes the key evidence by tier; the rest of the section reports each tier in turn.
+
+\begin{table}[h!]
+\centering
+\caption{Key evidence by evaluation tier. Status: executed vs.\ planned.}
+\label{tab:evidence}
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}llp{7.2cm}l@{}}
+\toprule
+\textbf{Tier} & \textbf{Question} & \textbf{Headline evidence} & \textbf{Status} \\
+\midrule
+Tier 1 & Synthetic recovery & Mexico 78.5\%, USA 70.0\% pref.\ accuracy (own); $\sim$52\%/45.5\% cross & executed \\
+Tier 2 & External human data (OOS) & MEX matched better on 97.1\% (34/35); $\Delta\text{TVD}=0.1495$; USA degrades (0.5258 vs.\ 0.3958), unresolved & executed \\
+Tier 3 & Held-out items + games & pre-registered holdout set; games designed, not run & planned \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Tier-1: Synthetic Preference Recovery}
 
 Table~\ref{tab:main} reports Tier-1 results on held-out synthetic preference pairs ($n=200$ per adapter--country cell). Both the Mexico and US adapters recover their own culture-conditioned synthetic labels well above chance ($78.5\%$ and $70.0\%$ preference accuracy, respectively), while cross-country accuracy remains near chance ($52.0\%$ and $45.5\%$).\footnote{Tier-1 figures derive from the fine-tuning pipeline's cross-evaluation notebook; the committed reproduction of these runs is scheduled (see Section~6).}
@@ -496,7 +527,7 @@ Across all models, option log-likelihood scoring suffers from severe \textbf{und
 
 \subsection{Construct-validity results}
 
-The measurement framework of Section~3.2 produces three families of results.
+The measurement framework of Section~3.2 answers three questions, and the results below are organized accordingly. \emph{First}, \textbf{admissibility}: which candidate measures survive the nomological network, and which fail? \emph{Second}, \textbf{consequentiality}: does the choice among admissible measures change downstream conclusions, or is representation choice cosmetic? \emph{Third}, \textbf{structure}: do the surviving measures reproduce the GPS benchmark's demographic patterns, at gradient and cell level?
 
 \paragraph{Admissibility of WVS facets as GPS representations.}
 Table~\ref{tab:typology} is the headline: only 5 of 16 candidate facets are admissible representations of the six GPS dimensions at the literature-anchored threshold. The failures are \emph{informative}: risktaking's mapped economic-values items do not behave like GPS risk preferences at any resolution (empty $M^*$ even at $\lambda=0.5$), and the age-shape diagnostic catches financial satisfaction (Q50) as a U-shaped rather than hump-shaped patience proxy---admissible at country level, structurally wrong at individual level.
@@ -527,17 +558,15 @@ The two contributions answer different questions, and both answers are needed. T
 The framework opens applications beyond the current pipeline's verified surface; we list them to scope the program.
 
 \begin{enumerate}[leftmargin=1.5em]
-  \item \textbf{Power-test analysis without priors.} The construct-identified range $[L,U]$ is a set of plausible effect sizes for the target parameter across admissible measures. A researcher planning a field experiment can compute power curves across the whole range rather than committing to a single prior effect---an honest way to size studies when the construct is latent and measurement choice is contested.
-  \item \textbf{Pre-piloting survey questions for new instruments.} The pipeline can probe draft items through validated adapters and benchmark populations before fielding: items whose model distributions diverge sharply from the target benchmark, or whose implied facet scores violate the network's restrictions, are flagged pre-field. This converts survey design from an expert-judgment task into a falsifiable design loop.
-  \item \textbf{Inducing a preference construct in an arbitrary LLM.} Because the cultural state enters only through the training labels, the pipeline can induce \emph{any} GPS parameterizable disposition in \emph{any} open-weight base model: given a target state $z^*$, generate pairs under $z^*$, fine-tune, and validate with the same two-tier protocol. This generalizes from ``culture'' to arbitrary preference engineering---e.g., inducing a specified risk attitude in a model that otherwise has none.
-  \item \textbf{Simulating human-subject responses at country or individual level.} The adapters are population simulators: at the \emph{moment} level (country means and option distributions, as in Tier-2) and, via persona-conditioned inference, at the \emph{distribution} level (individual-level response heterogeneity conditional on demographics). The validity ladder of Section~3.2 (country, demographic gradient, cell) transfers to both objects, giving the simulation a defined validity certificate rather than an anecdotal one.
-  \item \textbf{Activation-steered constructs (derivative work).} Steering vectors \cite{turner2023,zou2023}---directions in activation space that modulate a behavior at inference time---provide a \emph{no-training} route to construct induction: a steering vector for a preference dimension yields a policy whose option distributions are a new measurement function $m_{\mathrm{steer}}(X)$, a candidate in the same menu as $m_{\mathrm{base}}$ and $m_{\mathrm{DPO}}$. Because steering intensity is a continuous knob, the menu becomes a continuum and admissibility becomes a function of steering strength; where along the intensity axis a steered measure crosses into the admissible set is a novel, framework-answerable question. This line is planned as a derivative project aimed at a methods/CS venue, not part of the current empirical claims.
-  \item \textbf{A validation feedback loop and a community construct registry.} If the validation protocol works, the network's restrictions become training objectives: fine-tuning can be gated on whether the implied measures satisfy the moment inequalities, yielding \emph{theoretically-aligned} models---policies trained to satisfy a stated nomological network. A public registry where research groups contribute construct definitions (score matrices plus nomological networks, subject to the discipline of anchored thresholds and frozen runs) would let measurement validity accumulate as a community resource rather than per-paper judgment.
+  \item \textbf{Pre-field design loops: power analysis without priors and survey-item pre-piloting.} The construct-identified range $[L,U]$ is a set of plausible effect sizes across admissible measures, so a researcher can compute power curves across the whole range instead of committing to a single prior---an honest way to size studies when measurement choice is contested. The same pipeline probes draft items through validated adapters before fielding: items whose distributions diverge sharply from the target benchmark, or whose implied facet scores violate the network's restrictions, are flagged pre-field. Survey design becomes a falsifiable loop rather than expert judgment.
+  \item \textbf{Inducing a preference construct in an arbitrary LLM.} Because the cultural state enters only through the training labels, the pipeline can induce \emph{any} GPS-parameterizable disposition in \emph{any} open-weight base model: given a target state $z^*$, generate pairs under $z^*$, fine-tune, and validate with the same tiered protocol. This generalizes from ``culture'' to arbitrary preference engineering---e.g., inducing a specified risk attitude in a model that otherwise has none.
+  \item \textbf{Activation-steered constructs (derivative work).} Steering vectors \cite{turner2023,zou2023}---directions in activation space that modulate behavior at inference time---provide a \emph{no-training} route to construct induction: a steering vector for a preference dimension yields a policy whose option distributions are a new measurement function $m_{\mathrm{steer}}(X)$, a candidate in the same menu as $m_{\mathrm{base}}$ and $m_{\mathrm{DPO}}$. Because steering intensity is continuous, the menu becomes a continuum and admissibility a function of steering strength; where a steered measure crosses into the admissible set is a framework-answerable question. This line is planned as a derivative project aimed at a methods/CS venue, not part of the current empirical claims.
+  \item \textbf{A validation feedback loop and a community construct registry.} If the validation protocol works, the network's restrictions become training objectives: fine-tuning can be gated on whether the implied measures satisfy the moment inequalities, yielding \emph{theoretically-aligned} models---policies trained to satisfy a stated nomological network. A public registry where research groups contribute construct definitions (score matrices plus nomological networks, subject to anchored thresholds and frozen runs) would let measurement validity accumulate as a community resource rather than per-paper judgment.
 \end{enumerate}
 
 \subsection{Positioning: measurement and developing economics}
 
-Economics has always studied latent constructs. Trust, patience, risk attitudes, and social preferences are not directly observable; they are recovered through instruments---surveys, incentivized tasks, experimental games---each of which is a costly, imperfect representation. The field's standard response is to \emph{justify a single proxy} and proceed. That response is increasingly untenable: the canonical trust item and a multi-item composite disagree on \emph{who} trusts, and the choice between them moves the trust--development correlation by a quarter of a correlation point. The argument of this paper is that the binding constraint on empirical work with latent constructs is no longer the cost of building measures but the discipline of \emph{choosing among them}. AI collapses the cost of candidate measures; partial identification over a nomological network supplies the discipline; the two together give developing economics what it has lacked since Cronbach and Meehl: a reproducible procedure for saying which measures are admissible and what conclusions survive all admissible ones. The implications run from hypothesis generation (survey new items before fielding) to cross-country policy design (which representation drives the policy conclusion---and what set of conclusions is robust to representation choice).
+The field's standard response to latent constructs is to \emph{justify a single proxy} and proceed. That response is increasingly untenable: the canonical trust item and a multi-item composite disagree on \emph{who} trusts, and the choice between them moves the trust--development correlation by a quarter of a correlation point. AI collapses the cost of candidate measures; partial identification over a nomological network supplies the discipline; the two together give developing economics a reproducible procedure for saying which measures are admissible and what conclusions survive all admissible ones. The implications run from hypothesis generation (survey new items before fielding) to cross-country policy design (which representation drives the policy conclusion---and what set of conclusions is robust to representation choice).
 
 \subsection{Limitations}
 
@@ -708,5 +737,32 @@ Zou, A., L.~Phan, S.~Chen, J.~Campbell, P.~Guo, R.~Ren, A.~Pan, X.~Yin, M.~Mazei
 arXiv:2310.01405.
 
 \end{thebibliography}
+
+\appendix
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Worked example: the age-shape restriction on patience}
+
+\label{app:patience}
+
+The trust profile (Section~3.3) illustrates the framework with a single convergent restriction. The patience dimension illustrates a second, structurally different restriction: a \emph{known-groups} style condition on the shape of a demographic profile. GPS patience is hump-shaped in age---rising into midlife and declining after---with an estimated age coefficient of $+0.72$ and age-squared of $-1.45$ in the pooled GPS individual data (Table~\ref{tab:ageshape}, left column). The WVS candidate that passes the country-level convergent restriction, financial satisfaction (Q50), has the \emph{opposite} curvature: U-shaped, with age-squared $+1.41$ ($z = +7.3$, USA sample), i.e., financial satisfaction rises with age. A country-level correlation of $r = 0.43$ between Q50 and GPS patience passes a convergent threshold, yet the individual-level age structure fails the shape restriction outright.
+
+\begin{table}[h!]
+\centering
+\caption{Age-shape diagnostic for the patience proxy (pooled GPS individual data vs.\ WVS Q50; sign conventions per the pre-registered protocol). A measure that passes country-level convergence but fails the shape restriction is admissible at the moment level and structurally wrong at the individual level.}
+\label{tab:ageshape}
+\scriptsize
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Coefficient} & \textbf{GPS patience (benchmark)} & \textbf{WVS Q50 (financial satisfaction)} \\
+\midrule
+age    & $+0.72$ (hump-shaped) & (rises with age) \\
+age$^2$ & $-1.45$ (concave)    & $+1.41$ (convex; $z = +7.3$, USA) \\
+shape  & hump-shaped           & U-shaped \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The example makes the framework's discriminations visible: the country-level correlation alone would admit Q50; the age-shape restriction does not. This is the same machinery that rejects the canonical trust item---a single convergent threshold is a weak filter, and the network's power comes from stacking restrictions of different types (convergent, discriminant, known-groups) on the same menu.
 
 \end{document}
