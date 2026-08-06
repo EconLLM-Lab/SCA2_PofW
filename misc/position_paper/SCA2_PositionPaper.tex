@@ -21,11 +21,13 @@
 
 % ── Colors ──────────────────────────────────────────────────────────────────
 \definecolor{econblue}{RGB}{20,55,95}
+\definecolor{econnavy}{RGB}{15,45,85}
+\definecolor{econteal}{RGB}{0,120,130}
 \definecolor{softgray}{RGB}{95,95,95}
-\definecolor{boxfill}{RGB}{245,247,250}
-\definecolor{boxedge}{RGB}{40,70,110}
-\definecolor{arrowcol}{RGB}{50,70,100}
-\definecolor{lightline}{RGB}{200,205,215}
+\definecolor{boxfill}{RGB}{248,250,253}
+\definecolor{boxedge}{RGB}{40,75,120}
+\definecolor{arrowcol}{RGB}{40,70,110}
+\definecolor{lightline}{RGB}{210,215,225}
 
 \hypersetup{
   colorlinks=true,
@@ -50,10 +52,10 @@
 % ── Header / footer ─────────────────────────────────────────────────────────
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\color{softgray} EconLLM Lab · SCA 2.0 Position Paper}
+\fancyhead[L]{\small\color{softgray}\textbf{EconLLM Lab} \quad\textperiodcentered\quad Synthetic Cultural Agents 2.0}
 \fancyhead[R]{\small\color{softgray}\thepage}
-\renewcommand{\headrulewidth}{0.3pt}
-\renewcommand{\headrule}{\hbox to\headwidth{\color{lightline}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{econblue}\leaders\hrule height \headrulewidth\hfill}}
 \fancypagestyle{plain}{%
   \fancyhf{}%
   \fancyfoot[C]{\small\color{softgray}\thepage}%
@@ -93,7 +95,7 @@ Measurement, and the Validity of Cultural Constructs in Language Models}\\[0.7em
 
 {\small\textsuperscript{1}Department of Economics, Arizona State University; EconLLM Lab.
 Correspondence: \texttt{agonz439@asu.edu}.}\\[0.1em]
-{\small\textsuperscript{2}EconLLM Lab; preference fine-tuning and evaluation pipeline.}\\[0.1em]
+{\small\textsuperscript{2}Department of Information Systems, Arizona State University; EconLLM Lab.}\\[0.1em]
 {\small\textsuperscript{3}Department of Economics, Claremont Graduate University; EconLLM Lab.}\\[0.35em]
 
 {\normalsize August 2026 \quad·\quad
@@ -142,7 +144,7 @@ The first generation of Synthetic Cultural Agents \cite{capra2025} showed that p
 
 The design rests on a sharp distinction between \emph{direct} and \emph{indirect} cultural information. Persona prompting---and ethnographic prompting more broadly---supplies cultural information \emph{directly} at inference time: the model is told who it is (``answer as someone in Mexico City''), and it plays along with the frame. \SCA{}~2.0 supplies it \emph{indirectly}, through the training labels alone. The model is never told which population it represents; its cultural disposition must be inferred from the pattern of which responses were preferred in its training data. This has a practical payoff that is often overlooked: because the target country is never mentioned, the pipeline pre-empts stereotype leakage---the model cannot lean on country-name stereotypes because it is not given the name---and the same design transfers to any population description that can be encoded as a preference vector.
 
-The paper makes two contributions, which are deliberately coupled. The \textbf{first} is an open-source pipeline for \emph{synthetic experiments on cultural states}: GPS-grounded synthetic preference pairs, DPO fine-tuning of an open-weight student model with unconditioned prompts, and out-of-sample evaluation on human survey responses. Because the cultural state enters only through the training labels, an analyst can hold the prompt design fixed while varying the state---a controlled intervention on the training distribution, not a randomized treatment of human culture. The \textbf{second} is a measurement instrument: since the scientific status of the enterprise hinges on whether our measures (survey facets, composites, adapters) actually measure the constructs they claim to, we formalize the Cronbach--Meehl nomological network \cite{cronbach1955} as a \emph{partial-identification} problem \cite{manski2003} over a finite menu of candidate measures. The instrument is implemented in the open-source package \cvp{} (\texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}): given a researcher-authored nomological network of moment restrictions with literature-anchored thresholds, it computes slack profiles, the admissible set $M^*$, and the construct-identified range $[L,U]$ of any downstream target functional.
+The paper makes two contributions, which are deliberately coupled. The \textbf{first} is an open-source pipeline for \emph{synthetic experiments on cultural states}: GPS-grounded synthetic preference pairs, DPO fine-tuning of an open-weight student model with unconditioned prompts, and out-of-sample evaluation on human survey responses. Because the cultural state enters only through the training labels, an analyst can hold the prompt design fixed while varying the state---a controlled intervention on the training distribution, not a randomized treatment of human culture. The \textbf{second} is a measurement instrument: since the scientific status of the enterprise hinges on whether our measures (survey facets, composites, adapters) actually measure the constructs they claim to, we formalize the Cronbach--Meehl nomological network \cite{cronbach1955} as a \emph{partial-identification} problem \cite{manski2003} over a finite menu of candidate measures. The instrument is implemented in the open-source package \cvp{} (\texttt{SCORE} $\rightarrow$ \texttt{RESTRICT} $\rightarrow$ \texttt{IDENTIFY} $\rightarrow$ \texttt{REPORT}): given a researcher-authored nomological network of moment restrictions with literature-anchored thresholds, it computes slack profiles, the admissible set $\widehat{\mathcal{M}}^{*}$, and the construct-identified range $[\widehat{L},\widehat{U}]$ of any downstream target functional.
 
 The methodological spine of the paper is a set of \emph{equivalences across literatures} that together formalize AI as an economic measurement instrument. First, \DPO{} training is Bradley--Terry maximum likelihood \cite{rafailov2023,bradley1952}: fine-tuning a policy on preference data is structural estimation of a random-utility model, so the trained policy's implied reward margins are utility differences. Second, option-likelihood scoring is Luce--Bradley--Terry--McFadden choice probability \cite{mcfadden1974}: the model's softmax over response options is a choice-probability simulator---a measurement function $m_{AI}(X)$ over the space of prompts and responses. Third, the Cronbach--Meehl nomological network is a system of moment inequalities \cite{cronbach1955,manski2003,dell2026}: validating a measure is computing an identified set---the same formal object at the center of the partial-identification literature, which converts ``which survey item should I use?'' from a judgment call into an identified set. None of these equivalences is new within its own literature; their \emph{fusion} is. The result is a general system of latent structural modeling with two components---a preference-alignment component (the pipeline) and a validation component (the measurement instrument)---of which cultural modeling is the first application. The SCA research agenda's fundamental objective is the \emph{measurement of culture}; this paper argues that the route runs through the general instrument, instantiated on culture, rather than through culture-specific engineering.
 
@@ -236,57 +238,59 @@ Figure~\ref{fig:pipeline} summarizes the system in five components: (1)~generati
 \centering
 \begin{tikzpicture}[
   font=\scriptsize,
-  node distance=0.40cm and 0.28cm,
-  box/.style={
-    draw=boxedge, fill=boxfill, rounded corners=2pt,
-    align=center, inner sep=4pt, text width=2.15cm, minimum height=1.0cm,
+  node distance=0.45cm and 0.35cm,
+  nodebox/.style={
+    draw=boxedge, fill=white, rounded corners=3pt,
+    align=center, inner sep=4pt, text width=2.3cm, minimum height=1.05cm,
     line width=0.6pt
   },
-  smallbox/.style={
-    draw=boxedge, fill=white, rounded corners=2pt,
-    align=center, inner sep=3pt, text width=1.85cm, minimum height=0.68cm,
-    line width=0.5pt
+  accentbox/.style={
+    draw=econteal, fill=econteal!6, rounded corners=3pt,
+    align=center, inner sep=4pt, text width=2.3cm, minimum height=1.05cm,
+    line width=0.7pt
   },
-  arr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.7pt},
-  darr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.7pt, dashed},
-  lab/.style={font=\tiny\color{softgray}, align=center},
-  grp/.style={draw=lightline, rounded corners=3pt, inner sep=5pt}
+  arr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.75pt},
+  darr/.style={-{Stealth[length=2.2mm]}, color=econteal, line width=0.75pt, dashed},
+  lab/.style={font=\tiny\color{softgray}, align=center}
 ]
 
-% ── row 1: generation pipeline (solid: executed)
-\node[box] (A) {\textbf{1. Generate}\\[1pt]GPS $z_c$ (z-scores)\\+ country-neutral scenarios};
-\node[box, right=of A] (B) {\textbf{2. Clean/label}\\[1pt]QC scoring (mono,\\distance, contamination)\\+ sign-based labels};
-\node[box, right=of B] (C) {\textbf{3. DPO}\\[1pt]QLoRA student\\unconditioned prompts\\\emph{country never named}};
-\node[box, right=of C] (D) {\textbf{4. Evaluate}\\[1pt]Tier 1: $\Delta r$ on held-out\\synthetic pairs (executed)};
+% ── Row 1: Pipeline & Structural Estimation
+\node[nodebox] (A) {\textbf{1. Generation}\\[1.5pt]\GPS{} $z_c$ (z-scores)\\+ neutral scenarios};
+\node[nodebox, right=of A] (B) {\textbf{2. QC \& Labeling}\\[1.5pt]6-dim QC filtering\\+ sign-based labels};
+\node[nodebox, right=of B] (C) {\textbf{3. Structural DPO}\\[1.5pt]QLoRA on Llama-3.1\\\emph{country never named}};
+\node[accentbox, right=of C] (D) {\textbf{4. Measurement}\\[1.5pt]Adapter emits\\$m_{AI}(X)$ distribution};
 
 \draw[arr] (A) -- (B);
 \draw[arr] (B) -- (C);
 \draw[arr] (C) -- (D);
 
-\node[lab, below=0.10cm of A] {identification input\\$\phi(z)^{\top} m(x,y)$};
-\node[lab, below=0.10cm of B] {retain + label};
-\node[lab, below=0.10cm of C] {structural\\estimation};
-\node[lab, below=0.10cm of D] {in-sample check\\\emph{shared ancestry}};
+\node[lab, below=0.08cm of A] {Falk et al. (2018)};
+\node[lab, below=0.08cm of B] {distance/mono/contam};
+\node[lab, below=0.08cm of C] {anti-stereotyping};
+\node[lab, below=0.08cm of D] {choice probability};
 
-% ── row 2: evaluation tiers (solid: executed; dashed: planned)
-\node[smallbox, below=1.15cm of A] (T1) {Tier 1: implied $\Delta r$\\held-out synthetic\\(executed)};
-\node[smallbox, right=0.5cm of T1] (T2) {Tier 2: WVS Wave 7\\OOS option likelihood\\$N=35$, $n=42$ overlap\\(executed)};
-\node[smallbox, right=0.5cm of T2] (T3) {Tier 3: held-out items\\+ experimental games\\(planned)};
-\node[smallbox, below=1.0cm of T2] (V) {5. Validate: \cvp{} layer\\admissible set $\widehat{\mathcal M}^*$,\\range $[\widehat L, \widehat U]$};
+% ── Row 2: Evaluation Tiers & Construct-Validity Layer
+\node[nodebox, below=1.2cm of A] (T1) {\textbf{Tier 1: Recovery}\\[1.5pt]Held-out synthetic $\Delta r$\\(executed, $n=200$)};
+\node[nodebox, right=of T1] (T2) {\textbf{Tier 2: Survey OOS}\\[1.5pt]WVS Wave 7 ($N=35$)\\(executed, human data)};
+\node[nodebox, right=of T2] (T3) {\textbf{Tier 3: Games}\\[1.5pt]Behavioral holdouts\\(planned, games)};
+\node[accentbox, right=of T3] (V) {\textbf{5. \cvp{}}\\[1.5pt]Nomological network $\mathcal{R}$\\$\rightarrow \widehat{\mathcal M}^*$ and $[\widehat L, \widehat U]$};
 
-\draw[arr] (D.south) -- ++(0,-0.30) -| (T1.north);
+\draw[arr] (D.south) -- ++(0,-0.35) -| (T1.north);
 \draw[arr] (T1) -- (T2);
 \draw[arr] (T2) -- (T3);
-\draw[darr] (C.south) -- ++(0,-0.30) -| (V.north);
+\draw[arr] (T3) -- (V);
 
-\node[lab, below=0.08cm of T3] {external human criterion\\\emph{pre-registered}};
-\node[lab, below=0.08cm of V] {adapter = candidate\\measure $m_{AI}(X)$};
+\node[lab, below=0.08cm of T1] {in-sample check};
+\node[lab, below=0.08cm of T2] {external criterion};
+\node[lab, below=0.08cm of T3] {pre-registered};
+\node[lab, below=0.08cm of V] {identified set};
 
-% ── feedback loops (dashed: planned/future)
-\draw[darr, bend left=50] (V.west) to node[lab, above, midway, yshift=0.14cm] {reject /\\new labels} (A.south);
-\draw[darr, bend left=45] (T2.south) to node[lab, below, midway, yshift=-0.16cm] {calibrate} (C.south);
+% ── Feedback loops
+\draw[darr] (V.south) -- ++(0,-0.35) -| node[lab, near start, yshift=-0.15cm] {validation feedback loop (planned)} (A.south);
+\draw[darr] (T2.north) -- ++(0,0.30) -| node[lab, near start, yshift=0.15cm] {calibration loop} (C.south);
+
 \end{tikzpicture}
-\caption{SCA~2.0 as a latent-structural-modeling system. Solid arrows are executed; dashed arrows are the planned validation feedback loops. The GPS state enters only as training labels (``the country is never named''), so cultural dispositions are encoded into weights, not prompts. Evaluation proceeds through three pre-registered tiers: synthetic recovery (Tier~1), out-of-sample WVS option likelihood against an external human criterion (Tier~2), and held-out items plus experimental games (Tier~3, planned). The \cvp{} layer admits the adapter itself as a candidate measurement function $m_{AI}(X)$ and returns the admissible set $\widehat{\mathcal M}^*$ and construct-identified range $[\widehat L, \widehat U]$.}
+\caption{\textbf{SCA~2.0 System Architecture.} Cultural states enter indirectly via \GPS{} z-score labels (the country is never named at inference). Structural DPO fine-tuning embeds preferences into weights, outputting choice probability simulator $m_{AI}(X)$. Validation proceeds through a pre-registered 3-tier ladder (synthetic recovery, WVS survey out-of-sample, and planned behavioral games) and the \cvp{} construct-validity layer.}
 \label{fig:pipeline}
 \end{figure}
 
@@ -341,26 +345,29 @@ The framework is implemented in the open-source package \cvp{} \cite{cvprofiles}
 \centering
 \begin{tikzpicture}[
   font=\scriptsize,
-  node distance=0.42cm and 0.35cm,
-  vbox/.style={draw=boxedge, fill=boxfill, rounded corners=2pt,
-    align=center, inner sep=5pt, text width=2.35cm, minimum height=0.9cm,
+  node distance=0.35cm,
+  vbox/.style={draw=boxedge, fill=boxfill, rounded corners=3pt,
+    align=center, inner sep=5pt, text width=2.45cm, minimum height=0.95cm,
     line width=0.6pt},
+  vboxaccent/.style={draw=econteal, fill=econteal!6, rounded corners=3pt,
+    align=center, inner sep=5pt, text width=2.45cm, minimum height=0.95cm,
+    line width=0.7pt},
   varr/.style={-{Stealth[length=2.2mm]}, color=arrowcol, line width=0.75pt},
-  vnote/.style={font=\tiny\color{softgray}, align=center, text width=2.35cm}
+  vnote/.style={font=\tiny\color{softgray}, align=center, text width=2.45cm}
 ]
-\node[vbox] (score) {\textbf{1. SCORE}\\Frozen unit $\times$ measure\\score table};
-\node[vbox, right=of score] (restrict) {\textbf{2. RESTRICT}\\Researcher-authored\\network + thresholds};
-\node[vbox, right=of restrict] (identify) {\textbf{3. IDENTIFY}\\Slacks $\rightarrow$ admissible\\set $\widehat{\mathcal M}^{*}$};
-\node[vbox, right=of identify] (report) {\textbf{4. REPORT}\\Target range\\$[\widehat L,\widehat U]$ + audit};
+\node[vbox] (score) {\textbf{1. SCORE}\\[1pt]Frozen unit $\times$ measure\\score table};
+\node[vbox, right=of score] (restrict) {\textbf{2. RESTRICT}\\[1pt]Researcher-authored\\network + thresholds};
+\node[vbox, right=of restrict] (identify) {\textbf{3. IDENTIFY}\\[1pt]Slacks $\rightarrow$ admissible\\set $\widehat{\mathcal M}^*$};
+\node[vboxaccent, right=of identify] (report) {\textbf{4. REPORT}\\[1pt]Target range $[\widehat L,\widehat U]$\\+ hash audit};
 \draw[varr] (score) -- (restrict);
 \draw[varr] (restrict) -- (identify);
 \draw[varr] (identify) -- (report);
-\node[vnote, below=0.12cm of score] {inputs are frozen};
-\node[vnote, below=0.12cm of restrict] {assumptions are explicit};
-\node[vnote, below=0.12cm of identify] {empty sets remain visible};
-\node[vnote, below=0.12cm of report] {hashes make runs auditable};
+\node[vnote, below=0.10cm of score] {inputs are frozen};
+\node[vnote, below=0.10cm of restrict] {assumptions explicit};
+\node[vnote, below=0.10cm of identify] {empty sets visible};
+\node[vnote, below=0.10cm of report] {auditable run-ids};
 \end{tikzpicture}
-\caption{The measurement layer separates researcher judgment from computation. Researchers specify the candidate measures and nomological network; \cvp{} scores restrictions, computes the admissible set, propagates measurement uncertainty to downstream targets, and preserves the audit trail.}
+\caption{\textbf{The \cvp{} State Machine.} The measurement layer separates researcher judgment from computation. Researchers specify candidate measures and nomological restrictions; \cvp{} evaluates slacks, computes the admissible set $\widehat{\mathcal M}^*$, propagates measurement uncertainty to downstream target range $[\widehat L,\widehat U]$, and emits deterministic run-id audit artifacts.}
 \label{fig:validity}
 \end{figure}
 
@@ -469,7 +476,11 @@ Tier 3 & Held-out items + games & pre-registered holdout set; games designed, no
 
 \subsection{Tier-1: Synthetic Preference Recovery}
 
-Table~\ref{tab:main} reports Tier-1 results on held-out synthetic preference pairs ($n=200$ per adapter--country cell). Both the Mexico and US adapters recover their own culture-conditioned synthetic labels well above chance ($78.5\%$ and $70.0\%$ preference accuracy, respectively), while cross-country accuracy remains near chance ($52.0\%$ and $45.5\%$).\footnote{Tier-1 figures derive from the fine-tuning pipeline's cross-evaluation notebook; the committed reproduction of these runs is scheduled (see Section~6).}
+Table~\ref{tab:main} reports Tier-1 in-sample recovery results across held-out synthetic preference triplets ($n=200$ per adapter--country cell). These evaluation data derive from the canonical pipeline in \texttt{DPO\_train\_test/} (specifically \texttt{DPO\_evaluation\_cross\_evaluation.ipynb}), where QLoRA DPO adapters on \texttt{Llama-3.1-8B-Instruct} are evaluated against held-out synthetic triplets generated via \texttt{sca2\_datagen}. For each item, the notebook computes the DPO implied reward margin:
+\begin{equation}
+  \widehat{\Delta r} \;=\; \beta \left[ \left( \log\pi_{\theta}(y^{w}\mid x) - \log\pi_{\theta}(y^{\ell}\mid x) \right) - \left( \log\pi_{\mathrm{ref}}(y^{w}\mid x) - \log\pi_{\mathrm{ref}}(y^{\ell}\mid x) \right) \right],
+\end{equation}
+with temperature $\beta = 0.1$. Both the Mexico and US adapters recover their own culture-conditioned synthetic labels well above chance ($78.5\%$ and $70.0\%$ preference accuracy, respectively; $\widehat{\Delta r} = +1.70$ and $+0.78$), while cross-country accuracy remains near chance ($52.0\%$ and $45.5\%$). Because synthetic training labels and evaluation items share generative ancestry, Tier-1 is an in-sample verification of alignment rather than an external validity test.
 
 \begin{table}[h!]
 \centering
@@ -626,9 +637,9 @@ Cao, Y., et~al. (2023).
 \textit{Proceedings of the First Workshop on Cross-Cultural Considerations in NLP}.
 
 \bibitem{capra2025}
-Capra, C.~M., A.~Gonzalez-Bonorino, and M.~Pantoja (2025).
-``LLMs Can Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents.''
-Working paper; forthcoming, \textit{Review of Experimental Economics}.
+Capra, C.~M., A.~Gonzalez-Bonorino, and E.~Pantoja (2025).
+``LLMs Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents.''
+arXiv preprint arXiv:2501.06834. Forthcoming, \textit{Review of Experimental Economics}.
 
 \bibitem{carlsondell2025}
 Carlson, J., and M.~Dell (2025).
