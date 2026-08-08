@@ -8,6 +8,11 @@
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{assumption}{Assumption}[section]
 \usepackage{booktabs,array,tabularx}
 \usepackage{graphicx}
 \usepackage{tikz}
@@ -194,6 +199,118 @@ This is partial identification: data and stated assumptions determine a set of c
 
 Passing these restrictions means that a measure is consistent with the nominated network. It does not prove that the latent attribute causes the score, that the construct is uniquely defined, or that the policy can answer arbitrary questions about a population \cite{borsboom2004}. Empty admissible sets and wide ranges are useful outcomes: they tell the researcher that the current evidence does not warrant the intended interpretation.
 
+\paragraph{Maintained assumptions.}
+Every application of the framework rests on four assumptions. They are stated once and used everywhere; they are the researcher's commitments, not outputs of the engine. Conversely, any implication of the framework that could be wrong is treated as testable: whenever a derived consequence can be checked against data, it should be promoted to a restriction in $\mathcal{R}$, and it is the audit role of \cvp{} to run that check. Maintained assumptions are thereby kept minimal and visible, while testable content migrates into the network, where it can falsify measures.
+
+\begin{enumerate}
+\item[(A1)] \emph{Menu coverage.} The menu $\M$ contains the operationalizations of interest for the research question: persona prompts, fine-tuned policies, survey composites, factor scores, experimental outcomes, or any other candidate measurement function the researcher is willing to defend. Coverage is argued from the literature and the research design; it is never proven, and the menu remains researcher-supplied throughout.
+\item[(A2)] \emph{Restriction validity.} Each restriction $g_r\in\mathcal{R}$ is a correct testable implication of the construct definition together with the auxiliary evidence $V$: the population moment $\E[g_r(m(X),V;\theta_r)]\ge 0$ holds for every admissible $m$. The restrictions are researcher-owned---they encode the nomological network the researcher asserts---and each is falsifiable by the data, in the sense that violation is an observable event.
+\item[(A3)] \emph{Sampling.} The unit-by-measure score matrix from which $\hat{s}_r(m)$ and $\hat{\beta}(m)$ are computed is drawn under a stated sampling model. For the cultural application the model is exchangeability of country-level aggregates: the $n$ country observations are exchangeable draws from the target population of countries, so that resampling units approximates the sampling distribution. The model is stated per application and frozen with the run.
+\item[(A4)] \emph{Tolerance policy.} The tolerance $\delta\ge 0$ is declared ex ante and defaults to zero; it is never tuned to rescue an empty admissible set. A positive $\delta$ is a substantive statement about how literally the researcher holds the network---slack is admitted into the restrictions---and every reported object is $\delta$-conditional.
+\end{enumerate}
+
+\paragraph{Consistency.}
+The sample objects are the plug-in admissible set $\hat{\M}^*=\{m\in\M:\hat{s}_r(m)\ge-\delta\ \forall r\}$ and the plug-in range $[\hat L,\hat U]$, with $\hat L=\min_{m\in\hat{\M}^*}\hat{\beta}(m)$ and $\hat U=\max_{m\in\hat{\M}^*}\hat{\beta}(m)$. Proposition~\ref{prop:consistency} gives the minimal conditions under which these converge to their population counterparts.
+
+\begin{proposition}[Consistency of the admissible set and the construct-identified range]\label{prop:consistency}
+Assume A1--A4. Suppose the slack estimators are uniformly consistent for their population analogues,
+\begin{equation}
+\max_{m\in\M}\max_{r\in\mathcal{R}}\bigl|\hat{s}_r(m)-s_r(m)\bigr|\xrightarrow{p}0,
+\qquad
+\max_{m\in\M}\bigl|\hat{\beta}(m)-\beta(m)\bigr|\xrightarrow{p}0,
+\label{eq:uniform}
+\end{equation}
+and suppose separation: no measure in $\M$ lies on the admissibility boundary, i.e.\ the slack margin $\mu(m):=\min_{r\in\mathcal{R}}s_r(m)+\delta$ satisfies $\mu(m)\neq 0$ for all $m\in\M$; in particular $\min_{r\in\mathcal{R}}s_r(m)>-\delta$ for every admissible $m$. Then admission decisions stabilize,
+\[
+\Pr\bigl(\hat{\M}^*=\M^*\bigr)\to 1,
+\]
+and the plug-in range is consistent,
+\[
+[\hat L,\hat U]\xrightarrow{p}[L,U].
+\]
+\end{proposition}
+
+\begin{remark}[Boundary measures as the documented failure regime]\label{rem:boundary}
+Separation is not checkable in finite samples; its absence is observable, and the reporting protocol monitors it. A measure whose slack margin $\hat{s}_r(m)+\delta$ on the binding restriction lies within $\kappa\cdot\mathrm{SE}$ of zero---default $\kappa=2$---is flagged as a boundary measure. Such measures flip in and out of $\hat{\M}^*$ across samples, and because a boundary measure can also be a $\beta$-extreme, admissibility and the range are coupled; inference must account for this coupling, as flagged by Dell and Rambachan \cite{dellrambachan2026}, and endpoint inference for the resulting intersection bounds follows the standard treatment \cite{imbensmanski2004,stoye2009}.
+\end{remark}
+
+The proof of Proposition~\ref{prop:consistency} is sketched in Appendix~C.
+
+\paragraph{Remarks.}
+\begin{enumerate}
+\item An empty admissible set is a rejection of the pair (menu, network)---the proposed operationalizations together with the restrictions asserted for them---not a verdict on the construct $C$ itself. The empty set is a finding, reported as such by \cvp{}, and the honest response is to revise the menu or the network, never the tolerance.
+\item Proposition~\ref{prop:consistency} is a statement about the object being well posed: the plug-in range has a well-defined probability limit. It says nothing about validity. Validity claims come exclusively from the restrictions themselves---from the maintained validity of $\mathcal{R}$ (A2) and from the informativeness of $[L,U]$; consistency only guarantees that the reported number is the one the researcher would have computed with an infinite sample.
+\item The framework sits inside the partial-identification toolkit by design: admissible sets and identified ranges follow the program of Manski \cite{manski2003}; Molinari surveys the modern machinery and asks what econometrics should import from psychometrics \cite{molinari2020}; Schennach supplies the theory of measurement systems on which the menu interpretation rests \cite{schennach2021}; and Dell and Rambachan formalize the nomological network as moment inequalities with inference deferred \cite{dellrambachan2026}---the setup Proposition~\ref{prop:consistency} completes.
+\end{enumerate}
+
+\subsection{Menu-level validity}
+
+\paragraph{Menu-level validity.}
+Construct validity in this framework attaches to the menu, not to any individual operationalization. The object of inference is the admissible set $\M^*$, and a candidate measure matters only through its membership in $\M^*$ and its contribution to the construct-identified range $[L,U]$. This contrasts with the per-measure protocols dominant in the machine-learning literature. The closest neighbor is the Proxy Presumption \cite{proxy2026}, which proposes a Construct Validity Protocol---discriminant, incremental, and predictive tests---for embedding-based social measures; that protocol validates individual operationalizations. The distinction is the direction of inference. Per-measure protocols take the measure as given and test it: the measure is the object, and validity is a verdict about that measure. Here, admissibility is estimated from moment restrictions and the resulting uncertainty is propagated into downstream estimands: the menu is the object, the measure is a unit of the menu.
+
+\begin{definition}[Menu-level validity]
+Fix a construct $C$, a menu $\M$ of measurement functions, and a nomological network $\mathcal R$ of restrictions $r$ with thresholds $\theta_r$, each of the form $\E[g_r(m(X),V;\theta_r)]\ge 0$. The \emph{admissible set} is $\M^*=\{m\in\M : \E[g_r(m(X),V;\theta_r)]\ge 0\ \text{for all } r\in\mathcal R\}$. A measure is \emph{construct-valid relative to} $(\M,\mathcal R)$ if it lies in $\M^*$; the system is \emph{menu-valid} when inference targets $\M^*$ rather than any individual measure.
+\end{definition}
+
+\begin{remark}
+This is why agreement among several prompted models is not validity \cite{campbell1959}. Correlated method error---shared architecture, training data, and prompt template---passes any per-measure agreement test while failing restrictions that use different-method auxiliaries; no number of agreeing operationalizations supplies what such an auxiliary contributes.
+\end{remark}
+
+\subsection{Inference over the admissible set}
+
+\paragraph{Inference over the admissible set.}
+The headline object remains the plug-in range $[\hat L,\hat U]=[\min_{m\in\hat\M^*}\hat\beta(m),\ \max_{m\in\hat\M^*}\hat\beta(m)]$: the image of $\beta$ on the estimated admissible set, with no model and no shrinkage imposed on the endpoints. The following reporting layer, implemented in \cvp{} \cite{cvprofiles}, is mandatory and additive; it characterizes the sampling behavior of the screening step rather than replacing it.
+
+\begin{enumerate}
+\item \emph{Coverage band.} A units-resampling bootstrap recomputes slacks, the estimated admissible set $\hat\M^*$, and $[\hat L,\hat U]$ per replicate (seeded for determinism). Report per-side quantiles at $\alpha/2$, with $\alpha=0.10$ by default, over non-empty replicates. Label the object an \emph{uncertainty band}: under the Bonferroni reading each side is reported at $\alpha/2$, and it is not claimed as a formal confidence region under arbitrary dependence, because the min/max functional over an estimated set is non-smooth.
+\item \emph{Empty-replicate rate.} Report explicitly the share of replicates with $\hat\M^*=\emptyset$. Coverage statements are conditional on non-empty admissible sets, and a high empty rate is a finding: the evidence does not robustly admit any measure from the menu.
+\item \emph{Boundary attribution.} Flag every measure whose minimal slack margin---$\min_r \hat s_r(m)+\delta$, in units of its standard error---lies within $\kappa\cdot\mathrm{SE}$ of the boundary, $\kappa=2$ by default. Boundary measures flip in and out of $\hat\M^*$ across replicates, driving the coupling between admissibility and the range; report the band together with the boundary set.
+\item \emph{Conservative cross-check.} For each admissible measure, construct a confidence interval for $\beta(m)$ (normal or bias-corrected bootstrap) with a Bonferroni adjustment over $|\hat\M^*|$, and union the intervals around $[\hat L,\hat U]$. If the projection is materially wider than the band, the coupling is material; report both.
+\end{enumerate}
+
+\begin{remark}
+The protocol sits between two classical regimes. Imbens--Manski \cite{imbensmanski2004} and Stoye \cite{stoye2009} provide confidence sets for partially identified parameters when the identified set is fixed up to estimation error in the moment functions; their endpoint logic takes selection as given. Here the identified set $\M^*$ itself is estimated, and its estimation error is coupled to the endpoint estimates through the boundary measures of item~3. The band above is therefore an uncertainty summary, not a simultaneous confidence region; full simultaneous-coverage theory for the coupled band is deferred to Appendix~C.
+\end{remark}
+
+\subsection{Holdout evaluation and falsifiable selection}
+
+\paragraph{The holdout protocol.}
+The nomological network $\mathcal{R}$ is partitioned into selection restrictions $\mathcal{R}_{\mathrm{select}}$ and holdout restrictions $\mathcal{R}_{\mathrm{holdout}}$: each restriction carries a stage attribute $\mathrm{stage}(r) \in \{\mathrm{select}, \mathrm{holdout}\}$, the two sets are disjoint, and their union is all of $\mathcal{R}$. Selection uses only the first set. Writing $s_r(m)$ for the slack of measure $m$ against restriction $r$ (the restriction is satisfied when $s_r(m) \ge -\delta$, for a tolerance $\delta \ge 0$), the admissible set is computed on selection restrictions alone,
+\[
+\M^*_{\mathrm{select}} \;=\; \bigl\{ m \in \M : s_r(m) \ge -\delta \ \ \forall r \in \mathcal{R}_{\mathrm{select}} \bigr\},
+\]
+and the construct-identified range is reported over $\M^*_{\mathrm{select}}$ as in Section~3. The holdout restrictions are pre-registered: they are never consulted while $\M^*_{\mathrm{select}}$ is being formed, and their slacks are scored only after the admissible set is frozen.
+
+\begin{assumption}[Pre-data discipline]
+The partition into $\mathcal{R}_{\mathrm{select}}$ and $\mathcal{R}_{\mathrm{holdout}}$, the tolerance $\delta$, the baseline rule $\mathcal{B}$ against which selection will be compared, and the random seed are all fixed before any holdout data are examined.
+\end{assumption}
+
+\paragraph{What the claim means, formally.}
+Under the pre-data discipline assumption, the selection rule is a functional of the selection data only: no holdout slack enters the computation of $\M^*_{\mathrm{select}}$. Define the holdout pass indicator
+\[
+H(m) \;=\; \mathbf{1}\bigl\{ s_r(m) \ge -\delta \ \ \forall r \in \mathcal{R}_{\mathrm{holdout}} \bigr\},
+\]
+so that $H(m)=1$ iff the measure survives every restriction it was never screened against.
+
+\begin{proposition}[Null and claim]
+The holdout pass rate of selection, $\E\bigl[H(m) \mid m \in \M^*_{\mathrm{select}}\bigr]$, is not constrained by construction: no quantity entering the selection step depends on $\mathcal{R}_{\mathrm{holdout}}$. The paper's claim is the strict inequality
+\[
+\E\bigl[H(m) \mid m \in \M^*_{\mathrm{select}}\bigr] \;>\; \E\bigl[H(m) \mid m \in \M^*_{\mathcal{B}}\bigr],
+\]
+where $\M^*_{\mathcal{B}}$ is the set selected by a named baseline rule --- selection by predictive fit, by convenience, by an LLM judge, or at random. The null is that selection restrictions carry no predictive content for holdout restrictions, under which the two rates coincide in expectation.
+\end{proposition}
+
+The natural estimator is the share of survivors passing holdout,
+\[
+\hat p \;=\; \frac{1}{\lvert \M^*_{\mathrm{select}} \rvert} \sum_{m \in \M^*_{\mathrm{select}}} H(m),
+\]
+with slacks replaced by their sample estimates; the baseline analogue is computed on the \emph{same} holdout set, both sets fixed before holdout scoring. A pre-registered comparison of $\hat p$ against its baseline counterpart is the operational test of the abstract's falsifiable core: any excess must come from content in $\mathcal{R}_{\mathrm{select}}$ that generalizes to $\mathcal{R}_{\mathrm{holdout}}$.
+
+Survivors that fail holdout are a scientific finding, not an error: the screen admitted a measure that the theory, as encoded in the holdout restrictions, rejects. The protocol is falsifiable rather than self-confirming precisely because the success criterion is external to the optimization --- a pass rate at or below baseline is a reportable outcome, not an anomaly to be debugged \cite{dellrambachan2026,manski2003}.
+
+\paragraph{Pre-registration narrative.}
+In the open-source implementation \cite{cvprofiles}, the freeze/run-id contract hash-pins the network, its anchors, the stage split, and the seed before any holdout scoring is permitted, making the partition that produced the reported comparison auditable ex post --- the operational meaning of ``pre-registered'' here.
+
 \subsection{From validation to an autoresearch loop}
 The framework permits a feedback loop, but only after a clear separation between evaluation and optimization. Let $z$ be a target cultural state, let $q(z)$ generate preference-training pairs, and let $\pi_\theta$ be an open-weight policy trained on those pairs. A validation profile $\mathcal{V}(\pi_\theta)$ can screen the resulting output against preregistered restrictions. The next training design may then change the data generator, regularization, or policy-intervention strength and repeat the evaluation on held-out data.
 
@@ -226,6 +343,12 @@ The structural conjecture is deliberately narrow: a policy trained on preference
 \caption{SCA 2.0 as a specific instance of the general framework. Training is only the middle of the argument; validation determines the permitted interpretation.}
 \label{fig:sca}
 \end{figure}
+
+\subsection{Identification of the moment-anchored estimator}
+
+The training pipeline starts from a country's six-dimensional Global Preferences Survey profile $z_c$~\cite{falk2018}, which parameterizes a scenario generator $q(z_c)$ that emits preference pairs; Direct Preference Optimization adjusts an open-weight student policy so that preferred responses are more probable than rejected ones relative to a reference policy~\cite{rafailov2023}. Under the Bradley--Terry reading, the trained policy's option probabilities form a discrete-choice distribution whose implied reward margins are identified relative to the reference policy~\cite{bradley1952,rafailov2023}. Three maintained assumptions make this estimator a candidate measurement function rather than a curve fit: the aggregate moments $z_c$ are valid summaries of the population's preference-relevant attributes for the construct of interest; the scenario generator draws items exchangeably from the construct's content domain; and the Bradley--Terry model holds, so that pairwise choice probabilities are logistic in reward differences.
+
+Under these assumptions, what is identified is the set of choice distributions consistent with the anchored moments---again a partial-identification object, in the same spirit as \eqref{eq:range}: the moments pin the anchor, but the mapping from moments to choice distributions is not unique, and the trained policy realizes one element of the identified set~\cite{manski2003}. What is not identified is cardinal utility, individual-level heterogeneity within the country, and cross-country comparability beyond the anchor scale. This is the sense in which the estimator is moment-anchored rather than item-anchored: PLURAL conditions preference training on survey item responses~\cite{plural2026}, and PALMs on language-model-synthesized construct-grounded rationales~\cite{palms2026}; both carry item-level or synthesized content into the training distribution. The present estimator anchors only on aggregate moments and inherits, in exchange, the aggregation assumption that the moments are sufficient statistics for the preference distribution---a stronger and more transparent assumption than the content assumptions of item-level pipelines, and one that the validity framework can screen: the trained adapter is a candidate measurement function $m_{\mathrm{DPO}}$ in the menu of Section~3, and its admissibility is determined by the same restrictions applied to any other measure. The screening question, not the raw policy, is the point of the paper.
 
 \subsection{The current evidence and its proper role}
 The existing pipeline has completed a useful but limited proof of concept. On 35 unseen WVS Wave 7 items, the Mexico adapter's fixed option distribution was closer to Mexican survey responses than the US adapter's on 34 items; the USA adapter degraded fit relative to the base model on both US and Mexican data. Because country labels were omitted at evaluation, these outcomes are consistent with country-specific information being represented in the adapter weights. They do not establish country-conditioned inference, calibrated response shares, or an explanation for the US degradation. Option scoring also showed under-dispersion relative to human response distributions.
@@ -325,6 +448,22 @@ A frozen country-level trust profile compares four WVS trust facets to GPS trust
 \section{Operational details of \cvp{}}
 The validation engine receives a unit-by-measure score table, a researcher-authored network, a target functional, a seed, and a versioned protocol. It returns the slack for every measure-restriction pair, the admissible set, the image of the target over that set, bootstrap uncertainty over units, and a threshold grid. Run identifiers hash frozen inputs so that an output can be traced to the exact score table and protocol. The tool has no language-model calls and does not infer the researcher's theory. This separation makes it suitable both for SCA 2.0 and for non-AI measurement problems.
 
+\section{Technical details and proofs}
+
+\subsection{Proof of Proposition 1}
+\begin{proof}[Proof sketch of Proposition~\ref{prop:consistency}]
+Write $\mu(m)=\min_{r\in\mathcal{R}}s_r(m)+\delta$. Separation implies $\eta:=\min_{m\in\M}|\mu(m)|>0$. Uniform consistency \eqref{eq:uniform} gives $\Pr\bigl(\max_{m,r}|\hat{s}_r(m)-s_r(m)|<\eta/2\bigr)\to 1$; on this event $\hat{\mu}(m):=\min_r\hat{s}_r(m)+\delta$ has the sign of $\mu(m)$ for every $m$, so $\hat{\M}^*=\M^*$ with probability tending to one. On the same event the endpoints are extrema of $\hat{\beta}$ over the fixed set $\M^*$, and since $\bigl|\min_{m\in\M^*}\hat{\beta}(m)-\min_{m\in\M^*}\beta(m)\bigr|\le\max_{m\in\M}|\hat{\beta}(m)-\beta(m)|\to_p 0$ (likewise for the maximum), $[\hat L,\hat U]\to_p[L,U]$. Boundary measures, with $\mu(m)=0$, are the only obstruction: their admission is decided by sampling noise.
+\end{proof}
+
+\subsection{The coupling problem and the uncertainty band}
+The plug-in range inherits two sources of sampling error: the endpoint estimates $\hat{\beta}(m)$ and the admission decision $\hat{\M}^*$. These are coupled whenever a measure's slack margin lies within estimation error of the boundary: such a measure can be admitted in one sample and rejected in the next, and if it is also a $\beta$-extreme, the endpoints move discontinuously. The reporting protocol of Section~3 addresses the coupling with three devices. First, the uncertainty band is reported per side at $\alpha/2$; under the Bonferroni reading the simultaneous event $\{L\ge \hat L_q,\ U\le \hat U_q\}$ has probability at least $1-\alpha$, but only approximately so, because the min/max functional over an estimated set is non-smooth and percentile methods for extrema can be unreliable when gaps between candidate $\beta(m)$ vanish. The band is an uncertainty summary with documented coverage properties under the stated reading, not a formal confidence region under arbitrary dependence. Second, the empty-replicate rate is reported because coverage is conditional on a non-empty admissible set; a material empty rate signals that admission itself is not robust. Third, boundary attribution makes the coupling visible: the set of measures with margin within $\kappa\cdot\mathrm{SE}$ of the boundary is reported alongside the band, and the conservative per-measure projection (Bonferroni over $|\hat{\M}^*|$) provides an outer check---if the projection is materially wider than the band, the coupling is material. In the small-$n$ regime of the application (country-level units, $n\approx 35$), per-side quantiles are coarse, and the empty rate and the boundary set are the primary honest outputs; $m$-out-of-$n$ resampling is a documented future robustness item rather than a shipped feature.
+
+\subsection{Simultaneous coverage of the coupled band}
+A complete treatment would construct a confidence region for the pair $(L,U)$---or for the random set $\M^*$ jointly with the endpoint estimates---with uniform coverage over a class of slack distributions that admit boundary measures. The natural building blocks are endpoint inference for partially identified parameters \cite{imbensmanski2004,stoye2009} applied to the intersection bounds induced by admission, together with a correction for the admission decision; the difficulty is that admission is itself a function of the sample, so the identified set is random. Sample splitting (half-sample admission, half-sample endpoints) decorrelates the two sources at the cost of effective sample size---unattractive at $n\approx 35$---and provides the cleanest benchmark for the conservativeness of the reported band. Formal results are deferred to the companion methods paper; the present paper commits to the reporting protocol of Section~3.
+
+\subsection{Holdout pass-rate comparison}
+The estimator $\hat p$ of Section~3 is a ratio of counts over the (random) survivor set. Conditional on a pre-registered holdout set and on the survivor set being non-empty with probability tending to one, its asymptotics follow from the consistency of the admissible set (Proposition~1) and a standard delta-method argument; the comparison against the baseline analogue on the same holdout set is the operational test. The formal treatment belongs with the companion methods paper.
+
 \begin{thebibliography}{99}\small
 \bibitem{aher2023} Aher, G., R. I. Arriaga, and A. T. Kalai (2023). ``Using Large Language Models to Simulate Multiple Humans and Replicate Human Subject Studies.'' \textit{ICML}.
 \bibitem{argyle2023} Argyle, L. P., E. C. Busby, N. Fulda, J. R. Gubler, C. Rytting, and E. S. Wiley (2023). ``Out of One, Many: Using Language Models to Simulate Human Samples.'' \textit{Political Analysis} 31(3): 337--351.
@@ -376,5 +515,7 @@ The validation engine receives a unit-by-measure score table, a researcher-autho
 \bibitem{desai2026} Desai, M., D. Card, and A. Z. Jacobs (2026). ``Validating LLMs in Social Science: Epistemic Threats and Emerging Norms.'' arXiv:2607.07915.
 \bibitem{disca2026} Kiet, H. T., D. S. D. Minh, T. Nguyen, C.-N. Tran, P.-H. Pham, N. L. P. Quy, A. Han, and L. Tran-Thanh (2026). ``Training-Free Cultural Alignment of Large Language Models via Persona Disagreement.'' arXiv:2605.10843.
 \bibitem{halterman2024} Halterman, A., and K. A. Keith (2024). ``Codebook LLMs: Evaluating LLMs as Measurement Tools for Political Science Concepts.'' \textit{Political Analysis}. arXiv:2407.10747.
+\bibitem{imbensmanski2004} Imbens, G. W., and C. F. Manski (2004). ``Confidence Intervals for Partially Identified Parameters.'' \textit{Econometrica} 72(6): 1845--1857.
+\bibitem{stoye2009} Stoye, J. (2009). ``More on Confidence Intervals for Partially Identified Parameters.'' \textit{Econometrica} 77(4): 1299--1315.
 \end{thebibliography}
 \end{document}
