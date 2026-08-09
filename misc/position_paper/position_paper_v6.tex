@@ -113,7 +113,7 @@ When measures become cheap, choosing and validating them becomes the scarce scie
 This paper proposes a simple discipline.
 Define the construct; declare a menu of candidate measures; state observable validity tests implied by the construct; retain the measures that survive; and report which scientific conclusions are robust across the surviving set.
 The framework treats conventional survey measures and AI-generated measures symmetrically.
-It completes, operationally, a construct-validity program that recent econometric work formalized as partial identification over measurement menus and left open at the inference stage~\cite{dellrambachan2026}.
+It completes, operationally, a construct-validity program that recent econometric work formalized as partial identification over measurement menus and explicitly called for principled, widely accepted methods of construct validation~\cite{dellrambachan2026}.
 The intended contribution is a \emph{systems view} of empirical science under cheap measurement (Figure~\ref{fig:systems})---separating hypothesis generation, measurement, construct validation, and estimation---together with a general, auditable method for using construct-validity evidence to select among heterogeneous measures and propagate remaining measurement uncertainty into scientific conclusions.
 That method is implemented in open software, illustrated on controlled data-generating processes, and designed for a real-world cultural-preferences application once frozen inputs and the evaluation harness support the intended analysis.
 
@@ -151,13 +151,23 @@ If a prompt, embedding, composite, or fine-tuned model can be generated quickly,
 
 Recent audits of \LLM{} use in social science find that model-generated measurements increasingly enter substantive analyses while validation practices remain heterogeneous~\cite{desai2026}.
 At the 2026 Political Methodology meetings, generative AI was central in roughly a quarter of presentations, and most of that work was measurement-related~\cite{hall2026}.
+Bauman et al.\ replicate 37 annotation tasks from 21 published studies and find that, with just a handful of prompt paraphrases, ``virtually anything can be presented as statistically significant,'' with roughly 31\% of published conclusions incorrect~\cite{bauman2026}.
+Model errors are correlated far beyond chance---same-wrong-answer agreement of 42\% versus 13\%, with better models \emph{more} correlated---so agreement across models is weak evidence of validity~\cite{kim2025}, and \LLM-based occupational-exposure scores are unstable across model choices~\cite{yinvu2026}.
 Computational social science and NLP have begun importing construct-validity language explicitly~\cite{proxy2026,halterman2024,bean2025}.
 Our premise is that this trend should be generalized beyond any one AI method: when measures are cheap, validity becomes the scarce resource.
 
 That premise has a precise econometric home.
-Dell and Rambachan's 2026 NBER Methods Lectures formalize the Cronbach--Meehl nomological network as a partial-identification problem over a menu of candidate measures, with moment-inequality restrictions, an admissible set, and a construct-identified range for a downstream estimand---and they explicitly leave estimation and inference beyond the lecture's scope~\cite{dellrambachan2026,cronbach1955}.
-This paper completes that program end-to-end: the decision rule, the inference protocol for data-dependent screening, the open implementation, and a planned cultural application.
+Dell and Rambachan's 2026 NBER Summer Institute Methods Lectures---``Estimation and Inference with AI-Generated Data''---translate the Cronbach--Meehl nomological network into partial-identification language over a menu of candidate measures: moment-inequality restrictions, an admissible set, a construct-identified range for a downstream estimand, and an explicit treatment of estimation and inference (prediction-powered inference with validation samples, identification from repeated measurements, and data fusion across sources)~\cite{dellrambachan2026,cronbach1955}.
+Their reading notes that additional restrictions can narrow the set of plausible measures, and the lectures close by calling for ``principled, widely accepted methods'' for construct validity.
+This paper operationalizes that call end-to-end: the decision rule, holdout-falsifiable selection, inference over the estimated admissible set, the open implementation, and a planned cultural application.
 The contribution is operational and auditable, not a claim to have discovered the bridge.
+
+The closest 2026 neighbors share the destination but not the selection device.
+Chen, Rambachan, and Tamer derive an identified set for a downstream parameter under benchmark-informed restrictions on the correlation of measurement errors~\cite{chenrttamer2026}; their restrictions bound error behavior, whereas ours are nomological-network moment inequalities over the menu, and the object of inference is the surviving set $\M^*$ rather than a single parameter.
+O\u{g}ut and Yin bound a regression coefficient using multiple nonlinear measurements, reaching the same $[\theta_L,\theta_U]$ destination without an admissible set or a selection rule~\cite{ogutyin2026}.
+Messing quantifies design-choice uncertainty in \LLM{} evaluation pipelines, where naive standard errors are 40--60\% too small---but the object is an evaluation score, not a construct measure, and admission uncertainty is absent~\cite{messing2026}.
+Canen and Enamorado use multiple \LLM{} measures as split-sample instruments to correct measurement error~\cite{canenenamorado2026}; that is correction, not selection.
+None of these performs menu-level validation with a surviving set and a falsifiable selection rule.
 
 \paragraph{A worked empirical workflow.}
 Consider a researcher studying generalized interpersonal trust as a latent construct $C$, with scientific interest in an association between trust and a behavioral or economic outcome $Y$.
@@ -281,6 +291,9 @@ Weakly positive inequalities are the normal form of one-sided validity content (
 Numeric gloss: $\tau_{\mathrm{conv}}=0.39$ means that, under the stated profile, any measure whose population correlation with the convergent criterion falls below $0.39$ is denied the interpretation attached to $C$, regardless of how strongly it predicts $Y$.
 Examples include convergent association with a related measure, weak association with a theoretically unrelated construct, a known-groups difference, prediction of a behavioral criterion, or invariance across a declared nuisance dimension.
 
+Validation as defined here is distinct from two adjacent activities~\cite{dellrambachan2026}: \emph{sensitivity analysis} asks whether conclusions change across procedures---the role of threshold grids over $\tau_r$, of $\theta$- and $\delta$-grids, and of the uncertainty band in Section~\ref{sec:theta}---whereas \emph{hypothesis testing} characterizes sampling variability of a target $\theta(m)$ given a fixed measure.
+Validation links measures to an explicit criterion, the restrictions in $\Rset$; the layers are complementary, and the reporting protocol keeps their outputs separate.
+
 Let $s_r(m)$ be the sample slack in test $r$ (positive values indicate satisfaction).
 For tolerance $\delta\ge 0$, define the surviving set
 \begin{equation}
@@ -370,7 +383,7 @@ It is that construct-guided selection should improve unseen validity relative to
 \label{eq:falsifiable}
 \end{equation}
 where $\M^*_B$ is a baseline set selected by a competing rule---best fit to a single anchor, best predictive fit on the selection sample, an \LLM{} judge, or random/convenience selection.
-Baseline selection rules and pass-rate comparisons live in the evaluation harness; the engine exposes stage tags, units-split composition, slacks, and holdout verdicts.
+Baseline selection rules and pass-rate comparisons live in the evaluation harness; the Python API exposes stage tags, units-split composition, slacks, and holdout verdicts.
 
 Equation~\eqref{eq:falsifiable} can fail.
 If it does, the proposed selection procedure has not shown that its validity language adds predictive scientific content.
@@ -640,7 +653,7 @@ The plug-in range collapses to the singleton $\{0.54\}$.
 
 If, instead, the threshold is set at the weak measure's population correlation with $V_{\!c}$ ($\tau_{\mathrm{conv}}=0.40$), then $s_{\mathrm{conv}}(m_{\mathrm{weak}})=0$ exactly: $m_{\mathrm{weak}}$ lies \emph{on} the admissibility boundary---the knife-edge regime the boundary-attribution protocol of Section~\ref{sec:theta} is designed to monitor.
 In finite samples the plug-in decision for $m_{\mathrm{weak}}$ is decided by sampling noise, and because $\theta(m_{\mathrm{weak}})$ is the lower endpoint of the range whenever it is admitted, admission error and endpoint error are coupled.
-\cvp{}~2.5.0 recomputes $\M^*$ inside a units bootstrap, reports an empty-replicate rate, labels an additive uncertainty band, attributes boundary measures via $|\mathrm{margin}_m|\le\kappa\cdot\mathrm{SE}_m$, and exposes both restriction-stage and units-split holdout.
+\cvp{}~2.5.0 recomputes $\M^*$ inside a units bootstrap, reports an empty-replicate rate, labels an additive uncertainty band, attributes boundary measures via $|\mathrm{margin}_m|\le\kappa\cdot\mathrm{SE}_m$, and its Python API exposes both restriction-stage and units-split holdout.
 Those layers are required before real-world results enter this paper; they are no longer missing engine primitives.
 
 \subsection{DGP~C --- empty $\M^*$ is a finding}
@@ -671,7 +684,7 @@ Only one of those two survives $\Rset_H$, so the baseline pass rate is $1/2=0.50
 In this population-limit example, construct-guided selection beats single-anchor selection on held-out validity---exactly the direction of Eq.~\eqref{eq:falsifiable}.
 The lenient-then-strict discriminant thresholds are intentional: they model ex-ante uncertainty about how tightly a discriminant bound should be set, which is precisely the kind of threshold judgment that a holdout partition is designed to stress-test rather than to hide inside a single-stage screen.
 The operational claim of the paper is that the same comparison, on real data with a preregistered split, is the empirical core once frozen inputs and the evaluation harness execute Eq.~\eqref{eq:falsifiable} end-to-end.
-\cvp{}~2.5.0 already exposes stage-tagged restrictions, units-split composition, and holdout verdicts under synthetic gates.
+\cvp{}~2.5.0's Python API already exposes stage-tagged restrictions, units-split composition, and holdout verdicts under synthetic gates.
 
 \subsection{Finite-sample engine check (not headline numbers)}
 To verify that the shipped pipeline reproduces the qualitative structure of DGP~A--D, we drew $n{=}2000$ standardized units from the linear factor design of Table~\ref{tab:loadings} (seed $20260808$) and ran \cvp{}~2.5.0 with bootstrap ($n_{\mathrm{boot}}{=}400$, $\alpha{=}0.10$, $\kappa{=}2$).
@@ -688,24 +701,31 @@ They do \emph{not} show that real survey items, persona prompts, or preference-t
 That is the content of Section~\ref{sec:plan}, not of this section.
 
 % =============================================================================
-\section{Planned real-world proof of concept}
+\section{Applied illustrations: from observation to falsification}
 \label{sec:plan}
 % =============================================================================
 Empirical cells in this manuscript are empty by design.
 The coupled-inference reporting layer, holdout-restriction workflow, and evaluator coverage required by Sections~\ref{sec:holdout}--\ref{sec:theta} now ship in \cvp{}~2.5.0 under synthetic gates~\cite{cvprofiles}.
-What remains before empirical cells are licensed is (i)~frozen, preregistered inputs for a multi-instrument trust profile, (ii)~an evaluation harness that implements the baselines of Eq.~\eqref{eq:falsifiable}, and (iii)~execution of the study on real survey and AI measures.
-This section preregisters that study.
+What remains before empirical cells are licensed is (i)~frozen, preregistered inputs, (ii)~an evaluation harness that implements the baselines of Eq.~\eqref{eq:falsifiable}, and (iii)~execution of the studies described here on real survey and AI measures.
+The flagship illustration takes the cultural-preference application end to end---from observation of population moments to the falsification of a measure-selection rule---while a second, deliberately shorter illustration applies the same machinery to AI benchmarks.
+This section preregisters both.
 
-\subsection{Flagship construct and menu}
-\textbf{Construct $C$:} generalized interpersonal trust---the disposition to expect cooperative behavior from anonymous others in the absence of contractual enforcement---defined independently of any single survey instrument~\cite{glaeser2000,sapienza2013,butler2016}.
+\subsection{Flagship illustration: cultural preferences, SCA~2 versus persona prompting}
+The flagship application compares two AI measurement technologies---persona prompting and the SCA~2 adapter---against conventional instruments for cultural preferences, under one common validity argument, from observation to falsification.
+
+\textbf{Observation.} The observation surfaces are population moments: country-level and individual-level GPS profiles, standardized as deviations from the global mean~\cite{falk2018}, and Wave~7 WVS and AmericasBarometer moments for the USA and Mexico, with items pre-registered into evaluation (tier~2) and held-out validation (tier~3) sets.
+
+\textbf{Construct $C$:} cultural preferences across the six GPS dimensions; generalized interpersonal trust---the disposition to expect cooperative behavior from anonymous others in the absence of contractual enforcement---serves as the primary construct, defined independently of any single survey instrument~\cite{glaeser2000,sapienza2013,butler2016}.
 
 \textbf{Menu} (Table~\ref{tab:trustmenu}): the six-method design of Eq.~\eqref{eq:trustmenu}, spanning conventional and AI generators plus a noise control.
+The two AI arms are the scientific focus: a cultural persona prompt, which declares the target population at inference, and the SCA~2 adapter, whose preference representation is trained from GPS-anchored labels while the country is never named---indirect encoding, so any population-specific behavior must be learned rather than prompted~\cite{capra2025}.
 All candidates face the same declared validity tests; the table does not presume which will survive.
 
 \begin{table}[t]
 \centering
 \small
-\caption{Canonical trust menu for the common benchmark.}
+\caption{Cultural-preference menu for the flagship illustration.
+The AI arms---persona prompting and the SCA~2 adapter---are the scientific focus; conventional instruments and the noise control anchor the common screen.}
 \label{tab:trustmenu}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{3.4cm} X@{}}
 \toprule
@@ -714,8 +734,8 @@ All candidates face the same declared validity tests; the table does not presume
 Single survey item & Direct human response & Conventional low-cost operationalization; interpretable but potentially narrow. \\
 Composite / PCA / IRT & Multiple human responses & Aggregates information; weights may alter construct meaning. \\
 Base prompting & Pretrained model & Tests structure already present without cultural conditioning. \\
-Cultural / persona prompt & Pretrained model + declared culture & Standard inference-time synthetic-subject baseline. \\
-SCA~2 adapter & Pretrained model + GPS-anchored preference training & Tests persistent policy-level preference representation. \\
+Cultural / persona prompt & Pretrained model + declared culture & Direct identity at inference: the population is named in the prompt; standard inference-time synthetic-subject baseline. \\
+SCA~2 adapter & Pretrained model + GPS-anchored preference training & Indirect encoding: the country is never named; preference representation is trained, not prompted. \\
 Noise / shuffled control & No valid construct signal & Negative control; a useful framework should reject it. \\
 \bottomrule
 \end{tabularx}
@@ -728,8 +748,10 @@ discriminant evidence against neighboring but distinct constructs (e.g., institu
 known-groups or demographic gradients declared from prior literature;
 external behavioral or economic criteria where available;
 cross-country ranking where justified;
-and negative controls.
+negative controls;
+and, where items are administered to both human and model respondents, human--model invariance tests (differential item functioning between humans and chatbots as a declared restriction)~\cite{zeinfeld2026}.
 Wherever possible, tests are partitioned into $\Rset_S$ and $\Rset_H$ under the pre-data discipline of Section~\ref{sec:holdout}.
+Two holdout devices implement falsifiability: tier~3 WVS moments, never used in training or scoring, are reserved as holdout restrictions; and the units-split assigns the USA and Mexico to separate frames, admitting on the training frame and demanding compliance on the held frame, with the robust set as headline (Section~\ref{sec:holdout}).
 Thresholds $\tau_r$ are literature-anchored and frozen before holdout scoring.
 
 \subsection{Downstream target and robust result set}
@@ -741,14 +763,22 @@ Empty or wide sets are admissible findings.
 Compare validity-guided selection to at least:
 (i) best fit to a single anchor (e.g., maximize correlation with \GPS{} trust);
 (ii) best predictive fit on selection-sample criteria;
-(iii) random or convenience selection among AI measures.
+(iii) random or convenience selection among AI measures, which serves as the default floor: a selection rule that cannot beat random selection on held-out validity carries no predictive content.
 The headline scientific claim of the empirical paper is Eq.~\eqref{eq:falsifiable}, not that any one generator ``wins.''
+
+\subsection{Secondary illustration: AI benchmarks as a measurement menu}
+A benchmark score is a measure: it maps model outputs to a number interpreted as ability, safety, or knowledge.
+The same machinery applies with benchmark families as the menu---reasoning suites, safety evals, cultural-knowledge benchmarks---and other benchmarks as convergent and discriminant foils in the validity network.
+Held-out task families play the role of $\Rset_H$, giving benchmark construct validation an anti-contamination design: an advertised capability should survive on tasks a model never saw~\cite{bean2025}.
+The motivating fragility is documented: the Stanford HAI 2026 AI Index reports that nearly half of the sixty most-cited benchmarks are saturated at the frontier~\cite{hai2026}, contamination is best treated as a spectrum rather than a flag, model errors are correlated far beyond chance~\cite{kim2025}, and prompt paraphrases can make virtually anything statistically significant~\cite{bauman2026}.
+This illustration is deliberately less developed: it is included to show that the menu-level screen is not specific to cultural measurement, not to claim a benchmark result in this version.
 
 \subsection{Extension ladder (not required for the first lock)}
 \begin{enumerate}
 \item Multi-country coverage spanning preference space and baseline-model proximity.
 \item All six \GPS{} dimensions as a generalization exercise: for each dimension $k$, ask whether $m_{\mathrm{SCA2},k}\in\M^*_k$~\cite{falk2018}.
 \item Composition with causal assumptions: if $\Theta(m;\mathcal{A})$ is a causal identified set under measure $m$ and assumptions $\mathcal{A}$, report $\bigcup_{m\in\M^*}\Theta(m;\mathcal{A})$ as measurement-robust causal conclusions~\cite{manning2024}---a composition, not an identification of construct validity with causality.
+\item Human--model measurement invariance: where items are administered to both humans and models, test invariance (DIF) as a declared restriction rather than an assumption~\cite{zeinfeld2026}.
 \end{enumerate}
 
 \subsection{What would weaken each claim}
@@ -765,11 +795,12 @@ Empirical cells are empty in this version; the matrix is the preregistration of 
 \toprule
 \textbf{Claim} & \textbf{Required evidence} & \textbf{Closest comparison} & \textbf{What would weaken it} \\
 \midrule
-Heterogeneous measures share one construct-level screen & Common benchmark: survey, composite, prompting, trained policy, noise & Psychometrics; Proxy Presumption; Codebook LLMs & Tests require incompatible method-specific definitions or fail to reject noise \\
+Heterogeneous measures share one construct-level screen & Common benchmark: survey, composite, persona prompt, SCA~2 adapter, noise & Psychometrics; Proxy Presumption; Codebook LLMs & Tests require incompatible method-specific definitions or fail to reject noise \\
 Validity-based selection has predictive content & Preregistered $\Rset_S/\Rset_H$ across constructs/populations & Cross-validation; predictive model selection & Survivors do no better on holdout than anchor-fit, prediction, or random \\
 Measurement choice changes conclusions & $\Theta^*$ for consequential analyses & Specification curves; multiverse & Surviving measures always yield indistinguishable results \\
-AI and conventional measures face the same standard & Head-to-head trust benchmark & LLM measurement frameworks & Surfaces not meaningfully comparable across technologies \\
-SCA~2 is a useful generator for some preferences & Multi-country, multi-dimension benchmark with controls & Persona simulation; cultural fine-tuning & Gains vanish outside training ancestry or lose to simpler methods \\
+AI and conventional measures face the same standard & Head-to-head cultural-preference benchmark (USA/MEX) & LLM measurement frameworks & Surfaces not meaningfully comparable across technologies \\
+SCA~2 versus persona prompting is decided by evidence, not engineering & Preregistered units-split (USA/MEX) + tier~3 holdout moments; baselines: random, anchor-fit, LLM judge & Persona simulation; cultural fine-tuning; Codebook LLMs & Survivors do no better on held-out moments than persona prompting or random selection \\
+Benchmark items as a menu & Construct-validated benchmarks: task-family menu, cross-benchmark foils, held-out tasks & Benchmark audits; construct-validity reviews & Scores do not separate from foils, or held-out task families fail to predict benchmark ranks \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -820,6 +851,37 @@ These boundaries are features rather than weaknesses.
 Empty survivor sets, wide robust result sets, and failed held-out tests are scientifically meaningful outcomes.
 
 % =============================================================================
+\section{Discussion: measurement validation and the automation of social science}
+\label{sec:discussion}
+% =============================================================================
+The four-layer separation of Section~\ref{sec:ai}---hypothesis generation, measurement generation, construct validation, and estimation/inference---is more than bookkeeping; it is a claim about where scientific labor can and cannot be delegated.
+Generators are cheap and increasingly agentic: they propose constructs, draft menus, and fill the unit-by-measure table, while estimation is, in most applications, solved engineering.
+The layer that resists automation is the gate between them---construct validation, where a researcher-authored network $\Rset$, thresholds $\tau_r$, and a held-out design adjudicate which measures may carry the interpretation attached to $C$.
+Validation is the only layer whose failure is itself a scientific output: an empty $\M^*$, a wide $\Theta^*$, or a failed holdout verdict revises the research program, whereas an architecture that collapses the layers inherits the failure modes of its weakest component.
+
+Proposals for automated social science make the stakes concrete.
+Manning, Zhu, and Horton suggest that language models can serve as both scientists and subjects, generating hypotheses and simulating respondents~\cite{manning2024}.
+That program is attractive precisely because the first and fourth layers---generation and estimation---are what models do best; what such loops lack is the third layer, an independent gate that can fail.
+The difficulty is not new in kind.
+Reinforcement learning with verifiable rewards (RLVR-style training) discovered the same architecture the hard way: when the verifier is learned or adjustable, the generator optimizes the verifier rather than the property, and neural process-reward models have been shown to score invalid proofs highly---fluency detectors more than reasoning verifiers.
+The field's response has been to move verification toward checks that cannot be learned away: frozen, private, or human-committed evaluation sets, a turn sharpened by recent analyses of public versus private benchmarks~\cite{truong2026}.
+The holdout-falsifiable validity commitment of Section~\ref{sec:holdout} is the measurement-side analogue: restrictions $\Rset_H$, thresholds, and units are frozen before scoring, so the selection rule itself can fail.
+The honest caveat is that this verifiability is social-contractual rather than computational---human-frozen and community-adjudicated---so we claim auditable, theory-grounded feedback, never a closed verifiable reward (Section~\ref{sec:boundaries}, point~6).
+
+The 2026 critique literature arrives at the same conclusion from the measurement side.
+LLM-simulated experiments are observational studies under user-drift confounding: the researcher controls the prompt, and comparisons across conditions are identified only if user-driven variation is held fixed~\cite{illusion2026}.
+Heuristic substitution of simulated for human evidence---treating model outputs as interchangeable with responses---cannot support confirmatory claims~\cite{hullman2026},
+and shadow evaluations, in which frontier agents work an unpublished research question and the original authors grade the output, find that agentic pipelines fall short of expert research under scrutiny that verifier-scored tasks and blind review cannot provide~\cite{kirgis2026}.
+Each critique names the same missing object: an ex ante, falsifiable validation record.
+The framework of this paper is that record.
+It does not prevent user drift or heuristic substitution; it converts them into testable restrictions---drift-sensitive auxiliaries, discriminant bounds, negative controls---whose failure is reported rather than absorbed.
+
+What would make an automated loop trustworthy?
+The commitment order matters more than the automation: the construct definition, the network $\Rset$, the thresholds $\tau_r$, and the holdout design must be frozen before any scoring, and the revision loop must be driven by the framework's own failure signals---empty $\M^*$, wide $\Theta^*$, failed holdout verdicts---which are feedback to the researcher, not permissions for an agent.
+Automation is safe to the extent that it is confined to the layers the framework does not gate, while the gate itself remains human-owned.
+Fully autonomous workflows therefore remain a contingency rather than a contribution: until \cvp{}~2.5.0 is operational on real frozen inputs under the preregistered study of Section~\ref{sec:plan}, the claims of this paper concern the validation gate, not its replacement.
+
+% =============================================================================
 \section{Conclusion: measurement when generation is no longer scarce}
 % =============================================================================
 Science does not become easier merely because candidate measures become cheap.
@@ -836,7 +898,7 @@ Formally,
 \[
 C\;\longrightarrow\;\M\;\xrightarrow{\Rset}\;\M^*\;\longrightarrow\;\Theta^*.
 \]
-Dell and Rambachan supplied the partial-identification reading of the nomological network and deferred inference~\cite{dellrambachan2026}; this paper supplies the operational end-to-end layer, the open tool, the controlled illustrations, and the preregistered path to a real-world proof of concept.
+Dell and Rambachan supplied the partial-identification reading of the nomological network and the call for principled construct-validity methods~\cite{dellrambachan2026}; this paper supplies the operational end-to-end layer, the open tool, the controlled illustrations, and the preregistered path to a real-world proof of concept.
 
 For the EconLLM research program, Synthetic Cultural Agents are measurement-generation technologies for culture.
 Neither prompting nor preference training is validated by construction.
@@ -955,7 +1017,7 @@ compared to the baseline analogue on the same holdout set.
 
 \subsection{Coupling and the uncertainty band}
 The plug-in range inherits sampling error from both $\hat\theta(m)$ and $\hat\M^*$.
-When a measure is near the boundary and $\beta$-extreme, the two errors are coupled---the difficulty flagged when inference was deferred in the NBER program~\cite{dellrambachan2026}.
+When a measure is near the boundary and $\beta$-extreme, the two errors are coupled---the difficulty flagged in the NBER program's treatment of inference under measurement menus~\cite{dellrambachan2026}.
 Endpoint inference for fixed identified sets~\cite{imbensmanski2004,stoye2009} takes selection as given; here selection is estimated.
 The main-text protocol (uncertainty band, empty rate, boundary attribution, optional conservative projection) is an uncertainty summary under a stated reading, not a simultaneous confidence region under arbitrary dependence.
 Sample splitting decorrelates admission and endpoints at the cost of effective sample size.
@@ -990,15 +1052,6 @@ What is not identified is cardinal utility, within-country heterogeneity, or cro
 Item-level pipelines~\cite{plural2026} and rationale-conditioned pipelines~\cite{palms2026} carry different content assumptions into training; moment anchoring trades those for a transparent aggregation assumption that the validity framework can screen.
 The trained policy enters $\M$ as one candidate $m$, not as a privileged structural truth.
 
-\section{Automated research workflows (discussion)}
-\label{app:workflows}
-% =============================================================================
-Figure~\ref{fig:systems} is an epistemic map, not a product architecture.
-A natural longer-run question is whether the same separation of layers can support \emph{semi-automated} research loops: an agent proposes menu variants or restriction drafts; a human freezes the construct, network, thresholds, and holdout design; the engine returns audit artifacts ($\M^*$, $\Theta^*$, uncertainty band, holdout verdict, freeze/run-id); and the researcher revises theory or design in light of empty sets, wide ranges, or failed held-out tests.
-We discuss that possibility only here.
-Main-text claims do not depend on autonomous agents writing validity arguments or selecting scientific thresholds.
-Until the package is operational on real frozen inputs (Section~\ref{sec:plan}), automated workflows remain a contingent discussion topic, not a contribution of this paper.
-
 \section{Notation at a glance}
 \label{app:notation}
 % =============================================================================
@@ -1031,15 +1084,18 @@ $G(D,C)$ & Measurement-generation technology \\
 \begin{thebibliography}{99}\small
 \bibitem{aher2023} Aher, G., R.~I. Arriaga, and A.~T. Kalai (2023). ``Using Large Language Models to Simulate Multiple Humans and Replicate Human Subject Studies.'' \textit{ICML}.
 \bibitem{argyle2023} Argyle, L.~P., et al.\ (2023). ``Out of One, Many: Using Language Models to Simulate Human Samples.'' \textit{Political Analysis} 31(3): 337--351.
+\bibitem{bauman2026} Baumann, J., P.~R\"ottger, A.~Urman, A.~Wendsj\"o, F.~M.~Plaza-del-Arco, J.~B.~Gruber, and D.~Hovy (2025). ``Large Language Model Hacking: Quantifying the Hidden Risks of Using LLMs for Text Annotation.'' arXiv:2509.08825.
 \bibitem{bean2025} Bean, A.~M., et al.\ (2025). ``Measuring What Matters: Construct Validity in Large Language Model Benchmarks.'' \textit{NeurIPS 2025} Datasets and Benchmarks Track. arXiv:2511.04703.
 \bibitem{borsboom2004} Borsboom, D., G.~J. Mellenbergh, and J.\ van Heerden (2004). ``The Concept of Validity.'' \textit{Psychological Review} 111(4): 1061--1071.
 \bibitem{bradley1952} Bradley, R.~A., and M.~Terry (1952). ``Rank Analysis of Incomplete Block Designs: I. The Method of Paired Comparisons.'' \textit{Biometrika} 39: 324--345.
 \bibitem{butler2016} Butler, J.~V., P.~Giuliano, and L.~Guiso (2016). ``The Right Amount of Trust.'' \textit{Journal of the European Economic Association} 14(5): 1155--1188.
 \bibitem{campbell1959} Campbell, D.~T., and D.~W. Fiske (1959). ``Convergent and Discriminant Validation by the Multitrait-Multimethod Matrix.'' \textit{Psychological Bulletin} 56: 81--105.
+\bibitem{canenenamorado2026} Canen, N., and T.~Enamorado (2026). ``Multiple LLM Measures as Split-Sample Instruments'' (working title). arXiv:2608.02909. % TODO: confirm exact title before submission
 \bibitem{capra2025} Capra, C.~M., A.~Gonzalez-Bonorino, and M.~Pantoja (2025). ``LLMs Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents.'' arXiv:2501.06834; forthcoming, \textit{Experimental Economics}.
+\bibitem{chenrttamer2026} Chen, X., A.~Rambachan, and E.~Tamer (2026). ``Partial Identification from LLM Prompts.'' Working paper, June 2026.
 \bibitem{cronbach1955} Cronbach, L.~J., and P.~E. Meehl (1955). ``Construct Validity in Psychological Tests.'' \textit{Psychological Bulletin} 52: 281--302.
 \bibitem{cvprofiles} Gonzalez-Bonorino, A.\ (2026). \texttt{cvprofiles}: Construct-Validity Profiles as Partial Identification over Measurement Menus. \url{https://github.com/Bonorinoa/cvprofiles}.
-\bibitem{dellrambachan2026} Dell, M., and A.~Rambachan (2026). ``Measurement in the Age of AI.'' NBER Summer Institute Methods Lectures, July 30, 2026.
+\bibitem{dellrambachan2026} Dell, M., and A.~Rambachan (2026). ``Estimation and Inference with AI-Generated Data.'' NBER Summer Institute Methods Lectures, July 30, 2026. Part 1: ``Measurement in the Age of AI: Discovery, Definition, and Observation''; Part 4: ``Measurement without Random Validation Samples: Multiple Measurements and Data Fusion.''
 \bibitem{desai2026} Desai, M., D.~Card, and A.~Z. Jacobs (2026). ``Validating LLMs in Social Science: Epistemic Threats and Emerging Norms.'' arXiv:2607.07915.
 \bibitem{disca2026} Kiet, H.~T., et al.\ (2026). ``Training-Free Cultural Alignment of Large Language Models via Persona Disagreement.'' arXiv:2605.10843.
 \bibitem{falk2018} Falk, A., et al.\ (2018). ``Global Evidence on Economic Preferences.'' \textit{Quarterly Journal of Economics} 133: 1645--1692.
@@ -1051,11 +1107,14 @@ $G(D,C)$ & Measurement-generation technology \\
 \bibitem{horton2023} Horton, J.~J., A.~Filippas, and B.~S. Manning (2023/2026). ``Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus?'' NBER Working Paper 31122.
 \bibitem{imbensmanski2004} Imbens, G.~W., and C.~F. Manski (2004). ``Confidence Intervals for Partially Identified Parameters.'' \textit{Econometrica} 72(6): 1845--1857.
 \bibitem{kane2013} Kane, M.~T. (2013). ``Validating the Interpretations and Uses of Test Scores.'' \textit{Journal of Educational Measurement} 50(1): 1--73.
+\bibitem{kim2025} Kim, E.~M., A.~Garg, K.~Peng, and N.~Garg (2025). ``Correlated Errors in Large Language Models.'' \textit{ICML 2025}, PMLR 267: 30038--30066.
 \bibitem{licht2025} Licht, H., et al.\ (2025). ``Measuring Scalar Constructs in Social Science with LLMs.'' \textit{EMNLP 2025}. arXiv:2509.03116.
 \bibitem{manning2024} Manning, B.~S., K.~Zhu, and J.~J. Horton (2024). ``Automated Social Science: Language Models as Scientist and Subjects.'' NBER Working Paper 32381.
 \bibitem{manski2003} Manski, C.~F. (2003). \textit{Partial Identification of Probability Distributions}. Springer.
 \bibitem{messick1995} Messick, S. (1995). ``Validity of Psychological Assessment.'' \textit{American Psychologist} 50(9): 741--749.
+\bibitem{messing2026} Messing (2026). ``Design-Choice Uncertainty in LLM Evaluation Pipelines'' (working title). arXiv:2604.11581. % TODO: confirm exact title before submission
 \bibitem{molinari2020} Molinari, F. (2020). ``Microeconometrics with Partial Identification.'' In \textit{Handbook of Econometrics}, Vol.~7A, 355--486. Elsevier.
+\bibitem{ogutyin2026} O\u{g}ut and Yin (2026). ``Bounds on Regression Coefficients with Multiple Nonlinear Measurements'' (working title). arXiv:2607.12219. % TODO: confirm exact title before submission
 \bibitem{palms2026} Dey, P., et al.\ (2026). ``PALMs: Using Multi Construct-Grounded Rationales for Modeling Population Preferences in LLMs.'' arXiv:2608.01458.
 \bibitem{plural2026} Agarwal, D., et al.\ (2026). ``PLURAL: A Global Dataset for Value Alignment.'' arXiv:2607.08034.
 \bibitem{proxy2026} Li, B., T.~Yu, K.~J.~L. Koa, and K.-W. Huang (2026). ``The Proxy Presumption: From Semantic Embeddings to Valid Social Measures.'' \textit{Proceedings of ACL 2026}. arXiv:2605.07409.
@@ -1064,6 +1123,13 @@ $G(D,C)$ & Measurement-generation technology \\
 \bibitem{schennach2021} Schennach, S.~M. (2020). ``Mismeasured and Unobserved Variables.'' In \textit{Handbook of Econometrics}, Vol.~7A, 487--565. Elsevier. % TODO: confirm preferred survey cite before submission
 \bibitem{simonsohn2020} Simonsohn, U., J.~P. Simmons, and L.~D. Nelson (2020). ``Specification Curve Analysis.'' \textit{Nature Human Behaviour} 4: 1208--1214.
 \bibitem{stoye2009} Stoye, J. (2009). ``More on Confidence Intervals for Partially Identified Parameters.'' \textit{Econometrica} 77(4): 1299--1315.
+\bibitem{yinvu2026} Yin, M., H.~Vu, and C.~Persico (2026). ``How (un)Stable Are LLM Occupational Exposure Scores? Evidence from Multi-Model Replication.'' NBER Working Paper 35110.
+\bibitem{truong2026} Truong, T., A.~Wang, B.~Wang, J.~Truong, A.~Reuel, R.~Haber, and S.~Koyejo (2026). ``Public AI Benchmarks Are Broken, But Are Private Benchmarks the Answer?'' Stanford AIMS. % TODO: confirm author list/initials and venue before submission
+\bibitem{illusion2026} Lin, V., T.~Yun, M.~Matari\'c, J.~Canny, A.~Gretton, and A.~D'Amour (2026). ``The Illusion of Intervention: Your LLM-Simulated Experiment is an Observational Study.'' arXiv:2605.20767.
+\bibitem{hullman2026} Hullman, J., D.~Broska, H.~Sun, and A.~Shaw (2026). ``This human study did not involve human subjects: Validating LLM simulations as behavioral evidence.'' arXiv:2602.15785.
+\bibitem{kirgis2026} Kirgis, P., et al.\ (2026). ``Can AI agents conduct open-ended AI research? Early evidence from two case studies.'' arXiv:2607.27191.
+\bibitem{zeinfeld2026} Zeinfeld, L., A.~Strugatski, Z.~Bar-Dov, and R.~Blonder (2026). ``Assessment Design in the AI Era: A Method for Identifying Items Functioning Differentially for Humans and Chatbots.'' arXiv:2603.23682.
+\bibitem{hai2026} Stanford HAI (2026). ``AI Index Report 2026.'' % TODO: add URL and verify the saturation statistic before submission
 \end{thebibliography}
 
 \end{document}
