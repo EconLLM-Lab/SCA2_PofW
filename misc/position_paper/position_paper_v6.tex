@@ -1,9 +1,10 @@
 \documentclass[10pt,letterpaper]{article}
 
 % -----------------------------------------------------------------------------
-% Measuring What We Mean — position paper v6
+% Measuring What We Mean — position paper v6 (rev. 2026-08-08)
 % Fusion: v5 general-science spine + v4 formal payload + first-principles SI
-% Empty empirical results (deferred to cvprofiles v3); synthetic DGPs only
+% Engine: cvprofiles 2.5.0 (holdout + coverage under synthetic gates)
+% Empirical results still empty (deferred to preregistered data/harness)
 % -----------------------------------------------------------------------------
 \usepackage[margin=0.88in,top=0.82in,bottom=0.82in]{geometry}
 \usepackage{mathptmx}
@@ -88,7 +89,7 @@
 \textbf{Kseniia Biriukova}\textsuperscript{2}\quad
 \textbf{Monica Capra}\textsuperscript{1,3}}\\[0.5em]
 {\small\textsuperscript{1}Department of Economics, Arizona State University; EconLLM Lab.\\
-\textsuperscript{2}EconLLM Lab.\\
+\textsuperscript{2}Department of Information Systems, Arizona State University; EconLLM Lab.\\
 \textsuperscript{3}Department of Economics, Claremont Graduate University; EconLLM Lab.}\\[0.75em]
 {\normalsize August 2026 \textperiodcentered\ Working paper / position paper}\\[0.35em]
 {\color{econblue}\rule{0.28\textwidth}{0.35pt}}
@@ -97,9 +98,10 @@
 \vspace{0.6em}
 \noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\vspace{0.3em}
 \textbf{Status.} This document states a research program and the evidence required to support it.
-Empirical results on real survey and AI measures are \emph{intentionally empty}: they are blocked until the companion validation engine \cvp{} ships the v3 inference and holdout layers needed for the intended analysis.
-What follows is the framework, its first-principles derivation, controlled synthetic illustrations of the shipped v2 engine, and a preregistered plan for the real-world proof of concept.
-Code: \href{https://github.com/EconLLM-Lab/SCA2_PofW}{\texttt{SCA2\_PofW}}; engine: \href{https://github.com/Bonorinoa/cvprofiles}{\texttt{cvprofiles}}.
+Empirical results on real survey and AI measures remain \emph{intentionally empty}: they await the preregistered data and evaluation harness of Section~\ref{sec:plan}, not missing engine primitives.
+The companion package \cvp{}~2.5.0 now ships the holdout workflows (restriction-stage tags and units-split) and the additive coverage uncertainty band under synthetic gates; those layers are illustrated in Section~\ref{sec:dgp}.
+What follows is the framework, its first-principles derivation, controlled synthetic illustrations, and a preregistered plan for the real-world proof of concept.
+Code: \href{https://github.com/EconLLM-Lab/SCA2_PofW}{\texttt{SCA2\_PofW}}; engine: \href{https://github.com/Bonorinoa/cvprofiles}{\texttt{cvprofiles}} (tag \texttt{v2.5.0}).
 \vspace{0.3em}}}
 
 \vspace{0.85em}
@@ -112,7 +114,8 @@ This paper proposes a simple discipline.
 Define the construct; declare a menu of candidate measures; state observable validity tests implied by the construct; retain the measures that survive; and report which scientific conclusions are robust across the surviving set.
 The framework treats conventional survey measures and AI-generated measures symmetrically.
 It completes, operationally, a construct-validity program that recent econometric work formalized as partial identification over measurement menus and left open at the inference stage~\cite{dellrambachan2026}.
-The intended contribution is not a new definition of construct validity, but a general, auditable way to use construct-validity evidence to select among heterogeneous measures and propagate remaining measurement uncertainty into scientific conclusions---implemented in open software, illustrated on controlled data-generating processes, and designed for a real-world cultural-preferences application once the technology supports the required analysis.
+The intended contribution is a \emph{systems view} of empirical science under cheap measurement (Figure~\ref{fig:systems})---separating hypothesis generation, measurement, construct validation, and estimation---together with a general, auditable method for using construct-validity evidence to select among heterogeneous measures and propagate remaining measurement uncertainty into scientific conclusions.
+That method is implemented in open software, illustrated on controlled data-generating processes, and designed for a real-world cultural-preferences application once frozen inputs and the evaluation harness support the intended analysis.
 
 \section*{Abstract}
 Artificial intelligence has sharply reduced the cost of producing candidate measures of latent constructs.
@@ -122,9 +125,9 @@ Measurement selection is formulated around four objects: a construct $C$, a decl
 The tests define a surviving set $\M^*$; the image $\Theta^*=\{\theta(m):m\in\M^*\}$ reports the conclusions robust to measurement choice within the declared menu and validity argument.
 Held-out validity tests make the selection rule itself falsifiable.
 The framework is derived from first principles as partial identification over a finite menu of measurement functions, with maintained assumptions, a consistency proposition for the plug-in admissible set and range, and a mandatory additive reporting layer for sampling uncertainty induced by data-dependent screening.
-It is implemented in the open, model-free package \cvp{}.
-Controlled synthetic data-generating processes illustrate the shipped engine and the limitations that motivate the next release.
-Empirical results on real survey and AI measures are deferred until that release; a preregistered trust-and-preferences study is specified as the real-world proof of concept.
+It is implemented in the open, model-free package \cvp{}~(2.5.0).
+Controlled synthetic data-generating processes illustrate the decision rule under known truth and verify the shipped holdout and coverage layers.
+Empirical results on real survey and AI measures are deferred until the preregistered study of Section~\ref{sec:plan} is executed on frozen inputs; a trust-and-preferences design is specified as that proof of concept.
 The broader research agenda is to make measurement selection auditable when candidate measures are abundant.
 
 \noindent\textbf{Keywords:}
@@ -156,6 +159,17 @@ Dell and Rambachan's 2026 NBER Methods Lectures formalize the Cronbach--Meehl no
 This paper completes that program end-to-end: the decision rule, the inference protocol for data-dependent screening, the open implementation, and a planned cultural application.
 The contribution is operational and auditable, not a claim to have discovered the bridge.
 
+\paragraph{A worked empirical workflow.}
+Consider a researcher studying generalized interpersonal trust as a latent construct $C$, with scientific interest in an association between trust and a behavioral or economic outcome $Y$.
+A standard analysis begins from one operationalization---a survey item, a multi-item composite, a text score, or a model-generated proxy---and reports a point estimate of $\theta(m)=\mathrm{Corr}(m,Y)$ or a related regression coefficient.
+When candidate operationalizations are cheap, the same design admits a \emph{menu} $\M$ of such scores.
+Validity is not read off $\theta(m)$.
+It is read off auxiliaries $V$ and a researcher-authored nomological network $\Rset(C)$: convergent association with related criteria, discriminant bounds against neighboring constructs, known-groups orderings, and other theory-implied inequalities, each with a substantive threshold $\tau_r$ chosen and justified by the researcher.
+Measures that satisfy the network form the surviving set $\M^*$; the image $\Theta^*=\{\theta(m):m\in\M^*\}$ is the set of conclusions licensed under that validity argument.
+Some restrictions (or units) are held out so that the selection rule itself can fail.
+Threshold grids and related diagnostics stress-test $\tau$ without auto-tuning emptiness away.
+If a causal strategy with assumptions $\mathcal{A}$ yields an identified set $\Theta(m;\mathcal{A})$ for each fixed $m$, measurement-robust causal conclusions take the form $\bigcup_{m\in\M^*}\Theta(m;\mathcal{A})$---a composition of construct validation with identification, not a substitute for either.
+
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}[
@@ -179,15 +193,50 @@ The same five terms appear in prose, figures, and formal statements throughout.}
 \label{fig:core}
 \end{figure}
 
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  up/.style={draw=slate, dashed, rounded corners=2pt, fill=white, align=center,
+             text width=2.05cm, minimum height=0.95cm, inner sep=3pt},
+  box/.style={draw=econblue, rounded corners=2pt, fill=mist, align=center,
+              text width=2.05cm, minimum height=0.95cm, inner sep=3pt},
+  outbox/.style={draw=passgreen, rounded corners=2pt, fill=passgreen!10, align=center,
+              text width=2.05cm, minimum height=0.95cm, inner sep=3pt},
+  arr/.style={-{Stealth[length=1.6mm]}, line width=0.65pt, color=slate}]
+\node[font=\scriptsize\bfseries\color{slate}] at (0,1.55) {Upstream};
+\node[font=\scriptsize\bfseries\color{econblue}] at (5.0,1.55) {Validity layer};
+\node[font=\scriptsize\bfseries\color{passgreen}] at (9.5,1.55) {Scientific outputs};
+\node[up] (gen) at (0,0.35) {\textbf{Generators}\\survey, LLM,\\multimodal, SCA};
+\node[up] (C2) at (0,-0.95) {\textbf{Construct $C$}\\prose definition};
+\node[box] (menu) at (3.2,0.35) {\textbf{Menu $\M$}\\unit$\times$score table};
+\node[box] (net) at (5.5,0.35) {\textbf{Network $\Rset,\tau,\delta$}\\auxiliaries $V$};
+\node[box] (hold) at (7.8,0.35) {\textbf{Holdout design}\\stage and/or units};
+\node[outbox] (ms) at (10.2,0.35) {\textbf{$\M^*$, $\Theta^*$}\\survivors-only range};
+\node[outbox] (band) at (10.2,-0.95) {\textbf{Uncertainty band}\\empty rate, boundary};
+\draw[arr] (gen)--(menu); \draw[arr] (C2)--(net);
+\draw[arr] (menu)--(net); \draw[arr] (net)--(hold); \draw[arr] (hold)--(ms);
+\draw[arr] (ms)--(band);
+\node[font=\scriptsize\color{slate}, text width=11.2cm, anchor=west] at (-0.9,-1.85)
+  {Dashed boxes are researcher- or generator-owned.
+   The engine does not generate measures, author $\Rset$, or choose $\tau$.
+   Freeze/run-id pins commitments before holdout scoring.};
+\end{tikzpicture}
+\caption{Epistemic systems view.
+Generators expand the menu; the validity layer adjudicates it; scientific conclusions are the image of a target functional on survivors, with additive sampling diagnostics.}
+\label{fig:systems}
+\end{figure}
+
 % =============================================================================
 \section{One construct, many measures}
 % =============================================================================
 The paper uses a deliberately small vocabulary.
-A \emph{construct} $C$ is the scientific concept of interest.
-A \emph{measure} $m$ is an operationalization that produces information intended to bear on $C$.
-A \emph{menu} $\M$ is the declared finite set of candidate measures under consideration.
-A set of \emph{validity tests} $\Rset$ contains observable implications that a credible measure should satisfy.
-Finally, $\theta(m)$ denotes the scientific result obtained when $m$ is used in the downstream analysis.
+A \emph{construct} $C$ is the scientific concept of interest, defined in prose by its intended interpretation---not observed as a column.
+A \emph{measurement function} is a map $m:\mathcal{X}\to\mathbb{R}$ from available inputs $X\in\mathcal{X}$ (survey responses, text, images, model states, \ldots) to a unit-level score, or a map to a vector followed by a \emph{declared} scalar reduction that is part of the measure's definition.
+A \emph{menu} $\M=\{m_1,\ldots,m_J\}$ is the finite set of such candidates declared by the researcher.
+\emph{Auxiliaries} $V$ are observed variables used to evaluate validity implications; they are not the latent construct.
+A set of \emph{validity tests} (restrictions) $\Rset(C)$ encodes those implications as moment inequalities with researcher-chosen thresholds.
+Finally, $\theta(m)$ denotes the scientific result obtained when measure $m$ is used in the downstream analysis.
 
 The core workflow is
 \begin{equation}
@@ -195,6 +244,7 @@ C \;\longrightarrow\; \M \;\xrightarrow{\;\Rset\;}\; \M^* \;\longrightarrow\; \T
 \label{eq:workflow}
 \end{equation}
 In words: define the construct, propose measures, test them, retain the surviving set, and ask which scientific conclusions survive measurement choice.
+Compatibility with the method is therefore \emph{menu- and generator-agnostic over finite scalar (or scalarized) operationalizations}, not a claim that every conceivable measurement object is in scope without reduction.
 
 Trust makes the distinction concrete.
 A researcher might consider
@@ -226,7 +276,9 @@ A convenient general representation is the population moment inequality
 r:\qquad \E\bigl[g_r\bigl(m(X),V;\tau_r\bigr)\bigr]\ge 0,
 \label{eq:restriction}
 \end{equation}
-where $\tau_r$ records the substantive threshold.
+where $\tau_r$ is the \emph{substantive threshold}: an exogenous, researcher-owned commitment---justified by theory, prior literature, or a preregistered tolerance---and \emph{not} a parameter estimated by the admissibility procedure.
+Weakly positive inequalities are the normal form of one-sided validity content (``at least this association,'' ``no more than this contamination,'' ``at least this group gap''); equalities would overclaim exact magnitudes and empty $\M^*$ under sampling noise.
+Numeric gloss: $\tau_{\mathrm{conv}}=0.39$ means that, under the stated profile, any measure whose population correlation with the convergent criterion falls below $0.39$ is denied the interpretation attached to $C$, regardless of how strongly it predicts $Y$.
 Examples include convergent association with a related measure, weak association with a theoretically unrelated construct, a known-groups difference, prediction of a behavioral criterion, or invariance across a declared nuisance dimension.
 
 Let $s_r(m)$ be the sample slack in test $r$ (positive values indicate satisfaction).
@@ -273,20 +325,36 @@ The reporting protocol monitors them rather than assuming them away.
 % =============================================================================
 A validity framework can become circular if researchers inspect all available evidence, choose restrictions that favor a preferred measure, and then report that the measure passes.
 We therefore propose a held-out test of the selection rule itself.
+Two complementary splits implement that discipline; they answer different questions and must not be conflated.
 
-Partition the prespecified validity evidence into
+\paragraph{Restriction-stage split.}
+Partition the prespecified validity tests into
 \begin{equation}
 \Rset=\Rset_S\cup\Rset_H,\qquad \Rset_S\cap\Rset_H=\emptyset,
 \label{eq:partition}
 \end{equation}
-where $S$ denotes selection and $H$ denotes held-out evidence.
+where $S$ denotes selection and $H$ denotes held-out evidence (same observational units).
 Construct the surviving set using only $\Rset_S$:
 \begin{equation}
 \M^*_S=\bigl\{m\in\M: m\text{ passes every }r\in\Rset_S\bigr\}.
 \label{eq:Mselect}
 \end{equation}
-Then evaluate the selected measures on $\Rset_H$, which was not used to admit them.
+Then score $\Rset_H$ without letting those restrictions vote on admission.
+Holdout-stage failures are scientific \emph{findings} about the selection rule; under a pure stage split they do not, by themselves, redefine the headline survivor set.
 
+\paragraph{Units split (empirical core).}
+Partition the sample into train and hold units (e.g., countries).
+Admit on the train frame; demand compliance of candidates on the hold frame.
+The robust set is
+\begin{equation}
+\M^*_{\mathrm{robust}}=\M^*_{\mathrm{select}}\cap\bigl\{m:\text{$m$ passes the hold-frame screen}\bigr\},
+\label{eq:Mrobust}
+\end{equation}
+and the headline range is the image of $\theta$ on $\M^*_{\mathrm{robust}}$ (with $\beta$ evaluated on the full pooled sample over that set).
+Empty robust sets are valid findings.
+For the planned cultural application, country-level units-split is the primary falsification design; restriction-stage tags are the implementation vehicle and a secondary discipline against Goodharting the full network.
+
+\paragraph{Falsifiable claim.}
 A simple loss summarizes held-out violations,
 \begin{equation}
 L_H(m)=\sum_{r\in\Rset_H} w_r\,\ell\bigl\{s_r(m)\bigr\},
@@ -302,11 +370,12 @@ It is that construct-guided selection should improve unseen validity relative to
 \label{eq:falsifiable}
 \end{equation}
 where $\M^*_B$ is a baseline set selected by a competing rule---best fit to a single anchor, best predictive fit on the selection sample, an \LLM{} judge, or random/convenience selection.
+Baseline selection rules and pass-rate comparisons live in the evaluation harness; the engine exposes stage tags, units-split composition, slacks, and holdout verdicts.
 
 Equation~\eqref{eq:falsifiable} can fail.
 If it does, the proposed selection procedure has not shown that its validity language adds predictive scientific content.
 This held-out design is therefore central rather than decorative: it converts the framework from an organizing vocabulary into an empirical claim.
-In the open implementation, the freeze/run-id contract hash-pins the network, anchors, stage split, and seed before holdout scoring~\cite{cvprofiles}---the operational meaning of ``preregistered'' here.
+In the open implementation (\cvp{}~2.5.0), the freeze/run-id contract hash-pins the network, anchors, stage split, holdout unit list, and seed before holdout scoring~\cite{cvprofiles}---the operational meaning of ``preregistered'' here.
 
 \begin{figure}[t]
 \centering
@@ -368,12 +437,12 @@ A narrow $\Theta^*$ supports a result robust to surviving measurement choice; a 
 \subsection{Inference over the admissible set}
 The headline object remains the plug-in range \eqref{eq:range}: the image of $\theta$ on $\M^*$, with no model and no shrinkage.
 Because $\M^*$ is estimated, admission and endpoints are coupled whenever measures lie near the boundary.
-The following reporting layer is \emph{mandatory and additive} (it does not replace the headline range):
+The following reporting layer is \emph{mandatory and additive} (it does not replace the headline range); \cvp{}~2.5.0 implements items (1)--(3) under synthetic gates:
 \begin{enumerate}
-\item \textbf{Coverage band.} Units-resampling bootstrap recomputes slacks, $\hat\M^*$, and $[\hat\theta_L,\hat\theta_U]$ per replicate (seeded). Report per-side quantiles at $\alpha/2$ ($\alpha=0.10$ default) over non-empty replicates. Label the object an \emph{uncertainty band} under a Bonferroni reading---not a formal confidence region under arbitrary dependence, because the min/max functional over an estimated set is non-smooth~\cite{imbensmanski2004,stoye2009}.
-\item \textbf{Empty-replicate rate.} The share of replicates with empty $\hat\M^*$ is reported explicitly; coverage is conditional on non-empty admissible sets.
-\item \textbf{Boundary attribution.} Flag measures whose minimal slack margin lies within $\kappa\cdot\mathrm{SE}$ of the boundary ($\kappa=2$ default).
-\item \textbf{Conservative cross-check.} Per-admissible-measure intervals with a Bonferroni adjustment over $|\hat\M^*|$, unioned around the plug-in range; if the projection is materially wider than the band, the coupling is material.
+\item \textbf{Uncertainty band.} Units-resampling bootstrap recomputes slacks, $\hat\M^*$, and $[\hat\theta_L,\hat\theta_U]$ per replicate (seeded). Report per-side quantiles at $\alpha/2$ ($\alpha=0.10$ default) over non-empty replicates. Label the object an \emph{uncertainty band}---selection uncertainty on the pooled sample, not a formal confidence region under arbitrary dependence, and not a holdout-robustness band~\cite{imbensmanski2004,stoye2009}.
+\item \textbf{Empty-replicate rate.} The share of replicates with empty $\hat\M^*$ is reported explicitly; the band is conditional on non-empty admissible sets.
+\item \textbf{Boundary attribution.} Flag measures whose absolute slack margin satisfies $|\mathrm{margin}_m|\le\kappa\cdot\mathrm{SE}_m$ ($\kappa=2$ default): near-threshold admissions and near-miss rejections are fragile; far-rejected measures are not.
+\item \textbf{Conservative cross-check (optional).} Per-admissible-measure intervals with a Bonferroni adjustment over $|\hat\M^*|$, unioned around the plug-in range; if the projection is materially wider than the band, the coupling is material.
 \end{enumerate}
 Full simultaneous-coverage theory for the coupled band is deferred to the companion methods paper; the present paper commits to the reporting protocol above (Appendix~\ref{app:first}).
 
@@ -382,13 +451,21 @@ Full simultaneous-coverage theory for the coupled band is deferred to the compan
 \label{sec:ai}
 % =============================================================================
 The framework deliberately separates generating a measure from validating it.
+Four layers of empirical work should not be collapsed into one:
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Hypothesis generation}---proposing constructs, menus, and theory fragments (including agent-assisted exploration);
+\item \emph{Measurement}---maps $m:\mathcal{X}\to\mathbb{R}$ (or declared scalarizations) that fill the unit-by-measure table;
+\item \emph{Construct validation / menu-level partial identification}---restrictions $\Rset$, survivors $\M^*$, and robust conclusions $\Theta^*$;
+\item \emph{Estimation and inference}---sampling uncertainty about data-dependent screening, and downstream causal or predictive analysis composed with $\M^*$.
+\end{enumerate}
 Let
 \begin{equation}
 G(D,C)\;\longrightarrow\; m
 \label{eq:generator}
 \end{equation}
 denote a measurement-generation technology that uses evidence $D$ and a target construct $C$ to produce a candidate measure $m$.
-This notation places conventional and AI procedures on equal epistemic footing without claiming they have the same engineering or causal properties.
+This notation places conventional and AI procedures---including multimodal models that map high-dimensional observations to scores---on equal epistemic footing without claiming they have the same engineering or causal properties.
+Generators expand the menu; they do not adjudicate it.
 
 A base language model provides a candidate through unconditioned elicitation; persona prompting supplies a target identity at inference; ethnographic retrieval enriches that context~\cite{capra2025}.
 These are \emph{contextual projections}: model weights are fixed while the information supplied at inference changes.
@@ -429,8 +506,9 @@ The same generator--validation distinction applies to sentiment, ideology, norms
 % =============================================================================
 Before any real-world claim, the decision rule should be transparent on data-generating processes (DGPs) whose truth is known by construction.
 This section uses \emph{population-limit} examples---exact correlations and group gaps implied by a linear factor structure---so that every slack and every admission decision can be verified by hand.
-No Monte Carlo noise enters the headline numbers.
-The examples mirror the restriction types shipped in \cvp{} v2 (\texttt{corr\_min}, \texttt{corr\_sign}, \texttt{mean\_order}, \texttt{rank\_agree}) and the target functional \texttt{corr\_y}~\cite{cvprofiles}.
+No Monte Carlo noise enters the headline numbers in Tables~\ref{tab:loadings}--\ref{tab:dgpa}.
+The examples use restriction types and target functionals available in \cvp{}~2.5.0 (\texttt{corr\_min}, \texttt{corr\_zero}, \texttt{mean\_order}, and \texttt{corr\_y}, among others)~\cite{cvprofiles}.
+A finite-sample engine check under the same design is reported briefly after DGP~D; it verifies shipped holdout and coverage behavior and does \emph{not} replace the closed forms.
 
 \subsection{Setup}
 Units are exchangeable draws from a latent construct $C$ with $\mathrm{Var}(C)=1$.
@@ -471,7 +549,7 @@ $\mathrm{Corr}(Y,C)=0.60$,
 and $\E[C\mid G{=}1]-\E[C\mid G{=}0]=0.80$ (known-groups gap on the latent).
 Measure--group gaps scale with the loading on $C$.
 
-\subsection{DGP~A --- clean separation (v2 works as designed)}
+\subsection{DGP~A --- clean separation}
 Selection network $\Rset_S$ (three restrictions, $\delta=0$):
 \begin{align}
 r_{\mathrm{conv}}&:\ \mathrm{Corr}(m,V_{\!c})\ge 0.39,
@@ -554,7 +632,7 @@ The surviving set is the set of columns with an all-green restriction profile.}
 \label{fig:heatmap}
 \end{figure}
 
-\subsection{DGP~B --- boundary measures (v2 limitation: coupling)}
+\subsection{DGP~B --- boundary measures and coupling}
 Raise the convergent threshold to $\tau_{\mathrm{conv}}=0.70$, holding the rest fixed.
 Population correlations with $V_{\!c}$ are still $0.72$, $0.40$, $0.56$, $0.16$, and $0$ (loadings times $0.80$).
 Then $m_{\mathrm{true}}$ remains admissible ($s_{\mathrm{conv}}=0.72-0.70=+0.02$), while $m_{\mathrm{weak}}$ falls to $s_{\mathrm{conv}}=0.40-0.70=-0.30$ and is rejected.
@@ -562,8 +640,8 @@ The plug-in range collapses to the singleton $\{0.54\}$.
 
 If, instead, the threshold is set at the weak measure's population correlation with $V_{\!c}$ ($\tau_{\mathrm{conv}}=0.40$), then $s_{\mathrm{conv}}(m_{\mathrm{weak}})=0$ exactly: $m_{\mathrm{weak}}$ lies \emph{on} the admissibility boundary---the knife-edge regime the boundary-attribution protocol of Section~\ref{sec:theta} is designed to monitor.
 In finite samples the plug-in decision for $m_{\mathrm{weak}}$ is decided by sampling noise, and because $\theta(m_{\mathrm{weak}})$ is the lower endpoint of the range whenever it is admitted, admission error and endpoint error are coupled.
-\cvp{} v2 already recomputes $\M^*$ inside a units bootstrap and reports an empty-replicate rate, but it does not yet (i)~label the band as a coverage object under a stated reading, (ii)~attribute width to boundary measures, or (iii)~offer a holdout stage split.
-Those are the v3 deliverables required before real-world results enter this paper.
+\cvp{}~2.5.0 recomputes $\M^*$ inside a units bootstrap, reports an empty-replicate rate, labels an additive uncertainty band, attributes boundary measures via $|\mathrm{margin}_m|\le\kappa\cdot\mathrm{SE}_m$, and exposes both restriction-stage and units-split holdout.
+Those layers are required before real-world results enter this paper; they are no longer missing engine primitives.
 
 \subsection{DGP~C --- empty $\M^*$ is a finding}
 Replace $r_{\mathrm{disc}}$ with a conflicting requirement $\mathrm{Corr}(m,V_{\!d})\ge 0.50$ and raise the convergent threshold to $\tau_{\mathrm{conv}}=0.60$, keeping $r_{\mathrm{grp}}$ at $0.25$.
@@ -592,7 +670,17 @@ An anchor-fit baseline that keeps the two measures with largest $|\mathrm{Corr}(
 Only one of those two survives $\Rset_H$, so the baseline pass rate is $1/2=0.50$.
 In this population-limit example, construct-guided selection beats single-anchor selection on held-out validity---exactly the direction of Eq.~\eqref{eq:falsifiable}.
 The lenient-then-strict discriminant thresholds are intentional: they model ex-ante uncertainty about how tightly a discriminant bound should be set, which is precisely the kind of threshold judgment that a holdout partition is designed to stress-test rather than to hide inside a single-stage screen.
-The operational claim of the paper is that the same comparison, on real data with a preregistered split, is the empirical core once the engine exposes stage-tagged restrictions end-to-end.
+The operational claim of the paper is that the same comparison, on real data with a preregistered split, is the empirical core once frozen inputs and the evaluation harness execute Eq.~\eqref{eq:falsifiable} end-to-end.
+\cvp{}~2.5.0 already exposes stage-tagged restrictions, units-split composition, and holdout verdicts under synthetic gates.
+
+\subsection{Finite-sample engine check (not headline numbers)}
+To verify that the shipped pipeline reproduces the qualitative structure of DGP~A--D, we drew $n{=}2000$ standardized units from the linear factor design of Table~\ref{tab:loadings} (seed $20260808$) and ran \cvp{}~2.5.0 with bootstrap ($n_{\mathrm{boot}}{=}400$, $\alpha{=}0.10$, $\kappa{=}2$).
+Under the DGP~A network, the admissible set was $\{m_{\mathrm{true}},m_{\mathrm{weak}}\}$ with plug-in range approximately $[0.285,\,0.522]$ (population $[0.30,\,0.54]$).
+The uncertainty band was approximately $[0.249,\,0.550]$ with empty-replicate rate $0$; only $m_{\mathrm{weak}}$ was flagged as boundary, with admission frequency $\hat p_{\mathrm{weak}}\approx 0.95$ and $\hat p_{\mathrm{true}}=1$.
+Under the DGP~D stage split, selection admitted $\{m_{\mathrm{true}},m_{\mathrm{weak}},m_{\mathrm{contam}}\}$ and the holdout verdict failed $m_{\mathrm{contam}}$ on the tight discriminant restriction---matching the closed-form direction.
+A units-split on the DGP~A network retained the same robust pair.
+These runs confirm engine behavior; they do not replace the hand-verified population tables above.
+(Local engine check under the P5 implementation, seed $20260808$: DGP~A run\_id \texttt{271b6d98\ldots}, stage-split \texttt{3a6c8f8a\ldots}, units-split \texttt{8508062e\ldots}; verification script \texttt{tools/paper\_synth\_p4p5.py} in the \cvp{} repository. Qualitative structure matches the closed forms; run-ids are diagnostic, not population quantities.)
 
 \subsection{What the illustrations show---and what they do not}
 The synthetic DGPs show that the decision rule is well-defined, that empty and wide sets are expressible findings, that boundary measures are the fragile case, and that holdout splits change the scientific question from ``does my favorite measure pass?'' to ``does my selection rule predict unseen validity?''
@@ -604,8 +692,9 @@ That is the content of Section~\ref{sec:plan}, not of this section.
 \label{sec:plan}
 % =============================================================================
 Empirical cells in this manuscript are empty by design.
-The intended analysis requires \cvp{} features that are specified for v3 and not yet the public contract of v2: a mandatory coupled-inference reporting layer, a first-class holdout-restriction workflow, and evaluator coverage adequate for a multi-instrument trust profile~\cite{cvprofiles}.
-This section preregisters the study that will fill those cells once the technology supports it.
+The coupled-inference reporting layer, holdout-restriction workflow, and evaluator coverage required by Sections~\ref{sec:holdout}--\ref{sec:theta} now ship in \cvp{}~2.5.0 under synthetic gates~\cite{cvprofiles}.
+What remains before empirical cells are licensed is (i)~frozen, preregistered inputs for a multi-instrument trust profile, (ii)~an evaluation harness that implements the baselines of Eq.~\eqref{eq:falsifiable}, and (iii)~execution of the study on real survey and AI measures.
+This section preregisters that study.
 
 \subsection{Flagship construct and menu}
 \textbf{Construct $C$:} generalized interpersonal trust---the disposition to expect cooperative behavior from anonymous others in the absence of contractual enforcement---defined independently of any single survey instrument~\cite{glaeser2000,sapienza2013,butler2016}.
@@ -692,8 +781,9 @@ SCA~2 is a useful generator for some preferences & Multi-country, multi-dimensio
 \noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\vspace{0.35em}
 \textbf{No empirical results are reported in this version.}
 Preliminary two-country adapter comparisons and standalone survey-correlation exercises are deliberately omitted.
-They cannot support the intended claims until \cvp{} exposes the coupled-inference and holdout workflows required by Sections~\ref{sec:holdout}--\ref{sec:theta}, and until the preregistered trust study of Section~\ref{sec:plan} is executed on frozen inputs.
-Reporting partial real-world numbers now would invite over-interpretation of evidence that the technology cannot yet discipline.
+They cannot support the intended claims until the preregistered trust study of Section~\ref{sec:plan} is executed on frozen inputs with an evaluation harness that implements Eq.~\eqref{eq:falsifiable}.
+Engine primitives for holdout and the additive uncertainty band are no longer the binding constraint; real-world evidence is.
+Reporting partial real-world numbers now would invite over-interpretation of undisciplined evidence.
 Synthetic illustrations (Section~\ref{sec:dgp}) demonstrate the decision rule under known truth; they are not substitutes for the real-world proof of concept.
 \vspace{0.35em}}}
 
@@ -706,13 +796,11 @@ Its design goal is intentionally modest: accept a frozen unit-by-measure score t
 It does not call an \LLM{}, choose the construct, write the validity argument, or decide what scientific threshold is acceptable.
 This separation keeps the method auditable and makes the software usable outside AI research.
 
-\textbf{v2 (shipped).}
- Score $\to$ restrict $\to$ identify $\to$ report; survivors-only range; empty $\M^*$ as exit-success finding; additive bootstrap and threshold grids; narrow restriction registry (\texttt{corr\_min}, \texttt{corr\_sign}, \texttt{mean\_order}, \texttt{rank\_agree}); model-free engine.
+\textbf{v2.5.0 (shipped under synthetic gates; not a PyPI release).}
+ Score $\to$ restrict $\to$ identify $\to$ report; survivors-only range; empty $\M^*$ as exit-success finding; freeze/run-id discipline; additive bootstrap, $\theta$- and $\delta$-grids; expanded registry (\texttt{corr\_min}, \texttt{corr\_sign}, \texttt{corr\_zero}, \texttt{mean\_order}, \texttt{rank\_agree}, \texttt{monotone\_rank}; betas including \texttt{corr\_y}, \texttt{ols\_coef}, \texttt{diff\_means}, \texttt{map\_distance}); restriction-stage and units-split holdout with robust headline; additive uncertainty band with empty-replicate rate and boundary attribution $|\mathrm{margin}_m|\le\kappa\cdot\mathrm{SE}_m$; model-free engine.
 
-\textbf{v3 (required before Section~\ref{sec:results} is filled).}
- Mandatory additive coverage band with empty-replicate rate and boundary attribution; first-class $\Rset_S/\Rset_H$ stage split and holdout verdict block; evaluator growth as fixtures demand (e.g., monotone-in-covariate); freeze/run-id discipline for paper-facing numbers; documentation amendments under the project's governance contract.
-
-Before a general-science submission with empirical claims, the package should include: a locked trust construct and validity profile; the six-method common menu; held-out validity evidence; negative controls; robustness across seeds and training choices where AI measures enter; and frozen artifacts sufficient for third-party replication.
+\textbf{Empirical license (still missing, by design).}
+ Locked trust construct and validity profile; six-method common menu on frozen inputs; held-out validity evidence with baseline comparisons for Eq.~\eqref{eq:falsifiable}; negative controls; robustness across seeds and training choices where AI measures enter; frozen artifacts sufficient for third-party replication.
 Public model release should follow rather than substitute for the common benchmark.
 The strongest near-term use of synthetic cultural agents remains hypothesis generation and instrument design---identifying behavioral margins worth testing with humans---rather than replacing human evidence.
 
@@ -869,7 +957,7 @@ compared to the baseline analogue on the same holdout set.
 The plug-in range inherits sampling error from both $\hat\theta(m)$ and $\hat\M^*$.
 When a measure is near the boundary and $\beta$-extreme, the two errors are coupled---the difficulty flagged when inference was deferred in the NBER program~\cite{dellrambachan2026}.
 Endpoint inference for fixed identified sets~\cite{imbensmanski2004,stoye2009} takes selection as given; here selection is estimated.
-The main-text protocol (coverage band, empty rate, boundary attribution, conservative projection) is an uncertainty summary with a Bonferroni reading, not a simultaneous confidence region under arbitrary dependence.
+The main-text protocol (uncertainty band, empty rate, boundary attribution, optional conservative projection) is an uncertainty summary under a stated reading, not a simultaneous confidence region under arbitrary dependence.
 Sample splitting decorrelates admission and endpoints at the cost of effective sample size.
 Formal simultaneous-coverage theory is the subject of the companion methods paper.
 
@@ -902,6 +990,15 @@ What is not identified is cardinal utility, within-country heterogeneity, or cro
 Item-level pipelines~\cite{plural2026} and rationale-conditioned pipelines~\cite{palms2026} carry different content assumptions into training; moment anchoring trades those for a transparent aggregation assumption that the validity framework can screen.
 The trained policy enters $\M$ as one candidate $m$, not as a privileged structural truth.
 
+\section{Automated research workflows (discussion)}
+\label{app:workflows}
+% =============================================================================
+Figure~\ref{fig:systems} is an epistemic map, not a product architecture.
+A natural longer-run question is whether the same separation of layers can support \emph{semi-automated} research loops: an agent proposes menu variants or restriction drafts; a human freezes the construct, network, thresholds, and holdout design; the engine returns audit artifacts ($\M^*$, $\Theta^*$, uncertainty band, holdout verdict, freeze/run-id); and the researcher revises theory or design in light of empty sets, wide ranges, or failed held-out tests.
+We discuss that possibility only here.
+Main-text claims do not depend on autonomous agents writing validity arguments or selecting scientific thresholds.
+Until the package is operational on real frozen inputs (Section~\ref{sec:plan}), automated workflows remain a contingent discussion topic, not a contribution of this paper.
+
 \section{Notation at a glance}
 \label{app:notation}
 % =============================================================================
@@ -912,13 +1009,16 @@ The trained policy enters $\M$ as one candidate $m$, not as a privileged structu
 Symbol & Meaning \\
 \midrule
 $C$ & Scientific construct \\
-$m$ & Candidate measure \\
+$m$ & Candidate measure / measurement function \\
 $\M$ & Declared menu \\
+$V$ & Auxiliaries used in validity tests \\
 $\Rset(C)$ & Validity tests / nomological network \\
+$\tau_r$ & Substantive threshold (researcher-owned) \\
 $\Rset_S,\Rset_H$ & Selection and holdout partitions \\
 $s_r(m)$ & Sample slack of restriction $r$ on measure $m$ \\
 $\delta$ & Slack tolerance (default $0$) \\
 $\M^*$ & Surviving / admissible set \\
+$\M^*_{\mathrm{select}},\M^*_{\mathrm{robust}}$ & Select and robust sets under holdout designs \\
 $\theta(m)$ & Scientific result using measure $m$ \\
 $\Theta^*$ & Robust result set \\
 $[\theta_L,\theta_U]$ & Construct-identified range \\
