@@ -94,102 +94,6 @@
 \end{center}
 
 \vspace{0.6em}
-% Figure 1: systems view of knowledge production (from Augusto's sketch).
-% Figure 2: core objects / epistemic ownership (per the 2026-08-10 figure audit).
-
-% ------------------------------------------------------------ Figure 1
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize,
-  lane/.style={draw=econblue, rounded corners=3pt, fill=mist, align=center,
-               text width=1.02in, minimum height=0.78in, inner sep=4pt, line width=0.7pt},
-  tool/.style={draw=slate!70, dashed, rounded corners=2pt, fill=white, align=center,
-               text width=0.98in, minimum height=0.55in, inner sep=3pt, font=\scriptsize},
-  cvbox/.style={draw=passgreen, rounded corners=3pt, fill=passgreen!10, align=center,
-                text width=1.55in, inner sep=4pt, line width=0.8pt},
-  arr/.style={-{Stealth[length=2.0mm]}, line width=0.8pt, color=slate},
-  darr/.style={-{Stealth[length=2.0mm]}, line width=0.7pt, color=slate, dashed},
-  tag/.style={font=\scriptsize\itshape\color{slate}}]
-\node[lane] (h) at (0,0) {\textbf{Hypothesis}\\\textbf{generation}\\\scriptsize\color{slate}what to mean};
-\node[lane, right=0.18in of h] (g) {\textbf{Measurement}\\\textbf{generation}\\\scriptsize\color{slate}how to operationalize};
-\node[lane, right=0.18in of g] (v) {\textbf{Construct \&}\\\textbf{measure validation}\\\scriptsize\color{slate}which interpretations};
-\node[lane, right=0.18in of v] (e) {\textbf{Estimation \&}\\\textbf{inference}\\\scriptsize\color{slate}what follows};
-\node[lane, right=0.18in of e] (c) {\textbf{Conclusion}\\\scriptsize\color{slate}what survives choice};
-\draw[arr] (h)--(g); \draw[arr] (g)--(v); \draw[arr] (v)--(e); \draw[arr] (e)--(c);
-\node[tool, below=0.5in of h] (ht) {theory,\\ prior evidence,\\ registry};
-\node[tool, below=0.5in of g] (gt) {surveys, experiments,\\ LLMs, embeddings,\\ trained policies};
-\node[tool, below=0.5in of e] (et) {regression, causal ID,\\ prediction, ranking};
-\node[tool, below=0.5in of c] (ct) {robust result set\\ $\Bset^*$, $[L,U]$};
-\draw[arr] (h)--(ht); \draw[arr] (g)--(gt); \draw[arr] (e)--(et); \draw[arr] (c)--(ct);
-\node[cvbox, below=0.5in of v] (cv) {\textbf{\texttt{cvprofiles}} (validation lane)\\[1pt]
- $\M^*$, $\Bset^*$, $[L,U]$\\ uncertainty band, empty rate\\ holdout verdicts, boundary flags};
-\draw[arr] (v)--(cv);
-\draw[decorate,decoration={brace,amplitude=3pt}, color=slate]
-  ([yshift=0.06in]h.north west) -- ([yshift=0.06in]g.north east)
-  node[midway, above=4pt, font=\scriptsize\bfseries\color{slate}] {Theory \& design};
-\draw[decorate,decoration={brace,amplitude=3pt}, color=econblue]
-  ([yshift=0.06in]v.north west) -- ([yshift=0.06in]c.north east)
-  node[midway, above=4pt, font=\scriptsize\bfseries\color{econblue}] {Empirical science};
-\node[tag, align=center, anchor=north] at (cv.south) [yshift=-0.30in]
-  {hypothesis testing $\to$ estimation \textperiodcentered\ sensitivity $\to$ dotted diagnostics
-   \textperiodcentered\ robustness $\to$ dashed into validation};
-\draw[darr] (et.west) to[out=180,in=0] (cv.east);
-\end{tikzpicture}
-\caption{A systems view of empirical knowledge production.
-AI primarily expands the measurement-generation stage; this paper disciplines the bridge from construct validation to estimation and conclusions.
-Solid arrows = artifacts, dashed = researcher-owned commitments, and the diagnostics that monitor the validation lane are reported separately from the headline outputs.}
-\label{fig:systems}
-\end{figure}
-
-% ------------------------------------------------------------ Figure 2
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize,
-  upbox/.style={draw=slate, dashed, rounded corners=2pt, fill=white, align=center,
-                text width=1.05in, minimum height=0.7in, inner sep=3pt},
-  box/.style={draw=econblue, rounded corners=2pt, fill=mist, align=center,
-              text width=1.05in, minimum height=0.7in, inner sep=3pt},
-  msbox/.style={draw=passgreen, rounded corners=2pt, fill=passgreen!10, align=center,
-                text width=1.05in, minimum height=0.7in, inner sep=3pt},
-  downbox/.style={draw=econblue, rounded corners=2pt, fill=mist, align=center,
-                  text width=1.15in, minimum height=0.7in, inner sep=3pt},
-  diagbox/.style={draw=amber, dotted, rounded corners=2pt, fill=amber!8, align=center,
-                  text width=1.15in, minimum height=0.55in, inner sep=3pt},
-  arr/.style={-{Stealth[length=1.8mm]}, line width=0.7pt, color=slate},
-  dottedarr/.style={-{Stealth[length=1.6mm]}, line width=0.6pt, color=amber, dotted},
-  pinbox/.style={draw=warm, rounded corners=2pt, fill=warm!8, align=center,
-                 text width=0.85in, minimum height=0.5in, inner sep=3pt}]
-\node[font=\scriptsize\bfseries\color{slate}] at (0,1.5) {Upstream};
-\node[upbox] (gen) at (0,0.35) {\textbf{Generators}\\\scriptsize survey, LLM,\\ multimodal, policies};
-\node[upbox] (C2) at (0,-0.8) {\textbf{Construct $C$}\\\scriptsize prose definition};
-\node[box] (menu) at (2.6,0.35) {\textbf{Menu $\M$}\\\scriptsize unit$\times$score table};
-\node[font=\scriptsize\bfseries\color{econblue}] at (5.3,1.5) {Validity layer};
-\node[box] (net) at (5.3,0.35) {\textbf{Network}\\\scriptsize $\Rset$, $\tau$, $\delta$; aux $V$};
-\node[box] (hold) at (5.3,-0.8) {\textbf{Holdout}\\\scriptsize stage and/or units};
-\node[font=\scriptsize\bfseries\color{passgreen}] at (8.0,1.5) {Object of inference};
-\node[msbox] (ms) at (8.0,0.35) {\textbf{Admissible set}\\\scriptsize $\M^*$};
-\node[font=\scriptsize\bfseries\color{econblue}] at (10.9,1.5) {Scientific outputs};
-\node[downbox] (b) at (10.9,0.35) {\textbf{Downstream}\\\scriptsize $\beta$ on survivors};
-\node[downbox] (range) at (13.0,0.35) {\textbf{Robust result}\\\scriptsize $\Bset^*$, $[L,U]$};
-\node[diagbox] (band) at (10.9,-0.8) {\textbf{Uncertainty band}\\ empty rate, boundary};
-\node[diagbox] (grid) at (13.0,-0.8) {\textbf{Sensitivity}\\ $\tau$-grids, diagnostics};
-\draw[arr] (gen)--(menu); \draw[arr] (C2)--(net);
-\draw[arr] (menu)--(net); \draw[arr] (net)--(hold);
-\draw[arr] (hold)--(ms); \draw[arr] (ms)--(b); \draw[arr] (b)--(range);
-\draw[dottedarr] (ms.south) -- (band.north);
-\draw[dottedarr] (band)--(grid);
-\node[pinbox] (pin) at (6.7,-1.9) {\textbf{Freeze / run-id}\\\scriptsize pins commitments};
-\draw[dottedarr] (pin.north) -- (hold.south);
-\node[font=\scriptsize\color{slate}, text width=5.7in, anchor=west] at (-0.6,-2.35)
-  {Dashed boxes are researcher- or generator-owned; the engine computes consequences and never authors $C$, $\M$, $\Rset$, or $\tau$.};
-\end{tikzpicture}
-\caption{Core objects and epistemic ownership of construct-identified inference.
-The admissible set $\M^*$ is the object of inference; $\Bset^*$ and $[L,U]$ are downstream scientific outputs computed only over survivors; sampling and sensitivity diagnostics live in a separate dotted lane; and a freeze/run-id pin sits between researcher commitments and engine compute.}
-\label{fig:core}
-\end{figure}
-
 
 % Fragment for the integrator. NO preamble, NO \begin{document}, NO bibliography.
 % Assumes the v7/v8 preamble macros: \M, \E, \Rset, \Bset, \cvp, \GPS, \WVS,
@@ -249,6 +153,58 @@ Prompted language models, log-probability elicitation, embeddings, and trained p
 What does not grow is the evidence that any particular score column measures the construct.
 In particular, a standard error computed conditional on a chosen score column---however small---cannot establish that the column measures the construct: sampling variability and construct validity are different objects, and no amount of the former substitutes for the latter.
 When measures become cheap, validation becomes the scarce stage of the pipeline.
+
+% Figure 1 — systems view of empirical knowledge production (input from §1.1)
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  lane/.style={draw=econblue, rounded corners=3pt, fill=mist, align=center,
+               text width=1.02in, minimum height=0.95in, inner sep=5pt, line width=0.7pt},
+  tool/.style={draw=slate!70, dashed, rounded corners=2pt, fill=white, align=center,
+               text width=0.98in, minimum height=0.6in, inner sep=3pt, font=\scriptsize},
+  cvbox/.style={draw=passgreen, rounded corners=3pt, fill=passgreen!10, align=center,
+                text width=1.6in, inner sep=5pt, line width=0.8pt},
+  arr/.style={-{Stealth[length=2.0mm]}, line width=0.8pt, color=slate},
+  darr/.style={-{Stealth[length=2.0mm]}, line width=0.7pt, color=slate, dashed},
+  tag/.style={font=\scriptsize\itshape\color{slate}}]
+% lane row
+\node[lane] (h) at (0,0) {\textbf{Hypothesis}\\\textbf{generation}\\\scriptsize\color{slate}what to mean};
+\node[lane, right=0.16in of h] (g) {\textbf{Measurement}\\\textbf{generation}\\\scriptsize\color{slate}how to operationalize};
+\node[lane, right=0.16in of g] (v) {\textbf{Construct \&}\\\textbf{measure}\\\textbf{validation}\\\scriptsize\color{slate}which interpretations};
+\node[lane, right=0.16in of v] (e) {\textbf{Estimation \&}\\\textbf{inference}\\\scriptsize\color{slate}what follows};
+\node[lane, right=0.16in of e] (c) {\textbf{Conclusion}\\\scriptsize\color{slate}what survives choice};
+\draw[arr] (h)--(g); \draw[arr] (g)--(v); \draw[arr] (v)--(e); \draw[arr] (e)--(c);
+% tool row
+\node[tool, below=0.62in of h] (ht) {theory, prior\\ evidence, registry};
+\node[tool, below=0.62in of g] (gt) {surveys, experiments,\\ LLMs, embeddings,\\ trained policies};
+\node[tool, below=0.62in of e] (et) {regression, causal ID,\\ prediction, ranking};
+\node[tool, below=0.62in of c] (ct) {robust result set\\ $\Bset^*$, $[L,U]$};
+\draw[arr] (h)--(ht); \draw[arr] (g)--(gt); \draw[arr] (e)--(et); \draw[arr] (c)--(ct);
+% cvprofiles span
+\node[cvbox, below=0.62in of v] (cv) {\textbf{\texttt{cvprofiles}} (validation lane)\\[1pt]
+ $\M^*$, $\Bset^*$, $[L,U]$; uncertainty band,\\ empty rate, holdout verdicts, boundary flags};
+\draw[arr] (v)--(cv);
+% braces
+\draw[decorate,decoration={brace,amplitude=3pt}, color=slate]
+  ([yshift=0.08in]h.north west) -- ([yshift=0.08in]g.north east)
+  node[midway, above=4pt, font=\scriptsize\bfseries\color{slate}] {Theory \& design};
+\draw[decorate,decoration={brace,amplitude=3pt}, color=econblue]
+  ([yshift=0.08in]v.north west) -- ([yshift=0.08in]c.north east)
+  node[midway, above=4pt, font=\scriptsize\bfseries\color{econblue}] {Empirical science};
+% activity tags (one compact line, clear of the cv box)
+\node[tag, align=center, anchor=north, text width=5.4in] at (cv.south) [yshift=-0.42in]
+  {hypothesis testing $\to$ estimation \textperiodcentered\ sensitivity $\to$ dotted diagnostics
+   \textperiodcentered\ robustness $\to$ dashed into validation};
+% dashed robustness arrow into the validation lane
+\draw[darr] (et.north) to[out=90,in=-40] (cv.south east);
+\end{tikzpicture}
+\caption{A systems view of empirical knowledge production.
+AI primarily expands the measurement-generation stage; this paper disciplines the bridge from construct validation to estimation and conclusions.
+Solid arrows denote artifacts, dashed denote researcher-owned commitments, and the diagnostics that monitor the validation lane are reported separately from the headline outputs.}
+\label{fig:systems}
+\end{figure}
+
 
 \subsection{The measured failure mode}
 The change is not hypothetical; practice has been audited.
@@ -384,6 +340,61 @@ That composition---construct-identified inference, \emph{validate first and prop
 
 The method validates first and propagates second: retain the measures that pass a declared validity screen, then report which scientific conclusions survive among the survivors.
 This section fixes the objects, the screen, the falsification designs, and the sampling diagnostics.
+
+% Figure 2 — core objects and epistemic ownership (input from §3.1)
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  upbox/.style={draw=slate, dashed, rounded corners=2pt, fill=white, align=center,
+                text width=1.1in, minimum height=0.72in, inner sep=3pt},
+  box/.style={draw=econblue, rounded corners=2pt, fill=mist, align=center,
+              text width=1.1in, minimum height=0.72in, inner sep=3pt},
+  msbox/.style={draw=passgreen, rounded corners=2pt, fill=passgreen!10, align=center,
+                text width=1.1in, minimum height=0.72in, inner sep=3pt},
+  downbox/.style={draw=econblue, rounded corners=2pt, fill=mist, align=center,
+                  text width=1.2in, minimum height=0.72in, inner sep=3pt},
+  diagbox/.style={draw=amber, dotted, rounded corners=2pt, fill=amber!8, align=center,
+                  text width=1.2in, minimum height=0.55in, inner sep=3pt},
+  arr/.style={-{Stealth[length=1.8mm]}, line width=0.7pt, color=slate},
+  dottedarr/.style={-{Stealth[length=1.6mm]}, line width=0.6pt, color=amber, dotted},
+  pinbox/.style={draw=warm, rounded corners=2pt, fill=warm!8, align=center,
+                 text width=0.95in, minimum height=0.5in, inner sep=3pt},
+  col/.style={font=\scriptsize\bfseries}]
+% column labels
+\node[col, color=slate] at (0,1.62) {Upstream};
+\node[col, color=econblue] at (5.3,1.62) {Validity layer};
+\node[col, color=passgreen] at (8.0,1.62) {Object of inference};
+\node[col, color=econblue] at (11.6,1.62) {Scientific outputs};
+% top row
+\node[upbox] (gen) at (0,0.4) {\textbf{Generators}\\\scriptsize survey, LLM,\\ multimodal, policies};
+\node[upbox] (C2) at (0,-0.95) {\textbf{Construct $C$}\\\scriptsize prose definition};
+\node[box] (menu) at (2.6,0.4) {\textbf{Menu $\M$}\\\scriptsize unit$\times$score table};
+\node[box] (net) at (5.3,0.4) {\textbf{Network}\\\scriptsize $\Rset$, $\tau$, $\delta$; aux $V$};
+\node[box] (hold) at (5.3,-0.95) {\textbf{Holdout}\\\scriptsize stage and/or units};
+\node[msbox] (ms) at (8.0,0.4) {\textbf{Admissible set}\\\scriptsize $\M^*$};
+\node[downbox] (b) at (10.7,0.4) {\textbf{Downstream}\\\scriptsize $\beta$ on survivors};
+\node[downbox] (range) at (13.2,0.4) {\textbf{Robust result}\\\scriptsize $\Bset^*$, $[L,U]$};
+% diagnostics dotted lane (separate row, clear of everything above)
+\node[diagbox] (band) at (10.7,-1.75) {\textbf{Uncertainty band}\\ empty rate, boundary};
+\node[diagbox] (grid) at (13.2,-1.75) {\textbf{Sensitivity}\\ $\tau$-grids, diagnostics};
+% arrows
+\draw[arr] (gen)--(menu); \draw[arr] (C2)--(net);
+\draw[arr] (menu)--(net); \draw[arr] (net)--(hold);
+\draw[arr] (hold)--(ms); \draw[arr] (ms)--(b); \draw[arr] (b)--(range);
+\draw[dottedarr] (ms.south) to[out=-90,in=135] (band.north);
+\draw[dottedarr] (band)--(grid);
+% freeze pin between commitments and compute
+\node[pinbox] (pin) at (6.7,-2.75) {\textbf{Freeze / run-id}\\\scriptsize pins commitments};
+\draw[dottedarr] (pin.north) to[out=90,in=-90] (hold.south);
+\node[font=\scriptsize\color{slate}, text width=5.9in, anchor=west] at (-0.6,-3.45)
+  {Dashed boxes are researcher- or generator-owned; the engine computes consequences and never authors $C$, $\M$, $\Rset$, or $\tau$.};
+\end{tikzpicture}
+\caption{Core objects and epistemic ownership of construct-identified inference.
+The admissible set $\M^*$ is the object of inference; $\Bset^*$ and $[L,U]$ are downstream scientific outputs computed only over survivors; sampling and sensitivity diagnostics live in a separate dotted lane; and a freeze/run-id pin sits between researcher commitments and engine compute.}
+\label{fig:core}
+\end{figure}
+
 
 \subsection{Primitives and notation}
 \label{sec:primitives}
