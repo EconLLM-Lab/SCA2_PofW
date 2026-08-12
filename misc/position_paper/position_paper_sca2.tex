@@ -88,7 +88,7 @@ Our contribution is a protocol, not a theorem of human-preference recovery. A pr
 
 The first implementation uses the Global Preferences Survey (\GPS), which reports country-level profiles for trust, risk taking, patience, altruism, and positive and negative reciprocity \cite{falk2018}. These anchors yield synthetic preference pairs; Direct Preference Optimization (\DPO) fits lightweight country-specific adapters relative to a common base policy \cite{rafailov2023}. The planned primary external criterion is a theory-mapped battery of World Values Survey (\WVS) item distributions. Crucially, country information is excluded from the primary evaluation prompt. This removes a direct country-token channel; it does not prove that all country-associated information is absent from base-model knowledge, scenario wording, or the profile. Thus the relevant question is not whether a model can retrieve a country label at inference. It is whether a policy induced by a declared aggregate anchor has externally useful behavior under a transparent, fixed procedure.
 
-This paper makes four contributions. First, it defines the aggregate-anchor construction problem and its scientific object. Second, it provides a modular protocol with anti-leakage, provenance, and reproducibility requirements. Third, it makes the protocol empirically testable through five links: anchor transmission, policy encoding, anchor relevance, external transport, and operator robustness. Fourth, it supplies a predeclared multi-country design that contrasts the constructed policy with base-model, country-prompt, non-LLM, and permuted-anchor baselines. The results of that design are deliberately not pre-judged here.
+This paper makes four contributions: a formal statement of the aggregate-anchor construction problem and its scientific object; a modular protocol with anti-leakage, provenance, and reproducibility requirements; an empirically testable design built on five links---anchor transmission, policy encoding, anchor relevance, external transport, and operator robustness; and a predeclared multi-country comparison of the constructed policy against base-model, country-prompt, non-LLM, and permuted-anchor baselines, whose results are deliberately not pre-judged here.
 
 \section{Positioning: where this protocol differs}
 The closest literatures differ in both their information source and the location at which that information enters the model. Early ``silicon sample'' work conditions models on detailed respondent profiles and asks whether generated responses resemble human samples \cite{argyle2023}. Subsequent evidence finds instability, distributional mismatch, and inferential risks in such replacement exercises \cite{bisbee2024}. A second family fine-tunes models on human preference or survey-response data. These approaches may be appropriate when individual records or empirical response distributions are available; their claim is correspondingly closer to learned human response behavior. A third family evaluates or aligns models against named cultural communities.
@@ -119,13 +119,15 @@ z_c=(z_{c1},\ldots,z_{cK})\in\mathbb{R}^K
 \end{equation}
 be a vector of pre-existing population-level measurements selected before training. In the first implementation, $K=6$ and $z_c$ contains \GPS{} country scores, represented in the pipeline as standardized deviations from global means. An aggregate anchor is an input to a construction procedure. It is \emph{not} an individual record, a country name shown at inference, or a moment condition automatically satisfied by a trained policy.
 
+We call such an input a \emph{declared} anchor: it is chosen by the researcher from a pre-existing, citable measurement source under a written inclusion rule, and it is fixed before training and before any outcome is inspected. A declared anchor is thus a researcher-committed input, whereas an \emph{identified} anchor is one recovered from the data.
+
 \subsection{A frozen construction protocol}
 We define a protocol as
 \begin{equation}
 \Pcal=(Z,R,G,S,Q,A,E),
 \label{eq:protocol}
 \end{equation}
-where $Z$ records the anchor source and country frame; $R$ is the deterministic anchor-to-profile rendering rule; $G$ is the scenario, response-pair, and label-generation procedure; $S$ is scoring, quality control, and filtering; $Q$ records prompts and direct-token anti-leakage restrictions; $A$ is the policy estimator and its training configuration; and $E$ is the planned evaluation, placebo, and sensitivity design. Conditional on an archived run manifest, the model-mediated stages of $G$ and $S$ are stochastic realizations; the protocol is not equivalent to a deterministic mapping from $z_c$ to data.
+where $Z$ records the anchor source and country frame; $R$ is the deterministic anchor-to-profile rendering rule; $G$ is the scenario, response-pair, and label-generation procedure; $S$ is scoring, quality control, and filtering; $Q$ records prompts and direct-token anti-leakage restrictions; $A$ is the policy estimator and its training configuration; and $E$ is the planned evaluation, placebo, and sensitivity design. Conditional on an archived run manifest, the model-mediated stages of $G$ and $S$ are stochastic realizations; the protocol is not equivalent to a deterministic mapping from $z_c$ to data. In the implemented protocol, $Z$ is the GPS ingestion and country frame of Section~6.1, $R$ the deterministic profile renderer, and $G$ the teacher, generator, and selector stages of Section~4.2. $S$ is the scorer and the quality-control gates, $Q$ the frozen prompts, $A$ the DPO fit of Section~4.3, and $E$ the tests of Section~5.
 
 Given a reference policy $\pi_{\mathrm{ref}}$, the protocol generates a country-specific synthetic dataset $\Dcal_c=\Gcal_{\Pcal}(z_c)$ and fits
 \begin{equation}
@@ -164,7 +166,9 @@ Country averages do not identify which individuals hold which preferences, how p
 The primary implementation begins with the \GPS{} vector and renders it into an anonymized quantitative profile. The rendering states the magnitude and direction of each standardized score without inserting a country name. In the primary evaluation prompt, country and demographic labels are likewise omitted. This direct-token anti-leakage design does not establish cultural validity or prove that country-associated information is absent. It establishes a narrower, auditable fact: any difference between adapters cannot be attributed to country tokens in the primary inference prompt. The claim must be complemented by audits of scenario text, profile re-identifiability, and whether a classifier can infer country from generated artifacts.
 
 \subsection{Synthetic data operator}
-The operator has five conceptually distinct stages. First, a teacher model proposes behaviorally distinct facets and culturally neutral scenarios for each preference dimension. Second, a generator creates two plausible, opposing responses to each fixed scenario while being instructed to hold non-target traits constant. Third, an anchor-aware selector chooses the response aligned with the country profile. Fourth, an independent scorer assigns both responses scores on all six dimensions. Fifth, deterministic quality-control rules retain pairs only if the scorer reports adequate target separation and acceptable directional consistency.
+The operator proceeds through five conceptually distinct stages. A teacher model first proposes behaviorally distinct facets and culturally neutral scenarios for each preference dimension, and a generator then creates two plausible, opposing responses to each fixed scenario while holding non-target traits constant. An anchor-aware selector chooses the response aligned with the country profile; an independent scorer assigns both responses scores on all six dimensions; and deterministic quality-control rules retain a pair only when the scorer reports adequate target separation and acceptable directional consistency.
+
+\noindent\textbf{Example (illustrative).} Suppose Mexico's patience z-score is $+0.32$, and the rendering stage translates it into the anonymized profile text ``standardized patience score moderately above the reference mean, with a correspondingly low temporal-discounting tendency.'' The teacher then proposes a culturally neutral scenario---a respondent deciding between an immediate small reward and a delayed larger one---and the generator fixes two opposing responses: A opts for the immediate reward, B waits for the larger one, with the instructions holding risk attitudes and income constraints constant. The anchor-aware selector, consulting the profile's positive sign, retains B for Mexico. The independent scorer assigns both responses six-dimension scores: B shows adequate separation on patience, while both remain close on the five non-target dimensions. The deterministic quality-control rules then admit the A/B pair, since target separation exceeds the threshold and the direction is consistent with the positive z-score. This trace illustrates the pipeline mechanics; it is not an empirical result.
 
 \begin{figure}[H]
 \centering
@@ -243,6 +247,33 @@ The first implementation uses \GPS{} as the anchor source and \WVS{} Wave 7 as t
 
 AmericasBarometer and the Integrated Values Surveys may serve as secondary instrument or temporal replications if multi-country overlap is adequate. World Bank indicators are contextual covariates for exploratory heterogeneity analysis, not direct choice-distribution criteria.
 
+\subsection{Anchor sources: criteria, GPS, and alternatives}
+
+A source must satisfy a small set of conditions before it can anchor the construction. It must be pre-existing and citable, fixing the reference in the public record rather than constructing it for this study; it must offer population-level aggregates rather than individual microdata, because the outcome surface is itself country-level; and it must be theoretically linked to the constructs of interest while remaining independent of the evaluation surface, so that anchoring on \WVS{} country means while evaluating \WVS{} items would be circular. It must also offer broad country coverage and valid, comparable measurement across countries.
+
+\GPS{} is a defensible first implementation of these criteria. Its country scores are aggregates by construction, derived from measures of six economic preferences that were validated ex ante in incentivized experiments, collected in representative samples across 76 countries---a set that overlaps the \WVS{} Wave 7 country frame. The data are public and citable, and the criteria are fixed before any scaled run.
+
+Alternatives exist if the criteria recommend them: \WVS{}/EVS country means, with the caveat of overlap with typical evaluation surfaces; Schwartz value country scores (PVQ/ESS); Hofstede dimensions; Inglehart--Welzel cultural-map coordinates; and the GLOBE project. Table~\ref{tab:anchor-sources} lists these candidates with their principal caveats. The method is agnostic to the specific source, so long as the criteria above hold.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Candidate anchor sources and their principal caveats.}
+\label{tab:anchor-sources}
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\hline
+Source & What it measures & Key caveat \\
+\hline
+\GPS{} & Six economic preferences (trust, risk-taking, patience, altruism, positive and negative reciprocity) & Aggregate by construction; experimentally validated \\
+\WVS{}/EVS means & Country-level value orientations and attitudes & Circular when the evaluation surface is \WVS{} itself \\
+Schwartz (PVQ/ESS) & Ten basic human values at country level & Fewer countries; values are not preference measures \\
+Hofstede dimensions & Work-related cultural dimensions & Dated samples; dimensions are not preference measures \\
+Inglehart--Welzel map & Emancipative and secular value coordinates & Two-dimensional reduction of a larger item space \\
+GLOBE & Societal practices and leadership values & Organizational focus; limited item overlap \\
+\hline
+\end{tabularx}
+\end{table}
+
 \subsection{Baselines and primary comparison}
 Every country is evaluated against four mandatory baselines: (i) the unmodified base model; (ii) a country-named cultural-prompt baseline; (iii) a named non-LLM aggregate benchmark fixed before outcome inspection; and (iv) the restricted permuted-anchor distribution. The country prompt is deliberately included despite violating direct-token anti-leakage because it answers a distinct practical question: whether an explicit persona retrieves useful information more effectively than the constructed policy. The analysis must report provenance-sensitive construction success separately from predictive alignment; a cultural prompt may be practically predictive while failing the former objective.
 
@@ -317,6 +348,31 @@ The pilot therefore does not establish country specificity. A single fixed adapt
 Deterministic signs eliminate all per-country selector calls. The default 120 fixed triplets (six dimensions times 20 scenarios) otherwise generate 120 times the number of countries selection calls. Score each canonical pair once rather than once per country, orient scores locally by country sign, and compute QC arithmetic locally; this reduces country-linear scorer calls and removes country/choice-order leakage. Facets and scenarios are already batched, but per-triplet selector reasoning payloads are not used for labeling or QC and can be omitted or sampled for audit, while preserving raw responses and request metadata for remaining calls.
 
 The minimum ablation uses a fixed scenario/A--B bank and compares: (i) deterministic signs versus legacy LLM selection; (ii) no QC versus scorer diagnostic-only versus scorer plus a predeclared contamination exclusion; and (iii) anchors off versus on. Each condition should retain at least three independently generated banks, stratified by dimension and $z$-score magnitude. Report label disagreement with the deterministic rule, QC retention, cross-loading distributions, blinded human ratings of target loading/non-target leakage/plausibility/option balance, and the full range of downstream conclusions. If legacy-selector and deterministic-sign estimates differ materially, the former is an unvalidated alternative rather than the primary dataset.
+
+\section{Training configuration}
+\label{app:trainconfig}
+The reference training configuration in Table~\ref{tab:trainconfig} is fixed before any scaled run; every adapter in the pilot and scaled protocol is estimated against it, and any deviation from it is declared as a sensitivity arm rather than an ad hoc adjustment. Entries are transcribed from and verified against the canonical training artifacts under \texttt{DPO\_train\_test/}.
+
+\begin{table}[H]
+\centering\small
+\caption{Reference training configuration for the country-specific DPO adapters. All variants in the operator-sensitivity panel are declared relative to this configuration.}\label{tab:trainconfig}
+\begin{tabularx}{\textwidth}{@{}p{3.6cm}Xp{4cm}@{}}
+\toprule
+\textbf{Component} & \textbf{Setting} & \textbf{Source/status}\\
+\midrule
+Base model & Llama-3.1-8B-Instruct (\texttt{meta-llama/Llama-3.1-8B-Instruct}) & \texttt{DPO\_train.ipynb}\\
+QLoRA quantization & 4-bit NF4, double quant, fp16 compute & \texttt{DPO\_train.ipynb}\\
+LoRA rank/alpha & $r=16$, $\alpha=32$, dropout $0.05$ & \texttt{DPO\_train.ipynb}\\
+LoRA target modules & \texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} (attention projections) & \texttt{DPO\_train.ipynb}\\
+DPO beta & $\beta=0.1$ & \texttt{DPO\_train.ipynb}\\
+Learning rate/schedule & $1\times10^{-4}$, cosine, warmup ratio $0.03$ & \texttt{DPO\_train.ipynb}\\
+Epochs & 1 & \texttt{DPO\_train.ipynb}\\
+Batch size/gradient accumulation & per-device batch 1; 16 accumulation steps (effective 16) & \texttt{DPO\_train.ipynb}\\
+Synthetic triplets per country & $\approx$3{,}594 generated per country; 2{,}875 in the training split (80/20, seed 42) & \texttt{DPO\_train.ipynb}\\
+Hardware & Single Colab-class GPU (Tesla T4 in the committed run) & \texttt{DPO\_train.ipynb}, \texttt{README.md}\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{Protocol artifacts required for a claim-ready version}
 A claim-ready version will archive: (i) country inclusion rules; (ii) anchor and item-map versions; (iii) prompts, temperatures, model IDs, and endpoint versions; (iv) raw scenario, pair, selection, and scoring outputs; (v) QC tables; (vi) training manifests and adapter hashes; (vii) evaluation outputs; and (viii) analysis code for item, country, generation, and training-seed uncertainty. A remote API seed is not itself a sufficient reproducibility guarantee; materialized datasets are the primary artifacts.
