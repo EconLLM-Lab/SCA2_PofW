@@ -1,10 +1,21 @@
-# SCA2_PofW — Synthetic Cultural Agents 2.0
+# SCA2_PofW — Synthetic Cultural Agents from Aggregate Anchors
 
 **EconLLM Lab**  
 Lab site: [econllm-lab.com](https://www.econllm-lab.com/)  
 Codebase: [github.com/EconLLM-Lab/SCA2_PofW](https://github.com/EconLLM-Lab/SCA2_PofW)
 
-Country-conditioned preference adapters (DPO / QLoRA on Llama-3.1-8B-Instruct) trained from GPS-grounded synthetic preference data, with frozen-adapter out-of-sample evaluation on World Values Survey (WVS Wave 7) and AmericasBarometer trust-core surfaces.
+A falsifiable construction protocol for population-level choice policies. The pipeline renders declared aggregate anchors — country-level Global Preference Survey (GPS) scores — into synthetic preference data, fits country-specific adapters (DPO / QLoRA on Llama-3.1-8B-Instruct), and evaluates the induced policies against independent human survey distributions. Country labels are excluded from primary inference prompts (`PROMPT_COUNTRY_CONDITIONING = False`): culture enters through the training signal, not through prompt retrieval.
+
+The protocol's scientific value is empirical, not assumed: the working paper specifies five rejection points — anchor transmission, policy encoding, anchor relevance (permuted-anchor placebo), external transport to independent human evidence, and operator robustness.
+
+---
+
+## Working papers
+
+| Paper | File | Status |
+|---|---|---|
+| **Synthetic Cultural Agents from Aggregate Anchors: A Falsifiable Protocol for Constructing Population-Level Choice Policies** (Gonzalez-Bonorino, Biriukova, Capra) — the methods paper for this codebase: aggregate-anchor construction protocol, scope boundary, five rejection points, predeclared multi-country design, USA/MEX pilot diagnostic (Appendix A), and an independent adversarial audit of the generation pipeline (Appendix B) | [`misc/position_paper/position_paper_sca2.pdf`](./misc/position_paper/position_paper_sca2.pdf) (LaTeX: [`position_paper_sca2.tex`](./misc/position_paper/position_paper_sca2.tex)) | Working-paper draft (methods-first; results shells pending the scaled experiment) |
+| Construct-validity instrument paper (validation lane, separate from this generation pipeline) | [`misc/position_paper/position_paper_cvprofiles.pdf`](./misc/position_paper/position_paper_cvprofiles.pdf) (LaTeX: [`position_paper_cvprofiles.tex`](./misc/position_paper/position_paper_cvprofiles.tex)) | Working-paper draft |
 
 ---
 
@@ -17,7 +28,7 @@ Country-conditioned preference adapters (DPO / QLoRA on Llama-3.1-8B-Instruct) t
 | **Adapter usage demo** (load + score + reward recovery) | [`notebooks/adapter_usage_demo.ipynb`](./notebooks/adapter_usage_demo.ipynb) |
 | **Canonical WVS OOS evaluation surface** | [`DPO_eval_WVS/`](./DPO_eval_WVS/) · evaluation scripts, result tables, and [`DPO_eval_WVS/README.md`](./DPO_eval_WVS/README.md) |
 | **Tier-2 OOS evaluation share pack** | [`data/merged/`](./data/merged/) · start at [`DATASET_GUIDE.md`](./data/merged/DATASET_GUIDE.md) |
-| **Position paper & theoretical framework** | [`misc/position_paper/`](./misc/position_paper/) · LaTeX source, compiled PDF, and theory notes |
+| **Working papers & theoretical framework** | [`misc/position_paper/`](./misc/position_paper/) · see the table above |
 | **Package smoke demo** | [`notebooks/demo.ipynb`](./notebooks/demo.ipynb) |
 
 ---
@@ -26,14 +37,14 @@ Country-conditioned preference adapters (DPO / QLoRA on Llama-3.1-8B-Instruct) t
 
 ```
 SCA2_PofW/
-├── synthetic_generation/     # GPS → synthetic preference triplets (q, y_w, y_l)
+├── synthetic_generation/     # GPS anchors → synthetic preference triplets (q, y_w, y_l) + scoring/QC
 ├── DPO_train_test/           # Preprocessing → DPO QLoRA fine-tuning → cross-eval
 ├── DPO_eval_WVS/             # Canonical Wave 7 WVS OOS evaluation surface & metrics
 │   ├── eval_results_wvs_wave7/  # Summary CSVs, bootstrap CIs, calibration, and question metrics
 │   └── question_map_wvs_edited.csv  # 35 unseen WVS items (30 mapped to 6 GPS dimensions, 5 demographics)
 ├── data/merged/              # WVS + AmericasBarometer evaluation parquets + guides
 ├── data/GPS, data/WVS/       # Codebooks & metadata (raw microdata gitignored)
-├── misc/                     # Position paper latex source (`position_paper/`) & DPO–BT theory archive
+├── misc/position_paper/      # Working papers (SCA protocol paper + cvprofiles validation paper)
 ├── notebooks/demo.ipynb      # Package smoke demo
 ├── SCA2_ProjectProposal.pdf
 └── SCA2_Main_draft.pdf
@@ -45,15 +56,17 @@ SCA2_PofW/
 
 | Surface | Status | Purpose |
 |---|---|---|
-| `synthetic_generation/` | **Canonical** | Generator & scorer for GPS-grounded preference pairs |
+| `synthetic_generation/` | **Canonical** | Anchor rendering, synthetic-pair generation, scoring & QC for GPS-grounded preference pairs |
 | `DPO_train_test/` | **Canonical** | QLoRA fine-tuning pipeline (`Llama-3.1-8B-Instruct`) |
 | `DPO_eval_WVS/` | **Canonical** | OOS evaluation on 35 unseen WVS Wave 7 items (30 mapped to 6 GPS dimensions, 5 demographics) |
 | `data/merged/` | **Canonical** | Frozen OOS parquets (USA/MEX × WVS/AB) |
+| `misc/position_paper/` | **Canonical** | Working papers (SCA protocol + cvprofiles validation) |
 | `DPO_preliminary_results/` | **Removed** | Legacy pilot CSVs (superseded by `DPO_eval_WVS/eval_results_wvs_wave7/`) |
+| `sca2_validity/` | **Removed** | Construct-validity prototypes (orthogonal to this pipeline; superseded by the cvprofiles paper lane) |
 
 ---
 
-## Empirical Findings (WVS Wave 7 OOS Evaluation)
+## Pilot Evaluation (USA/MEX — proof of concept, not country-specificity evidence)
 
 Evaluated on 35 unseen Wave 7 WVS items (30 mapped to 6 Global Preferences Survey (GPS) dimensions, 5 demographics) with `PROMPT_COUNTRY_CONDITIONING = False`:
 
@@ -67,25 +80,32 @@ Evaluated on 35 unseen Wave 7 WVS items (30 mapped to 6 Global Preferences Surve
 | **USA Data (USA WVS)** | USA Adapter (Matched) | 0.5258 | 0.2246 | 11.4% |
 
 ### Key Takeaways:
-1. **MEX Adapter Distributional Alignment:** On MEX WVS items, the MEX adapter's predicted response distribution lies closer to Mexico's observed response distribution than the USA adapter's does on 97.1% of questions ($\Delta \text{TVD} = 0.1495, \text{95% CI}: [0.0964, 0.2152]$). Because prompts never name the country (`PROMPT_COUNTRY_CONDITIONING = False`), this reflects what the adapter weights learned, not prompt retrieval — but it measures which adapter's **fixed** distribution sits closer to each country's responses, not country-conditioned inference behavior (see note below).
-2. **USA Adapter Degradation:** The USA adapter degrades fidelity to WVS response distributions relative to the base model on **both** eval countries (TVD 0.526 vs 0.396 on USA data; also worse on MEX data). Mechanism (e.g., pretraining-prior interaction vs. overfit to synthetic scenario format) is not identified by this design.
-3. **Under-Dispersion:** Option log-probability softmax scoring concentrates probability mass on modal options, leading to systematic population under-dispersion (dispersion bias $-1.15$ to $-1.63$).
+1. **MEX adapter distributional alignment:** On MEX WVS items, the MEX adapter's fixed predicted response distribution lies closer to Mexico's observed response distribution than the USA adapter's on 97.1% of questions ($\Delta \text{TVD} = 0.1495$, 95% CI: [0.0964, 0.2152]).
+2. **USA adapter degradation:** The USA adapter degrades fidelity to WVS response distributions relative to the base model on **both** eval countries (TVD 0.526 vs 0.396 on USA data; also worse on MEX data). Mechanism (e.g., anchor–pretraining-prior collision vs. overfit to synthetic scenario format) is not identified by this design.
+3. **Under-dispersion:** Option log-probability softmax scoring concentrates probability mass on modal options, leading to systematic population under-dispersion (dispersion bias $-1.15$ to $-1.63$).
 
-> **Design note (interpretation boundary):** with unconditioned prompts, all models emit identical option probabilities across eval countries (the `_on_USA` and `_on_MEX` files differ only in the `eval_country` label). "Matched vs cross" therefore compares each adapter's single fixed distribution against each country's observed response distribution. It does **not** demonstrate that an adapter conditions on or "knows" its target country at inference time. Country-specificity of behavior is a separate question addressed by the construct-validity layer (`sca2_validity/`, persona-gradient protocol).
+> **Design note (interpretation boundary):** with unconditioned prompts, all models emit identical option probabilities across eval countries (the `_on_USA` and `_on_MEX` files differ only in the `eval_country` label). "Matched vs cross" therefore compares each adapter's single **fixed** distribution against each country's observed response distribution. It does **not** demonstrate that an adapter conditions on or "knows" its target country at inference time. The two-country pilot cannot establish country-specificity; the working paper's predeclared design (§6) addresses this with a restricted permutation distribution, an operator-sensitivity panel, and a planned 10–15-country panel. These pilot numbers are reproduced and discussed in Appendix A of the working paper.
 
 ---
 
 ## Scope & Reliable Applications
 
-### Reliable Applications (What the methodology CAN do):
-* **Distributional Fidelity Shifts:** Shifts option-choice probabilities toward empirical population distributions for populations under-represented in pretraining (e.g., the MEX adapter on MEX data), measured without country prompts (`PROMPT_COUNTRY_CONDITIONING = False`). This shows the adapter's *fixed* output distribution is closer to Mexico's observed responses — it does not establish country-conditioned inference behavior (see design note above).
-* **Relative Comparative Statics:** Suitable for evaluating ordinal shifts in preference traits (e.g., Altruism TVD dropping from $0.450 \rightarrow 0.152$ on MEX data).
-* **Latent Option Probing:** Clean, zero-shot option log-likelihood scoring on structured questionnaires without generation noise.
+The working paper (§8) draws the boundary precisely; a summary:
 
-### Unreliable Applications (What it CANNOT do yet):
-* **Absolute Population Polling / Headcount Forecasting:** Cannot predict exact percentage response shares due to structural under-dispersion.
-* **USA Adapter Deployment:** USA DPO adapter should not be deployed as an "improved American persona" as fine-tuning degrades the base model's existing prior.
-* **Free-Form Generative Persona Chat:** Current evaluation validates structured choice probability distributions, not open-ended conversational roleplay.
+### Reliable applications (when the predeclared tests support them):
+* **Exploratory measurement and hypothesis generation:** constructing candidate policy measures from declared aggregate anchors.
+* **Survey-item and benchmark design:** generating plausible scenario/response material conditioned on population-level profiles.
+* **Fixed-policy proximity evaluation:** measuring how close an adapter's fixed output distribution lies to independent human response distributions (no country-conditioned inference claims).
+* **Ordinal comparative statics:** evaluating ordinal shifts in preference traits across adapters.
+* **Latent option probing:** clean, zero-shot option log-likelihood scoring on structured questionnaires without generation noise.
+
+### Unreliable applications:
+* **Individual or subgroup representation:** aggregate anchors do not identify individual preferences or within-country heterogeneity; no individual is claimed to be represented.
+* **Full preference-distribution recovery:** structural under-dispersion bounds distributional-shape claims.
+* **Causal or structural inference / counterfactuals:** requires a separate measurement and identification argument.
+* **Absolute polling / headcount forecasting:** cannot predict exact percentage response shares.
+* **USA adapter deployment as an "improved American persona":** fine-tuning degrades the base model's existing prior.
+* **Free-form generative persona chat:** current evaluation validates structured choice probability distributions, not open-ended roleplay.
 
 ---
 

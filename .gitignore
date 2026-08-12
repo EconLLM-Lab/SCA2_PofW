@@ -21,6 +21,7 @@ data/validity/runs/
 .vscode/
 .codebase-memory/
 .vs/
+.hermes/
 
 # LaTeX build artifacts
 *.aux

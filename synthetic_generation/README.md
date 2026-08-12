@@ -7,23 +7,22 @@
 
 This folder contains the data generation pipeline for **SCA 2.0** (Synthetic Cultural Agents, second generation). The goal is to create synthetic preference datasets that can be used to fine-tune open-source language models so they behave in ways that reflect the cultural preferences of specific populations — not just WEIRD (Western, Educated, Industrialized, Rich, Democratic) ones.
 
-**The big idea:** The Global Preferences Survey (GPS) by Falk et al. (2018) measured six economic preferences — trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity — across 76 countries. We use these measurements as a "cultural state vector" to condition a large language model to generate training data. A student model is then fine-tuned on this data using Direct Preference Optimization (DPO), which is mathematically equivalent to maximum likelihood estimation under the Bradley-Terry paired comparison model. This equivalence allows us to import structural econometrics tools (identification, overidentification testing, counterfactual analysis) into the fine-tuning process.
+**The big idea:** The Global Preferences Survey (GPS) by Falk et al. (2018) measured six economic preferences — trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity — across 76 countries. We treat these country-level scores as declared *aggregate anchors* and render them into synthetic preference data. A student model is then fine-tuned on this data using Direct Preference Optimization (DPO), a pairwise-preference estimator with reference-policy regularization. The protocol's scientific value is established empirically, not assumed: the working paper ([`../misc/position_paper/position_paper_sca2.pdf`](../misc/position_paper/position_paper_sca2.pdf)) specifies five rejection points — anchor transmission, policy encoding, anchor relevance (permuted-anchor placebo), external transport, and operator robustness. The pipeline deliberately makes no identification claim about individual preferences or full population distributions.
 
 **Where this fits in the research agenda:**
 
-| Paper | Focus | Status |
+| Working paper | Focus | Status |
 |-------|-------|--------|
-| Paper 1 | DPO as BT MLE (theory) | Working paper complete |
-| **Paper 2** | **Empirical validation (this pipeline)** | **Active development** |
-| Paper 3 | Teacher bias bounds | Planned |
-| Paper 4 | Counterfactual analysis | Planned |
-| Paper 5 | Sequential extension (Soft Bellman) | Planned |
+| **position_paper_sca2** | **Aggregate-anchor construction protocol (this pipeline)** | **Working-paper draft** |
+| position_paper_cvprofiles | Construct-validity instrument (validation lane) | Working-paper draft |
+
+Both papers live in [`../misc/position_paper/`](../misc/position_paper/).
 
 If you're new to the lab, start by reading:
 - The [lab mission document](https://www.econllm-lab.com/) for context on what we do and why
 - Falk et al. (2018), "Global Evidence on Economic Preferences," *QJE* — the GPS paper
 - Capra, Gonzalez-Bonorino & Pantoja (2025), "LLMs Model Non-WEIRD Populations" — SCA 1.0
-- The SCA 2.0 project proposal (in [`context/SCA2_ProjectProposal.pdf`](./context/SCA2_ProjectProposal.pdf))
+- The SCA 2.0 project proposal ([`../SCA2_ProjectProposal.pdf`](../SCA2_ProjectProposal.pdf))
 
 ---
 
@@ -47,9 +46,11 @@ Defines target countries, GPS dimensions, Hugging Face endpoint role aliases, hy
 - `hf-scorer`: Quality control scoring only
 
 ### Block B — Data ingestion and profile construction
-Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a natural-language ethnographic profile. This profile is used by the scorer endpoint when selecting which fixed response option matches a country.
+Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a deterministic quantitative profile (anonymized — no country name appears in the profile text).
 
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
+
+The profile is used by the **generator** endpoint when selecting which fixed response option matches a country (see Block C, Stage 2b).
 
 ### Block C — Generation engine
 
@@ -58,7 +59,9 @@ Four-step architecture:
 1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into exactly 5 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
 3. **Fixed triplet generation** (Stage 2): For each scenario, the generator endpoint creates fixed high/low response options once, independent of country.
-4. **Profile-based selection** (Stage 2b): For each country, the scorer endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
+4. **Profile-based selection** (Stage 2b): For each country, the **generator** endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
+
+   > *Audit note:* the LLM selector implements a supplied sign rule stochastically. Appendix B of the working paper ([`../misc/position_paper/position_paper_sca2.pdf`](../misc/position_paper/position_paper_sca2.pdf)) recommends a deterministic A/B sign rule as the primary operator, with the LLM selector retained as a sensitivity arm.
 
 ### Block D — Scoring and quality control
 Each pair is scored on all 6 GPS dimensions in a single API call. For the target GPS dimension,
@@ -212,10 +215,10 @@ If your laptop is unreliable for multi-hour generations, GitHub Codespaces is a 
 | ξ- | Negative reciprocity | Willingness to punish unfair behavior |
 
 ### DPO (Direct Preference Optimization)
-The fine-tuning method we use. It takes pairs of (preferred, dispreferred) responses and adjusts model weights so the preferred response becomes more likely. The key insight of this project is that DPO's training objective is mathematically identical to the Bradley-Terry log-likelihood — which means we can use econometric tools to validate the trained model.
+The fine-tuning method we use. It takes pairs of (preferred, dispreferred) responses and adjusts model weights so the preferred response becomes more likely, while a KL penalty keeps the policy close to the reference model. DPO is a pairwise-preference estimator; in this project it fits the *synthetic* preferences generated by the anchor-based protocol. It is not a constrained estimator that mechanically enforces the GPS anchor moments.
 
-### The J-test
-Our main validation tool. After fine-tuning, we check whether the model's behavior matches out-of-sample moments from the World Values Survey (WVS Wave 7). The J-statistic tells us whether our structural model is overidentified — i.e., whether 6 GPS parameters are enough to explain 30+ behavioral moments.
+### Falsification design
+After fine-tuning, the protocol is evaluated on predeclared tests rather than assumed valid: (i) *anchor transmission* — do the declared anchors change labels and retained pairs in the expected direction? (ii) *policy encoding* — does DPO retain the synthetic contrast? (iii) *anchor relevance* — do real-anchor adapters beat permuted-anchor placebos? (iv) *external transport* — do induced option probabilities improve alignment with independent human response distributions (e.g., WVS Wave 7)? (v) *operator robustness* — do conclusions survive changes to scenario banks, selection, QC, and training seeds? See the working paper ([`../misc/position_paper/position_paper_sca2.pdf`](../misc/position_paper/position_paper_sca2.pdf), §5).
 
 ---
 
@@ -272,7 +275,7 @@ These are documented here so new members understand *why* things are the way the
 1. **English-only generation:** Confirmed that cross-language behavior shifts are minimal for our purposes. Keeps the pipeline simpler and cheaper.
 2. **Facet-first scenario generation:** Each GPS dimension is first decomposed into 4–6 facets before scenario generation. This raises scenario diversity compared with the original notebook.
 3. **Fixed triplet generation:** The high/low response options are generated once per scenario, independent of country, then reused across countries. This removes the old country-specific pair generation flow and makes cross-country comparisons cleaner.
-4. **Separate scoring endpoint:** The scorer endpoint handles both profile-based selection and QC scoring, reducing generator self-preference bias relative to a single-endpoint pipeline.
+4. **Separate scoring endpoint:** QC scoring runs on a dedicated scorer endpoint, reducing generator self-preference bias relative to a single-endpoint pipeline. Profile-based selection is performed by the generator endpoint; see the audit in Appendix B of the working paper for why this stage is being re-examined.
 5. **No nationality references:** Responses should not contain phrases like "As a Mexican..." or "As an American...". We express cultural dispositions through behavioral choices, not identity labels.
 6. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked diagnostically but not filtered on.
 7. **Checkpoint after generation:** The pipeline writes raw pairs and a scenario bank checkpoint before scoring so long runs can be resumed without paying for generation twice.
@@ -280,7 +283,7 @@ These are documented here so new members understand *why* things are the way the
 9. **Early-stop reliability guard:** Stage 2 can stop early on sustained generation failure rates to avoid wasting long runs under heavy provider throttling.
 
 **Known limitations:**
-- Positive reciprocity has only 3 WVS proxy items — J-test power will be low on this dimension
+- Positive reciprocity has only 3 WVS proxy items — external-transport precision will be low on this dimension
 - No human validation yet (Krippendorff's α ≥ 0.7 target is a planned follow-up)
 - Patience and risk-taking WVS proxies have questionable face validity (flagged for review)
 - The pipeline retries transient API failures and can stop early when failure rates remain too high, but it does **not** fall back to closed-provider models or alternate endpoints. See [CLI_GUIDE.md](./CLI_GUIDE.md) for exact behavior.
@@ -292,4 +295,4 @@ These are documented here so new members understand *why* things are the way the
 - Falk, A., Becker, A., Dohmen, T., Enke, B., Huffman, D., & Sunde, U. (2018). [Global Evidence on Economic Preferences](https://doi.org/10.1093/qje/qjy013). *The Quarterly Journal of Economics*, 133(4), 1645–1692.
 - Rafailov, R., Sharma, A., Mitchell, E., Manning, C. D., Ermon, S., & Finn, C. (2023). [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://openreview.net/forum?id=HPuSIXJaa9). *Advances in Neural Information Processing Systems 36*.
 - Capra, C. M., Gonzalez-Bonorino, A., & Pantoja, E. (2025). [LLMs Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5082714). *SSRN Working Paper No. 5082714*.
-- Gonzalez-Bonorino, A. (2026). Synthetic Cultural Agents via Structural Preference Estimation: DPO as Bradley-Terry MLE. *Working paper, EconLLM Lab, ASU*.
+- Gonzalez-Bonorino, A., Biriukova, K., & Capra, M. (2026). [Synthetic Cultural Agents from Aggregate Anchors: A Falsifiable Protocol for Constructing Population-Level Choice Policies](../misc/position_paper/position_paper_sca2.pdf). *EconLLM Lab working paper.*
