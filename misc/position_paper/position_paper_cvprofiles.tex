@@ -1,10 +1,11 @@
 \documentclass[10pt,letterpaper]{article}
 
 % -----------------------------------------------------------------------------
-% Measuring What We Mean — position paper v8 (2026-08-14)
+% Measuring What We Mean — position paper v8 (2026-08-14 rewrite)
 % Construct-identified inference (composition of CV, multiverse, PI).
-% Engine: cvprofiles 3.0.0 (released on PyPI 2026-08-10); WVS/GPS patience
-% application as initial real-data proof of work (frozen scores/network/seed).
+% Engine: cvprofiles 3.0.1 (PyPI 2026-08-14). Confirmatory application:
+% human-only patience + trust at country and country-demeaned cell resolutions.
+% 2026-08-10 K=5 patience freeze (3.0.0) is Appendix E, not the headline.
 % -----------------------------------------------------------------------------
 \usepackage[margin=0.88in,top=0.82in,bottom=0.82in]{geometry}
 \usepackage{mathptmx}
@@ -95,48 +96,47 @@
 
 \vspace{0.6em}
 
-% Fragment for the integrator. NO preamble, NO \begin{document}, NO bibliography.
-% Assumes the v7/v8 preamble macros: \M, \E, \Rset, \Bset, \cvp, \GPS, \WVS,
-% \LLM, \SCA, \DPO, and the colors mist/rulegray; amsmath; global equation
-% numbers. Citations restricted to the verified v8 key list (note: the v8
-% bibliography uses halterman2026, not v7's halterman2024). The only figure
-% cross-reference is Figure~\ref{fig:systems} (assembled by the integrator).
-
 % --- Status box ---------------------------------------------------------------
 \noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\vspace{0.3em}
 \textbf{Status.}
-The companion package \cvp{}~3.0.0 is publicly released (PyPI, 2026-08-10) and used here as an instrument; package development is a parallel project.
-This version reports the \WVS/\GPS{} patience application under a freeze of the score matrix, network, split, seed, and package pin (\cvp{}~3.0.0; verifier \texttt{tools/verify\_wvs\_gps.py}): a \GPS{} positive control, \WVS{} proxies and a composite, open-weight \LLM{} log-probability scores, and a noise negative control, facing one common validity network with held-out country evidence and a downstream estimand.
-The example demonstrates the scientific contract rather than settling the measurement of patience.
-Synthetic data-generating processes remain in Appendix~B where truth is known by construction.
+The companion package \cvp{}~3.0.1 is publicly released (PyPI, 2026-08-14) and used here as an instrument.
+This version reports a human-only application of construct-identified inference to patience and trust at two resolutions---countries and country-demeaned demographic cells---under networks and thresholds frozen before slacks were inspected.
+The 2026-08-10 seven-measure patience freeze, which included open-weight log-probability scores, is retained as an appendix pilot and is not the headline evidence.
+Empty admissible sets, wide uncertainty bands, and disagreement across resolutions are reported as findings.
 \vspace{0.3em}}}
 
 \vspace{0.85em}
 
 % --- Statement of significance -------------------------------------------------
 \section*{Statement of significance}
-Scientists rarely observe constructs such as patience directly; they work through measures.
-Artificial intelligence makes candidate measures cheap, so deciding which measures warrant the intended interpretation becomes the scarce task.
-We compose three traditions—construct validity, multiverse reporting, and partial identification—around four objects: a construct $C$, a finite menu $\M$, a theory-derived validity argument $\Rset(C)$ written as restrictions, and a downstream estimand $\beta(m)$.
-Surviving measures form $\M^*$; the image $\Bset^*$ reports which conclusions survive remaining measurement choice.
-A country-level patience application places a $\GPS{}$ positive control, $\WVS{}$ proxies and a composite, two open-weight log-probability scores, and a noise negative control under one network, with held-out countries and a random-selection floor.
-The selection rule can fail on held-out evidence.
-This paper states the composition and reports an initial proof of work; the experiments that would decide whether the composition has empirical bite are in Section~6.5.
+Scientists rarely observe constructs such as patience or trust directly; they work through measures.
+Artificial intelligence has made candidate measures cheap, so the scarce task is deciding which scores warrant the intended interpretation and which scientific conclusions survive that choice.
+We compose construct validity, multiverse reporting, and partial identification around four objects: a construct $C$, a finite menu $\M$, a theory-derived validity argument $\Rset(C)$, and a downstream estimand $\beta(m)$.
+Survivors form $\M^*$; the image $\Bset^*$ reports remaining disagreement among those who may speak.
+An unrestricted menu of country-level patience measures sign-switches on a development estimand; the same objects, under a declared network, leave a fragile singleton.
+The same grammar applied to trust, and to within-country cells, does not reproduce that singleton.
+The paper's result is that disagreement---across measures, resolutions, and the screen versus the estimand---is the measurement conclusion, not a prelude to a later experiment.
 
 % --- Abstract ------------------------------------------------------------------
 \section*{Abstract}
 Artificial intelligence has sharply reduced the cost of producing candidate measures of latent constructs.
-A researcher can now measure patience with a validated survey module, a proxy item, a composite score, a prompted open-weight language model, or a trained policy.
+A researcher can now measure patience or trust with a validated survey module, a proxy item, a composite, a prompted language model, or a trained policy.
 Abundance creates a selection problem: which measures warrant the interpretation they are given, and which scientific conclusions survive reasonable measurement choice?
 
-We develop construct-identified inference around four objects: a construct $C$, a declared menu $\M$ of candidate measures, a theory-derived validity argument $\Rset(C)$, and a downstream estimand $\beta(m)$.
+We develop construct-identified inference around four objects: a construct $C$, a declared menu $\M$, a theory-derived validity argument $\Rset(C)$, and a downstream estimand $\beta(m)$.
 The validity argument screens the menu into an admissible set $\M^*$; the image $\Bset^*=\{\beta(m):m\in\M^*\}$ reports which results survive measurement choice within the declared contract.
-Selection is made prospectively falsifiable by holding out restrictions or units, and sampling fragility induced by data-dependent screening is reported additively, as an uncertainty band rather than a confidence set for the headline range.
+If $\Rset$ is empty, that image is the unrestricted specification-curve range.
+Selection is made prospectively falsifiable by holding out restrictions, and sampling fragility induced by data-dependent screening is reported additively as an uncertainty band, not as a confidence set for the headline range.
 
-The framework is implemented in the open, model-free package \cvp{}~3.0.0.
-As initial real-world proof of work, seven measures of country-level patience---a \GPS{} positive control, \WVS{} proxy items and a composite, Llama-3.1-8B and Phi-4-mini open-weight log-probability scores, and a noise negative control---face one common nomological network with held-out country evidence and a downstream estimand.
-The headline admissible set retains the \GPS{} measure and the 8B prompt measure, with range $[0.328,0.402]$ (OLS coefficient of the standardized measure on log GDP per capita, education control, $n=41$), at the 100th percentile of the random-selection null; the pooled robust set is empty.
-The example demonstrates the scientific contract rather than settling the measurement of patience.
+The framework is implemented in the open, model-free package \cvp{}~3.0.1.
+On a frozen seven-measure patience menu the empty-network special case recovers the sign-switching range $[-0.219,0.402]$.
+A Campbell--Fiske $2\times 2$ written as ordinary restrictions retains no instrument: at country level the canonical \WVS{} trust item tracks \GPS{} patience more closely than \GPS{} trust.
+The confirmatory application is human-only and two-resolution.
+At the country level, only \GPS{} patience survives an education and risk-discriminant screen ($n=41$), with plug-in coefficient $0.402$ on log GDP per capita after an education control and an uncertainty band $[0.079,0.563]$ that is much wider than the point.
+Several \WVS{} trust facets survive institutional and inequality bars ($n=35$) with range $[0.107,0.391]$, but the coverage band crosses zero.
+Inside countries, after country demeaning, thrift (Q13) is a weak admissible representation of \GPS{} patience and perseverance (Q14) is not; no \WVS{} trust measure clears the predeclared education bar, even though several multi-item facets still co-move with \GPS{} trust.
+The result is not a settled measure of either construct.
+It is that the same objects produce different speaker lists at different resolutions, and that those disagreements are what the composition is for.
 
 \noindent\textbf{Keywords:}
 construct validity; measurement uncertainty; partial identification; operationalization; multiverse; AI measurement; construct-identified inference
@@ -274,14 +274,15 @@ $\Bset^*$ is the image of the estimand over measures that survive a declared val
 Restrictions or units can be held out prospectively, and validity-guided selection can fail---against held-out evidence and against a random-selection baseline.
 \textit{(iii) Separation of headline from diagnostics.}
 The headline range is reported separately from additive sampling diagnostics: an uncertainty band (selection uncertainty, not a confidence set), an empty-replicate rate, and boundary attribution.
-\textit{(iv) An auditable, model-free implementation and a real-data proof of work.}
-The method ships in the released package \cvp{}~3.0.0~\cite{cvprofiles}, and the empirical example places human and AI measures under one contract: one menu, one validity network, held-out country evidence, and a downstream estimand.
+\textit{(iv) An auditable, model-free implementation and a two-resolution application.}
+The method ships in the released package \cvp{}~3.0.1~\cite{cvprofiles}.
+The confirmatory application places human measures of patience and of trust under one contract at two resolutions, with leftover restrictions, additive sampling diagnostics, and two nested special cases computed on the same objects.
 
 \subsection{Roadmap}
 The remainder of the paper locks two commitments.
 Novelty is claimed only in the operational composition of three existing traditions, in a selection rule that can fail, and in a released implementation.
-The patience application is a proof of work for that contract, not a general standard journals should require.
-Section~2 situates the argument among three traditions; Section~3 formalizes the objects; Section~4 documents the released implementation; Section~5 reports the real-data proof of work; Section~6 states what the framework does and does not claim, with the open implementation and its boundaries detailed in Section~6.5; Section~7 concludes.
+The application is evidence about two constructs at two resolutions, not a general standard journals should require and not a measure of culture.
+Section~2 situates the argument among three traditions; Section~3 formalizes the objects, including the empty-network and Campbell--Fiske special cases; Section~4 documents the released implementation; Section~5 reports the two-resolution application; Section~6 states what the framework does and does not claim; Section~7 concludes.
 
 \section{Three traditions, one missing layer}
 \label{sec:traditions}
@@ -483,12 +484,20 @@ with the transparent scalar summary
 defined whenever $\M^*\neq\emptyset$.
 
 The contrast with an unrestricted multiverse makes the ordering concrete~\cite{simonsohn2020}.
+If $\Rset=\emptyset$, then $\M^*=\M$ and $[L,U]$ is the specification-curve range over the full menu: every candidate is entitled to speak, and remaining disagreement is reported rather than screened.
+That object is a named special case of \eqref{eq:range}, not a missing network.
 Suppose five candidate measures deliver $\beta$ values $0.10$, $0.12$, $0.35$, $-0.04$, and $0.38$.
 Reported over the full menu, the conclusion ranges from $-0.04$ to $0.38$: sign-switching, and fragile on its face.
 If the validity argument retains only the two measures with $\beta(m)=0.35$ and $\beta(m)=0.38$, the construct-identified range $[0.35,0.38]$ is narrow, and the conclusion survives measurement choice.
 If all five survive, every candidate meets $\Rset(C)$ but admissible measures disagree on $\beta$, so no single estimand conclusion survives measurement choice within the declared menu.
 The multiverse domain is $\M$; the construct-identified domain is $\M^*$.
 $\Bset^*$ is not an unconditional identified set for the latent construct; it is the set of results produced by measures that survive a declared validity argument~\cite{manski2003,molinari2020}.
+
+The same equations recover two classical objects.
+If $\M^*$ is treated as known, endpoint inference for $[L,U]$ is ordinary inference for extrema over a fixed finite set, and a Bonferroni union of intervals is a conservative cross-check in the spirit of Imbens and Manski~\cite{imbensmanski2004}.
+If each $g_r$ is a Chen--Rambachan--Tamer restriction on error correlation~\cite{chenrttamer2026}, the identified set defined by \eqref{eq:restriction}--\eqref{eq:range} is their set.
+Campbell and Fiske's monotrait--heteromethod and heterotrait--monomethod cells~\cite{campbell1959} are likewise instances of \eqref{eq:restriction}: a convergent floor $\tau_{\mathrm{conv}}$ is a $\mathrm{corr\_min}$ restriction against a partner column, and a discriminant ceiling $\tau_{\mathrm{disc}}$ is a $\mathrm{corr\_zero}$ restriction.
+The paper computes both special cases on frozen scores in Section~\ref{sec:app-special}.
 
 \subsection{Falsifying the validity rule}
 \label{sec:falsify}
@@ -559,7 +568,7 @@ Because $\M^*$ is estimated, the following reporting layer is \emph{mandatory an
 \begin{enumerate}[label=(\roman*)]
 \item \textbf{Uncertainty band.}
 A units-resampling bootstrap recomputes slacks, $\M^*$, and the endpoints in every replicate (seeded); report per-side quantiles over non-empty replicates.
-The resampling unit must be declared so that every slack and every $\beta(m)$ is a function of the resampled units; in the patience application the unit is the country and the \LLM{} columns are frozen maps, not resampled pretraining draws.
+The resampling unit must be declared so that every slack and every $\beta(m)$ is a function of the resampled units; in the country profiles the unit is the country, and in the cell profiles the unit is the demographic cell.
 Label the object an \emph{uncertainty band}: selection uncertainty on the pooled sample, not a confidence interval and not a holdout-robustness band.
 The fixed-selection literature takes the admissible set as given~\cite{imbensmanski2004,stoye2009}; here selection is estimated.
 \item \textbf{Empty-replicate rate.}
@@ -603,152 +612,151 @@ The engine implements the state machine
 and accepts four plain-text inputs---scores, roles, network, and target specification---producing slacks, $\M^*$, $\Bset^*$, a survivors-only range, holdout verdicts, and the additive diagnostics of Section~\ref{sec:uncertainty}.
 Frozen runs hash the score matrix, network, and target specification into a reproducibility record, and an empty $\M^*$ is an exit-success scientific finding rather than an exception.
 The engine is deliberately score-agnostic and model-free: it contains no language model, searches no prompt space, and writes no theory.
-This separation is a paper--package contract: the package is released on PyPI (version 3.0.0, 2026-08-10) and used here as an instrument; the \LLM{} scoring adapters used in Section~\ref{sec:app} are upstream measurement generators, open-sourced separately, and never engine features.
-Software cannot resolve disagreements about what patience, trust, or culture means; it can make those disagreements inspectable.
+This separation is a paper--package contract: the package is released on PyPI (version 3.0.1, 2026-08-14) and used here as an instrument.
+Version 3.0.1 adds a named \texttt{empty\_R} contract so that $\Rset=\emptyset$ is expressible and fail-loud rather than a silent admit-all; default \texttt{empty\_R=false} is omitted from the network hash, so pre-3.0.1 freezes remain bit-stable.
+Software cannot resolve disagreements about what patience or trust means; it can make those disagreements inspectable.
 Competing researchers can author different networks, thresholds, or menus and see exactly which commitment changes the conclusion---a feature, not a hidden optimizer.
 
-\section{Real-world proof of work: measuring patience across countries}
+\section{Two constructs, two resolutions}
 \label{sec:app}
 
-The framework is applied end to end to a substantively consequential, latent construct with a strong human measurement benchmark.
-The example demonstrates the scientific contract---heterogeneous measures, one common validity network, held-out country evidence, negative controls, and a downstream estimand---rather than settling the measurement of patience.
+The framework is applied to patience and trust, each at two resolutions, under networks and thresholds frozen before slacks were inspected.
+The menus are human-only: \GPS{} country scores, \WVS{} Wave~7 items and composites, and a seeded noise control.
+Open-weight log-probability scores appear only in the 2026-08-10 appendix pilot.
+Country $\beta$ is the standardized OLS coefficient of the measure on log GDP per capita with a country-mean education control; cell $\beta$ is the correlation of the measure with the matching \GPS{} cell mean after country demeaning.
+Headline admission uses the restriction-stage split of Section~\ref{sec:falsify}: leftover restrictions never vote on $\M^*_S$.
+Every confirmatory run reports an uncertainty band, an empty-replicate rate, and a $\tau$-grid as additive diagnostics ($n_{\mathrm{boot}}=1000$, $\alpha=0.10$, seed 20260814).
 
-\subsection{Construct and observation}
+\subsection{Constructs, frames, and menus}
 \label{sec:app-construct}
 
 Patience is time preference as operationalized by the Global Preference Survey, whose module was designed by selecting and weighting survey items for predictive validity against incentivized experimental measures and validated across countries~\cite{falk2018,falk2023}.
-Country-level \GPS{} patience therefore provides a positive-control operationalization with an unusually clear validation history.
-The observation frame joins \GPS{} country-level patience with World Values Survey Wave~7 country means (thrift, Q13; perseverance, Q14), the education auxiliary used by the network (Q275 country mean), the risk-preference auxiliary (GPS country level), and the downstream outcome (WDI \texttt{log\_gdp\_pc}, snapshot-hashed).
-Data hygiene is explicit: respondents below a floor of 30 per country are excluded, WVS missing codes $-1$ through $-5$ are masked and never imputed, and the World Bank snapshot is pinned by checksum.
+A valid measure should rise with human capital and should not collapse into risk preference.
+Trust is the belief that other people have good intentions, or that most people can be trusted.
+\GPS{} trust is a single experimentally validated item; \WVS{} Q57 is the canonical survey item; in-group, out-group, and institution facets are distinct objects of trust~\cite{glaser2000,sapienza2013}.
+A valid measure should co-move with institutional quality and move opposite income inequality~\cite{aghion2010,bjornskov2008}.
+When \GPS{} trust sits in the menu it is a peer candidate, not a bar.
 
-\subsection{Menu and generators}
-\label{sec:app-menu}
+The country frame is the inner join of \GPS{}, \WVS{} Wave~7, and a pinned WDI snapshot, after a respondent floor of 30 and after masking \WVS{} missing codes $-1$ through $-5$ without imputation.
+Patience is observed for 41 countries; trust, which also requires WGI rule of law and a gini series, for 35.
+Cells are sex-by-age-band means (six bands from 18--24 through 65+) built separately in \GPS{} individual files and in \WVS{}, then inner-joined, with a minimum of 20 respondents per cell and at least six cells per country: 480 cells in 42 countries.
+The confirmatory cell estimand country-demeans every column that enters $\Rset$ or $\beta$ before SCORE.
+A pooled (undemeaned) cell run remains on disk as a contrast; it is not the within-country conclusion.
 
-The menu contains seven measures spanning conventional survey technology, composites, open-weight language models, and a negative control (Table~\ref{tab:menu}).
-The two prompt arms are produced by a declared upstream protocol: a WVS-style item prompt, log-probability scoring over the response options at temperature~0 with the model file (GGUF) pinned by checksum, and a declared scalarization to a country score (Appendix~\ref{app:llm}).
-Engineering origin confers no standing: the \GPS{} instrument, the survey proxies, the composites, and the model scores all face the same construct-level network.
+The patience country menu is \GPS{} patience, \WVS{} Q13 (thrift), Q14 (perseverance), their declared composite $z(\mathrm{Q13})+z(\mathrm{Q14})$, and noise.
+The trust country menu is \GPS{} trust, Q57, in-group, out-group, institution, the mean of the three multi-item facets (Q57 excluded), and noise.
+Cell menus drop the \GPS{} column from $\M$ and use it only as the $\beta$ outcome, so recovery cannot be tautological.
 
-\begin{table}[t]
-\centering
-\small
-\caption{The patience menu.\
-All candidates face the same validity network; the table does not presume which will survive.}
-\label{tab:menu}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.9cm} >{\raggedright\arraybackslash}p{4.1cm} X@{}}
-\toprule
-\textbf{Candidate} & \textbf{Information source} & \textbf{Scientific role} \\
-\midrule
-$m_{\mathrm{gps\_patience}}$ & \GPS{} country-level patience & Positive control; experimentally validated instrument. \\
-$m_{\mathrm{wvs\_q13}}$ & WVS~7 Q13 (thrift), country mean & Cheap survey proxy; semantically related, not a positive control. \\
-$m_{\mathrm{wvs\_q14}}$ & WVS~7 Q14 (perseverance), country mean & Cheap survey proxy; semantically related, not a positive control. \\
-$m_{\mathrm{composite}}$ & $z(\mathrm{Q13})+z(\mathrm{Q14})$ & Explicit composite; declared scalarization, no hidden weighting. \\
-$m_{\mathrm{prompt\_a}}$ & Meta-Llama-3.1-8B-Instruct Q8\_0, log-prob & Open-weight \LLM{} measurement; the science. \\
-$m_{\mathrm{prompt\_b}}$ & Phi-4-mini 3.8B Q8\_0, log-prob & Open-weight \LLM{} measurement; the science. \\
-$m_{\mathrm{noise}}$ & Seeded Gaussian, fixed seed & Negative control; a discriminating screen should reject it. \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\subsection{Validity network and holdout design}
+\subsection{Networks}
 \label{sec:app-network}
 
-The network is authored from the construct interpretation, and no restriction references a menu measure (the anti-circularity lock; the outcome enters only through $\beta$):
-\begin{align}
-r_{\mathrm{conv}}&:\ \mathrm{Corr}(m,\mathrm{q275\_mean})\ge 0.20
-  &&\text{(select stage; patience rises with education)}\\
-r_{\mathrm{mono}}&:\ \text{monotone rank in }\mathrm{q275\_mean}\ge 0.15
-  &&\text{(holdout stage; patience monotone in education)}\\
-r_{\mathrm{disc}}&:\ \bigl|\mathrm{Corr}(m,\mathrm{risktaking})\bigr|\le 0.35
-  &&\text{(select stage; patience distinct from risk preference)}
-\end{align}
-with slack tolerance $\delta=0$.\footnote{Threshold provenance is part of the scientific record. The discriminant bar was re-anchored from $0.30$ to $0.35$ before any frozen number, on verified population evidence: the GPS country-level correlation between patience and risk-taking is $0.230$ in Falk et al.~\cite{falk2018} (Table IV, $n=76$) and $0.358$ in Hanushek et al.~\cite{hanushek2022}; the GPS risk item itself traces to~\cite{dohmen2011}. The $0.30$ run was retained as a motivating diagnostic rather than discarded. This is the doctrine of Section~\ref{sec:restrictions} in operation: thresholds are literature-anchored commitments made before the data, never post-hoc rescues.}
-The downstream target is $\beta(m)=\texttt{ols\_coef}$ of the standardized measure on \texttt{log\_gdp\_pc} with \texttt{q275\_mean} as control.
+Patience at the country level is screened by $\mathrm{Corr}(m,\mathrm{q275\_mean})\ge 0.20$ (select) and $|\mathrm{Corr}(m,\mathrm{risktaking})|\le 0.35$ (select), with leftover rank-monotonicity in education at $0.15$.
+The education floor sits well below the published country association of patience with years of schooling~\cite{falk2018}; the discriminant bar admits the published patience--risk range of $0.230$~\cite{falk2018} to $0.358$~\cite{hanushek2022} and still rejects $r\gtrsim 0.6$.
+Trust at the country level is screened by $\mathrm{Corr}(m,\mathrm{rule\_of\_law})\ge 0.30$ and a negative $\mathrm{corr\_sign}$ on gini at $0.10$, with leftover education at $0.20$.
+There is no $\mathrm{corr\_min}$ against \GPS{} trust, because that column is in the menu.
+Cell networks keep only the education implication, now on country-demeaned cell education, with leftover rank-monotonicity; GDP, gini, and rule of law do not vary within country and are not used.
 
-Falsifiability comes from a country units-split: pooled $K{=}5$ folds (seed 20260810, split seed 17, 41 countries), admission on each fold's training frame, compliance demanded on the held-out frame, and a random-selection baseline (500 seeded draws, subset sizes 1--4).
-Reporting posture is stated explicitly: $\M^*_{\mathrm{select}}$ is the headline object by a 2026-08-10 amendment after a single 80/20 split admitted noise on every held-out bar and returned an empty robust set.
-Per-fold compliance remains a diagnostic.
-The redesign is a change of \emph{test}, recorded with the earlier runs; it is not prospective falsifiability of the original contract.
-Assumption~A.5 applies to the frozen amended contract, not to the discarded split.
+\subsection{Nested special cases}
+\label{sec:app-special}
 
-\subsection{What the accepted frozen run shows}
-\label{sec:app-results}
+On the frozen seven-measure patience score table of the 2026-08-10 pilot, setting $\Rset=\emptyset$ in \cvp{}~3.0.1 admits the full menu and returns $[L,U]=[-0.219,0.402]$, which is exactly the minimum and maximum of the seven $\beta$ values.
+The composition claim of Section~\ref{sec:propagate} is therefore a computed result, not a verbal nesting.
+The same table already showed that an unrestricted multiverse of patience operationalizations sign-switches on the development estimand.
 
-Table~\ref{tab:results} reports slacks on a representative (fold-0) training frame, pooled standardized $\beta$ values, and the fold-level selection and compliance counts.
-The headline result is:
-\begin{quote}
-\emph{The admissible set across all pooled folds is $\M^*_{\mathrm{select}}=\{m_{\mathrm{gps\_patience}},\,m_{\mathrm{prompt\_a}}\}$, with construct-identified range $[L,U]=[0.328,\,0.402]$, at the 100th percentile of the random-selection null (subset sizes 1--4).}
-\end{quote}
-Four properties of the run carry the scientific weight.
-\textbf{(i) The screen discriminates.} The positive control ($m_{\mathrm{gps\_patience}}$) survives selection in all five folds, and the negative control ($m_{\mathrm{noise}}$) is rejected in every fold---an uncorrelated score does not pass the convergent and monotonicity tests.
-\textbf{(ii) An AI measure earns admission under the same contract.} The 8B open-weight prompt measure is selected in all five folds alongside the validated instrument; its fold-0 convergent slack against education is positive (+0.153), unlike the WVS proxies.
-\textbf{(iii) The robust set is empty.} No measure complies on all five held-out frames ($m_{\mathrm{prompt\_a}}$ 3/5, $m_{\mathrm{gps\_patience}}$ 1/5; noise and Q13 once each), so $\M^*_{\mathrm{robust}}=\varnothing$.
-Under posture~(a) emptiness does not replace the select-set range.
-It is reported as a finding: the hold-frame screen is low-powered at $n_{\mathrm{hold}}\approx 8$, and the validated instrument fails the monotonicity restriction we wrote (fold-0 slack $-0.383$ against $\tau=0.15$).
-A reader may treat that failure as evidence against this $\Rset(C)$ at country level.
-\textbf{(iv) The discriminant threshold} was re-anchored from $0.30$ to $0.35$ before the accepted freeze, on published country-level correlations in $[0.23,0.36]$; the $0.30$ run is retained as a motivating diagnostic.
+Campbell and Fiske's $2\times 2$ is written as eight ordinary restrictions on a peer menu of \GPS{} patience, \WVS{} child-qualities, \GPS{} trust, and Q57, with $\tau_{\mathrm{conv}}=0.30$ and $\tau_{\mathrm{disc}}=0.35$ ($n=41$).
+The convergent floor sits at a published survey--behavioral trust bound and below the Falk et al.\ GPS--WVS trust Spearman of $0.49$~\cite{falk2018}; the discriminant ceiling admits their country Corr(patience, trust) of $0.190$.
+Both the classical per-instrument retain set and the engine's global $\M^*$ are empty.
+The binding cells are not subtle: \GPS{} patience versus child-qualities is $r=-0.252$; \GPS{} trust versus Q57 is $r=0.284$, just under the floor; Q57 versus \GPS{} \emph{patience} is $r=0.825$.
+Partialling log GDP per capita and education leaves that last association at $0.706$.
+The inequalities are Campbell--Fiske cells, so the psychometric bridge is formally recovered.
+Substantively the $2\times 2$ rejects every instrument: at country level the canonical \WVS{} trust item is closer to \GPS{} time preference than to \GPS{} ``best intentions.''
+That is a finding about the named special case, not a reason to lower $\tau$ after seeing slacks.
 
-One substantive pattern deserves a careful, ecologically caveated paragraph.
-At country level, the WVS thrift and perseverance items are \emph{negatively} associated with education (convergent slacks $-0.45$ and $-0.76$ in fold 0) and with log GDP per capita (pooled $\beta$ $-0.17$ and $-0.19$), while \GPS{} patience and the 8B prompt measure co-move with development.
-Country aggregates of ``thrift'' and ``determination'' thus behave opposite to the patience--development association that the validated instrument and the larger open model reproduce.
-This is an observation about country-level aggregation, not an individual-level claim, and it is exactly the kind of signal a menu-level screen exposes that a single retained operationalization would hide.
+\subsection{Country profiles}
+\label{sec:app-country}
+
+Table~\ref{tab:twores} collects the four confirmatory profiles.
+Only \GPS{} patience survives the country patience screen.
+Its education slack is $+0.275$ and its risk-discriminant slack is $+0.075$; leftover monotonicity on the \emph{full} 41-country frame is $+0.233$.
+Q13, Q14, and the composite fail education hard (slacks $-0.533$, $-0.777$, $-0.722$) and have negative $\beta$ on log GDP ($-0.166$, $-0.195$, $-0.219$).
+The plug-in range is the singleton $0.402$.
+The uncertainty band is $[0.079,0.563]$, and $29.7$~percent of bootstraps empty $\M^*$.
+The $\tau$-grid empties the set at $\lambda=0.5$ because the discriminant bar tightens below the sample $|r|$ of patience with risk.
+The country singleton is therefore selection-fragile: the plug-in point is not a narrow scientific conclusion.
+
+Trust at the country level is the opposite pattern.
+\GPS{} trust fails rule of law (slack $-0.176$) and leftover education; institution trust fails the same rule-of-law bar (slack $-0.425$) and has negative $\beta$ ($-0.092$).
+Q57, in-group, out-group, and the multi-item composite survive.
+The plug-in range $[0.107,0.391]$ is the image of those four coefficients.
+The coverage band $[-0.016,0.639]$ crosses zero, so the plug-in interval cannot be advertised as a narrow positive development gradient.
+Leftover education is passed by Q57, in-group, and out-group and failed by the composite (slack $-0.052$).
+The tool's holdout pass rate is $0.75$ against a random-subset mean of $0.52$ at $k=1$; that is not a strong win over chance at this leftover test.
+
+\subsection{Within-country cells}
+\label{sec:app-cells}
+
+Country-demeaning the 480 cells inverts both pooled-cell stories, which is why the pooled runs are not confirmatory.
+Q13 was rejected in the undemeaned table because richer countries have both more education and lower thrift endorsement.
+Inside countries the sign flips: education slack $+0.051$, leftover monotonicity $+0.060$, and $\beta$ versus \GPS{} patience $+0.245$, with coverage $[0.174,0.335]$ and an empty-replicate rate of $0.17$.
+Q14 stays anti-aligned (slack $-0.564$, $\beta=-0.326$).
+The composite is Q13 dragged under the bar by Q14.
+Q13's education slack is only $+0.051$; $\lambda=1.5$ empties $\M^*$.
+At the resolution the design claimed, thrift is a weak admissible representation of \GPS{} patience and perseverance is not.
+The country-level rejection of the \WVS{} patience \emph{menu} remains, because Q13 still fails $\mathrm{corr\_min}(\mathrm{q275\_mean})$ across countries.
+Resolution disagreement is the result.
+
+Every trust facet fails the education bar after demeaning, including at $\lambda=0.5$.
+The empty set is not a close call.
+Q57's pooled cell survival was between-country: after demeaning, $\beta$ versus \GPS{} trust is $+0.052$.
+In-group, out-group, institution, and the composite still recover \GPS{} trust inside countries ($0.224$, $0.211$, $0.285$, $0.318$) without tracking within-country education.
+The stated admission bar and the GPS-recovery estimand disagree.
+Under the predeclared education restriction, no \WVS{} trust measure is admissible at the within-country cell resolution; several multi-item facets nonetheless co-move with \GPS{} trust, and Q57 does not.
 
 \begin{table}[t]
 \centering
 \small
-\caption{Frozen-run results (41 countries, pooled $K{=}5$).
-Slacks are on the fold-0 training frame (positive = satisfies the restriction at the stated threshold); $\beta$ is the pooled standardized OLS coefficient on \texttt{log\_gdp\_pc} with \texttt{q275\_mean} control; selection and compliance are fold counts out of five.}
-\label{tab:results}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} rrrrrr@{}}
+\caption{Confirmatory two-resolution profiles (\cvp{}~3.0.1, seed 20260814, $n_{\mathrm{boot}}=1000$).
+Country $\beta$ is standardized OLS on log GDP per capita with an education control; cell $\beta$ is the correlation with the matching \GPS{} cell mean after country demeaning.
+Coverage is the additive uncertainty band at $\alpha=0.10$.
+Pooled (undemeaned) cell runs are omitted: they are not the within-country estimand.}
+\label{tab:twores}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.7cm} r >{\raggedright\arraybackslash}p{3.4cm} r r r@{}}
 \toprule
-\textbf{Measure} & $s_{\mathrm{conv}}$ & $s_{\mathrm{mono}}$ & $s_{\mathrm{disc}}$ & $\beta$ & \textbf{Selected} & \textbf{Compliant} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-5}\cmidrule(lr){6-7}
- & ($\theta{=}0.20$) & ($\theta{=}0.15$) & ($\theta{=}0.35$) & (pooled) & (of 5) & (of 5) \\
+\textbf{Profile} & $n$ & $\M^*$ & $[L,U]$ & \textbf{Coverage} & \textbf{Empty-rep.} \\
 \midrule
-$m_{\mathrm{gps\_patience}}$        & $+0.298$ & $-0.383$ & $+0.028$ & $+0.4025$ & 5 & 1 \\
-$m_{\mathrm{wvs\_q13}}$        & $-0.453$ & $-0.317$ & $+0.143$ & $-0.1660$ & 0 & 1 \\
-$m_{\mathrm{wvs\_q14}}$        & $-0.765$ & $-0.717$ & $+0.300$ & $-0.1948$ & 0 & 0 \\
-$m_{\mathrm{composite}}$       & $-0.678$ & $-0.650$ & $+0.266$ & $-0.2187$ & 0 & 0 \\
-$m_{\mathrm{prompt\_a}}$  & $+0.153$ & $+0.433$ & $+0.326$ & $+0.3275$ & 5 & 3 \\
-$m_{\mathrm{prompt\_b}}$  & $-0.059$ & $-0.017$ & $+0.234$ & $+0.3739$ & 1 & 1 \\
-$m_{\mathrm{noise}}$      & $-0.342$ & $+0.100$ & $+0.231$ & $+0.0199$ & 0 & 1 \\
+Patience, country & 41 & \{\GPS{} patience\} & $0.402$ & $[0.079,0.563]$ & $0.297$ \\
+Trust, country & 35 & \{Q57, in, out, composite\} & $[0.107,0.391]$ & $[-0.016,0.639]$ & $0.002$ \\
+Patience, cells & 480 & \{Q13\} & $0.245$ & $[0.174,0.335]$ & $0.170$ \\
+Trust, cells & 480 & $\emptyset$ & --- & --- & $1.000$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The headline range is the image of $\beta$ on the survivors only: $[L,U]=[\beta(m_{\mathrm{prompt\_a}}),\,\beta(m_{\mathrm{gps\_patience}})]=[0.328,\,0.402]$.
-The fold-0 convergent slack of $m_{\mathrm{prompt\_b}}$ is $-0.059$; a correlation standard error of order $1/\sqrt{41}$ puts several slacks on the boundary, so this design does not meet the separation condition of Proposition~A.1.
-Section~\ref{sec:uncertainty} requires an uncertainty band, empty-replicate rate, and boundary flags as an additive layer on this frozen score matrix; those objects are implemented in \cvp{}~3.0.0 and are not in the accepted summary.
-An unrestricted multiverse over the full menu would span $[-0.219,\,0.402]$---negative at one end, fragile on its face---while the construct-identified range is positive and narrow.
-That unrestricted span is exactly \eqref{eq:range} with $\Rset=\emptyset$.
-This is the ordering of Section~\ref{sec:propagate} made concrete: rejected measures remain diagnostically visible in Table~\ref{tab:results}, but they do not determine the robustness range.
+\subsection{What the application is allowed to mean}
+\label{sec:app-read}
 
-\subsection{Why the design is falsifiable}
-\label{sec:app-falsifiable}
+Validity decides who may speak.
+The range reports leftover disagreement among those who may.
+The band reports that the speaker list itself is noisy.
+Leftover restrictions ask whether unseen implications still agree.
 
-The application contains several ways to fail, and each is a scientific finding rather than a software error: the negative control can survive selection; the validated positive control can fail; a measure can pass selection and fail the held-out countries; the robust set can be empty; and the downstream range can remain wide or change sign.
-The random-selection baseline makes the comparative claim concrete---the tool's survivors sit at the 100th percentile of random subsets on the held-out moments, and a future replication that falls to the median would falsify the predictive content of this network.
+Read that way, the application does not deliver a preferred measure of patience or of trust.
+An unrestricted patience menu sign-switches; the validity screen leaves a GPS singleton whose sampling fragility the band refuses to hide.
+\WVS{} thrift and perseverance are not interchangeable proxies: inside countries one weakly recovers \GPS{} patience and the other points the wrong way.
+Trust's country survivors clear external institutional bars that \GPS{} trust itself fails, and the same education implication that admits Q13 inside countries empties the entire trust cell menu.
+Q57 tracks \GPS{} patience at country level and does not recover \GPS{} trust inside countries.
+Those are disagreements the composition is designed to make inspectable.
+They are not a license to move $\tau$, to promote the 2026-08-10 posture-(a) freeze, or to call the menus a measure of culture.
 
-\subsection{Threats to interpretation and claim boundaries}
-\label{sec:app-threats}
+Four concerns travel with every reading.
+The country samples are small ($n=41$ and $n=35$), so units-split holdout is power-limited and was not used as headline.
+Thresholds remain researcher-owned commitments; their provenance is auditable and the $\tau$-grid is reported, but they are still judgment.
+Cell country-demeaning was a dated estimand amendment after a diagnostic pooled-versus-demeaned correlation check, not a post-hoc rescue of $\theta$.
+Anchors and outcomes are separated by construction---GDP is $\beta$-only; \GPS{} trust is never a bar when it is in the menu---but circularity is a standing risk rather than a solved problem.
 
-Four concerns travel with every reading of the result.
-First, the country-level sample is small ($n=41$), so holdout compliance is low-powered and the boundary diagnostics matter.
-Second, thresholds and menu membership carry substantive judgment; their provenance---including the pre-freeze re-anchor---is auditable but remains judgment.
-Third, prompt or model search performed before a score enters the frozen menu is an upstream researcher degree of freedom and must be documented (Appendix~\ref{app:llm}).
-Fourth, anchors and outcome must not be allowed to play every role at once; here the outcome is $\beta$-only and no restriction references a menu measure, but the circularity concern is stated rather than assumed away.
-The claim boundaries are correspondingly narrow: the empty robust set and the rejection of the WVS proxies reject the pair (menu, network) at country aggregation; they say nothing about any single measure's latent validity, and the survival of $m_{\mathrm{prompt\_a}}$ does not make it the construct.
-AI agreement is not independent validation: the two prompt arms share pretraining families, so co-admission of $m_{\mathrm{gps\_patience}}$ and $m_{\mathrm{prompt\_a}}$ is not two independent validations.
-The Independence and exclusions fields of Table~\ref{tab:adapter} are required records for those arms and are not filled here.
+The framework remains modular: a new generator can join a menu without rewriting the network, and engineering sophistication is not construct validity~\cite{rafailov2023,plural2026,palms2026}.
+That modularity is not a license to treat the present human-only application as an AI-measurement result.
 
-\subsection{Modularity}
-\label{sec:app-modularity}
-
-The framework is intentionally modular: a new generator can join the menu without rewriting the network.
-A preference-trained adapter, for example, would enter as one candidate under the same screen; training on population moments is not self-validation, because the screen can reject the trained policy like any other measure.
-The defense against a generator trained to pass the known restrictions is procedural---frozen network, holdout-stage restrictions, and the random floor---and the pooled $K{=}5$ result shows the screen is binding even for the positive control.
-DPO-style preference optimization~\cite{rafailov2023} and population-alignment pipelines~\cite{plural2026,palms2026} are generators in this sense: their engineering sophistication is not construct validity.
-
-% faithful to the v7 first-principles spine).
 \section{What follows---and what does not}
 \label{sec:discussion}
 
@@ -772,20 +780,22 @@ Domain-specific validity evidence changes; the composition does not.
 \subsection{Researcher-owned validation gates in automated science}
 Automation can expand the menu, compute scores, and execute a frozen network.
 It should not silently redefine the construct, rewrite the network after seeing results, or treat correlated model outputs as independent evidence.
-A credible automated-science architecture therefore needs a researcher-owned, contestable validation gate---one that can itself fail, and whose commitments can be compared across research teams (Appendix~\\ref{app:automation}).
+A credible automated-science architecture therefore needs a researcher-owned, contestable validation gate---one that can itself fail, and whose commitments can be compared across research teams (Appendix~\ref{app:automation}).
 The most direct failure mode is Goodharting: a generator trained explicitly against the known restrictions.
 The defenses are procedural rather than magical---freeze the network and thresholds before final scoring, preserve negative controls, reserve restrictions or units, and keep generator provenance separate from validity evidence.
 
-\subsection{The decisive experiments}
+\subsection{What this application decides---and what remains}
 \label{sec:agenda}
-This version reports an initial demonstration.
-The following experiments, not this application, decide whether the composition changes scientific conclusions.
+The empirical results of Section~\ref{sec:app} are not a preliminary agenda waiting for future experiments to decide whether construct-identified inference has bite; they are direct evidence of that bite on two consequential constructs across two resolutions.
+First, on country-level patience, the unrestricted specification curve spans $[-0.219, 0.402]$, while the nomological screen isolates the validated instrument and exposes that its point estimate ($0.402$) is sampling-fragile ($[0.079, 0.563]$) under units resampling.
+Second, on within-country demographic cells, the screen discriminates among semantically related proxies: thrift (Q13) survives as a weak representation of time preference ($\beta = 0.245$), while perseverance (Q14) is anti-aligned.
+Third, on trust, the framework shows that single-item generalized trust (Q57) tracks development and patience at the country level but fails to recover GPS trust inside countries, whereas multi-item facets co-move with GPS trust without tracking within-country education.
+
+What remains is not justifying the necessity of construct validity, but extending its empirical scale:
 \begin{enumerate}[label=(\roman*)]
-\item \textbf{Consequentiality.} Show that restricting the menu to $\M^*$ materially changes or clarifies $\Bset^*$ relative to an unrestricted multiverse---ideally a case where the multiverse looks fragile and the construct-identified range is narrow, or where the screen reverses the sign of the conclusion.
-\item \textbf{Stronger held-out falsification.} Run restriction-stage and units splits with adequate power, and report survivor pass rates against random, single-anchor, and predictive-selection baselines; the current application's pooled robust set is empty precisely because holdout power is limited.
-\item \textbf{Independence of validity evidence.} Use non-overlapping anchors, preregister prompt and model search, and keep training data, auxiliaries, and outcomes separate by construction; human--model invariance tests can enter the network as declared restrictions rather than assumptions~\cite{zeinfeld2026}.
-\item \textbf{Replication across constructs and samples.} Extend the protocol to the six \GPS{} dimensions, to trust~\cite{glaser2000,sapienza2013,butler2016}, and to risk, and to individual-level frames where ecological inference is not the question.
-\item \textbf{Threshold and menu provenance.} Report $\theta$-grids and menu-perturbation sensitivity so that the researcher-owned commitments are auditable at the same resolution as the headline range.
+\item \textbf{Multimodal and LLM generators.} Evaluate generative language-model representations against these same frozen human networks, requiring the adapter provenance cards of Appendix~\ref{app:llm}.
+\item \textbf{High-dimensional demographic panels.} Scale cell-mean and individual-level gradient evaluations to broader survey intersections where within-country variation provides rich identification.
+\item \textbf{Pre-registered construct registries.} Build open libraries of nomological networks, threshold justifications, and candidate menus so that researchers can contest measurement definitions transparently.
 \end{enumerate}
 
 \subsection{Open implementation and community}
@@ -1006,15 +1016,16 @@ Interventions in LLM-simulated-user experiments can induce user drift, motivatin
 The most direct Goodharting failure is training a generator against the known restriction network; the defenses are procedural---freeze $\Rset$ and $\tau$ before final scoring, preserve negative controls, reserve restrictions or units, and keep generator provenance separate from validity evidence.
 The medium-run opportunity is a community registry of construct definitions, frozen score matrices, researcher-authored networks, and reproducible audits---a way to make disagreements legible rather than a closed ``verifiable reward'' for autonomous science.
 
-\section{Open-weight LLM measurement protocol}
+\section{Open-weight LLM measurement protocol and appendix pilot}
 \label{app:llm}
 
 LLM outputs enter the framework only after they are reduced to declared score columns.
 For a binary or ordered response prompt, a log-probability scalarization uses the model-implied probability or log-odds assigned to prespecified answer tokens.
 The prompt template, model identity, quantization, tokenizer, decoding settings, answer-token mapping, and scalar reduction are part of the measurement function $m$ and must be frozen with the score provenance.
 Temperature-zero decoding improves reproducibility but does not establish validity; open weights improve auditability but do not confer scientific standing.
-The two prompt arms in Section~\ref{sec:app} use Meta-Llama-3.1-8B-Instruct Q8\_0 and Phi-4-mini 3.8B Q8\_0, GGUF-pinned by checksum, scored with llama.cpp at temperature~0.
-Table~\ref{tab:adapter} states the minimum provenance needed to treat an LLM score as an auditable measurement function; the engine itself contains no language model, and the adapters are open-sourced separately from the package.
+
+The 2026-08-10 preliminary patience freeze (shipped under \cvp{}~3.0.0; seed 20260810, split seed 17, $n=41$) used two open-weight models: Meta-Llama-3.1-8B-Instruct Q8\_0 ($m_{\mathrm{prompt\_a}}$) and Phi-4-mini 3.8B Q8\_0 ($m_{\mathrm{prompt\_b}}$), GGUF-pinned by checksum, scored with llama.cpp at temperature~0.
+Table~\ref{tab:adapter} states the required provenance record.
 
 \begin{table}[ht]
 \centering
@@ -1036,12 +1047,46 @@ Independence & Any overlap between training data, validity auxiliaries, and down
 \end{tabularx}
 \end{table}
 
+\paragraph{The 2026-08-10 patience pilot.}
+In the pooled $K=5$ country units-split pilot, the selection set across all folds was $\M^*_{\mathrm{select}}=\{m_{\mathrm{gps\_patience}},\,m_{\mathrm{prompt\_a}}\}$, with range $[L,U]=[0.328,\,0.402]$ on the standardized log GDP per capita estimand with education control.
+However, the robust set complying on all five held-out test frames was empty ($\M^*_{\mathrm{robust}}=\varnothing$).
+Moreover, the fold-0 monotonicity slack of \GPS{} patience was $-0.383$ (against threshold $0.15$), which our full-sample analysis in Section~\ref{sec:app-country} demonstrated was a small-sample training-split artifact (the full 41-country monotonicity slack is $+0.233$).
+Under units-resampling bootstrap, the fold-0 uncertainty band $[0.101, 0.561]$ swallows the plug-in range.
+This confirms why the $K=5$ mixed-menu freeze is retained as an illustrative pilot of the protocol rather than a confirmatory scientific conclusion.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Appendix pilot: 2026-08-10 frozen patience run (41 countries, pooled $K{=}5$, \cvp{}~3.0.0).
+Slacks are on the fold-0 training frame; $\beta$ is pooled standardized OLS on log GDP per capita with education control; selection and compliance are counts out of 5 folds.}
+\label{tab:pilot_results}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} rrrrrr@{}}
+\toprule
+\textbf{Measure} & $s_{\mathrm{conv}}$ & $s_{\mathrm{mono}}$ & $s_{\mathrm{disc}}$ & $\beta$ & \textbf{Selected} & \textbf{Compliant} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-5}\cmidrule(lr){6-7}
+ & ($\theta{=}0.20$) & ($\theta{=}0.15$) & ($\theta{=}0.35$) & (pooled) & (of 5) & (of 5) \\
+\midrule
+$m_{\mathrm{gps\_patience}}$ & $+0.298$ & $-0.383$ & $+0.028$ & $+0.4025$ & 5 & 1 \\
+$m_{\mathrm{wvs\_q13}}$        & $-0.453$ & $-0.317$ & $+0.143$ & $-0.1660$ & 0 & 1 \\
+$m_{\mathrm{wvs\_q14}}$        & $-0.765$ & $-0.717$ & $+0.300$ & $-0.1948$ & 0 & 0 \\
+$m_{\mathrm{composite}}$       & $-0.678$ & $-0.650$ & $+0.266$ & $-0.2187$ & 0 & 0 \\
+$m_{\mathrm{prompt\_a}}$  & $+0.153$ & $+0.433$ & $+0.326$ & $+0.3275$ & 5 & 3 \\
+$m_{\mathrm{prompt\_b}}$  & $-0.059$ & $-0.017$ & $+0.234$ & $+0.3739$ & 1 & 1 \\
+$m_{\mathrm{noise}}$      & $-0.342$ & $+0.100$ & $+0.231$ & $+0.0199$ & 0 & 1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \clearpage
 \begin{thebibliography}{99}\small
+
+\bibitem{aghion2010} Aghion, P., Y.~Algan, P.~Cahuc, and A.~Shleifer (2010). ``Regulation and Distrust.'' \textit{Quarterly Journal of Economics} 125(3): 1015--1049. \url{https://doi.org/10.1162/qjec.2010.125.3.1015}.
 
 \bibitem{bauman2026} Baumann, J., P.~R\"ottger, A.~Urman, A.~Wendsj\"o, F.~M.~Plaza-del-Arco, J.~B.~Gruber, and D.~Hovy (2025). ``Large Language Model Hacking: Quantifying the Hidden Risks of Using LLMs for Text Annotation.'' arXiv:2509.08825.
 
 \bibitem{bean2025} Bean, A.~M., et al. (2025). ``Measuring What Matters: Construct Validity in Large Language Model Benchmarks.'' \textit{NeurIPS 2025, Datasets and Benchmarks Track}. arXiv:2511.04703.
+
+\bibitem{bjornskov2008} Bj\o rnskov, C. (2008). ``Social Capital and Happiness in the United States.'' \textit{Social Indicators Research} 86(1): 269--282. \url{https://doi.org/10.1007/s11205-007-9106-8}.
 
 \bibitem{borsboom2004} Borsboom, D., G.~J. Mellenbergh, and J.~van Heerden (2004). ``The Concept of Validity.'' \textit{Psychological Review} 111(4): 1061--1071. \url{https://doi.org/10.1037/0033-295X.111.4.1061}.
 
@@ -1057,7 +1102,7 @@ Independence & Any overlap between training data, validity auxiliaries, and down
 
 \bibitem{cronbach1955} Cronbach, L.~J., and P.~E. Meehl (1955). ``Construct Validity in Psychological Tests.'' \textit{Psychological Bulletin} 52: 281--302. \url{https://doi.org/10.1037/h0040957}.
 
-\bibitem{cvprofiles} Gonzalez-Bonorino, A. (2026). \texttt{cvprofiles}: Construct-Validity Profiles as Partial Identification over Measurement Menus. Version 3.0.0, public repository and PyPI. \url{https://github.com/Bonorinoa/cvprofiles}.
+\bibitem{cvprofiles} Gonzalez-Bonorino, A. (2026). \texttt{cvprofiles}: Construct-Validity Profiles as Partial Identification over Measurement Menus. Version 3.0.1, public repository and PyPI. \url{https://github.com/Bonorinoa/cvprofiles}.
 
 \bibitem{delgiudice2021} Del Giudice, M., and S.~W. Gangestad (2021). ``A Traveler's Guide to the Multiverse: Promises, Pitfalls, and a Framework for the Evaluation of Analytic Decisions.'' \textit{Advances in Methods and Practices in Psychological Science} 4(1). \url{https://doi.org/10.1177/2515245920954925}.
 
