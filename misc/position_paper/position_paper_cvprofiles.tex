@@ -1077,6 +1077,73 @@ $m_{\mathrm{noise}}$      & $-0.342$ & $+0.100$ & $+0.231$ & $+0.0199$ & 0 & 1 \
 \end{tabularx}
 \end{table}
 
+\section{Synthesis of contributions and empirical grounding}
+\label{app:synthesis}
+
+Table~\ref{tab:synthesis_contributions} summarizes the scope and depth of our methodological and substantive contributions, framing construct-identified inference as a formal bridge across psychometrics, multiverse reporting, and partial identification.
+Figure~\ref{fig:traditions_flow} details the synthesis of these three traditions in response to the AI measurement shock.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  shock/.style={draw=failred, fill=failred!8, rounded corners=3pt, align=center,
+                text width=4.8in, minimum height=0.45in, line width=0.8pt},
+  tradbox/.style={draw=econblue, fill=mist, rounded corners=3pt, align=left,
+                  text width=4.6in, minimum height=0.62in, inner sep=5pt, line width=0.7pt},
+  conclbox/.style={draw=passgreen, fill=passgreen!10, rounded corners=3pt, align=center,
+                   text width=4.8in, minimum height=0.45in, line width=0.8pt},
+  arr/.style={-{Stealth[length=2.2mm]}, line width=0.9pt, color=slate},
+  lbl/.style={font=\scriptsize\itshape\color{slate}, fill=white, inner sep=2pt}]
+
+\node[shock] (s) at (0, 3.3) {\textbf{\color{failred}THE AI MEASUREMENT SHOCK}\\
+Generative models, prompt elicitation, and synthetic agents produce cheap candidate score columns.};
+
+\node[tradbox] (t1) at (0, 2.0) {\textbf{\color{econblue}Tradition 1: Psychometrics} \cite{cronbach1955,campbell1959,messick1995}\\
+\textit{Nomological Network $\Rset(C)$}: Encodes theory-derived convergent and discriminant moment restrictions $\E[g_r(m(X),V;\tau_r)]\ge 0$ with researcher-owned substantive thresholds.};
+
+\node[tradbox] (t2) at (0, 0.7) {\textbf{\color{econblue}Tradition 2: Multiverse Analysis} \cite{steegen2016,simonsohn2020}\\
+\textit{Measurement Menu $\M$}: Declares candidate operationalizations, exposing model choices rather than optimizing a single preferred specification.};
+
+\node[tradbox] (t3) at (0, -0.6) {\textbf{\color{econblue}Tradition 3: Partial Identification} \cite{manski2003,imbensmanski2004,dellrambachan2026}\\
+\textit{Construct-Identified Set $\Bset^*$}: Evaluates the downstream target functional $\beta(m)$ only on the admissible set $\M^*=\{m\in\M : s_r(m)\ge -\delta\}$, reporting the range $[L,U]$ and additive uncertainty band.};
+
+\node[conclbox] (c) at (0, -1.9) {\textbf{\color{passgreen}SCIENTIFIC CONCLUSION}\\
+Headline bounds $[L,U]$ on survivors $+$ additive bootstrap uncertainty band $+$ cross-resolution audits.};
+
+\draw[arr] (s) -- (t1);
+\draw[arr] (t1) -- node[lbl] {Restrictions $\Rset(C)$} (t2);
+\draw[arr] (t2) -- node[lbl] {Admissible set $\M^*$} (t3);
+\draw[arr] (t3) -- node[lbl] {Image $\Bset^* = \{\beta(m): m\in\M^*\}$} (c);
+
+\end{tikzpicture}
+\caption{The three traditions composed by construct-identified inference.
+Nomological restrictions from psychometrics screen candidate operationalizations from a declared multiverse, and partial identification propagates the remaining measurement choice into downstream scientific conclusions.}
+\label{fig:traditions_flow}
+\end{figure}
+
+\begin{table}[p]
+\centering
+\small
+\caption{Summary of methodological contributions and their empirical grounding in this paper.}
+\label{tab:synthesis_contributions}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{2.6cm} X@{}}
+\toprule
+\textbf{Claimed Contribution} & \textbf{Methodological Anchor} & \textbf{Key Literature} & \textbf{Empirical Grounding in This Paper} \\
+\midrule
+\textbf{I. Unrestricted Multiverse Recovery} & Setting $\Rset=\emptyset$ recovers the raw specification curve as a named special case of $[L, U]$. & Simonsohn et al.~\cite{simonsohn2020}; Steegen et al.~\cite{steegen2016} & On the 7-measure patience menu, $\Rset=\emptyset$ returns $[-0.219, 0.402]$, demonstrating that raw multiverse reporting sign-switches on development. \\
+\addlinespace
+\textbf{II. Formal MTMM Matrix Recovery} & Campbell--Fiske convergent ($\tau_{\text{conv}}$) and discriminant ($\tau_{\text{disc}}$) cells are ordinary $\mathrm{corr\_min}$ / $\mathrm{corr\_zero}$ restrictions. & Campbell \& Fiske~\cite{campbell1959}; Falk et al.~\cite{falk2018} & The $2\times 2$ matrix of patience and trust empties: WVS Q57 tracks GPS patience ($r=0.825$; partial $r=0.706$) far more than GPS trust ($r=0.284$). \\
+\addlinespace
+\textbf{III. Sampling Fragility \& Uncertainty Bands} & Selection on sample moments is data-dependent; units bootstrap bands and empty-replicate rates are reported additively alongside $[L, U]$. & Imbens \& Manski~\cite{imbensmanski2004}; Stoye~\cite{stoye2009} & Country patience yields a plug-in singleton ($0.402$), but the uncertainty band $[0.079, 0.563]$ and $29.7\%$ empty-replicate rate expose that the singleton is sampling-fragile. \\
+\addlinespace
+\textbf{IV. Resolution Shifts \& Ecological Confounds} & Testing across macro (country) and within-country demographic cell resolutions reveals whether proxy failure is construct mismatch or aggregation bias. & Falk \& Hermle~\cite{falkhermle2018}; Messick~\cite{messick1995} & WVS Thrift (Q13) fails at country level ($-0.33$) but survives within-country demeaning ($+0.25$, $\beta=0.245$), while Perseverance (Q14) is anti-aligned at both levels ($-0.33$). \\
+\addlinespace
+\textbf{V. Construct Selection vs.\ Estimand Co-movement} & Predeclared nomological gates and criterion-recovery estimands can cleanly pull apart without invalidating the framework. & Kane~\cite{kane2013}; Borsboom et al.~\cite{borsboom2004} & Within-country trust yields $\M^*=\emptyset$ under the education gate, even though multi-item facets co-move with GPS trust ($r=0.21\text{--}0.32$) while Q57 collapses ($r=0.05$). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \clearpage
 \begin{thebibliography}{99}\small
 
@@ -1115,6 +1182,8 @@ $m_{\mathrm{noise}}$      & $-0.342$ & $+0.100$ & $+0.231$ & $+0.0199$ & 0 & 1 \
 \bibitem{dohmen2011} Dohmen, T., A.~Falk, D.~Huffman, U.~Sunde, J.~Schupp, and G.~G. Wagner (2011). ``Individual Risk Attitudes: Measurement, Determinants, and Behavioral Consequences.'' \textit{Journal of the European Economic Association} 9(3): 522--550. \url{https://doi.org/10.1111/j.1542-4774.2011.01015.x}.
 
 \bibitem{falk2018} Falk, A., A.~Becker, T.~Dohmen, B.~Enke, D.~Huffman, and U.~Sunde (2018). ``Global Evidence on Economic Preferences.'' \textit{Quarterly Journal of Economics} 133(4): 1645--1692. \url{https://doi.org/10.1093/qje/qjy013}.
+
+\bibitem{falkhermle2018} Falk, A., and J.~Hermle (2018). ``Relationship of Gender Differences in Preferences to Economic Development and Gender Equality.'' \textit{Science} 362(6412): eaas9899. \url{https://doi.org/10.1126/science.aas9899}.
 
 \bibitem{falk2023} Falk, A., A.~Becker, T.~Dohmen, D.~Huffman, and U.~Sunde (2023). ``The Preference Survey Module: A Validated Instrument for Measuring Risk, Time, and Social Preferences.'' \textit{Management Science} 69(4): 1935--1950. \url{https://doi.org/10.1287/mnsc.2022.4455}.
 
