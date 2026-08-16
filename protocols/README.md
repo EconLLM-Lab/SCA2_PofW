@@ -23,7 +23,7 @@ until `label` and `generate` both write a receipt.
 | 5 | `sca2 train` (freeze DPO plan; no GPU) | done |
 | 6 | `sca2 eval` (freeze WVS plan; no GPU) | done |
 | 7 | Manifest hash-chain + `report.json` | done |
-| 8 | Notebooks as thin clients (no Drive-path breakage) | not started |
+| 8 | Notebooks as thin clients (no Drive-path breakage) | done |
 
 ## Ownership
 

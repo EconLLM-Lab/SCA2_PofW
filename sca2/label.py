@@ -32,7 +32,7 @@ def run_label(
     _ensure_datagen_on_path()
     from sca2_datagen.relabel import export_sign_relabel
 
-    run_id = new_run_id(str(protocol["name"]))
+    run_id = new_run_id(str(protocol["name"]), stage="label")
     root = repo_root()
     dest = Path(output_dir) if output_dir else prepare_run_dir(
         Path(runs_root) if runs_root else root / "runs",

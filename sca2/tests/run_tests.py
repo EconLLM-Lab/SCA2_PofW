@@ -20,6 +20,11 @@ from sca2.tests.test_generate import (
     test_materialize_is_refused,
 )
 from sca2.tests.test_label import test_label_on_tiny_bank
+from sca2.tests.test_notebook import (
+    test_eval_claim_repeats_boundary,
+    test_train_knobs_map_notebook_names,
+    test_us_alias_is_usa,
+)
 from sca2.tests.test_protocol import (
     test_missing_table_is_rejected,
     test_paper_protocol_loads_and_hashes,
@@ -58,6 +63,9 @@ def main() -> int:
         test_collect_keeps_latest_matching_hash,
         test_report_incomplete_without_all_stages,
         test_report_chains_four_stages,
+        test_us_alias_is_usa,
+        test_train_knobs_map_notebook_names,
+        test_eval_claim_repeats_boundary,
     ]
     failed = 0
     for test in tests:
@@ -87,7 +95,7 @@ def main() -> int:
             failed += 1
             print("FAIL test_label_on_tiny_bank")
             traceback.print_exc()
-    print(f"{20 - failed} passed, {failed} failed")
+    print(f"{23 - failed} passed, {failed} failed")
     return 0 if failed == 0 else 1
 
 

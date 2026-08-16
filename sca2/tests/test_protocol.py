@@ -46,5 +46,9 @@ def test_receipt_is_scannable() -> None:
 def test_run_id_uses_protocol_name() -> None:
     from datetime import datetime, timezone
 
-    run_id = new_run_id("gps_sign_dpo_wvs", when=datetime(2026, 8, 18, 12, 0, tzinfo=timezone.utc))
-    assert run_id == "20260818_120000Z_gps_sign_dpo_wvs"
+    run_id = new_run_id(
+        "gps_sign_dpo_wvs",
+        when=datetime(2026, 8, 18, 12, 0, tzinfo=timezone.utc),
+        stage="label",
+    )
+    assert run_id == "20260818_120000Z_gps_sign_dpo_wvs_label"

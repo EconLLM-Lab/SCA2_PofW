@@ -10,9 +10,10 @@ from typing import Any
 from .protocol import dump_public_protocol
 
 
-def new_run_id(protocol_name: str, when: datetime | None = None) -> str:
+def new_run_id(protocol_name: str, when: datetime | None = None, stage: str | None = None) -> str:
     stamp = (when or datetime.now(timezone.utc)).strftime("%Y%m%d_%H%M%SZ")
-    return f"{stamp}_{protocol_name}"
+    suffix = f"_{stage}" if stage else ""
+    return f"{stamp}_{protocol_name}{suffix}"
 
 
 def prepare_run_dir(runs_root: Path, run_id: str, protocol: dict[str, Any]) -> Path:

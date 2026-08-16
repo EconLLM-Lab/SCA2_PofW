@@ -12,5 +12,7 @@ PYTHONPATH=".:synthetic_generation" python -m sca2 label --protocol protocols/gp
 `label` applies `sign(z)`. `train` writes a frozen DPO plan and refuses `--execute`.
 `eval` writes a frozen WVS transport plan and refuses `--execute`.
 `report` stitches the latest matching stage receipts into `report.json`.
+Notebooks stay on Drive paths; optional client is `DPO_train_test/SCA2_PROTOCOL_CLIENT.md`.
+Walkthrough: `protocols/TUTORIAL.md`.
 
 Tests: `PYTHONPATH=".:synthetic_generation" python sca2/tests/run_tests.py`

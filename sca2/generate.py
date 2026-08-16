@@ -110,7 +110,7 @@ def run_generate(
 
     bank = resolve_repo_path(protocol["generation"]["bank"], repo_root())
     inspection = inspect_bank(bank)
-    run_id = new_run_id(str(protocol["name"]))
+    run_id = new_run_id(str(protocol["name"]), stage="generate")
     run_dir = prepare_run_dir(
         Path(runs_root) if runs_root else repo_root() / "runs",
         run_id,

@@ -95,7 +95,7 @@ def run_report(
     root = Path(runs_root) if runs_root else repo_root() / "runs"
     stages = collect_stage_receipts(root, protocol["_hash"])
     report = build_report(protocol, stages)
-    run_id = new_run_id(str(protocol["name"]))
+    run_id = new_run_id(str(protocol["name"]), stage="report")
     run_dir = prepare_run_dir(root, run_id, protocol)
     report_path = run_dir / "report.json"
     report["run_id"] = run_id

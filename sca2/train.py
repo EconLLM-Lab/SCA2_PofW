@@ -101,7 +101,7 @@ def run_train(
     files = resolve_country_files(labeled, chosen)
     plan = build_train_plan(protocol, countries=chosen, files=files)
 
-    run_id = new_run_id(str(protocol["name"]))
+    run_id = new_run_id(str(protocol["name"]), stage="train")
     run_dir = prepare_run_dir(
         Path(runs_root) if runs_root else root / "runs",
         run_id,
