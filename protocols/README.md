@@ -20,7 +20,7 @@ until `label` and `generate` both write a receipt.
 | 2 | CLI skeleton (`python -m sca2`) + run directory / receipt | done |
 | 3 | `sca2 label` (deterministic sign-relabel) | done |
 | 4 | `sca2 generate` (inspect/reuse frozen bank; no HF) | done |
-| 5 | `sca2 train` (DPO / QLoRA) | not started |
+| 5 | `sca2 train` (freeze DPO plan; no GPU) | done |
 | 6 | `sca2 eval` (WVS / placebos) | not started |
 | 7 | Manifest hash-chain + `report.json` | not started |
 | 8 | Notebooks as thin clients (no Drive-path breakage) | not started |

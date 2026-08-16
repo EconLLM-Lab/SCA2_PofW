@@ -37,12 +37,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Refuse by design: a new bank is a new protocol, not a flag.",
     )
 
-    for name, help_text in (
-        ("train", "DPO / QLoRA (not wired)"),
-        ("eval", "WVS / placebos (not wired)"),
-    ):
-        cmd = sub.add_parser(name, help=help_text)
-        cmd.add_argument("--protocol", type=Path, required=True)
+    train = sub.add_parser("train", help="Freeze a DPO/QLoRA plan (does not launch GPU)")
+    train.add_argument("--protocol", type=Path, required=True)
+    train.add_argument("--runs-root", type=Path, default=None)
+    train.add_argument("--data-dir", type=Path, default=None)
+    train.add_argument("--countries", nargs="+", default=None)
+    train.add_argument(
+        "--execute",
+        action="store_true",
+        help="Refuse by design until a local trainer is wired.",
+    )
+
+    eval_cmd = sub.add_parser("eval", help="WVS / placebos (not wired)")
+    eval_cmd.add_argument("--protocol", type=Path, required=True)
 
     return parser
 
@@ -102,6 +109,21 @@ def main(argv: list[str] | None = None) -> int:
             print(f"ok=false  {exc}")
             return 2
         return 0 if receipt.get("status") == "bank_reused" else 1
+    if args.command == "train":
+        from .train import run_train
+
+        try:
+            receipt = run_train(
+                args.protocol,
+                countries=args.countries,
+                data_dir=args.data_dir,
+                execute=args.execute,
+                runs_root=args.runs_root,
+            )
+        except (RuntimeError, FileNotFoundError) as exc:
+            print(f"ok=false  {exc}")
+            return 2
+        return 0 if receipt.get("status") == "planned" else 1
     return _not_wired(args.command, args.protocol)
 
 
