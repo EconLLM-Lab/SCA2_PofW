@@ -57,6 +57,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Refuse by design until a local scorer is wired.",
     )
 
+    report = sub.add_parser("report", help="Stitch stage receipts into report.json")
+    report.add_argument("--protocol", type=Path, required=True)
+    report.add_argument("--runs-root", type=Path, default=None)
+
     return parser
 
 
@@ -143,6 +147,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f"ok=false  {exc}")
             return 2
         return 0 if receipt.get("status") == "planned" else 1
+    if args.command == "report":
+        from .report import run_report
+
+        receipt = run_report(args.protocol, runs_root=args.runs_root)
+        return 0 if receipt.get("status") == "chained" else 1
     return _not_wired(args.command, args.protocol)
 
 

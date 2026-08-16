@@ -26,6 +26,11 @@ from sca2.tests.test_protocol import (
     test_receipt_is_scannable,
     test_run_id_uses_protocol_name,
 )
+from sca2.tests.test_report import (
+    test_collect_keeps_latest_matching_hash,
+    test_report_chains_four_stages,
+    test_report_incomplete_without_all_stages,
+)
 from sca2.tests.test_train import (
     test_train_execute_is_refused,
     test_train_missing_country_fails,
@@ -50,6 +55,9 @@ def main() -> int:
         test_eval_plans_existing_item_map,
         test_eval_missing_map_fails,
         test_eval_execute_is_refused,
+        test_collect_keeps_latest_matching_hash,
+        test_report_incomplete_without_all_stages,
+        test_report_chains_four_stages,
     ]
     failed = 0
     for test in tests:
@@ -79,7 +87,7 @@ def main() -> int:
             failed += 1
             print("FAIL test_label_on_tiny_bank")
             traceback.print_exc()
-    print(f"{17 - failed} passed, {failed} failed")
+    print(f"{20 - failed} passed, {failed} failed")
     return 0 if failed == 0 else 1
 
 
