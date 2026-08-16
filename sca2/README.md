@@ -9,6 +9,7 @@ PYTHONPATH=".:synthetic_generation" python -m sca2 label --protocol protocols/gp
 ```
 
 `generate` inspects the hashed bank and refuses `--materialize`.
-`label` applies `sign(z)`. `train` and `eval` are declared, not wired.
+`label` applies `sign(z)`. `train` writes a frozen DPO plan and refuses `--execute`.
+`eval` is not wired.
 
 Tests: `PYTHONPATH=".:synthetic_generation" python sca2/tests/run_tests.py`

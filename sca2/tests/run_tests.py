@@ -20,6 +20,11 @@ from sca2.tests.test_protocol import (
     test_receipt_is_scannable,
     test_run_id_uses_protocol_name,
 )
+from sca2.tests.test_train import (
+    test_train_execute_is_refused,
+    test_train_missing_country_fails,
+    test_train_plans_existing_country_files,
+)
 
 
 def main() -> int:
@@ -32,6 +37,9 @@ def main() -> int:
         test_inspect_reports_inverted_polarity,
         test_generate_reuses_declared_bank,
         test_materialize_is_refused,
+        test_train_plans_existing_country_files,
+        test_train_missing_country_fails,
+        test_train_execute_is_refused,
     ]
     failed = 0
     for test in tests:
@@ -61,7 +69,7 @@ def main() -> int:
             failed += 1
             print("FAIL test_label_on_tiny_bank")
             traceback.print_exc()
-    print(f"{11 - failed} passed, {failed} failed")
+    print(f"{14 - failed} passed, {failed} failed")
     return 0 if failed == 0 else 1
 
 

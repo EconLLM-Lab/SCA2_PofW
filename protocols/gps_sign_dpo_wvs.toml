@@ -70,13 +70,30 @@ contamination_gate = false
 country_conditioning = false
 
 # ---------------------------------------------------------------------------
-# A — Policy estimator (declared, not wired)
-# In code today: DPO_train_test/*.ipynb
+# A — Policy estimator
+# In code today: DPO_train_test/DPO_train.ipynb
+# The CLI writes a frozen plan. It does not launch GPU training.
 # ---------------------------------------------------------------------------
 [train]
 estimator = "dpo_qlora"
 base_model = "meta-llama/Llama-3.1-8B-Instruct"
 wired = false
+execute = false
+data_dir = "synthetic_generation/outputs/gps_sign_relabel_all"
+notebook = "DPO_train_test/DPO_train.ipynb"
+train_frac = 0.80
+seed = 42
+beta = 0.1
+lora_r = 16
+lora_alpha = 32
+lora_dropout = 0.05
+lora_targets = ["q_proj", "k_proj", "v_proj", "o_proj"]
+learning_rate = 1.0e-4
+num_train_epochs = 1
+per_device_train_batch_size = 1
+gradient_accumulation_steps = 16
+max_length = 768
+quantization = "nf4_4bit"
 
 # ---------------------------------------------------------------------------
 # E — Evaluation (declared, not wired)
