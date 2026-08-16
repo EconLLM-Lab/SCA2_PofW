@@ -94,6 +94,10 @@ Note that some cross-dimensional movement is realistic — economic decisions ra
 ### Block E — Export and cost summary
 Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, token usage, elapsed-runtime endpoint cost estimate, and git hash.
 
+### Sign-relabel panel (all GPS countries)
+
+A deterministic export lives at [`outputs/gps_sign_relabel_all/`](outputs/gps_sign_relabel_all/README.md): the 658 shared A/B triplets from the June 23 USA/MEX bank, labeled for all 76 GPS countries by `chosen = A if z >= 0 else B` (50,008 rows). No Hugging Face calls. Rebuild with `python -m sca2_datagen.relabel`.
+
 ---
 
 ## Getting started

@@ -1,0 +1,1402 @@
+{
+  "run_id": "gps_sign_relabel_all_20260816_004545Z",
+  "timestamp": "2026-08-16T00:45:45.772175+00:00",
+  "labeling_rule": "deterministic_sign",
+  "source_run_id": "usa_mex_dpo_anchored_110_b6_c4_06232026_20260623_185531Z",
+  "source_checkpoint": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/synthetic_generation/outputs/usa_mex_dpo_anchored_110_b6_c4_06232026/checkpoint_raw_pairs.jsonl",
+  "n_triplets": 658,
+  "n_countries": 76,
+  "n_rows": 50008,
+  "countries": [
+    "AFG",
+    "ARE",
+    "ARG",
+    "AUS",
+    "AUT",
+    "BGD",
+    "BIH",
+    "BOL",
+    "BRA",
+    "BWA",
+    "CAN",
+    "CHE",
+    "CHL",
+    "CHN",
+    "CMR",
+    "COL",
+    "CRI",
+    "CZE",
+    "DEU",
+    "DZA",
+    "EGY",
+    "ESP",
+    "EST",
+    "FIN",
+    "FRA",
+    "GBR",
+    "GEO",
+    "GHA",
+    "GRC",
+    "GTM",
+    "HRV",
+    "HTI",
+    "HUN",
+    "IDN",
+    "IND",
+    "IRN",
+    "IRQ",
+    "ISR",
+    "ITA",
+    "JOR",
+    "JPN",
+    "KAZ",
+    "KEN",
+    "KHM",
+    "KOR",
+    "LKA",
+    "LTU",
+    "MAR",
+    "MDA",
+    "MEX",
+    "MWI",
+    "NGA",
+    "NIC",
+    "NLD",
+    "PAK",
+    "PER",
+    "PHL",
+    "POL",
+    "PRT",
+    "ROU",
+    "RUS",
+    "RWA",
+    "SAU",
+    "SRB",
+    "SUR",
+    "SWE",
+    "THA",
+    "TUR",
+    "TZA",
+    "UGA",
+    "UKR",
+    "USA",
+    "VEN",
+    "VNM",
+    "ZAF",
+    "ZWE"
+  ],
+  "gps_vectors": {
+    "AFG": {
+      "trust": 0.31596440076828003,
+      "risktaking": 0.12076426297426224,
+      "patience": -0.20136012136936188,
+      "altruism": 0.1664554625749588,
+      "posrecip": 0.2896409034729004,
+      "negrecip": 0.25471246242523193
+    },
+    "DZA": {
+      "trust": -0.17737062275409698,
+      "risktaking": 0.39153048396110535,
+      "patience": 0.05981524661183357,
+      "altruism": -0.009968001395463943,
+      "posrecip": -0.5982553362846375,
+      "negrecip": 0.25490081310272217
+    },
+    "ARG": {
+      "trust": -0.2067333310842514,
+      "risktaking": 0.041503168642520905,
+      "patience": -0.22930797934532166,
+      "altruism": 0.02734668180346489,
+      "posrecip": 0.15967930853366852,
+      "negrecip": -0.14045727252960205
+    },
+    "AUS": {
+      "trust": 0.29897257685661316,
+      "risktaking": 0.1371365487575531,
+      "patience": 0.6570037603378296,
+      "altruism": 0.15533144772052765,
+      "posrecip": 0.06966002285480499,
+      "negrecip": 0.022189751267433167
+    },
+    "AUT": {
+      "trust": 0.15462811291217804,
+      "risktaking": -0.06182915344834328,
+      "patience": 0.6082850098609924,
+      "altruism": -0.035363130271434784,
+      "posrecip": 0.1610465943813324,
+      "negrecip": -0.055415451526641846
+    },
+    "BGD": {
+      "trust": -0.17336532473564148,
+      "risktaking": -0.19806775450706482,
+      "patience": 0.08113671094179153,
+      "altruism": 0.9064632654190063,
+      "posrecip": 0.1543675661087036,
+      "negrecip": 0.11328817158937454
+    },
+    "BOL": {
+      "trust": -0.16032962501049042,
+      "risktaking": 0.10303828865289688,
+      "patience": 0.07133110612630844,
+      "altruism": -0.005186883267015219,
+      "posrecip": 0.1079196110367775,
+      "negrecip": -0.003735218197107315
+    },
+    "BIH": {
+      "trust": -0.1931062638759613,
+      "risktaking": -0.12563906610012054,
+      "patience": -0.24725770950317383,
+      "altruism": -0.11530996114015579,
+      "posrecip": 0.09646286070346832,
+      "negrecip": 0.4293549060821533
+    },
+    "BWA": {
+      "trust": -0.33846157789230347,
+      "risktaking": 0.6973791718482971,
+      "patience": 0.23399034142494202,
+      "altruism": -0.14206203818321228,
+      "posrecip": -0.2586674988269806,
+      "negrecip": -0.1727222055196762
+    },
+    "BRA": {
+      "trust": -0.0026891387533396482,
+      "risktaking": -0.2505967915058136,
+      "patience": -0.26004019379615784,
+      "altruism": 0.46435976028442383,
+      "posrecip": 0.3512381911277771,
+      "negrecip": -0.20162957906723022
+    },
+    "KHM": {
+      "trust": -0.07913503795862198,
+      "risktaking": -0.40463992953300476,
+      "patience": -0.11989903450012207,
+      "altruism": -0.2161569893360138,
+      "posrecip": 0.17168301343917847,
+      "negrecip": -0.06205156818032265
+    },
+    "CMR": {
+      "trust": -0.530916154384613,
+      "risktaking": -0.5350592732429504,
+      "patience": -0.4274941682815552,
+      "altruism": 0.1482611894607544,
+      "posrecip": 0.1529756337404251,
+      "negrecip": -0.3245351016521454
+    },
+    "CAN": {
+      "trust": 0.24527503550052643,
+      "risktaking": 0.18354815244674683,
+      "patience": 0.7184794545173645,
+      "altruism": 0.22933843731880188,
+      "posrecip": 0.19679629802703857,
+      "negrecip": 0.022899141535162926
+    },
+    "CHL": {
+      "trust": -0.08321409672498703,
+      "risktaking": 0.12537220120429993,
+      "patience": -0.15540830790996552,
+      "altruism": -0.10583535581827164,
+      "posrecip": 0.024950547143816948,
+      "negrecip": -0.12846584618091583
+    },
+    "CHN": {
+      "trust": 0.5528057813644409,
+      "risktaking": -0.01981012150645256,
+      "patience": 0.3981046676635742,
+      "altruism": 0.5048251152038574,
+      "posrecip": 0.4793371856212616,
+      "negrecip": 0.025847053155303
+    },
+    "COL": {
+      "trust": 0.00554653350263834,
+      "risktaking": -0.04517452418804169,
+      "patience": -0.34593233466148376,
+      "altruism": 0.09587360173463821,
+      "posrecip": 0.1996425837278366,
+      "negrecip": -0.3092086911201477
+    },
+    "CRI": {
+      "trust": -0.14910292625427246,
+      "risktaking": 0.001672215643338859,
+      "patience": -0.16306732594966888,
+      "altruism": 0.41820865869522095,
+      "posrecip": 0.14475521445274353,
+      "negrecip": -0.4337829053401947
+    },
+    "HRV": {
+      "trust": 0.10511626303195953,
+      "risktaking": 0.0684363842010498,
+      "patience": -0.09371346235275269,
+      "altruism": -0.07094663381576538,
+      "posrecip": 0.1885991096496582,
+      "negrecip": 0.7389078736305237
+    },
+    "CZE": {
+      "trust": -0.450684130191803,
+      "risktaking": -0.020464401692152023,
+      "patience": 0.38435131311416626,
+      "altruism": -0.939616858959198,
+      "posrecip": -0.30193787813186646,
+      "negrecip": 0.2903363108634949
+    },
+    "EGY": {
+      "trust": 0.6090208888053894,
+      "risktaking": -0.2808961868286133,
+      "patience": -0.3831945061683655,
+      "altruism": 0.6341461539268494,
+      "posrecip": 0.569984495639801,
+      "negrecip": 0.0348358154296875
+    },
+    "EST": {
+      "trust": 0.08612611889839172,
+      "risktaking": -0.2954334318637848,
+      "patience": 0.025314416736364365,
+      "altruism": -0.5666890144348145,
+      "posrecip": -0.49283143877983093,
+      "negrecip": -0.2217399924993515
+    },
+    "FIN": {
+      "trust": 0.09990701079368591,
+      "risktaking": -0.2827601432800293,
+      "patience": 0.599554181098938,
+      "altruism": -0.2500971853733063,
+      "posrecip": 0.08859659731388092,
+      "negrecip": -0.13623562455177307
+    },
+    "FRA": {
+      "trust": -0.16548220813274384,
+      "risktaking": -0.03010464459657669,
+      "patience": 0.3568710684776306,
+      "altruism": -0.17471100389957428,
+      "posrecip": -0.12234953045845032,
+      "negrecip": 0.5280535221099854
+    },
+    "GEO": {
+      "trust": -0.20484574139118195,
+      "risktaking": -0.08132492005825043,
+      "patience": -0.4854279160499573,
+      "altruism": 0.6278199553489685,
+      "posrecip": 0.5627527236938477,
+      "negrecip": -0.2543642222881317
+    },
+    "DEU": {
+      "trust": -0.11882252991199493,
+      "risktaking": -0.04448588192462921,
+      "patience": 0.6243981719017029,
+      "altruism": -0.05100206658244133,
+      "posrecip": -0.07986503094434738,
+      "negrecip": -0.2942652404308319
+    },
+    "GHA": {
+      "trust": -0.19801777601242065,
+      "risktaking": 0.618450403213501,
+      "patience": 0.0846189633011818,
+      "altruism": 0.11105220764875412,
+      "posrecip": -0.22070853412151337,
+      "negrecip": -0.07418406754732132
+    },
+    "GRC": {
+      "trust": -0.35150548815727234,
+      "risktaking": -0.15707357227802277,
+      "patience": -0.3600853979587555,
+      "altruism": -0.1728164255619049,
+      "posrecip": -0.0437733493745327,
+      "negrecip": 0.4293229877948761
+    },
+    "GTM": {
+      "trust": -0.362962931394577,
+      "risktaking": -0.21859027445316315,
+      "patience": -0.2572553753852844,
+      "altruism": -0.13400402665138245,
+      "posrecip": -0.06493174284696579,
+      "negrecip": -0.4893120229244232
+    },
+    "HTI": {
+      "trust": -0.1575143188238144,
+      "risktaking": 0.019328011199831963,
+      "patience": -0.3756559491157532,
+      "altruism": -0.5228543281555176,
+      "posrecip": -0.6985160708427429,
+      "negrecip": 0.2303871363401413
+    },
+    "HUN": {
+      "trust": 0.53216552734375,
+      "risktaking": -0.4984564185142517,
+      "patience": -0.43091627955436707,
+      "altruism": -0.5908812880516052,
+      "posrecip": -0.06583016365766525,
+      "negrecip": -0.16624628007411957
+    },
+    "IND": {
+      "trust": -0.20398138463497162,
+      "risktaking": -0.27524739503860474,
+      "patience": -0.10873283445835114,
+      "altruism": -0.2676217555999756,
+      "posrecip": -0.4538295865058899,
+      "negrecip": 0.07119843363761902
+    },
+    "IDN": {
+      "trust": 0.2635972201824188,
+      "risktaking": -0.321643203496933,
+      "patience": -0.36182090640068054,
+      "altruism": 0.10292664915323257,
+      "posrecip": 0.14521285891532898,
+      "negrecip": 0.1512729823589325
+    },
+    "IRN": {
+      "trust": 0.3004699945449829,
+      "risktaking": 0.3378799855709076,
+      "patience": -0.38071906566619873,
+      "altruism": 0.5904965400695801,
+      "posrecip": 0.5509329438209534,
+      "negrecip": 0.11850626766681671
+    },
+    "IRQ": {
+      "trust": 0.2896195352077484,
+      "risktaking": 0.16578853130340576,
+      "patience": -0.41695645451545715,
+      "altruism": -0.23216478526592255,
+      "posrecip": -0.28882601857185364,
+      "negrecip": 0.09443917125463486
+    },
+    "ISR": {
+      "trust": -0.053660519421100616,
+      "risktaking": 0.24376137554645538,
+      "patience": 0.45680537819862366,
+      "altruism": -0.32634466886520386,
+      "posrecip": -0.009948547929525375,
+      "negrecip": 0.19927367568016052
+    },
+    "ITA": {
+      "trust": -0.07473386079072952,
+      "risktaking": -0.09364677220582962,
+      "patience": 0.10848815739154816,
+      "altruism": 0.34591156244277954,
+      "posrecip": 0.1764194369316101,
+      "negrecip": 0.311279296875
+    },
+    "JPN": {
+      "trust": -0.5187299251556396,
+      "risktaking": -0.3558382987976074,
+      "patience": 0.10841258615255356,
+      "altruism": -0.2410411536693573,
+      "posrecip": -0.23702187836170197,
+      "negrecip": 0.22034327685832977
+    },
+    "JOR": {
+      "trust": 0.3898036479949951,
+      "risktaking": -0.1248016506433487,
+      "patience": -0.4184761941432953,
+      "altruism": 0.15912073850631714,
+      "posrecip": 0.28744587302207947,
+      "negrecip": -0.3151598274707794
+    },
+    "KAZ": {
+      "trust": 0.15293806791305542,
+      "risktaking": 0.24510741233825684,
+      "patience": -0.25865525007247925,
+      "altruism": 0.17297221720218658,
+      "posrecip": 0.3076663017272949,
+      "negrecip": -0.20160871744155884
+    },
+    "KEN": {
+      "trust": -0.4223032295703888,
+      "risktaking": 0.2439042031764984,
+      "patience": -0.07622268795967102,
+      "altruism": -0.31699398159980774,
+      "posrecip": -0.3184950053691864,
+      "negrecip": -0.09605418145656586
+    },
+    "LTU": {
+      "trust": -0.17750166356563568,
+      "risktaking": -0.045938365161418915,
+      "patience": -0.061742525547742844,
+      "altruism": -0.7299575209617615,
+      "posrecip": -0.5316876173019409,
+      "negrecip": 0.05420713126659393
+    },
+    "MWI": {
+      "trust": -0.4734359085559845,
+      "risktaking": 0.4750382602214813,
+      "patience": -0.045587364584207535,
+      "altruism": -0.08846744894981384,
+      "posrecip": 0.02389351837337017,
+      "negrecip": -0.40469110012054443
+    },
+    "MEX": {
+      "trust": -0.3570720851421356,
+      "risktaking": -0.13891679048538208,
+      "patience": -0.10842810571193695,
+      "altruism": -0.8130887150764465,
+      "posrecip": -1.0379811525344849,
+      "negrecip": -0.1146494597196579
+    },
+    "MDA": {
+      "trust": 0.0011756669264286757,
+      "risktaking": -0.03477420657873154,
+      "patience": 0.1950138956308365,
+      "altruism": 0.1873682141304016,
+      "posrecip": 0.20627498626708984,
+      "negrecip": 0.4948996305465698
+    },
+    "MAR": {
+      "trust": -0.09031475335359573,
+      "risktaking": -0.06895921379327774,
+      "patience": -0.31072527170181274,
+      "altruism": 0.5590382218360901,
+      "posrecip": 0.5531409382820129,
+      "negrecip": -0.48759108781814575
+    },
+    "NLD": {
+      "trust": 0.2980569303035736,
+      "risktaking": 0.1893262416124344,
+      "patience": 0.9517077803611755,
+      "altruism": -0.19006243348121643,
+      "posrecip": -0.1484014242887497,
+      "negrecip": 0.41444092988967896
+    },
+    "NIC": {
+      "trust": 0.022988805547356606,
+      "risktaking": -0.5472273230552673,
+      "patience": -0.6125203371047974,
+      "altruism": -0.17819155752658844,
+      "posrecip": -0.41596606373786926,
+      "negrecip": -0.3882535994052887
+    },
+    "NGA": {
+      "trust": -0.057804401963949203,
+      "risktaking": 0.38598349690437317,
+      "patience": -0.20041942596435547,
+      "altruism": -0.14435505867004395,
+      "posrecip": -0.37476322054862976,
+      "negrecip": 0.1765047311782837
+    },
+    "PAK": {
+      "trust": -0.10337088257074356,
+      "risktaking": 0.019619442522525787,
+      "patience": -0.08310799300670624,
+      "altruism": -0.27611401677131653,
+      "posrecip": -0.02244466543197632,
+      "negrecip": 0.15996569395065308
+    },
+    "PER": {
+      "trust": -0.0969185009598732,
+      "risktaking": 0.15494471788406372,
+      "patience": -0.10892990976572037,
+      "altruism": -0.1327207386493683,
+      "posrecip": -0.08682620525360107,
+      "negrecip": 0.02901185117661953
+    },
+    "PHL": {
+      "trust": 0.35706308484077454,
+      "risktaking": 0.2946476340293884,
+      "patience": 0.09911276400089264,
+      "altruism": 0.3808668553829193,
+      "posrecip": 0.21247929334640503,
+      "negrecip": -0.15014693140983582
+    },
+    "POL": {
+      "trust": -0.14705054461956024,
+      "risktaking": -0.07357099652290344,
+      "patience": 0.07167225331068039,
+      "altruism": -0.3701225221157074,
+      "posrecip": -0.16395600140094757,
+      "negrecip": 0.2965291142463684
+    },
+    "PRT": {
+      "trust": 0.08258696645498276,
+      "risktaking": -0.7924346327781677,
+      "patience": -0.3116377592086792,
+      "altruism": 0.04926776885986328,
+      "posrecip": 0.1864062398672104,
+      "negrecip": -0.3754822611808777
+    },
+    "ROU": {
+      "trust": -0.21704743802547455,
+      "risktaking": -0.22955098748207092,
+      "patience": -0.26815101504325867,
+      "altruism": -0.23912186920642853,
+      "posrecip": -0.11751875281333923,
+      "negrecip": -0.38201791048049927
+    },
+    "RUS": {
+      "trust": -0.15077486634254456,
+      "risktaking": -0.32336241006851196,
+      "patience": -0.07527794688940048,
+      "altruism": -0.06924083083868027,
+      "posrecip": -0.09340506792068481,
+      "negrecip": -0.15547128021717072
+    },
+    "RWA": {
+      "trust": -0.12548469007015228,
+      "risktaking": -0.2896941304206848,
+      "patience": -0.6060301661491394,
+      "altruism": -0.14198996126651764,
+      "posrecip": -0.5799824595451355,
+      "negrecip": -0.05932539701461792
+    },
+    "SAU": {
+      "trust": 0.30015313625335693,
+      "risktaking": 0.6957461833953857,
+      "patience": 0.20012196898460388,
+      "altruism": -0.3712661564350128,
+      "posrecip": -0.4870773255825043,
+      "negrecip": 0.5995556116104126
+    },
+    "SRB": {
+      "trust": -0.16020424664020538,
+      "risktaking": -0.12961876392364502,
+      "patience": -0.13782070577144623,
+      "altruism": -0.3164179027080536,
+      "posrecip": 0.37641996145248413,
+      "negrecip": -0.043900661170482635
+    },
+    "ZAF": {
+      "trust": -0.1669178158044815,
+      "risktaking": 0.9705963134765625,
+      "patience": 0.05791202932596207,
+      "altruism": -0.32110974192619324,
+      "posrecip": -0.834181010723114,
+      "negrecip": 0.026783309876918793
+    },
+    "KOR": {
+      "trust": -0.09921464323997498,
+      "risktaking": -0.03935208171606064,
+      "patience": 0.36924976110458374,
+      "altruism": 0.3936173915863037,
+      "posrecip": -0.16840630769729614,
+      "negrecip": 0.6647935509681702
+    },
+    "ESP": {
+      "trust": 0.2410432994365692,
+      "risktaking": -0.15840178728103638,
+      "patience": 0.1984737515449524,
+      "altruism": -0.12915435433387756,
+      "posrecip": 0.3158908486366272,
+      "negrecip": 0.17693988978862762
+    },
+    "LKA": {
+      "trust": -0.27219584584236145,
+      "risktaking": 0.06270594894886017,
+      "patience": -0.1009262278676033,
+      "altruism": 0.5115963816642761,
+      "posrecip": 0.26989343762397766,
+      "negrecip": -0.1172700971364975
+    },
+    "SUR": {
+      "trust": 0.11636457592248917,
+      "risktaking": 0.17821326851844788,
+      "patience": 0.006719468627125025,
+      "altruism": 0.09016276150941849,
+      "posrecip": 0.16491937637329102,
+      "negrecip": 0.015116076916456223
+    },
+    "SWE": {
+      "trust": 0.30693086981773376,
+      "risktaking": 0.05185330659151077,
+      "patience": 1.0714523792266846,
+      "altruism": -0.16685828566551208,
+      "posrecip": -0.027697507292032242,
+      "negrecip": -0.09452004730701447
+    },
+    "CHE": {
+      "trust": 0.08828393369913101,
+      "risktaking": -0.019343413412570953,
+      "patience": 0.6697421073913574,
+      "altruism": 0.09470735490322113,
+      "posrecip": 0.125156968832016,
+      "negrecip": -0.010735603049397469
+    },
+    "TZA": {
+      "trust": -0.14714427292346954,
+      "risktaking": 0.49186715483665466,
+      "patience": -0.324980229139328,
+      "altruism": -0.4567192494869232,
+      "posrecip": -0.886457085609436,
+      "negrecip": 0.040648460388183594
+    },
+    "THA": {
+      "trust": 0.3484398126602173,
+      "risktaking": -0.1235896497964859,
+      "patience": -0.22972559928894043,
+      "altruism": -0.1466904729604721,
+      "posrecip": 0.3043249845504761,
+      "negrecip": 0.23695966601371765
+    },
+    "TUR": {
+      "trust": 0.12911024689674377,
+      "risktaking": 0.023427221924066544,
+      "patience": -0.047398898750543594,
+      "altruism": -0.2789745330810547,
+      "posrecip": -0.44317981600761414,
+      "negrecip": 0.5167550444602966
+    },
+    "UGA": {
+      "trust": -0.7064389586448669,
+      "risktaking": 0.16258633136749268,
+      "patience": -0.2552556097507477,
+      "altruism": -0.2819530665874481,
+      "posrecip": -0.27726882696151733,
+      "negrecip": -0.1740911304950714
+    },
+    "UKR": {
+      "trust": -0.09238698333501816,
+      "risktaking": -0.2186678797006607,
+      "patience": -0.18166576325893402,
+      "altruism": -0.12226596474647522,
+      "posrecip": 0.16583691537380219,
+      "negrecip": -0.19130994379520416
+    },
+    "ARE": {
+      "trust": 0.5071082711219788,
+      "risktaking": 0.08651500195264816,
+      "patience": -0.09131865203380585,
+      "altruism": 0.15418167412281036,
+      "posrecip": 0.07319600880146027,
+      "negrecip": 0.22190479934215546
+    },
+    "GBR": {
+      "trust": 0.23470205068588257,
+      "risktaking": 0.04868467152118683,
+      "patience": 0.5350247025489807,
+      "altruism": 0.028450366109609604,
+      "posrecip": -0.03833173215389252,
+      "negrecip": 0.024550387635827065
+    },
+    "USA": {
+      "trust": 0.15036696195602417,
+      "risktaking": 0.11658679693937302,
+      "patience": 0.8112621307373047,
+      "altruism": 0.40642887353897095,
+      "posrecip": 0.20365002751350403,
+      "negrecip": 0.011553643271327019
+    },
+    "VEN": {
+      "trust": 0.11499140411615372,
+      "risktaking": 0.24952252209186554,
+      "patience": -0.22711750864982605,
+      "altruism": 0.08039962500333786,
+      "posrecip": 0.04784287139773369,
+      "negrecip": -0.20394811034202576
+    },
+    "VNM": {
+      "trust": 0.14363136887550354,
+      "risktaking": -0.00868162140250206,
+      "patience": 0.11049969494342804,
+      "altruism": -0.15891523659229279,
+      "posrecip": -0.26562613248825073,
+      "negrecip": -0.14012926816940308
+    },
+    "ZWE": {
+      "trust": -0.5091331005096436,
+      "risktaking": 0.5231947898864746,
+      "patience": -0.2385871857404709,
+      "altruism": -0.04083532467484474,
+      "posrecip": -0.1646638661623001,
+      "negrecip": -0.1276615709066391
+    }
+  },
+  "per_country_sign": {
+    "AFG": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "ARE": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "ARG": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "AUS": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "AUT": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "BGD": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "BIH": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "BOL": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "BRA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "BWA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "CAN": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "CHE": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CHL": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CHN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "CMR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "COL": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CRI": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CZE": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "DEU": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "DZA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "EGY": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "ESP": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "EST": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "FIN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "FRA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "GBR": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "GEO": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "GHA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "GRC": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "GTM": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "HRV": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "HTI": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "HUN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "IDN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "IND": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "IRN": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "IRQ": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "ISR": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "ITA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "JOR": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "JPN": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "KAZ": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "KEN": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "KHM": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "KOR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "LKA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "LTU": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "MAR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "MDA": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "MEX": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "MWI": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "NGA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "NIC": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "NLD": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PAK": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PER": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PHL": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "POL": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PRT": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "ROU": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "RUS": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "RWA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "SAU": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "SRB": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "SUR": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "SWE": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "THA": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "TUR": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "TZA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "UGA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "UKR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "USA": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "VEN": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "VNM": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "ZAF": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "ZWE": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    }
+  },
+  "per_country_counts": {
+    "AFG": 658,
+    "ARE": 658,
+    "ARG": 658,
+    "AUS": 658,
+    "AUT": 658,
+    "BGD": 658,
+    "BIH": 658,
+    "BOL": 658,
+    "BRA": 658,
+    "BWA": 658,
+    "CAN": 658,
+    "CHE": 658,
+    "CHL": 658,
+    "CHN": 658,
+    "CMR": 658,
+    "COL": 658,
+    "CRI": 658,
+    "CZE": 658,
+    "DEU": 658,
+    "DZA": 658,
+    "EGY": 658,
+    "ESP": 658,
+    "EST": 658,
+    "FIN": 658,
+    "FRA": 658,
+    "GBR": 658,
+    "GEO": 658,
+    "GHA": 658,
+    "GRC": 658,
+    "GTM": 658,
+    "HRV": 658,
+    "HTI": 658,
+    "HUN": 658,
+    "IDN": 658,
+    "IND": 658,
+    "IRN": 658,
+    "IRQ": 658,
+    "ISR": 658,
+    "ITA": 658,
+    "JOR": 658,
+    "JPN": 658,
+    "KAZ": 658,
+    "KEN": 658,
+    "KHM": 658,
+    "KOR": 658,
+    "LKA": 658,
+    "LTU": 658,
+    "MAR": 658,
+    "MDA": 658,
+    "MEX": 658,
+    "MWI": 658,
+    "NGA": 658,
+    "NIC": 658,
+    "NLD": 658,
+    "PAK": 658,
+    "PER": 658,
+    "PHL": 658,
+    "POL": 658,
+    "PRT": 658,
+    "ROU": 658,
+    "RUS": 658,
+    "RWA": 658,
+    "SAU": 658,
+    "SRB": 658,
+    "SUR": 658,
+    "SWE": 658,
+    "THA": 658,
+    "TUR": 658,
+    "TZA": 658,
+    "UGA": 658,
+    "UKR": 658,
+    "USA": 658,
+    "VEN": 658,
+    "VNM": 658,
+    "ZAF": 658,
+    "ZWE": 658
+  },
+  "per_dimension_triplet_counts": {
+    "trust": 110,
+    "risktaking": 109,
+    "patience": 110,
+    "altruism": 110,
+    "posrecip": 109,
+    "negrecip": 110
+  },
+  "near_zero_threshold": 0.1,
+  "near_zero_labeled_rows": 12388,
+  "notes": [
+    "Shared A/B bank is reused for every country; only chosen/rejected are flipped.",
+    "z == 0 is labeled A (non-negative). Magnitude is discarded.",
+    "source_qc_status is the original USA/MEX scorer label for that pair, not a new score.",
+    "No Hugging Face / LLM calls were made for this export."
+  ]
+}
