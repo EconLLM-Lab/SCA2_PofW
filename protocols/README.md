@@ -21,7 +21,7 @@ until `label` and `generate` both write a receipt.
 | 3 | `sca2 label` (deterministic sign-relabel) | done |
 | 4 | `sca2 generate` (inspect/reuse frozen bank; no HF) | done |
 | 5 | `sca2 train` (freeze DPO plan; no GPU) | done |
-| 6 | `sca2 eval` (WVS / placebos) | not started |
+| 6 | `sca2 eval` (freeze WVS plan; no GPU) | done |
 | 7 | Manifest hash-chain + `report.json` | not started |
 | 8 | Notebooks as thin clients (no Drive-path breakage) | not started |
 
