@@ -6,6 +6,12 @@ import tempfile
 import traceback
 from pathlib import Path
 
+from sca2.tests.test_eval import (
+    test_eval_execute_is_refused,
+    test_eval_missing_map_fails,
+    test_eval_plans_existing_item_map,
+    test_inspect_item_map_counts_mapped,
+)
 from sca2.tests.test_generate import (
     test_generate_reuses_declared_bank,
     test_inspect_bank_counts_unique_triplets,
@@ -40,6 +46,10 @@ def main() -> int:
         test_train_plans_existing_country_files,
         test_train_missing_country_fails,
         test_train_execute_is_refused,
+        test_inspect_item_map_counts_mapped,
+        test_eval_plans_existing_item_map,
+        test_eval_missing_map_fails,
+        test_eval_execute_is_refused,
     ]
     failed = 0
     for test in tests:
@@ -69,7 +79,7 @@ def main() -> int:
             failed += 1
             print("FAIL test_label_on_tiny_bank")
             traceback.print_exc()
-    print(f"{14 - failed} passed, {failed} failed")
+    print(f"{17 - failed} passed, {failed} failed")
     return 0 if failed == 0 else 1
 
 

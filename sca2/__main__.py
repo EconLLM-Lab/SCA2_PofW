@@ -48,8 +48,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Refuse by design until a local trainer is wired.",
     )
 
-    eval_cmd = sub.add_parser("eval", help="WVS / placebos (not wired)")
+    eval_cmd = sub.add_parser("eval", help="Freeze a WVS transport plan (does not score a model)")
     eval_cmd.add_argument("--protocol", type=Path, required=True)
+    eval_cmd.add_argument("--runs-root", type=Path, default=None)
+    eval_cmd.add_argument(
+        "--execute",
+        action="store_true",
+        help="Refuse by design until a local scorer is wired.",
+    )
 
     return parser
 
@@ -117,6 +123,19 @@ def main(argv: list[str] | None = None) -> int:
                 args.protocol,
                 countries=args.countries,
                 data_dir=args.data_dir,
+                execute=args.execute,
+                runs_root=args.runs_root,
+            )
+        except (RuntimeError, FileNotFoundError) as exc:
+            print(f"ok=false  {exc}")
+            return 2
+        return 0 if receipt.get("status") == "planned" else 1
+    if args.command == "eval":
+        from .eval import run_eval
+
+        try:
+            receipt = run_eval(
+                args.protocol,
                 execute=args.execute,
                 runs_root=args.runs_root,
             )

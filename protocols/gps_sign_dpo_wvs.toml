@@ -96,11 +96,19 @@ max_length = 768
 quantization = "nf4_4bit"
 
 # ---------------------------------------------------------------------------
-# E — Evaluation (declared, not wired)
+# E — Evaluation
 # In code today: DPO_eval_WVS/*.ipynb
 # Transport to WVS is a test of the protocol, not recovery of P_human.
+# Matched-vs-cross under unconditioned prompts is fixed-policy proximity.
 # ---------------------------------------------------------------------------
 [eval]
 surface = "wvs_wave7"
-item_map = "synthetic_generation/sca2_datagen/config.py:WVS_ITEM_MAP"
+item_map = "DPO_eval_WVS/question_map_wvs_edited.csv"
+config_map = "synthetic_generation/sca2_datagen/config.py:WVS_ITEM_MAP"
+notebook_score = "DPO_eval_WVS/DPO_survey_distribution_evaluation.ipynb"
+notebook_analyze = "DPO_eval_WVS/GPS_vs_WVS_evaluation_analysis.ipynb"
+country_conditioning = false
+primary_metric = "tvd"
+matched_vs_cross_means = "fixed_policy_proximity"
 wired = false
+execute = false
