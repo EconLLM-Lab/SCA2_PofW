@@ -127,7 +127,7 @@ We define a protocol as
 \Pcal=(Z,R,G,S,Q,A,E),
 \label{eq:protocol}
 \end{equation}
-where $Z$ records the anchor source and country frame; $R$ is the deterministic anchor-to-profile rendering rule; $G$ is the scenario, response-pair, and label-generation procedure; $S$ is scoring, quality control, and filtering; $Q$ records prompts and direct-token anti-leakage restrictions; $A$ is the policy estimator and its training configuration; and $E$ is the planned evaluation, placebo, and sensitivity design. Conditional on an archived run manifest, the model-mediated stages of $G$ and $S$ are stochastic realizations; the protocol is not equivalent to a deterministic mapping from $z_c$ to data. In the implemented protocol, $Z$ is the GPS ingestion and country frame of Section~6.1, $R$ the deterministic profile renderer, and $G$ the teacher, generator, and selector stages of Section~4.2. $S$ is the scorer and the quality-control gates, $Q$ the frozen prompts, $A$ the DPO fit of Section~4.3, and $E$ the tests of Section~5.
+where $Z$ records the anchor source and country frame; $R$ is the deterministic anchor-to-profile rendering rule; $G$ is the scenario, response-pair, and label-generation procedure; $S$ is scoring, quality control, and filtering; $Q$ records prompts and direct-token anti-leakage restrictions; $A$ is the policy estimator and its training configuration; and $E$ is the planned evaluation, placebo, and sensitivity design. Conditional on an archived run manifest, the model-mediated stages of $G$ and $S$ are stochastic realizations; the protocol is not equivalent to a deterministic mapping from $z_c$ to data. In the implemented protocol, $Z$ is the GPS ingestion and country frame of Section~6.1, $R$ the deterministic profile renderer, and $G$ the teacher--generator bank together with deterministic sign labeling (Section~4.2). $S$ is inherited pair scoring used as a diagnostic, $Q$ the frozen prompts, $A$ the DPO fit of Section~4.3, and $E$ the tests of Section~5.
 
 Given a reference policy $\pi_{\mathrm{ref}}$, the protocol generates a country-specific synthetic dataset $\Dcal_c=\Gcal_{\Pcal}(z_c)$ and fits
 \begin{equation}
@@ -166,9 +166,9 @@ Country averages do not identify which individuals hold which preferences, how p
 The primary implementation begins with the \GPS{} vector and renders it into an anonymized quantitative profile. The rendering states the magnitude and direction of each standardized score without inserting a country name. In the primary evaluation prompt, country and demographic labels are likewise omitted. This direct-token anti-leakage design does not establish cultural validity or prove that country-associated information is absent. It establishes a narrower, auditable fact: any difference between adapters cannot be attributed to country tokens in the primary inference prompt. The claim must be complemented by audits of scenario text, profile re-identifiability, and whether a classifier can infer country from generated artifacts.
 
 \subsection{Synthetic data operator}
-The operator proceeds through five conceptually distinct stages. A teacher model first proposes behaviorally distinct facets and culturally neutral scenarios for each preference dimension, and a generator then creates two plausible, opposing responses to each fixed scenario while holding non-target traits constant. An anchor-aware selector chooses the response aligned with the country profile; an independent scorer assigns both responses scores on all six dimensions; and deterministic quality-control rules retain a pair only when the scorer reports adequate target separation and acceptable directional consistency.
+The operator has two layers. A teacher first proposes behaviorally distinct facets and culturally neutral scenarios for each preference dimension, and a generator then writes two opposing responses to each scenario while holding non-target traits constant. Response A is instructed to load positively on the target dimension and Response B negatively. That shared bank does not depend on the country. Country identity enters only as a label: the production rule assigns the high-loading response when $z_{c,k}\ge 0$ and the low-loading response when $z_{c,k}<0$. An independent scorer may assign both responses six-dimension scores; in the implemented protocol those scores are inherited from the materialized bank and used as diagnostics. Contamination is recorded and is not a retention gate. A legacy LLM selector that was prompted to implement the same sign rule is retained only as a sensitivity arm.
 
-\noindent\textbf{Example (illustrative).} Suppose Mexico's patience z-score is $+0.32$, and the rendering stage translates it into the anonymized profile text ``standardized patience score moderately above the reference mean, with a correspondingly low temporal-discounting tendency.'' The teacher then proposes a culturally neutral scenario---a respondent deciding between an immediate small reward and a delayed larger one---and the generator fixes two opposing responses: A opts for the immediate reward, B waits for the larger one, with the instructions holding risk attitudes and income constraints constant. The anchor-aware selector, consulting the profile's positive sign, retains B for Mexico. The independent scorer assigns both responses six-dimension scores: B shows adequate separation on patience, while both remain close on the five non-target dimensions. The deterministic quality-control rules then admit the A/B pair, since target separation exceeds the threshold and the direction is consistent with the positive z-score. This trace illustrates the pipeline mechanics; it is not an empirical result.
+\noindent\textbf{Example (illustrative).} Mexico's GPS patience score is $-0.11$. The rendering stage states that standardized patience is moderately below the global mean. The teacher proposes a culturally neutral intertemporal scenario, and the generator fixes two opposing responses: A waits for the larger later reward (positive loading) and B takes the smaller reward now (negative loading), with risk attitudes and income constraints held as constant as the prompt can make them. The sign rule, seeing a negative $z$, labels B as chosen for Mexico. Inherited scorer ratings, when available, are attached as diagnostics and do not decide admission. This trace illustrates the implemented mechanics; it is not an empirical result.
 
 \begin{figure}[H]
 \centering
@@ -180,20 +180,18 @@ The operator proceeds through five conceptually distinct stages. A teacher model
 \node[data, right=of gps] (render) {Deterministic\\profile rendering};
 \node[model, right=of render] (teacher) {Teacher: facets\\and scenarios};
 \node[model, right=of teacher] (pair) {Generator: fixed\\opposing pairs};
-\node[model, below=of pair] (selector) {Selector: country-\\specific pair label};
-\node[model, left=of selector] (scorer) {Scorer: six-\\dimension scores};
-\node[gate, left=of scorer] (qc) {Deterministic QC\\and contamination gate};
-\node[data, left=of qc] (dpo) {Country DPO\\training set};
+\node[data, below=of pair] (signlab) {Sign label:\\$z\ge 0\Rightarrow A$};
+\node[model, left=of signlab] (scorer) {Scorer: inherited\\diagnostics};
+\node[data, left=of scorer] (dpo) {Country DPO\\training set};
 \draw[->,thick] (gps)--(render)--(teacher)--(pair);
-\draw[->,thick] (pair)--(selector);
-\draw[->,thick] (render.south)|-(selector.west);
-\draw[->,thick] (selector)--(scorer);
-\draw[->,thick] (scorer)--(qc)--(dpo);
+\draw[->,thick] (pair)--(signlab);
+\draw[->,thick,dashed] (pair)--(scorer);
+\draw[->,thick] (signlab)--(dpo);
 \end{tikzpicture}
-\caption{Current implementation architecture. The profile rendering is deterministic; the teacher, pair generator, selector, and scorer are separable model-mediated stages. The scientific-design appendix audits these choices and motivates ablations.}\label{fig:pipeline}
+\caption{Implemented architecture. Profile rendering and sign labeling are deterministic; the teacher and pair generator are the stochastic bank. The scorer is diagnostic and is not a contamination gate. An LLM selector is a sensitivity arm, not this path.}\label{fig:pipeline}
 \end{figure}
 
-This decomposition matters. Calling every upstream choice ``teacher bias'' obscures the actual sources of dependence: scenario construction, response-pair generation, country-specific selection, scorer judgments, and filter thresholds may each change the synthetic training distribution. The empirical design therefore treats the full operator as an object of sensitivity analysis.
+This decomposition matters. Calling every upstream choice ``teacher bias'' obscures the actual sources of dependence: scenario construction, response-pair generation, the labeling rule, scorer judgments, and any filter thresholds may each change the synthetic training distribution. The empirical design therefore treats the full operator as an object of sensitivity analysis.
 
 \subsection{Policy estimation}
 For synthetic triplets $(x,y_w,y_\ell)\in\Dcal_c$, \DPO{} fits a policy relative to $\pi_{\mathrm{ref}}$ by minimizing
