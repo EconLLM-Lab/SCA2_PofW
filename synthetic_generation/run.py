@@ -79,6 +79,16 @@ def build_parser() -> argparse.ArgumentParser:
         type=parse_bool_arg,
         help="Add curated scenario anchors to hf-generator triplet prompts. Accepts True/False.",
     )
+    parser.add_argument(
+        "--labeling",
+        choices=["deterministic_sign", "llm"],
+        default="deterministic_sign",
+        help=(
+            "Country labeling of fixed A/B pairs. 'deterministic_sign' (default) assigns "
+            "chosen=A iff z>=0 with no model call. 'llm' is the legacy selector ablation and "
+            "requires the generator endpoint."
+        ),
+    )
     parser.add_argument("--estimate-only", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     parser.add_argument("--gps-path", type=Path, default=None)
@@ -341,6 +351,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         "max_error_rate_for_continue": args.max_error_rate_for_continue,
         "sample_size_policy": args.sample_size_policy,
         "use_anchors": args.use_anchors,
+        "labeling": args.labeling,
     }
     config = CONFIG.with_overrides(**overrides)
     if config.scenarios_per_dim <= 0:
@@ -389,13 +400,14 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
 
     log_banner(LOGGER, "SCA 2.0 Synthetic Data Generation")
     LOGGER.info(
-        "Configuration: countries=%s | scenarios_per_dim=%d | use_anchors=%s | models=%s/%s/%s",
+        "Configuration: countries=%s | scenarios_per_dim=%d | use_anchors=%s | models=%s/%s/%s | labeling=%s",
         countries,
         config.scenarios_per_dim,
         config.use_anchors,
         config.teacher_model,
         config.generator_model,
         config.scorer_model,
+        config.labeling,
     )
 
     if args.estimate_only:

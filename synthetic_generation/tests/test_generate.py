@@ -294,7 +294,7 @@ def test_run_teacher_pipeline_reuses_fixed_options_and_only_selects_per_country(
         generate.run_teacher_pipeline(
             profiles,
             ["MEX", "USA"],
-            config=CONFIG.with_overrides(scenarios_per_dim=1),
+            config=CONFIG.with_overrides(scenarios_per_dim=1, labeling="llm"),
             tracker=CostTracker(),
         )
     )
@@ -307,3 +307,58 @@ def test_run_teacher_pipeline_reuses_fixed_options_and_only_selects_per_country(
         assert set(group["country"]) == {"MEX", "USA"}
         assert set(group["chosen_option"]) == {"A", "B"}
     assert all(call[4] in {"Mexico profile", "USA profile"} for call in selection_calls)
+
+
+def test_run_teacher_pipeline_deterministic_sign_default_avoids_selector_endpoint(monkeypatch) -> None:
+    """Default labeling must assign A/B by sign(z) with no LLM-selector call."""
+
+    selector_calls: list[object] = []
+
+    async def failing_safe_select(*args: object, **kwargs: object) -> dict[str, object]:
+        selector_calls.append(args)
+        raise AssertionError("selector endpoint must not be called under deterministic_sign")
+
+    async def fake_generate_scenarios(
+        dim_key, dim_info, n, config=CONFIG, tracker=None, use_anchors=False, sem=None
+    ):
+        return [{"facet": "f", "prompt": f"scenario-{dim_key}"}]
+
+    async def fake_safe_generate_triplet(
+        prompt,
+        facet,
+        dim_key,
+        dim_info,
+        sem,
+        config=CONFIG,
+        tracker=None,
+        use_anchors=False,
+    ):
+        return {
+            "response_a": f"{prompt} :: high {dim_key}",
+            "response_b": f"{prompt} :: low {dim_key}",
+            "reasoning": "fixed options",
+        }
+
+    monkeypatch.setattr(generate, "generate_scenarios", fake_generate_scenarios)
+    monkeypatch.setattr(generate, "safe_generate_triplet", fake_safe_generate_triplet)
+    monkeypatch.setattr(generate, "safe_select_triplet_for_profile", failing_safe_select)
+
+    profiles = {
+        "MEX": {"profile_text": "Mexico profile", "z_c": {key: -0.1 for key in GPS_DIMENSIONS}},
+        "USA": {"profile_text": "USA profile", "z_c": {key: 0.1 for key in GPS_DIMENSIONS}},
+    }
+    df_raw, _ = asyncio.run(
+        generate.run_teacher_pipeline(
+            profiles,
+            ["MEX", "USA"],
+            config=CONFIG.with_overrides(scenarios_per_dim=1),
+            tracker=CostTracker(),
+        )
+    )
+
+    assert not selector_calls, "deterministic_sign must not invoke the selector endpoint"
+    assert len(df_raw) == len(GPS_DIMENSIONS) * 2
+    for _, row in df_raw.iterrows():
+        z = profiles[row["country"]]["z_c"][row["gps_dimension"]]
+        expected = "A" if z >= 0 else "B"
+        assert row["chosen_option"] == expected

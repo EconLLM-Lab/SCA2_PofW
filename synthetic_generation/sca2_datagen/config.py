@@ -218,6 +218,7 @@ class PipelineConfig:
     error_rate_window: int = 50
     max_error_rate_for_continue: float = 0.75
     sample_size_policy: str = "skip_unavailable"
+    labeling: str = "deterministic_sign"  # "deterministic_sign" (default, no endpoint) | "llm" (ablation only)
     use_anchors: bool = False
     keep_labeled_examples: bool = True
     normalize_perspective: str = "second_person"
