@@ -41,3 +41,12 @@ Requires: `pandas`, `pyarrow`. Optional plots: `matplotlib`, `seaborn`.
 - GPS is the in-sample identification instrument — not included here.
 
 Lab rebuild (raw `.dta` required): `python _build_merge.py`
+
+## Full-country WVS surface (42 countries)
+
+`data/wvs_eval_full/` contains one `{ISO3}_WVS_wave7.parquet` per country in the
+GPS × WVS Wave 7 intersection (42 countries), same 44-column schema as the USA/MEX
+files here, plus `_manifest.json` (per-country n, fieldwork year, item coverage) and
+`_build_wvs_eval_full.py` (reproducible builder). Updated construct priors per GPS
+dimension are in `CONSTRUCT_MAP.md`. These are the files to use for multi-country
+adapter evaluation after training.
