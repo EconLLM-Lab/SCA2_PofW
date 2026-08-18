@@ -313,6 +313,27 @@ async def safe_select_triplet_for_profile(*args: Any, **kwargs: Any) -> dict[str
         return {"error": utils.compact_error_message(exc)}
 
 
+def sign_label_triplet(
+    triplet: dict[str, Any],
+    z_c: dict[str, float],
+    dim_key: str,
+) -> dict[str, Any]:
+    """Deterministic A/B assignment from the target-dimension z-score sign.
+
+    No model call. chosen = A iff z >= 0 else B. Mirrors relabel.LABELING_RULE
+    so generation and the frozen panel agree by construction.
+    """
+
+    z_value = float(z_c[dim_key])
+    chosen_option = "A" if z_value >= 0 else "B"
+    return {
+        "chosen_option": chosen_option,
+        "chosen": triplet["response_a"] if chosen_option == "A" else triplet["response_b"],
+        "rejected": triplet["response_b"] if chosen_option == "A" else triplet["response_a"],
+        "reasoning": "deterministic_sign: chosen=A iff z>=0",
+    }
+
+
 async def run_teacher_pipeline(
     cultural_profiles: dict[str, dict[str, Any]],
     countries: list[str],
@@ -426,32 +447,46 @@ async def run_teacher_pipeline(
             "; ".join(error_summary),
         )
 
-    LOGGER.info("Stage 2b/3: selecting fixed responses for countries=%s", countries)
+    LOGGER.info("Stage 2b/3: assigning fixed responses for countries=%s (labeling=%s)", countries, config.labeling)
     for country in countries:
         profile = cultural_profiles[country]
-        LOGGER.info("Selecting among %d fixed triplets for country=%s", len(fixed_triplets), country)
-        selection_results = await utils.gather_with_progress(
-            [
-                safe_select_triplet_for_profile(
-                    triplet["prompt"],
-                    triplet["facet"],
-                    triplet["gps_dimension"],
-                    GPS_DIMENSIONS[triplet["gps_dimension"]],
-                    triplet["response_a"],
-                    triplet["response_b"],
-                    country,
-                    profile["profile_text"],
-                    profile["z_c"],
-                    sem,
-                    config=config,
-                    tracker=tracker,
-                )
+        LOGGER.info("Labeling among %d fixed triplets for country=%s", len(fixed_triplets), country)
+        if config.labeling == "deterministic_sign":
+            # Default: no endpoint call. The Qwen selector re-implements this sign
+            # rule stochastically; keeping it deterministic here prevents any
+            # per-country model call at the labeling stage.
+            selection_results = [
+                sign_label_triplet(triplet, profile["z_c"], triplet["gps_dimension"])
                 for triplet in fixed_triplets
-            ],
-            description=f"Select {country}",
-            logger=LOGGER,
-            batch_size=10,
-        )
+            ]
+        elif config.labeling == "llm":
+            # Ablation only. Requires the generator endpoint (HF_GENERATOR_ENDPOINT_URL).
+            selection_results = await utils.gather_with_progress(
+                [
+                    safe_select_triplet_for_profile(
+                        triplet["prompt"],
+                        triplet["facet"],
+                        triplet["gps_dimension"],
+                        GPS_DIMENSIONS[triplet["gps_dimension"]],
+                        triplet["response_a"],
+                        triplet["response_b"],
+                        country,
+                        profile["profile_text"],
+                        profile["z_c"],
+                        sem,
+                        config=config,
+                        tracker=tracker,
+                    )
+                    for triplet in fixed_triplets
+                ],
+                description=f"Select {country}",
+                logger=LOGGER,
+                batch_size=10,
+            )
+        else:
+            raise ValueError(
+                f"Unknown labeling mode: {config.labeling!r} (expected 'deterministic_sign' or 'llm')"
+            )
 
         failed_selection_messages: list[str] = []
         for triplet, selection in zip(fixed_triplets, selection_results):

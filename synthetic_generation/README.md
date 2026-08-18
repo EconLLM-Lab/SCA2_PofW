@@ -50,7 +50,7 @@ Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural s
 
 **Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [briq-institute.org](https://gps.briq-institute.org).
 
-The profile is used by the **generator** endpoint when selecting which fixed response option matches a country (see Block C, Stage 2b).
+The profile text documents the country's disposition for human readers; country labeling of fixed A/B pairs is the deterministic sign rule (no model call) unless `--labeling llm` is used (see Block C, Stage 2b).
 
 ### Block C — Generation engine
 
@@ -59,7 +59,7 @@ Four-step architecture:
 1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into exactly 5 concrete sub-dimensions.
 2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
 3. **Fixed triplet generation** (Stage 2): For each scenario, the generator endpoint creates fixed high/low response options once, independent of country.
-4. **Profile-based selection** (Stage 2b): For each country, the **generator** endpoint selects which fixed option best matches that country's GPS disposition. This keeps the response options fixed across countries while preserving country-specific preferences.
+3. **Profile-based (sign) selection** (Stage 2b): For each country, the chosen fixed response is assigned by the **sign of the target-dimension z-score** (`chosen = A if z >= 0 else B`) — a deterministic rule, **no model call**. The legacy LLM selector that re-implements this sign rule is retained only as an opt-in ablation (`--labeling llm`), which does require the generator endpoint. This keeps the response options fixed across countries while preserving country-specific preferences.
 
    > *Audit note:* the LLM selector implements a supplied sign rule stochastically. Appendix B of the working paper ([`../misc/position_paper/position_paper_sca2.pdf`](../misc/position_paper/position_paper_sca2.pdf)) recommends a deterministic A/B sign rule as the primary operator, with the LLM selector retained as a sensitivity arm.
 
@@ -279,7 +279,7 @@ These are documented here so new members understand *why* things are the way the
 1. **English-only generation:** Confirmed that cross-language behavior shifts are minimal for our purposes. Keeps the pipeline simpler and cheaper.
 2. **Facet-first scenario generation:** Each GPS dimension is first decomposed into 4–6 facets before scenario generation. This raises scenario diversity compared with the original notebook.
 3. **Fixed triplet generation:** The high/low response options are generated once per scenario, independent of country, then reused across countries. This removes the old country-specific pair generation flow and makes cross-country comparisons cleaner.
-4. **Separate scoring endpoint:** QC scoring runs on a dedicated scorer endpoint, reducing generator self-preference bias relative to a single-endpoint pipeline. Profile-based selection is performed by the generator endpoint; see the audit in Appendix B of the working paper for why this stage is being re-examined.
+4. **Separate scoring endpoint:** QC scoring runs on a dedicated scorer endpoint, reducing generator self-preference bias relative to a single-endpoint pipeline. Country selection is the deterministic sign rule (no model call) by default; the legacy LLM selector is an opt-in ablation (`--labeling llm`). See the audit in Appendix B of the working paper for why this stage was re-examined.
 5. **No nationality references:** Responses should not contain phrases like "As a Mexican..." or "As an American...". We express cultural dispositions through behavioral choices, not identity labels.
 6. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked diagnostically but not filtered on.
 7. **Checkpoint after generation:** The pipeline writes raw pairs and a scenario bank checkpoint before scoring so long runs can be resumed without paying for generation twice.

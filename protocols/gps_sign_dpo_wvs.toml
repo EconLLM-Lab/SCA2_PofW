@@ -1,0 +1,114 @@
+# SCA2 paper application — aggregate GPS anchors, sign-relabel, DPO, WVS.
+# This file IS the operator P = (Z, R, G, S, Q, A, E).
+# Comments teach; the loader only reads keys.
+
+schema_version = 1
+name = "gps_sign_dpo_wvs"
+status = "label_wired"          # train/eval are declared, not implemented
+# Ownership of knobs: protocols/DEGREES_OF_FREEDOM.md
+
+# ---------------------------------------------------------------------------
+# Z — Anchor source
+# What population-level information is allowed to enter the construction?
+# In code: profiles.extract_gps_vector / relabel.load_gps_vectors
+# The unit is a country. The number is a standardized deviation from the
+# GPS global mean (Falk et al. 2018), not a raw survey mean and not a person.
+# ---------------------------------------------------------------------------
+[anchor]
+source = "gps_falk_2018"
+file = "data/GPS/GPS_dataset_country_level/country_gps.dta"
+vectors_json = "synthetic_generation/outputs/gps_sign_relabel_all/gps_z_vectors.json"
+inclusion = "all_complete_six_dim"
+dimensions = ["trust", "risktaking", "patience", "altruism", "posrecip", "negrecip"]
+
+# ---------------------------------------------------------------------------
+# R — Profile rendering
+# How does z_c become text the rest of the pipeline may see?
+# In code: profiles.build_cultural_profile
+# Country names are forbidden here. Magnitude bins (near / moderate / strong)
+# are a rendering choice, not extra identification.
+# The sign-relabel path does not need the prose profile at all — only the sign.
+# ---------------------------------------------------------------------------
+[profile]
+rule = "deterministic_quantitative"
+country_in_profile = false
+
+# ---------------------------------------------------------------------------
+# G — Synthetic-data operator
+# Shared A/B bank is country-independent. Labeling is the only country step.
+# In code: generate.py (bank) and relabel.py (labels)
+# labeling = deterministic_sign is the production rule.
+# llm_selector is an ablation, not the baseline.
+# ---------------------------------------------------------------------------
+[generation]
+bank = "synthetic_generation/outputs/usa_mex_dpo_anchored_110_b6_c4_06232026/checkpoint_raw_pairs.jsonl"
+labeling = "deterministic_sign"
+selector = "none"
+zero_rule = "nonnegative_is_A"   # z == 0 -> A
+use_anchors = false              # June 23 bank was generated without YAML anchors
+magnitude_used = "sign_only"     # |z| does not change the label
+pair_admission = "all_bank_pairs"  # not the June 23 QC-pass 599-row export
+
+# ---------------------------------------------------------------------------
+# S — Scoring / QC
+# The June 23 scorer wrote 0-1 ratings on the shared pairs.
+# This protocol inherits those scores and rotates them onto A/B.
+# It does not re-call Phi-4. Contamination is diagnostic, not a gate.
+# In code: score.py (original), relabel.recover_ab_scores (rotation)
+# ---------------------------------------------------------------------------
+[qc]
+mode = "inherited_source_bank"
+contamination_gate = false
+
+# ---------------------------------------------------------------------------
+# Q — Prompts and anti-leakage
+# Omitting country tokens removes a prompting channel only.
+# It does not prove the base model has no country prior.
+# In code: generate.select_triplet_for_profile, eval PROMPT_COUNTRY_CONDITIONING
+# ---------------------------------------------------------------------------
+[prompts]
+country_conditioning = false
+
+# ---------------------------------------------------------------------------
+# A — Policy estimator
+# In code today: DPO_train_test/DPO_train.ipynb
+# The CLI writes a frozen plan. It does not launch GPU training.
+# ---------------------------------------------------------------------------
+[train]
+estimator = "dpo_qlora"
+base_model = "meta-llama/Llama-3.1-8B-Instruct"
+wired = false
+execute = false
+data_dir = "synthetic_generation/outputs/gps_sign_relabel_all"
+notebook = "DPO_train_test/DPO_train.ipynb"
+train_frac = 0.80
+seed = 42
+beta = 0.1
+lora_r = 16
+lora_alpha = 32
+lora_dropout = 0.05
+lora_targets = ["q_proj", "k_proj", "v_proj", "o_proj"]
+learning_rate = 1.0e-4
+num_train_epochs = 1
+per_device_train_batch_size = 1
+gradient_accumulation_steps = 16
+max_length = 768
+quantization = "nf4_4bit"
+
+# ---------------------------------------------------------------------------
+# E — Evaluation
+# In code today: DPO_eval_WVS/*.ipynb
+# Transport to WVS is a test of the protocol, not recovery of P_human.
+# Matched-vs-cross under unconditioned prompts is fixed-policy proximity.
+# ---------------------------------------------------------------------------
+[eval]
+surface = "wvs_wave7"
+item_map = "DPO_eval_WVS/question_map_wvs_edited.csv"
+config_map = "synthetic_generation/sca2_datagen/config.py:WVS_ITEM_MAP"
+notebook_score = "DPO_eval_WVS/DPO_survey_distribution_evaluation.ipynb"
+notebook_analyze = "DPO_eval_WVS/GPS_vs_WVS_evaluation_analysis.ipynb"
+country_conditioning = false
+primary_metric = "tvd"
+matched_vs_cross_means = "fixed_policy_proximity"
+wired = false
+execute = false
