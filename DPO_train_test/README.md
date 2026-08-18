@@ -1,7 +1,10 @@
 # DPO train / test (canonical)
 
 Country-specific QLoRA DPO adapters on **Llama-3.1-8B-Instruct**, plus cross-country reward-recovery evaluation.
-NOTE: For a base run, refer to the notebooks in the folder. For evaluation, select the countries carefully: running all combinations of countries will be long and unnecessary.
+
+NOTE: For a base run, refer to the notebooks in the folder. This version does not require preprocessing and only needs data preparation.
+
+NOTE2: For evaluation, select the countries carefully: running all combinations of countries will be long and unnecessary.
 
 ## Run order
 
