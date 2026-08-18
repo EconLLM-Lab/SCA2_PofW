@@ -1,0 +1,793 @@
+{
+  "description": "SCA2 WVS7 evaluation surfaces, GPS \u2229 WVS Wave 7 intersection",
+  "built_by": "data/wvs_eval_full/_build_wvs_eval_full.py",
+  "n_countries": 42,
+  "countries": [
+    "ARG",
+    "AUS",
+    "BGD",
+    "BOL",
+    "BRA",
+    "CAN",
+    "CHL",
+    "CHN",
+    "COL",
+    "CZE",
+    "DEU",
+    "EGY",
+    "GBR",
+    "GRC",
+    "GTM",
+    "IDN",
+    "IND",
+    "IRN",
+    "IRQ",
+    "JOR",
+    "JPN",
+    "KAZ",
+    "KEN",
+    "KOR",
+    "MAR",
+    "MEX",
+    "NGA",
+    "NIC",
+    "NLD",
+    "PAK",
+    "PER",
+    "PHL",
+    "ROU",
+    "RUS",
+    "SRB",
+    "THA",
+    "TUR",
+    "UKR",
+    "USA",
+    "VEN",
+    "VNM",
+    "ZWE"
+  ],
+  "country_names": {
+    "ARG": "Argentina",
+    "AUS": "Australia",
+    "BGD": "Bangladesh",
+    "BOL": "Bolivia",
+    "BRA": "Brazil",
+    "CAN": "Canada",
+    "CHL": "Chile",
+    "CHN": "China",
+    "COL": "Colombia",
+    "CZE": "Czech Republic",
+    "DEU": "Germany",
+    "EGY": "Egypt",
+    "GBR": "United Kingdom",
+    "GRC": "Greece",
+    "GTM": "Guatemala",
+    "IDN": "Indonesia",
+    "IND": "India",
+    "IRN": "Iran",
+    "IRQ": "Iraq",
+    "JOR": "Jordan",
+    "JPN": "Japan",
+    "KAZ": "Kazakhstan",
+    "KEN": "Kenya",
+    "KOR": "South Korea",
+    "MAR": "Morocco",
+    "MEX": "Mexico",
+    "NGA": "Nigeria",
+    "NIC": "Nicaragua",
+    "NLD": "Netherlands",
+    "PAK": "Pakistan",
+    "PER": "Peru",
+    "PHL": "Philippines",
+    "ROU": "Romania",
+    "RUS": "Russia",
+    "SRB": "Serbia",
+    "THA": "Thailand",
+    "TUR": "Turkey",
+    "UKR": "Ukraine",
+    "USA": "United States",
+    "VEN": "Venezuela",
+    "VNM": "Vietnam",
+    "ZWE": "Zimbabwe"
+  },
+  "wvs_item_map": {
+    "Q57": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Most people can be trusted (binary)"
+    },
+    "Q59": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Trust: Your neighborhood (1-4 inv)"
+    },
+    "Q61": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Trust: People met first time (1-4 inv)"
+    },
+    "Q62": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Trust: Other religion (1-4 inv)"
+    },
+    "Q63": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Trust: Other nationality (1-4 inv)"
+    },
+    "Q64": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Confidence: Churches (1-4 inv)"
+    },
+    "Q69": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Confidence: Police (1-4 inv)"
+    },
+    "Q70": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Confidence: Courts (1-4 inv)"
+    },
+    "Q71": {
+      "dim": "trust",
+      "tier": 2,
+      "label": "Confidence: Government (1-4 inv)"
+    },
+    "Q58": {
+      "dim": "trust",
+      "tier": 3,
+      "label": "Trust: Family (1-4 inv, in-group)"
+    },
+    "Q60": {
+      "dim": "trust",
+      "tier": 3,
+      "label": "Trust: Personal acquaintances (1-4 inv)"
+    },
+    "Q73": {
+      "dim": "trust",
+      "tier": 3,
+      "label": "Confidence: Parliament (1-4 inv)"
+    },
+    "Q13": {
+      "dim": "patience",
+      "tier": 2,
+      "label": "Child quality: Thrift (binary)"
+    },
+    "Q14": {
+      "dim": "patience",
+      "tier": 2,
+      "label": "Child quality: Perseverance (binary)"
+    },
+    "Q43": {
+      "dim": "patience",
+      "tier": 2,
+      "label": "Less importance on work: good/bad (1-3)"
+    },
+    "Q50": {
+      "dim": "patience",
+      "tier": 3,
+      "label": "Financial satisfaction (1-10)"
+    },
+    "Q106": {
+      "dim": "risktaking",
+      "tier": 2,
+      "label": "Incomes equal (1) vs different (10)"
+    },
+    "Q107": {
+      "dim": "risktaking",
+      "tier": 2,
+      "label": "Private ownership (1) vs govt (10)"
+    },
+    "Q109": {
+      "dim": "risktaking",
+      "tier": 2,
+      "label": "Competition good (1) vs harmful (10)"
+    },
+    "Q178": {
+      "dim": "risktaking",
+      "tier": 3,
+      "label": "Justifiable: fare avoidance (1-10)"
+    },
+    "Q12": {
+      "dim": "posrecip",
+      "tier": 2,
+      "label": "Child quality: Tolerance/respect (binary)"
+    },
+    "Q174": {
+      "dim": "posrecip",
+      "tier": 2,
+      "label": "Religion: follow norms vs do good (binary)"
+    },
+    "Q81": {
+      "dim": "posrecip",
+      "tier": 3,
+      "label": "Confidence: Charitable orgs (1-4 inv)"
+    },
+    "Q176": {
+      "dim": "negrecip",
+      "tier": 2,
+      "label": "Moral clarity (1-10)"
+    },
+    "Q177": {
+      "dim": "negrecip",
+      "tier": 2,
+      "label": "Justifiable: Claiming benefits (1-10 inv)"
+    },
+    "Q179": {
+      "dim": "negrecip",
+      "tier": 2,
+      "label": "Justifiable: Stealing (1-10 inv)"
+    },
+    "Q195": {
+      "dim": "negrecip",
+      "tier": 3,
+      "label": "Justifiable: Death penalty (1-10)"
+    },
+    "Q101": {
+      "dim": "altruism",
+      "tier": 2,
+      "label": "Member: Charitable org (0-2)"
+    },
+    "Q99": {
+      "dim": "altruism",
+      "tier": 2,
+      "label": "Member: Environmental org (0-2)"
+    },
+    "Q103": {
+      "dim": "altruism",
+      "tier": 3,
+      "label": "Member: Self-help group (0-2)"
+    }
+  },
+  "files": {
+    "ARG_WVS_wave7.parquet": {
+      "country": "ARG",
+      "name": "Argentina",
+      "n": 1003,
+      "ncols": 44,
+      "fieldwork_year": 2017,
+      "years": [
+        2017
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "AUS_WVS_wave7.parquet": {
+      "country": "AUS",
+      "name": "Australia",
+      "n": 1813,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "BGD_WVS_wave7.parquet": {
+      "country": "BGD",
+      "name": "Bangladesh",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "BOL_WVS_wave7.parquet": {
+      "country": "BOL",
+      "name": "Bolivia",
+      "n": 2067,
+      "ncols": 44,
+      "fieldwork_year": 2017,
+      "years": [
+        2017
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "BRA_WVS_wave7.parquet": {
+      "country": "BRA",
+      "name": "Brazil",
+      "n": 1762,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "CAN_WVS_wave7.parquet": {
+      "country": "CAN",
+      "name": "Canada",
+      "n": 4018,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "CHL_WVS_wave7.parquet": {
+      "country": "CHL",
+      "name": "Chile",
+      "n": 1000,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "CHN_WVS_wave7.parquet": {
+      "country": "CHN",
+      "name": "China",
+      "n": 3036,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "COL_WVS_wave7.parquet": {
+      "country": "COL",
+      "name": "Colombia",
+      "n": 1520,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "CZE_WVS_wave7.parquet": {
+      "country": "CZE",
+      "name": "Czech Republic",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2022,
+      "years": [
+        2022
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "DEU_WVS_wave7.parquet": {
+      "country": "DEU",
+      "name": "Germany",
+      "n": 1528,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "EGY_WVS_wave7.parquet": {
+      "country": "EGY",
+      "name": "Egypt",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "GBR_WVS_wave7.parquet": {
+      "country": "GBR",
+      "name": "United Kingdom",
+      "n": 2609,
+      "ncols": 44,
+      "fieldwork_year": 2022,
+      "years": [
+        2022
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "GRC_WVS_wave7.parquet": {
+      "country": "GRC",
+      "name": "Greece",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2017,
+      "years": [
+        2017
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "GTM_WVS_wave7.parquet": {
+      "country": "GTM",
+      "name": "Guatemala",
+      "n": 1229,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "IDN_WVS_wave7.parquet": {
+      "country": "IDN",
+      "name": "Indonesia",
+      "n": 3200,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "IND_WVS_wave7.parquet": {
+      "country": "IND",
+      "name": "India",
+      "n": 1692,
+      "ncols": 44,
+      "fieldwork_year": 2023,
+      "years": [
+        2023
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "IRN_WVS_wave7.parquet": {
+      "country": "IRN",
+      "name": "Iran",
+      "n": 1499,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "IRQ_WVS_wave7.parquet": {
+      "country": "IRQ",
+      "name": "Iraq",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "JOR_WVS_wave7.parquet": {
+      "country": "JOR",
+      "name": "Jordan",
+      "n": 1203,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "JPN_WVS_wave7.parquet": {
+      "country": "JPN",
+      "name": "Japan",
+      "n": 1353,
+      "ncols": 44,
+      "fieldwork_year": 2019,
+      "years": [
+        2019
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "KAZ_WVS_wave7.parquet": {
+      "country": "KAZ",
+      "name": "Kazakhstan",
+      "n": 1276,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "KEN_WVS_wave7.parquet": {
+      "country": "KEN",
+      "name": "Kenya",
+      "n": 1266,
+      "ncols": 44,
+      "fieldwork_year": 2021,
+      "years": [
+        2021
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "KOR_WVS_wave7.parquet": {
+      "country": "KOR",
+      "name": "South Korea",
+      "n": 1245,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "MAR_WVS_wave7.parquet": {
+      "country": "MAR",
+      "name": "Morocco",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2021,
+      "years": [
+        2021
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "MEX_WVS_wave7.parquet": {
+      "country": "MEX",
+      "name": "Mexico",
+      "n": 1741,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "NGA_WVS_wave7.parquet": {
+      "country": "NGA",
+      "name": "Nigeria",
+      "n": 1237,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "NIC_WVS_wave7.parquet": {
+      "country": "NIC",
+      "name": "Nicaragua",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "NLD_WVS_wave7.parquet": {
+      "country": "NLD",
+      "name": "Netherlands",
+      "n": 2145,
+      "ncols": 44,
+      "fieldwork_year": 2022,
+      "years": [
+        2022
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "PAK_WVS_wave7.parquet": {
+      "country": "PAK",
+      "name": "Pakistan",
+      "n": 1995,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "PER_WVS_wave7.parquet": {
+      "country": "PER",
+      "name": "Peru",
+      "n": 1400,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "PHL_WVS_wave7.parquet": {
+      "country": "PHL",
+      "name": "Philippines",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2019,
+      "years": [
+        2019
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "ROU_WVS_wave7.parquet": {
+      "country": "ROU",
+      "name": "Romania",
+      "n": 1257,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "RUS_WVS_wave7.parquet": {
+      "country": "RUS",
+      "name": "Russia",
+      "n": 1810,
+      "ncols": 44,
+      "fieldwork_year": 2017,
+      "years": [
+        2017
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "SRB_WVS_wave7.parquet": {
+      "country": "SRB",
+      "name": "Serbia",
+      "n": 1046,
+      "ncols": 44,
+      "fieldwork_year": 2017,
+      "years": [
+        2017
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "THA_WVS_wave7.parquet": {
+      "country": "THA",
+      "name": "Thailand",
+      "n": 1500,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "TUR_WVS_wave7.parquet": {
+      "country": "TUR",
+      "name": "Turkey",
+      "n": 2415,
+      "ncols": 44,
+      "fieldwork_year": 2018,
+      "years": [
+        2018
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "UKR_WVS_wave7.parquet": {
+      "country": "UKR",
+      "name": "Ukraine",
+      "n": 1289,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "USA_WVS_wave7.parquet": {
+      "country": "USA",
+      "name": "United States",
+      "n": 2596,
+      "ncols": 44,
+      "fieldwork_year": 2017,
+      "years": [
+        2017
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "VEN_WVS_wave7.parquet": {
+      "country": "VEN",
+      "name": "Venezuela",
+      "n": 1190,
+      "ncols": 44,
+      "fieldwork_year": 2021,
+      "years": [
+        2021
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "VNM_WVS_wave7.parquet": {
+      "country": "VNM",
+      "name": "Vietnam",
+      "n": 1200,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    },
+    "ZWE_WVS_wave7.parquet": {
+      "country": "ZWE",
+      "name": "Zimbabwe",
+      "n": 1215,
+      "ncols": 44,
+      "fieldwork_year": 2020,
+      "years": [
+        2020
+      ],
+      "item_nonnull_min": 1.0,
+      "item_nonnull_mean": 1.0,
+      "mapped_items_present": 30
+    }
+  }
+}
