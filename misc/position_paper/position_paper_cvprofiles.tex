@@ -119,28 +119,28 @@ The change is a reporting rule, not a preferred score: if the network cannot ret
 
 % --- Abstract ------------------------------------------------------------------
 \section*{Abstract}
-Empirical science fails in three ways that different fields named separately.
-Measurement error is the psychometric worry that a score does not capture the construct.
-Specification error is the econometric worry that a conclusion moves when a defensible alternative score is used instead.
-Sampling error is the statistician's worry that a screen fitted on the same sample overstates how stable the survivors are.
-Artificial intelligence has made candidate measures of patience or trust cheap---a survey module, a proxy, a composite, a prompted language model, a trained policy---so all three errors arrive at once.
-
-We report only the range of a downstream scientific quantity over the scores that survive a declared validity screen.
-If no validity restriction is imposed, that range is the unrestricted specification curve.
+Candidate measures of latent constructs are cheap: a survey module, a proxy item, a composite, a prompted language model, or a trained policy can each score the same construct, and different scores can move conclusions.
+This paper reports only the range of a downstream scientific quantity over the measures that survive a declared validity screen---a set of predeclared convergent and discriminant implications with researcher-owned thresholds.
+With no validity restriction, that range is the unrestricted specification curve.
 Selection can be held out and can fail, and sampling fragility induced by data-dependent screening is reported additively as an uncertainty band, not as a confidence set for the headline range.
 
-The framework is implemented in the open package \cvp{}~3.0.2, whose validity layer is deliberately model-free: no likelihood, no fitted null, and no language model.
-On the present seven-measure country patience menu the empty-network special case recovers the sign-switching range $[-0.219,0.565]$.
-A Campbell--Fiske $2\times 2$ written as ordinary restrictions retains no instrument: at country level the canonical \WVS{} trust item tracks \GPS{} patience more closely than \GPS{} trust.
-The powered application is 480 country-demeaned sex-by-age cells.
-Thrift (Q13) and both open-weight patience scores survive a predeclared education bar and recover \GPS{} patience inside countries with range $[0.245,0.556]$; perseverance (Q14) is anti-aligned.
-No \WVS{} trust measure clears that bar.
-One open-weight trust score does, and its correlation with \GPS{} trust is $-0.317$.
-The two models are not two methods, and neither application yields a preferred measure.
-The result is that the same screen produces different speaker lists at different resolutions, and that those disagreements are what the composition is for.
+The framework is implemented in the open package \cvp{}~3.0.2.
+On a frozen seven-measure patience menu the empty-network special case recovers the sign-switching range $[-0.219,0.565]$; a Campbell--Fiske $2\times 2$ retains no instrument, because the canonical \WVS{} trust item tracks \GPS{} patience more closely than \GPS{} trust.
+On 480 country-demeaned demographic cells, thrift and two open-weight patience scores survive a predeclared education bar and recover \GPS{} patience in $[0.245,0.556]$ while perseverance is anti-aligned; no \WVS{} trust measure clears that bar, and the only cheap trust score that does is negatively associated with \GPS{} trust.
+
+Two models given identical prompts are not two methods, and neither application yields a preferred measure: the same screen produces different speaker lists at different resolutions, and those disagreements are what the composition is for.
 
 \noindent\textbf{Keywords:}
-construct validity; measurement uncertainty; partial identification; operationalization; multiverse; AI measurement; construct-identified inference
+construct validity; measurement uncertainty; partial identification; multiverse; AI measurement
+
+\section*{Plain-language abstract}
+Scientists rarely observe things like patience or trust directly; they observe scores---survey answers, composite indexes, or, increasingly, outputs of language models---and different measures can lead to different conclusions.
+Artificial intelligence has made candidate measures cheap, so the hard problem is deciding which measures are trustworthy and which conclusions survive that decision.
+This paper proposes a reporting rule: researchers declare a menu of candidate measures and a set of pre-registered expectations a credible measure should satisfy (for example, a patience measure should rise with education and should not collapse into risk-taking); measures that satisfy every expectation are admissible, and the paper reports the range of the scientific result across those admissible measures rather than a single preferred score.
+If no measure survives, that emptiness is a finding, not a failure.
+The rule is implemented in a free, open-source software package and demonstrated on international survey data on patience and trust, including scores produced by two open-weight language models.
+The demonstration shows the rule does real work: an unrestricted menu of patience measures sign-switches on a development question; the canonical trust item behaves more like a patience measure than a trust measure; and the only cheap trust score that clears the education bar points against the criterion it was asked to recover.
+The paper's conclusion is that disagreement across measures, models, and resolutions is the measurement result---information to be reported, not noise to be hidden.
 
 \section{The inferential problem when measures become cheap}
 \label{sec:problem}
@@ -758,6 +758,26 @@ Trust, cells & 480 & \{Phi\} & $-0.317$ & $[-0.382,-0.240]$ & $0.000$ \\
 \section{What follows---and what does not}
 \label{sec:discussion}
 
+\subsection{Transparency and openness}
+\label{sec:transparency}
+\textbf{Data and materials.}
+Frozen score matrices, roles, networks, thresholds, and all run artifacts behind the reported tables are committed in the public repository (\url{https://github.com/Bonorinoa/cvprofiles}, tag \texttt{v3.0.2}).
+Raw \WVS{} Wave~7 and \GPS{} microdata are license-restricted and are not redistributed; the derived country- and cell-level score tables are committed.
+Open-weight model artifacts (Meta-Llama-3.1-8B-Instruct and Phi-4-mini, Q8\_0) are pinned by SHA-256 checksum, and the scored columns are committed.
+A versioned deposit of the run artifacts with a persistent DOI will be made at acceptance.
+
+\textbf{Code.}
+The engine is the open-source package \cvp{} (version 3.0.2, MIT license), with a documented state machine (SCORE $\to$ RESTRICT $\to$ IDENTIFY $\to$ REPORT), frozen-run hash contracts, and a test suite of 369 tests; version 3.0.1 remains the PyPI release.
+
+\textbf{Preregistration.}
+This study was not preregistered in a public registry.
+The framework's falsifiability discipline is procedural and is documented in the paper: networks and thresholds were authored and frozen before slacks were inspected, the restriction-stage split of Section~\ref{sec:falsify} holds out restrictions that never vote on admission, and the freeze/run-id contract hash-pins scores, network, and target before scoring.
+
+\textbf{Reporting of AI use.}
+Language models were used as measurement instruments: the open-weight columns (Appendix~\ref{app:llm}) were produced by prompted, temperature-zero scoring of published survey items under a documented adapter card.
+An AI writing assistant (Hermes Agent, Nous Research~\cite{hermesagent}) was used for editing and formatting assistance; all scientific content, analysis, and research decisions are the authors'.
+No AI system is an author.
+
 \subsection{What an empty or wide set means}
 An empty $\M^*$ rejects the pair consisting of the current menu and the validity argument on the stated sampling frame; it does not refute the existence of the construct.
 A wide $\Bset^*$ says the scientific conclusion remains sensitive even after the validity screen; a narrow $\Bset^*$ says the conclusion is robust across the surviving operationalizations.
@@ -819,6 +839,16 @@ Frozen score matrices, roles, networks, thresholds, and all run artifacts behind
 Raw \WVS{} Wave~7 and \GPS{} microdata are license-restricted and are not redistributed; the derived country and cell score tables are committed.
 Open-weight model artifacts (Meta-Llama-3.1-8B-Instruct and Phi-4-mini, Q8\_0) are pinned by SHA-256 checksum, and the scored columns are committed.
 A versioned DOI will be deposited on Zenodo at acceptance.
+
+\section*{Author contributions}
+Augusto Gonzalez-Bonorino: conceptualization, methodology, software, formal analysis, investigation, data curation, writing---original draft, visualization.
+Kseniia Biriukova: methodology, investigation, writing---review and editing.
+Monica Capra: conceptualization, supervision, writing---review and editing.
+
+\section*{Author note}
+This work was distributed as a working paper by the EconLLM Lab (August 2026); it has not been presented at a conference.
+The companion software package \cvp{} is publicly released (GitHub tag v3.0.2; PyPI version 3.0.1).
+Generative AI was used in two ways: open-weight language models were used as measurement instruments (documented in Appendix~\ref{app:llm}), and an AI writing assistant (Hermes Agent, Nous Research) was used for editing and formatting assistance; all scientific content, analyses, decisions, and nomological networks are the authors'.
 
 \clearpage
 \appendix
@@ -1191,6 +1221,8 @@ Nomological restrictions from psychometrics screen candidate operationalizations
 \bibitem{cronbach1955} Cronbach, L.~J., and P.~E. Meehl (1955). ``Construct Validity in Psychological Tests.'' \textit{Psychological Bulletin} 52: 281--302. \url{https://doi.org/10.1037/h0040957}.
 
 \bibitem{cvprofiles} Gonzalez-Bonorino, A. (2026). \texttt{cvprofiles}: Construct-Validity Profiles as Partial Identification over Measurement Menus. Version 3.0.2, public repository (tag v3.0.2); version 3.0.1 on PyPI. \url{https://github.com/Bonorinoa/cvprofiles}.
+
+\bibitem{hermesagent} Hermes Agent (Nous Research) (2026). \textit{Hermes Agent} [Computer software]. \url{https://hermes-agent.nousresearch.com}.
 
 \bibitem{delgiudice2021} Del Giudice, M., and S.~W. Gangestad (2021). ``A Traveler's Guide to the Multiverse: Promises, Pitfalls, and a Framework for the Evaluation of Analytic Decisions.'' \textit{Advances in Methods and Practices in Psychological Science} 4(1). \url{https://doi.org/10.1177/2515245920954925}.
 
