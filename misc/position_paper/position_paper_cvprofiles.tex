@@ -99,7 +99,7 @@
 % --- Status box ---------------------------------------------------------------
 \noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\vspace{0.3em}
 \textbf{Status.}
-The companion package \cvp{}~3.0.1 is publicly released (PyPI, 2026-08-14) and used here as an instrument.
+The companion package \cvp{}~3.0.1 is publicly released (PyPI, 2026-08-14 local / 2026-08-15 UTC) and used here as an instrument.
 This version reports a two-resolution application of construct-identified inference to patience and trust.
 The powered surface is 480 country-demeaned sex-by-age cells; two freshly scored open-weight log-probability columns face the same frozen human networks.
 The country-level profiles ($n=41$ and $n=35$), including those cheap columns, are a complete but underpowered appendix.
@@ -110,12 +110,12 @@ Empty admissible sets, wide uncertainty bands, model disagreement, and screen-ve
 
 % --- Statement of significance -------------------------------------------------
 \section*{Statement of significance}
-Scientists rarely observe constructs such as patience or trust; they work through measures, and those measures can fail in three ways different fields already named.
-A score may not capture the intended construct (measurement error); a conclusion may move when a defensible alternative score is used instead (specification error); or a screen fitted on the same sample may make the survivors look stabler than they are (sampling error).
-Artificial intelligence has made candidate scores cheap, so the scarce task is deciding which of those errors still bind.
-This paper reports only conclusions that survive a declared validity screen, and it reports remaining disagreement among the survivors rather than a preferred score.
-On patience and trust, an empty screen sign-switches; a classical multitrait--multimethod test retains no instrument; inside countries, thrift and two open-weight patience scores survive an education bar that perseverance fails, while the only cheap trust score that clears that bar points against GPS trust.
-Disagreement across measures, models, and resolutions is the measurement conclusion, not a prelude to a later experiment.
+Scientists work through measures of constructs they cannot see.
+Cheap model scores multiply the representations.
+This paper reports only the image of a downstream estimand over measures that survive a declared nomological network.
+On patience and trust, an empty network sign-switches; a classical multitrait--multimethod screen retains no instrument; country-demeaned cells admit thrift and two open-weight patience scores while perseverance fails; the only cheap trust score that clears the same education bar points against \GPS{} trust.
+Two models given identical prompts do not agree on trust.
+The change is a reporting rule, not a preferred score: if the network cannot retain a representation, the paper cannot retain the conclusion.
 
 % --- Abstract ------------------------------------------------------------------
 \section*{Abstract}
@@ -129,14 +129,13 @@ We report only the range of a downstream scientific quantity over the scores tha
 If no validity restriction is imposed, that range is the unrestricted specification curve.
 Selection can be held out and can fail, and sampling fragility induced by data-dependent screening is reported additively as an uncertainty band, not as a confidence set for the headline range.
 
-The framework is implemented in the open, model-free package \cvp{}~3.0.1.
+The framework is implemented in the open package \cvp{}~3.0.1, whose validity layer is deliberately model-free: no likelihood, no fitted null, and no language model.
 On the present seven-measure country patience menu the empty-network special case recovers the sign-switching range $[-0.219,0.565]$.
 A Campbell--Fiske $2\times 2$ written as ordinary restrictions retains no instrument: at country level the canonical \WVS{} trust item tracks \GPS{} patience more closely than \GPS{} trust.
 The powered application is 480 country-demeaned sex-by-age cells.
 Thrift (Q13) and both open-weight patience scores survive a predeclared education bar and recover \GPS{} patience inside countries with range $[0.245,0.556]$; perseverance (Q14) is anti-aligned.
 No \WVS{} trust measure clears that bar.
 One open-weight trust score does, and its correlation with \GPS{} trust is $-0.317$.
-At the underpowered country resolution ($n=41$ and $n=35$), both cheap patience columns join \GPS{} on an education and risk-discriminant screen, widening the development range from the GPS singleton $0.402$ to $[0.402,0.565]$; only one of the two cheap trust columns joins the \WVS{} survivors, and the coverage band still crosses zero.
 The two models are not two methods, and neither application yields a preferred measure.
 The result is that the same screen produces different speaker lists at different resolutions, and that those disagreements are what the composition is for.
 
@@ -239,6 +238,8 @@ The relevant robustness set is the image of the downstream estimand over the sur
 \vspace{0.5em}
 
 The boxed claim relocates the burden of robustness: stability is required over measures that survive a declared validity argument, not over all plausible operationalizations.
+The claim is deliberately one-directional: validity evidence screens measures.
+Classical construct validation is reciprocal---anomalous patterns among rejected measures can motivate revising the construct or the network---and we state that discovery channel explicitly in Appendix~\ref{app:automation} rather than collapsing it into the confirmatory screen.
 The rest of this section makes the objects precise and states the contributions.
 
 \subsection{Four objects}
@@ -415,6 +416,8 @@ A \emph{measurement function} $m:\mathcal{X}\to\mathbb{R}$ maps available inputs
 The \emph{menu} $\M=\{m_1,\ldots,m_J\}$ is the finite set of candidates declared by the researcher.
 \emph{Auxiliaries} $V$ are observed variables used to evaluate validity implications; they are not the construct.
 The \emph{nomological network} $\Rset(C)$ encodes those implications as moment restrictions with substantive thresholds $\tau_r$, following the classical validation tradition~\cite{cronbach1955,campbell1959} and its recent partial-identification reading~\cite{dellrambachan2026}.
+We reserve \emph{nomological network} for the broader theory from which $\Rset(C)$ is derived; $\Rset(C)$ itself is the finite, operationalized set of thresholded implications actually screened.
+A failed restriction can therefore mean either that $m$ is a poor measure or that the network supplied the wrong implication---the screen cannot by itself distinguish the two.
 The admissible set $\M^*$ retains the measures that pass every restriction; $\beta(m)$ is the downstream target; $\Bset^*$ is its image over $\M^*$, with scalar summary $[L,U]$; and $G(D,C)$ denotes a measurement-generation technology producing candidate measures from evidence $D$ and construct $C$.
 The owner column of Table~\ref{tab:objects} states the division of labor: commitments are authored upstream; the engine computes their consequences.
 
@@ -453,7 +456,7 @@ r:\qquad \E\bigl[g_r\bigl(m(X),V;\tau_r\bigr)\bigr]\ge 0,
 \end{equation}
 where $\tau_r$ is the \emph{substantive threshold}: a researcher-owned commitment justified by theory, prior literature, or a preregistered tolerance, and \emph{not} a parameter estimated by the admissibility procedure.
 Weak inequalities are the normal form of one-sided validity content (``at least this association,'' ``no more than this contamination'').
-A numeric gloss fixes the reading: $\tau_{\mathrm{conv}}=0.39$ means that any measure whose population correlation with the convergent criterion falls below $0.39$ is denied the interpretation attached to $C$, regardless of how well it predicts $Y$.
+A numeric gloss fixes the reading: $\tau_{\mathrm{conv}}=0.39$ means that any measure whose population correlation with the convergent criterion falls below $0.39$ fails the declared admissibility gate under $\Rset(C)$, regardless of how well it predicts $Y$.
 Let $s_r(m)$ denote the sample slack of restriction $r$ on measure $m$ (positive when satisfied).
 For a declared tolerance $\delta\ge 0$, the admissible set is
 \begin{equation}
@@ -462,7 +465,8 @@ For a declared tolerance $\delta\ge 0$, the admissible set is
 \end{equation}
 Passing is conditional evidence: $m\in\M^*$ means $m$ is consistent with the declared interpretation---not that $m$ is the construct, that the menu is exhaustive, or that $m$ is valid for uses the tests do not represent.
 An empty admissible set is a valid finding: it rejects the pair $(\M,\Rset)$ as an operationalization of $C$, not $C$ itself.
-A poor restriction can reject a useful measure; a weak network can admit a poor one.
+A poor restriction can reject a useful measure; a weak network can admit a poor one; and a misspecified network can manufacture apparent homogeneity by excluding a coherent family of counterexamples.
+The force of the screen is therefore conditional on the restrictions being correct implications of the construct (Assumption~A.2): pre-specification fixes researcher degrees of freedom, but it does not by itself establish that a restriction is substantively necessary for the intended interpretation.
 The framework disciplines these commitments by making them explicit and auditable---it does not make them disappear.
 
 The screen is deliberately not a classical joint hypothesis test: there is no likelihood, no null distribution, and no prior; the engine computes transparent moments against declared thresholds and reports which measures clear them.
@@ -494,6 +498,7 @@ If the validity argument retains only the two measures with $\beta(m)=0.35$ and 
 If all five survive, every candidate meets $\Rset(C)$ but admissible measures disagree on $\beta$, so no single estimand conclusion survives measurement choice within the declared menu.
 The multiverse domain is $\M$; the construct-identified domain is $\M^*$.
 $\Bset^*$ is not an unconditional identified set for the latent construct; it is the set of results produced by measures that survive a declared validity argument~\cite{manski2003,molinari2020}.
+The unrestricted image over $\M$ and the conditional image over $\M^*$ answer different questions; where both are computable this paper reports both, and the contrast between them is informative rather than a defect.
 
 The same equations recover two classical objects.
 If $\M^*$ is treated as known, endpoint inference for $[L,U]$ is ordinary inference for extrema over a fixed finite set, and a Bonferroni union of intervals is a conservative cross-check in the spirit of Imbens and Manski~\cite{imbensmanski2004}.
@@ -581,6 +586,8 @@ Flag measures whose absolute slack margin satisfies $|\mathrm{margin}_m|\le\kapp
 \item \textbf{Conservative cross-check (optional).}
 Compare a units bootstrap that re-forms $\M^*$ in every replicate with the same bootstrap that freezes $\M^*$ at the original estimate; only that contrast isolates admission--endpoint coupling from ordinary endpoint sampling error.
 A Bonferroni union computed on a fixed $\M^*$ measures interval conservatism, not coupling.
+\item \textbf{Validity-argument sensitivity (roadmap).}
+The $\tau$-grid varies numeric thresholds while holding the validity theory fixed; sensitivity across substantively defensible networks $\Rset_1,\Rset_2,\ldots$ is a separate layer that the current application does not execute (Section~\ref{sec:community}).
 \end{enumerate}
 Under uniform consistency of the slacks and the target functional, and a separation condition excluding measures exactly on the admissibility boundary, the plug-in admissible set and range converge in probability to their population counterparts (Appendix~A).
 The documented failure regime is coupling: a near-boundary measure that is also $\beta$-extreme couples admission with the endpoints, because its inclusion or exclusion moves the range directly.
@@ -613,8 +620,9 @@ The engine implements the state machine
 \end{equation}
 and accepts four plain-text inputs---scores, roles, network, and target specification---producing slacks, $\M^*$, $\Bset^*$, a survivors-only range, holdout verdicts, and the additive diagnostics of Section~\ref{sec:uncertainty}.
 Frozen runs hash the score matrix, network, and target specification into a reproducibility record, and an empty $\M^*$ is an exit-success scientific finding rather than an exception.
-The engine is deliberately score-agnostic and model-free: it contains no language model, searches no prompt space, and writes no theory.
-This separation is a paper--package contract: the package is released on PyPI (version 3.0.1, 2026-08-14) and used here as an instrument.
+The engine is deliberately score-agnostic: it contains no language model, searches no prompt space, and writes no theory, and its validity layer fits no likelihood, prior, or null.
+Score-agnostic does not mean upstream measurement models are irrelevant---a composite's reliability or an LLM's prompt protocol shapes the score columns and hence the slacks---but the engine itself is agnostic about how scores were produced.
+This separation is a paper--package contract: the package is released on PyPI (version 3.0.1, 2026-08-14 local / 2026-08-15 UTC) and used here as an instrument.
 Version 3.0.1 adds a named \texttt{empty\_R} contract so that $\Rset=\emptyset$ is expressible and fail-loud rather than a silent admit-all; default \texttt{empty\_R=false} is omitted from the network hash, so pre-3.0.1 freezes remain bit-stable.
 Software cannot resolve disagreements about what patience or trust means; it can make those disagreements inspectable.
 Competing researchers can author different networks, thresholds, or menus and see exactly which commitment changes the conclusion---a feature, not a hidden optimizer.
@@ -669,13 +677,16 @@ Cell networks keep only the education implication, now on country-demeaned cell 
 On the present seven-measure country patience menu, setting $\Rset=\emptyset$ in \cvp{}~3.0.1 admits the full menu and returns $[L,U]=[-0.219,0.565]$, the minimum and maximum of those seven $\beta$ values (composite $-0.219$; Phi $0.565$).
 The composition claim of Section~\ref{sec:propagate} is therefore a computed result, not a verbal nesting.
 An unrestricted multiverse of patience operationalizations still sign-switches on the development estimand.
+The unrestricted range is reported by design alongside the screened range: the contrast shows how much apparent fragility the validity argument removes and how much survives it.
+The two objects answer different questions---heterogeneity across plausible operationalizations versus heterogeneity among operationalizations licensed by $\Rset(C)$---and their disagreement is not a defect.
 
 Campbell and Fiske's $2\times 2$ is written as eight ordinary restrictions on a peer menu of \GPS{} patience, \WVS{} child-qualities, \GPS{} trust, and Q57, with $\tau_{\mathrm{conv}}=0.30$ and $\tau_{\mathrm{disc}}=0.35$ ($n=41$).
 The convergent floor sits at a published survey--behavioral trust bound and below the Falk et al.\ GPS--WVS trust Spearman of $0.49$~\cite{falk2018}; the discriminant ceiling admits their country Corr(patience, trust) of $0.190$.
 Both the classical per-instrument retain set and the engine's global $\M^*$ are empty.
 The binding cells are not subtle: \GPS{} patience versus child-qualities is $r=-0.252$; \GPS{} trust versus Q57 is $r=0.284$, just under the floor; Q57 versus \GPS{} \emph{patience} is $r=0.825$.
 Partialling log GDP per capita and education leaves that last association at $0.706$.
-The inequalities are Campbell--Fiske cells, so the psychometric bridge is formally recovered.
+The inequalities are Campbell--Fiske cells, so the original correlational MTMM criteria are nested as a special case of the general restriction framework.
+This recovers the classical correlation-based MTMM logic; modern latent-variable MTMM (e.g., trait--method models such as CT-C($M-1$)) is a broader family this framework does not implement.
 Substantively the $2\times 2$ rejects every instrument: at country level the canonical \WVS{} trust item is closer to \GPS{} time preference than to \GPS{} ``best intentions.''
 That is a finding about the named special case, not a reason to lower $\tau$ after seeing slacks.
 
@@ -688,6 +699,8 @@ Inside countries the sign flips.
 Q13's education slack is $+0.051$, leftover monotonicity $+0.060$, and $\beta$ versus \GPS{} patience $+0.245$.
 Q14 stays anti-aligned (slack $-0.564$, $\beta=-0.326$).
 The composite is Q13 dragged under the bar by Q14.
+The rejected family is coherent: Q13, Q14, and their composite all point negatively on the development estimand at country level, and Q14 remains anti-aligned inside countries.
+Under the reciprocal reading of construct validation, that coherence is evidence---of measurement failure or of a divisible construct---and a candidate input to theory revision, not merely noise the screen removed.
 
 Both open-weight patience columns clear the same education bar with room (slacks $+0.322$ and $+0.440$) and leftover monotonicity.
 Their cell $\beta$s are $+0.417$ and $+0.556$.
@@ -707,9 +720,8 @@ The only speaker the screen admits is a cheap measure that points against the cr
 \subsection{What the application is allowed to mean}
 \label{sec:app-read}
 
-Validity decides who may speak.
-The range reports leftover disagreement among those who may.
-The band reports that the speaker list itself is noisy.
+Validity decides which measures may enter the conditional robustness set; rejected measures are not epistemically silent, and a coherent rejected family is evidence about the adequacy of $\Rset(C)$ and of the construct definition---the input to a discovery channel (revise, refreeze, test on new data) that this paper does not execute.
+The range reports leftover disagreement among those admitted; the band reports that the speaker list itself is noisy.
 
 Read that way, the cell application does not deliver a preferred measure of patience or of trust.
 Thrift and perseverance are not interchangeable proxies.
@@ -768,6 +780,7 @@ It should not silently redefine the construct, rewrite the network after seeing 
 A credible automated-science architecture therefore needs a researcher-owned, contestable validation gate---one that can itself fail, and whose commitments can be compared across research teams (Appendix~\ref{app:automation}).
 The most direct failure mode is Goodharting: a generator trained explicitly against the known restrictions.
 The defenses are procedural rather than magical---freeze the network and thresholds before final scoring, preserve negative controls, reserve restrictions or units, and keep generator provenance separate from validity evidence.
+Anti-circularity must not become anti-learning: revising a construct or network after structured anomalies is legitimate theory development, provided the revised contract is frozen and tested on new data; what is forbidden is silently rewriting $\Rset$ or $\tau$ after seeing slacks to rescue the current result.
 
 \subsection{What this application decides---and what remains}
 \label{sec:agenda}
@@ -778,6 +791,7 @@ The unrestricted country patience menu still sign-switches; once the same cheap 
 What remains is scale, not the necessity of the composition: individual-level gradient tests that keep residual variance the cell means discard, and open libraries of networks and thresholds so that research teams can contest measurement definitions without silently rewriting them.
 
 \subsection{Open implementation and community}
+\label{sec:community}
 The registry of restriction types, target functionals, and generators is deliberately small, and its gaps are known: stability is schema-only, slacks are never learned, and coupling theory is deferred to a companion methods paper.
 The contribution we invite is concrete---new restriction types, $\beta$-functionals, and measurement generators---not a leaderboard.
 
@@ -798,6 +812,12 @@ C\;\longrightarrow\;\M\;\xrightarrow{\;\Rset\;}\;\M^*\;\longrightarrow\;\Bset^*.
 \]
 The novelty is not construct validity, multiverse analysis, partial identification, or sampling inference in isolation; it is their operational composition at the measurement layer.
 When measures are cheap, validity becomes the scarce resource.
+
+\section*{Data and code availability}
+Frozen score matrices, roles, networks, thresholds, and all run artifacts behind the tables are committed in the public repository \url{https://github.com/Bonorinoa/cvprofiles} at tag \texttt{paper-2026-08-18} (package version 3.0.1); the engine is released on PyPI.
+Raw \WVS{} Wave~7 and \GPS{} microdata are license-restricted and are not redistributed; the derived country and cell score tables are committed.
+Open-weight model artifacts (Meta-Llama-3.1-8B-Instruct and Phi-4-mini, Q8\_0) are pinned by SHA-256 checksum, and the scored columns are committed.
+A versioned DOI will be deposited on Zenodo at acceptance.
 
 \clearpage
 \appendix
@@ -975,7 +995,22 @@ Selection admits $m_{\mathrm{true}}$, $m_{\mathrm{weak}}$, and $m_{\mathrm{conta
 An anchor-fit baseline that keeps the two measures with the largest convergent correlations retains $m_{\mathrm{true}}$ and $m_{\mathrm{contam}}$, of which only one survives holdout: pass rate $1/2$.
 In this population-limit example, construct-guided selection beats single-anchor selection on held-out validity---the direction of the falsifiable claim.
 
-A finite-sample engine check under the shipped implementation reproduces the qualitative structure of DGPs A--D; run identifiers are recorded in the companion repository.
+\paragraph{DGP E: theory misspecification (a divisible construct).}
+Suppose the construct is initially treated as unitary but the menu actually contains two coherent families with opposite nomological relations: four measures load $0.80$ or $0.60$ on a subconstruct $C_1$ and four load $0.80$ or $0.60$ on $C_2$ (with $C_1\perp C_2$), plus noise.
+Let the convergent criterion be $V_c=0.80\,C_1-0.20\,C_2+\varepsilon$ and the outcome $Y=0.60\,C_1-0.50\,C_2+\varepsilon$, both standardized.
+A screen $\mathrm{Corr}(m,V_c)\ge 0.39$ admits the $C_1$ family (population convergent correlations $0.64$ and $0.48$) and rejects the $C_2$ family ($-0.16$ and $-0.12$).
+The unrestricted image over $\M$ is $[-0.40,0.48]$---broad and structured, with a coherent negative block from the rejected family; the conditional image is $\Bset^*=[0.36,0.48]$, narrow and positive.
+Both objects are correct under their own questions: the conditional set is valid inference under $\Rset$, and the structured disagreement in the full menu is exactly the evidence that $C$ may be divisible.
+The framework decides which measures may speak under the declared argument; it does not decide whether the rejected family is invalid measurement or evidence that $C$ should be split---that decision belongs to the discovery channel (Appendix~\ref{app:automation}), which revises, refreezes, and tests on new data.
+
+\paragraph{DGP F: reliability attenuation (measurement precision).}
+Hold latent validity constant and vary only the psychometric precision of two otherwise equivalent composites.
+Let $C$ be standardized with a criterion $B$ at $\mathrm{Corr}(C,B)=0.70$, and let $A_1$ and $A_2$ be means of five items each loading $0.90$ and $0.50$ on $C$ (independent errors), giving composite reliabilities $\omega_1=0.955$ and $\omega_2=0.625$.
+The observed criterion correlations are $\mathrm{Corr}(A_1,B)=0.70\sqrt{0.955}=0.684$ and $\mathrm{Corr}(A_2,B)=0.70\sqrt{0.625}=0.553$: identical latent validity, different admissibility.
+A convergent gate $\mathrm{Corr}(m,B)\ge 0.60$ admits $A_1$ and rejects $A_2$ purely because of reliability, and the same attenuation makes $A_2$ look cleaner on an upper-bound discriminant gate against a slightly contaminated foil ($\mathrm{Corr}(A_2,V_d)=0.079$ versus $0.098$ for $A_1$ when $\mathrm{Corr}(V_d,C)=0.10$).
+The lesson is that admissibility can depend on the machinery of score construction, not only on substantive construct differences---the motivation for the measurement-precision layer on the roadmap (Section~\ref{sec:community}), and a caution the paper's own reliability-naive composite $z(\mathrm{Q13})+z(\mathrm{Q14})$, dragged under the bar by Q14, illustrates empirically.
+
+A finite-sample engine check under the shipped implementation reproduces the qualitative structure of DGPs A--F; run identifiers are recorded in the companion repository.
 
 \section{Benchmarks as measurement menus}
 \label{app:bench}
@@ -1148,7 +1183,7 @@ Nomological restrictions from psychometrics screen candidate operationalizations
 
 \bibitem{canenenamorado2026} Canen, N., and T.~Enamorado (2026). ``When Predictions Become Regressors: A Split-Sample Correction for Biases in Downstream Inference.'' arXiv:2608.02909.
 
-\bibitem{capra2025} Gonzalez-Bonorino, A., C.~M. Capra, and M.~Pantoja (2025). ``LLMs Can Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents.'' arXiv:2501.06834; forthcoming, \textit{Review of Experimental Economics}.
+\bibitem{capra2025} Gonzalez-Bonorino, A., C.~M. Capra, and E.~Pantoja (2025). ``LLMs Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents.'' arXiv:2501.06834.
 
 \bibitem{chenrttamer2026} Chen, X., A.~Rambachan, and E.~Tamer (2026). ``Partial Identification from LLM Prompts.'' arXiv:2606.15031v2.
 
@@ -1230,7 +1265,7 @@ Nomological restrictions from psychometrics screen candidate operationalizations
 
 \bibitem{truong2026} Truong, S., S.~Wang, A.~Wang, N.~Truong, A.~Reuel, N.~Haber, and S.~Koyejo (2026). ``Public AI Benchmarks Are Broken, But Are Private Benchmarks the Answer?'' Manuscript. \url{https://aimslab.stanford.edu/papers/Truong2026PublicPrivate.pdf}.
 
-\bibitem{wallach2025} Wallach, H., M.~Desai, N.~Pangakis, A.~F. Cooper, et al. (2025). ``Position: Evaluating Generative AI Systems Is a Social Science Measurement Challenge.'' \textit{ICML 2025}. arXiv:2411.10939.
+\bibitem{wallach2025} Wallach, H., M.~Desai, N.~Pangakis, A.~F. Cooper, et al. (2024). ``Evaluating Generative AI Systems Is a Social Science Measurement Challenge.'' \textit{NeurIPS 2024 Workshop on Evaluating Evaluations (EvalEval)}. arXiv:2411.10939.
 
 \bibitem{yinvu2026} Yin, M., H.~Vu, and C.~Persico (2026). ``How (Un)Stable Are LLM Occupational Exposure Scores? Evidence from Multi-Model Replication.'' NBER Working Paper 35110. \url{https://doi.org/10.3386/w35110}.
 
