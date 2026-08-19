@@ -3,7 +3,7 @@
 % -----------------------------------------------------------------------------
 % Measuring What We Mean — position paper v8 (2026-08-15 LLM join)
 % Construct-identified inference (composition of CV, multiverse, PI).
-% Engine: cvprofiles 3.0.1. Main application: demeaned cells + fresh
+% Engine: cvprofiles 3.0.2. Main application: demeaned cells + fresh
 % open-weight scores. Country human+LLM is the underpowered appendix.
 % 2026-08-10 K=5 freeze deleted (not recycled).
 % -----------------------------------------------------------------------------
@@ -99,7 +99,7 @@
 % --- Status box ---------------------------------------------------------------
 \noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\vspace{0.3em}
 \textbf{Status.}
-The companion package \cvp{}~3.0.1 is publicly released (PyPI, 2026-08-14 local / 2026-08-15 UTC) and used here as an instrument.
+The companion package \cvp{}~3.0.2 is released in the public repository (tag \texttt{v3.0.2}); version 3.0.1 is the current PyPI release (2026-08-14 local / 2026-08-15 UTC).
 This version reports a two-resolution application of construct-identified inference to patience and trust.
 The powered surface is 480 country-demeaned sex-by-age cells; two freshly scored open-weight log-probability columns face the same frozen human networks.
 The country-level profiles ($n=41$ and $n=35$), including those cheap columns, are a complete but underpowered appendix.
@@ -129,7 +129,7 @@ We report only the range of a downstream scientific quantity over the scores tha
 If no validity restriction is imposed, that range is the unrestricted specification curve.
 Selection can be held out and can fail, and sampling fragility induced by data-dependent screening is reported additively as an uncertainty band, not as a confidence set for the headline range.
 
-The framework is implemented in the open package \cvp{}~3.0.1, whose validity layer is deliberately model-free: no likelihood, no fitted null, and no language model.
+The framework is implemented in the open package \cvp{}~3.0.2, whose validity layer is deliberately model-free: no likelihood, no fitted null, and no language model.
 On the present seven-measure country patience menu the empty-network special case recovers the sign-switching range $[-0.219,0.565]$.
 A Campbell--Fiske $2\times 2$ written as ordinary restrictions retains no instrument: at country level the canonical \WVS{} trust item tracks \GPS{} patience more closely than \GPS{} trust.
 The powered application is 480 country-demeaned sex-by-age cells.
@@ -278,7 +278,7 @@ Restrictions or units can be held out prospectively, and validity-guided selecti
 \textit{(iii) Separation of headline from diagnostics.}
 The headline range is reported separately from additive sampling diagnostics: an uncertainty band (selection uncertainty, not a confidence set), an empty-replicate rate, and boundary attribution.
 \textit{(iv) An auditable, model-free implementation and a two-resolution application.}
-The method ships in the released package \cvp{}~3.0.1~\cite{cvprofiles}.
+The method ships in the released package \cvp{}~3.0.2~\cite{cvprofiles}.
 The confirmatory application places human measures of patience and of trust under one contract at two resolutions, with leftover restrictions, additive sampling diagnostics, and two nested special cases computed on the same objects.
 
 \subsection{Roadmap}
@@ -622,8 +622,9 @@ and accepts four plain-text inputs---scores, roles, network, and target specific
 Frozen runs hash the score matrix, network, and target specification into a reproducibility record, and an empty $\M^*$ is an exit-success scientific finding rather than an exception.
 The engine is deliberately score-agnostic: it contains no language model, searches no prompt space, and writes no theory, and its validity layer fits no likelihood, prior, or null.
 Score-agnostic does not mean upstream measurement models are irrelevant---a composite's reliability or an LLM's prompt protocol shapes the score columns and hence the slacks---but the engine itself is agnostic about how scores were produced.
-This separation is a paper--package contract: the package is released on PyPI (version 3.0.1, 2026-08-14 local / 2026-08-15 UTC) and used here as an instrument.
-Version 3.0.1 adds a named \texttt{empty\_R} contract so that $\Rset=\emptyset$ is expressible and fail-loud rather than a silent admit-all; default \texttt{empty\_R=false} is omitted from the network hash, so pre-3.0.1 freezes remain bit-stable.
+This separation is a paper--package contract: the package is released in the public repository (tag \texttt{v3.0.2}; version 3.0.1 on PyPI, 2026-08-14 local / 2026-08-15 UTC) and used here as an instrument.
+Version 3.0.1 added a named \texttt{empty\_R} contract so that $\Rset=\emptyset$ is expressible and fail-loud rather than a silent admit-all; default \texttt{empty\_R=false} is omitted from the network hash, so pre-3.0.1 freezes remain bit-stable.
+Version 3.0.2 pins round-trip CSV parsing so run identities re-verify from committed inputs on every platform; all runs reported here are 3.0.2 freezes.
 Software cannot resolve disagreements about what patience or trust means; it can make those disagreements inspectable.
 Competing researchers can author different networks, thresholds, or menus and see exactly which commitment changes the conclusion---a feature, not a hidden optimizer.
 
@@ -674,7 +675,7 @@ Cell networks keep only the education implication, now on country-demeaned cell 
 \subsection{Nested special cases}
 \label{sec:app-special}
 
-On the present seven-measure country patience menu, setting $\Rset=\emptyset$ in \cvp{}~3.0.1 admits the full menu and returns $[L,U]=[-0.219,0.565]$, the minimum and maximum of those seven $\beta$ values (composite $-0.219$; Phi $0.565$).
+On the present seven-measure country patience menu, setting $\Rset=\emptyset$ in \cvp{}~3.0.2 admits the full menu and returns $[L,U]=[-0.219,0.565]$, the minimum and maximum of those seven $\beta$ values (composite $-0.219$; Phi $0.565$).
 The composition claim of Section~\ref{sec:propagate} is therefore a computed result, not a verbal nesting.
 An unrestricted multiverse of patience operationalizations still sign-switches on the development estimand.
 The unrestricted range is reported by design alongside the screened range: the contrast shows how much apparent fragility the validity argument removes and how much survives it.
@@ -739,7 +740,7 @@ Circularity is a standing risk rather than a solved problem.
 \begin{table}[t]
 \centering
 \small
-\caption{Powered application: country-demeaned cells with fresh open-weight columns (\cvp{}~3.0.1, seed 20260814, $n_{\mathrm{boot}}=1000$).
+\caption{Powered application: country-demeaned cells with fresh open-weight columns (\cvp{}~3.0.2, seed 20260814, $n_{\mathrm{boot}}=1000$).
 Cell $\beta$ is the correlation with the matching \GPS{} cell mean after country demeaning.
 Coverage is the additive uncertainty band at $\alpha=0.10$.
 Country profiles are Appendix~\ref{app:country}.}
@@ -814,7 +815,7 @@ The novelty is not construct validity, multiverse analysis, partial identificati
 When measures are cheap, validity becomes the scarce resource.
 
 \section*{Data and code availability}
-Frozen score matrices, roles, networks, thresholds, and all run artifacts behind the tables are committed in the public repository \url{https://github.com/Bonorinoa/cvprofiles} at tag \texttt{paper-2026-08-18} (package version 3.0.1); the engine is released on PyPI.
+Frozen score matrices, roles, networks, thresholds, and all run artifacts behind the tables are committed in the public repository \url{https://github.com/Bonorinoa/cvprofiles} at tag \texttt{v3.0.2} (package version 3.0.2); version 3.0.1 is on PyPI.
 Raw \WVS{} Wave~7 and \GPS{} microdata are license-restricted and are not redistributed; the derived country and cell score tables are committed.
 Open-weight model artifacts (Meta-Llama-3.1-8B-Instruct and Phi-4-mini, Q8\_0) are pinned by SHA-256 checksum, and the scored columns are committed.
 A versioned DOI will be deposited on Zenodo at acceptance.
@@ -1084,7 +1085,7 @@ The two models are not two methods: they disagree on the inequality bar, and onl
 \begin{table}[ht]
 \centering
 \small
-\caption{Country appendix (\cvp{}~3.0.1, seed 20260814, $n_{\mathrm{boot}}=1000$).
+\caption{Country appendix (\cvp{}~3.0.2, seed 20260814, $n_{\mathrm{boot}}=1000$).
 Country $\beta$ is standardized OLS on log GDP per capita with an education control.}
 \label{tab:country_llm}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.8cm} r >{\raggedright\arraybackslash}p{4.2cm} r r r@{}}
@@ -1183,13 +1184,13 @@ Nomological restrictions from psychometrics screen candidate operationalizations
 
 \bibitem{canenenamorado2026} Canen, N., and T.~Enamorado (2026). ``When Predictions Become Regressors: A Split-Sample Correction for Biases in Downstream Inference.'' arXiv:2608.02909.
 
-\bibitem{capra2025} Gonzalez-Bonorino, A., C.~M. Capra, and E.~Pantoja (2025). ``LLMs Can Model Non-WEIRD Behavior: Experiments with Synthetic Cultural Agents.'' Accepted for publication in \textit{Research in Experimental Economics} 23: Artificial Intelligence and Experimental Methods.
+\bibitem{capra2025} Gonzalez-Bonorino, A., C.~M. Capra, and E.~Pantoja (2025). ``LLMs Can Model Non-WEIRD Behavior: Experiments with Synthetic Cultural Agents.'' Accepted for publication in \textit{Research in Experimental Economics} 23: Artificial Intelligence and Experimental Methods. arXiv:2501.06834.
 
 \bibitem{chenrttamer2026} Chen, X., A.~Rambachan, and E.~Tamer (2026). ``Partial Identification from LLM Prompts.'' arXiv:2606.15031v2.
 
 \bibitem{cronbach1955} Cronbach, L.~J., and P.~E. Meehl (1955). ``Construct Validity in Psychological Tests.'' \textit{Psychological Bulletin} 52: 281--302. \url{https://doi.org/10.1037/h0040957}.
 
-\bibitem{cvprofiles} Gonzalez-Bonorino, A. (2026). \texttt{cvprofiles}: Construct-Validity Profiles as Partial Identification over Measurement Menus. Version 3.0.1, public repository and PyPI. \url{https://github.com/Bonorinoa/cvprofiles}.
+\bibitem{cvprofiles} Gonzalez-Bonorino, A. (2026). \texttt{cvprofiles}: Construct-Validity Profiles as Partial Identification over Measurement Menus. Version 3.0.2, public repository (tag v3.0.2); version 3.0.1 on PyPI. \url{https://github.com/Bonorinoa/cvprofiles}.
 
 \bibitem{delgiudice2021} Del Giudice, M., and S.~W. Gangestad (2021). ``A Traveler's Guide to the Multiverse: Promises, Pitfalls, and a Framework for the Evaluation of Analytic Decisions.'' \textit{Advances in Methods and Practices in Psychological Science} 4(1). \url{https://doi.org/10.1177/2515245920954925}.
 
