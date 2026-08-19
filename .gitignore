@@ -17,6 +17,11 @@ data/Barometer/
 # SCA2 construct-validity reproducible run outputs (inputs + summaries tracked)
 data/validity/runs/
 
+# Phase-2 unified mirror — Drive (MyDrive/SCA2_phase2) is canonical; raw eval CSVs are a working copy
+data/phase2/raw/
+# Phase-2 adapter backup (HF repo Bonorinoa/SCA2-phase2-adapters is canonical; 7.6 GB of weights)
+data/phase2/adapters/
+
 # agents / local indexes
 .vscode/
 .codebase-memory/
