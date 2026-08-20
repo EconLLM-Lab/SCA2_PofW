@@ -17,6 +17,7 @@ All scripts run from the repo root with the project venv: `unset PYTHONPATH && .
 | `09_temperature_scaling.py` | `temp_scale_*.csv` | Inference temperature sweep (T=1..3) on existing option probabilities; shape vs location decomposition |
 | `10_development_restrictions.py` | `development_*.csv` | Nomological test: composite vs log GDP pc (WDI 2015-2019), GPS/human/adapter layers, education partials |
 | `11_twin_gdp.py` | `twin_gdp_pairs.csv` | Sign-twin proximity vs development confound (partial corr on CF_ST) |
+| `12_persona_baseline.py` | `persona_vs_base_vs_adapter_tvd.csv`, `persona_pooled_shape.csv`, `persona_summary_by_country.csv` | Country-named prompt baseline (base + persona, 16 countries) vs adapters |
 
 Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface schema), `_check_trust.py` (reconciliation diagnostic).
 
@@ -66,6 +67,20 @@ Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface sche
   layers (risk +0.347 vs human -0.345; negrecip -0.321 vs GPS +0.215) — the imprint
   pattern. GPS z (76 ctry): patience +0.584, trust +0.322; human WVS (42): patience
   +0.092, trust +0.158.
+- **Persona prompting beats both the adapters and the unconditioned base on TVD.**
+  Base Llama-3.1-8B-Instruct with "typical adult living in COUNTRY" (16 countries,
+  35 items, single-choice): pooled TVD 0.375 vs base 0.443 and adapters 0.469;
+  persona wins in 14/16 countries against each (GRC ≈ tie vs adapter; USA ≈ tie vs
+  base). Mean Δ persona−adapter = −0.091; persona−base = −0.067. Persona also has
+  the least under-dispersion (entropy err −0.438 vs base −0.540, adapters −0.736)
+  and the best top-option match (0.479 vs 0.452/0.451). The anti-leakage design
+  (weights-only, no country in prompt) costs ~0.09 TVD on average — the adapters'
+  fixed distribution is closer to the population than the unconditioned base, but
+  a simple country-named prompt on the SAME base model does better on the
+  distributional surface. Directional constructs (trust/patience ordering) are
+  still the adapters' contribution; persona gains are shape/location, not new
+  construct knowledge (raw outputs: `data/phase2/raw/wvs/persona_baseline/`,
+  gitignored; script `12_persona_baseline.py`).
 
 ## Metric note (cultural distance)
 
