@@ -59,7 +59,9 @@ BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
 MULTI_SELECT = "multiple_response_max_5"
 
 
-def recode(raw, item):
+def recode_value(raw, item):
+    """Recode a single option code. Never apply this to a mean: binary recodes
+    are nonlinear, so recode(E[V]) != E[recode(V)]. Use the latter."""
     s = float(raw)
     if item in INVERT_1_4:
         return 5.0 - s
@@ -202,12 +204,14 @@ def composites_from_options(opts: pd.DataFrame) -> pd.DataFrame:
             d = d.sort_values("option_value")
             pm = d["model_prob"].values.astype(float)
             pm = pm / pm.sum()
-            mean = float((d["option_value"].values.astype(float) * pm).sum())
+            vv = d["option_value"].values.astype(float)
+            rec = np.array([recode_value(v, q) for v in vv])
+            mean = float((rec * pm).sum())
             for dim, items in DIM_ITEMS.items():
                 if q in items:
                     rows.append({"model": model, "eval_country": ec,
                                  "gps_dimension": dim, "item": q,
-                                 "mean": recode(mean, q)})
+                                 "mean": mean})
     return pd.DataFrame(rows)
 
 

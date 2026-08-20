@@ -7,18 +7,19 @@
 \usepackage{array}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{float}
 \usepackage{hyperref}
 \usepackage{xcolor}
 
 \title{\textbf{SCA2 Phase-2 Report: Synthetic Cultural Agents \\ A Unified Evaluation of DPO Adapters, Prompted Base, and Human Baselines}}
 \author{EconLLM Lab -- Gonzalez-Bonorino, Biriukova, Capra}
-\date{August 19, 2026 (draft for internal discussion)}
+\date{August 20, 2026 (internal; audited after 19 August draft)}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-\noindent We evaluate sixteen country-specific DPO/QLoRA adapters (Llama-3.1-8B-Instruct, trained on synthetic GPS-sign preference pairs with no country tokens in any prompt and no WVS/AB data in training) against two inference-time alternatives on the same surface: the unconditioned base model and the base model prompted as a resident of each country, plus a uniform random baseline and the human population itself. Every model is passed through identical pipelines: distributional fit to WVS Wave-7 population response distributions (TVD, JSD, entropy and dispersion errors, top-option match), a construct bridge to GPS country $z$-scores, and nomological development restrictions (log GDP per capita, education partials, Gini). The results split cleanly: prompting recovers distributional shape (persona TVD 0.375 vs adapter 0.469 and base 0.443, with noise at 0.338 --- a diffuse-population floor), while only the trained adapters recover the GPS preference \emph{direction} and its economic gradient (adapter trust composite $\rho_{\mathrm{GPS}}=0.70$ vs persona 0.06; base and noise are single fixed distributions whose cross-country correlations are undefined by construction). We discuss what researchers and policy-makers gain from a weights-only, aggregate-anchor policy, whether soft DPO is warranted, and the journal landscape for the work as it stands.
+\noindent We evaluate sixteen country-specific DPO/QLoRA adapters (Llama-3.1-8B-Instruct, trained on synthetic GPS-sign preference pairs with no country tokens in any prompt and no WVS/AB data in training) against two inference-time alternatives on the same surface: the unconditioned base model and the base model prompted as a resident of each country, plus a uniform random baseline and the human population itself. Every model is passed through identical pipelines: distributional fit to WVS Wave-7 population response distributions (TVD, JSD, entropy and dispersion errors, top-option match), a construct bridge to GPS country $z$-scores, and nomological development restrictions (log GDP per capita, education partials, Gini). The results split cleanly: prompting recovers distributional shape (persona TVD 0.375 vs adapter 0.469 and base 0.443, with noise at 0.338 --- a diffuse-population floor), while only the trained adapters recover the GPS preference \emph{direction} and its economic gradient (adapter trust composite $\rho_{\mathrm{GPS}}=0.78$ vs persona 0.06; base and noise are single fixed distributions whose cross-country correlations are undefined by construction). CF\_ST cultural distance (Muthukrishna et al.\ 2020) and a PCA of item \emph{means} disagree because they measure different objects: frequency/shape versus location. We discuss what researchers gain from a weights-only, aggregate-anchor policy, why soft DPO is the wrong next lever if the goal is histogram fit, and which venues the evidence can honestly support.
 \end{abstract}
 
 \section{Data and construction of every number}\label{sec:construction}
@@ -29,7 +30,7 @@ For each of sixteen countries ($\mathcal{C}$ = CHN, JPN, GBR, USA, MEX, ARG, DEU
 
 \begin{itemize}
 \item \textbf{base} --- Llama-3.1-8B-Instruct, unconditioned prompt (``Answer this questionnaire as an individual person''). Option probabilities computed as softmax over summed per-token log-probabilities of each response code completion, exactly as in the canonical evaluation notebook. Because the prompt never names a country, base is a \emph{single fixed distribution} replicated across countries; only its per-country TVD (against each country's population) varies.
-\item \textbf{persona} --- the same base model with the country named in the prompt (``Answer this questionnaire as a typical adult living in COUNTRY''). Scored identically; this produces sixteen \emph{distinct} distributions, one per prompted country. New run, 2026-08-19, T4, 5{,}616 option rows.
+\item \textbf{persona} --- the same base model with the country named in the prompt (``Answer this questionnaire as a typical adult living in COUNTRY''). Scored identically; this produces sixteen \emph{distinct} distributions, one per prompted country. Run 2026-08-19, T4, 5{,}616 option rows.
 \item \textbf{adapter (per country)} --- the SCA2 DPO/QLoRA adapter for that country, unconditioned prompt. Trained on 526 synthetic GPS-sign pairs (658-pair production bank, $G=\mathrm{sign}(z)$ labels), 1 epoch, $\beta=0.1$, LoRA $r{=}16/\alpha{=}32$. Weights-only: the country signal must live in the LoRA weights.
 \item \textbf{noise} --- uniform distribution over the population option grid for each (country, item). This is the random-guess floor.
 \item \textbf{human (WVS)} --- the survey-weighted population response distribution (the target; by construction all fit metrics are 0 for it).
@@ -38,7 +39,7 @@ For each of sixteen countries ($\mathcal{C}$ = CHN, JPN, GBR, USA, MEX, ARG, DEU
 
 \subsection{The evaluation surface}
 \label{sec:surface}
-All models are scored on the same 35 WVS Wave-7 items (the question map in \texttt{DPO\_eval\_WVS/question\_map\_wvs\_edited.csv}). The \textbf{distributional surface} uses the 30 single-choice items (binary + ordered scales); the 3 multi-select and 2 numeric-open items are excluded because their option space is not a single softmax. The construct and development surfaces use the full 30-item map through dimension composites.
+All models are scored on the same 35 WVS Wave-7 items (the question map in \texttt{DPO\_eval\_WVS/question\_map\_wvs\_edited.csv}). The \textbf{distributional surface} uses the 30 single-choice items (binary + ordered scales); the 3 multi-select and 2 numeric-open items are excluded because their option space is not a single softmax. The construct and development surfaces use the 30-item map through dimension composites.
 
 \subsection{Metric definitions (how every number is built)}
 \label{sec:metrics}
@@ -52,11 +53,11 @@ For a model's option distribution $p$ and the population distribution $q$ on a c
 \mathrm{TopMatch} &= \mathbf{1}\bigl[\arg\max_k p_k=\arg\max_k q_k\bigr]. \nonumber
 \end{align}
 
-\textbf{Composites.} For each dimension $d \in \{$trust, patience, risktaking, positive reciprocity, negative reciprocity, altruism$\}$, the country-level composite is the mean over that dimension's mapped items of the item means, after polarity recoding so that higher = more of the construct (trust items $5-v$ on 1--4 scales; justifiability $11-v$ on 1--10; binary trust $1$ if trust, $0$ otherwise). Human composites are survey-weighted; model composites weight each option by the model's probability. Missing WVS codes (negative values) are masked \emph{before} recoding. These recodes are identical to \texttt{analysis/phase2/06\_construct\_bridge.py}.
+\textbf{Composites.} For each dimension $d \in \{$trust, patience, risktaking, positive reciprocity, negative reciprocity, altruism$\}$, the country-level composite is the mean over that dimension's mapped items of the item means, after polarity recoding so that higher = more of the construct (trust items $5-v$ on 1--4 scales; justifiability $11-v$ on 1--10; binary items recoded \emph{option-wise} as $1\{v=1\}$ then averaged, never recoded as $1\{\mathrm{mean}=1\}$). Human composites are survey-weighted; model composites weight each recoded option by the model's probability. Missing WVS codes (negative values) are masked \emph{before} recoding. These recodes match \texttt{analysis/phase2/06\_construct\_bridge.py} on the human layer.
 
 \textbf{Construct bridge.} Spearman correlation across countries between the country composite and the GPS country $z$-score for that dimension. Human layer: 42 countries with both WVS and GPS. Adapter and persona layers: 16 countries. \textbf{Base and noise are excluded}: as single fixed (or grid-uniform) distributions they have no cross-country composite variation, so their Spearman is undefined (marked ``---'').
 
-\textbf{Development restrictions.} Spearman correlation across countries between the composite and $\log$ GDP per capita (World Bank WDI \texttt{NY.GDP.PCAP.PP.KD}, PPP constant 2017 US\$, 2015--2019 mean; \texttt{data/phase2/aux/wdi.csv}). Partial Spearman controls education (Q275, WVS ISCED, survey-weighted country mean). Gini (WDI \texttt{SI.POV.GINI}) is reported as a secondary auxiliary. These follow the cvprofiles convention ($\beta = $ coefficient on $\log$ GDP per capita controlling education). Base and noise are again excluded (undefined).
+\textbf{Development restrictions.} Spearman correlation across countries between the composite and $\log$ GDP per capita (World Bank WDI \texttt{NY.GDP.PCAP.PP.KD}, PPP constant 2017 US\$, 2015--2019 mean; \texttt{data/phase2/aux/wdi.csv}). Partial Spearman controls education (Q275, WVS ISCED, survey-weighted country mean). Gini (WDI \texttt{SI.POV.GINI}) is reported as a secondary auxiliary. Base and noise are again excluded (undefined).
 
 \textbf{Direction.} Top-option match rate by dimension: the fraction of items in the dimension where the model's modal answer equals the population's modal answer.
 
@@ -64,13 +65,13 @@ For a model's option distribution $p$ and the population distribution $q$ on a c
 \label{sec:replication}
 \begin{itemize}
 \item \textbf{Code:} \texttt{analysis/phase2/01..14\_*.py} in the SCA2\_PofW repository (branch \texttt{feat/co2-adapters}).
-\item \textbf{Raw eval outputs:} Google Drive \texttt{MyDrive/SCA2\_phase2/eval/} (GPS and WVS families, both banks; \texttt{wvs/persona\_baseline/} for the new run).
-\item \textbf{Unified analysis outputs:} \texttt{MyDrive/SCA2\_phase2/analysis/outputs/} (all CSVs and figures).
+\item \textbf{Raw eval outputs:} Google Drive \texttt{MyDrive/SCA2\_phase2/eval/} (GPS and WVS families, both banks; \texttt{wvs/persona\_baseline/} for the persona run).
+\item \textbf{Unified analysis outputs:} \texttt{analysis/phase2/outputs/} (CSVs and figures); Drive copy under \texttt{SCA2\_phase2/analysis/outputs/}.
 \item \textbf{Adapters:} HuggingFace \texttt{Bonorinoa/SCA2-phase2-adapters} (private; base8 + co2\_8).
-\item \textbf{Aux data:} \texttt{data/phase2/aux/wdi.csv} (WDI; also on Drive \texttt{SCA2\_phase2/aux/}).
+\item \textbf{Aux data:} \texttt{data/phase2/aux/wdi.csv}.
 \end{itemize}
 
-\section{Results}
+\section{Results}\label{sec:results}
 
 \subsection{Distributional fit: prompting wins, but the population is diffuse}
 \label{sec:dist}
@@ -85,9 +86,9 @@ Table~\ref{tab:dist} shows the pooled distributional surface (30 single-choice i
 
 \textbf{The noise floor is informative.} Uniform noise has TVD 0.338 --- \emph{lower} than every model's TVD. The WVS populations are so diffuse (multi-modal, near-uniform on many items) that any concentrated distribution pays a TVD penalty. TVD therefore rewards \emph{flatness} as much as accuracy, and model-vs-model TVD comparisons must be read against this floor: persona (0.375) is only 0.037 above noise; the adapters (0.469) are 0.13 above.
 
-\textbf{Persona is the best model on the distributional surface.} Persona TVD 0.375 < base 0.443 < adapters 0.469, and persona also has the smallest under-dispersion (entropy error $-0.44$ vs base $-0.54$ and adapters $-0.74$) and the best top-option match (0.48 vs 0.45/0.45). Persona beats the adapter in 15/16 countries and the base in 15/16 (Fig.~\ref{fig:dist}).
+\textbf{Persona is the best model on the distributional surface.} Persona TVD 0.375 $<$ base 0.443 $<$ adapters 0.469, and persona also has the smallest under-dispersion (entropy error $-0.44$ vs base $-0.54$ and adapters $-0.74$) and the best top-option match (0.48 vs 0.45/0.45). Persona beats the adapter in 15/16 countries and the base in 15/16 (Fig.~\ref{fig:dist}; GRC is the adapter win on TVD).
 
-\textbf{Why adapters underperform on TVD.} The adapters are the most over-concentrated family (entropy error $-0.74$, std error $-0.65$), a direct consequence of hard pairwise DPO labels: a pairwise preference signal identifies an ordering, never population marginals. This replicates the mode-collapse diagnosis of Pfeifer \& Dalloul (2026) on the same base model, and of the wider synthetic-survey literature.
+\textbf{Why adapters underperform on TVD.} The adapters are the most over-concentrated family (entropy error $-0.74$, std error $-0.65$), a direct consequence of hard pairwise DPO labels: a pairwise preference signal identifies an ordering, never population marginals. This replicates the mode-collapse diagnosis of Pfeifer \& Dalloul (2026) on the same base model.
 
 \subsection{Construct bridge: the adapters carry the GPS construct; prompting does not}
 \label{sec:bridge}
@@ -100,22 +101,22 @@ Table~\ref{tab:construct} shows Spearman of country composites vs GPS $z$, per d
 \input{tables/table_construct.tex}
 \end{table}
 
-\textbf{The key contrast.} On trust, the adapter composite ranks countries in GPS order ($\rho=0.70$), the human WVS layer does too ($0.41$, consistent with Falk et al.\ 2018's $0.49$), but the persona prompt does \emph{not} ($0.06$). The unconditioned base cannot be assessed at all (no country variation). The same pattern holds for patience (adapter 0.42, human 0.32, persona 0.60) and risktaking (adapter 0.57 vs human $-0.08$). \textbf{The GPS preference ordering lives in the trained weights, not in the country-named prompt.} The persona prompt buys distributional shape; it does not reproduce the GPS construct ranking.
+\textbf{The key contrast.} On trust, the adapter composite ranks countries in GPS order ($\rho=0.78$), the human WVS layer does too ($0.41$, consistent with Falk et al.\ 2018's $0.49$), but the persona prompt does \emph{not} ($0.06$). The unconditioned base cannot be assessed at all (no country variation). Patience is mixed: adapter $0.42$, human $0.32$, persona $0.60$. \textbf{The GPS preference ordering on trust lives in the trained weights, not in the country-named prompt.} The persona prompt buys distributional shape; it does not reproduce the GPS trust ranking.
 
-\textbf{The imprint pattern on exploratory dimensions.} Risktaking, positive reciprocity, and altruism show adapter $\rho$ substantially \emph{larger} than the human layer's (e.g.\ risktaking 0.57 vs $-0.08$). Because those WVS items do not track GPS in humans, a high adapter $\rho$ there is the GPS sign bit expressed through a poorly mapped instrument --- an imprint, not a recovered survey construct. The honest reading of the bridge: only trust and patience are real GPS proxies in this menu, and the adapters transfer exactly those.
+\textbf{The imprint pattern on exploratory dimensions.} Risktaking, positive reciprocity, and altruism show adapter $\rho$ larger than the human layer's (risktaking $0.57$ vs $-0.08$). Because those WVS items do not track GPS in humans, a high adapter $\rho$ there is the GPS sign bit expressed through a poorly mapped instrument --- an imprint, not a recovered survey construct. The honest reading of the bridge: only trust and patience are real GPS proxies in this menu. Adapters transfer trust cleanly; patience is transferred at human-instrument strength; the rest is imprint.
 
-\subsection{Development restrictions: adapters satisfy the GPS gradient}
+\subsection{Development restrictions: adapters satisfy the GPS gradient, weakly}
 \label{sec:dev}
 Table~\ref{tab:dev} shows Spearman of each composite vs $\log$ GDP per capita.
 
 \begin{table}[ht]
 \centering
-\caption{Development restriction: Spearman $\rho$ of country composite vs $\log$ GDP pc (WDI 2015--2019). Human n=42; adapter and persona layers n=16. ``---'' = undefined (single fixed distribution).}
+\caption{Development restriction: Spearman $\rho$ of country composite vs $\log$ GDP pc (WDI 2015--2019). Human n=41 (one country missing WDI); adapter and persona layers n=16. ``---'' = undefined (single fixed distribution).}
 \label{tab:dev}
 \input{tables/table_development.tex}
 \end{table}
 
-\textbf{The adapters reproduce the GPS-positive gradient} on trust ($+0.13$; education partial $+0.56$) and patience ($+0.29$; partial $+0.46$), in the same direction as the GPS anchor and the human WVS layer (trust $+0.09$). \textbf{Persona overshoots} (trust $+0.73$, patience $+0.33$), consistent with prompting inheriting the model's Western-coded priors. The base model, being a single fixed distribution, carries no country variation on this surface and is marked ``---''. The pattern is the imprint story: the trained weights carry the GPS gradient; the prompt does not.
+\textbf{The adapters reproduce the GPS-positive gradient} on trust ($+0.13$; education partial $+0.50$) and patience ($+0.29$; partial $+0.46$), in the same direction as the GPS anchor and the human WVS layer (trust $+0.09$). These are directional, not large. \textbf{Persona overshoots} (trust $+0.73$, patience $+0.33$), consistent with prompting inheriting the model's Western-coded priors. The base model, being a single fixed distribution, carries no country variation on this surface and is marked ``---''.
 
 \subsection{Direction}
 \label{sec:direction}
@@ -128,11 +129,11 @@ Table~\ref{tab:direction} shows top-option match by dimension. The adapters' mod
 \input{tables/table_direction.tex}
 \end{table}
 
-\section{Figures: the visual narrative}
+\section{Figures: how each chart was generated and how to read it}
 \label{sec:figures}
-All figures are produced by \texttt{analysis/phase2/14\_report\_figures.py} from the committed CSVs.
+All figures are produced by \texttt{analysis/phase2/14\_report\_figures.py} from the unified CSVs and the option-probability files. Two bugs in the 19 August draft were corrected before these panels were rebuilt: (i) binary composites recoded the \emph{mean} rather than the options ($1\{\mathrm{mean}=1\}$ collapsed almost every binary item to 0; adapter trust $\rho$ moved $0.70\to 0.78$); (ii) CF\_ST concatenated the CO2 $8\times 8$ cross-grid copies of each adapter (identical probabilities, 16-long vectors) so those items were skipped against 2-option human grids and the missing distances were filled with the matrix mean.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \begin{subfigure}[b]{0.47\textwidth}
 \includegraphics[width=\textwidth]{figures/fig_heatmap_tvd.png}
@@ -142,11 +143,11 @@ All figures are produced by \texttt{analysis/phase2/14\_report\_figures.py} from
 \includegraphics[width=\textwidth]{figures/fig_violin_tvd.png}
 \caption{Per-item TVD distributions.}
 \end{subfigure}
-\caption{Distributional surface. Persona is darkest (best) in most heatmap cells; the violins show the concentration of every model except noise.}
+\caption{Distributional surface. Heatmap cells are mean TVD over the 30 single-choice items for that country$\times$model; the colormap is \texttt{viridis\_r}, so darker (purple) is \emph{worse} TVD (further from WVS) and lighter (yellow) is \emph{better}. The adapter column is darkest in 15/16 rows --- adapters are the worst-fitting family. Noise is lightest overall because uniform noise wins the TVD contest against diffuse populations; persona is the medium green band, better than base and adapter in 15/16 countries but still above the noise floor. The violin unrolls the same TVD across items: adapter is a tight high-TVD mass, persona a lower wider mass, noise the lowest median and the widest spread. Read the heatmap for country heterogeneity (EGY/IDN adapters worst; GRC the adapter win on TVD) and the violin for the per-item concentration story.}
 \label{fig:dist}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \begin{subfigure}[b]{0.47\textwidth}
 \includegraphics[width=\textwidth]{figures/fig_heatmap_construct.png}
@@ -156,18 +157,18 @@ All figures are produced by \texttt{analysis/phase2/14\_report\_figures.py} from
 \includegraphics[width=\textwidth]{figures/fig_direction_bar.png}
 \caption{Top-option match by dimension.}
 \end{subfigure}
-\caption{Construct and direction surfaces. Gray cells are undefined (base/noise); the noise bar shows top-match alone is not validity.}
+\caption{Construct and direction surfaces. Gray cells are undefined (base/noise have no cross-country composite variation). The trust row is the paper's positive result: adapter $0.78$, human $0.41$, persona $0.06$. The noise bars in (b) show why top-match is not validity: altruism populations are near-unimodal, so uniform noise matches the mode at rate 1.00.}
 \label{fig:bridge}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.78\textwidth]{figures/fig_scatter_development.png}
-\caption{Development restriction by dimension and model (gray = human reference). The adapters reproduce the positive GPS gradient; persona overshoots; the base is excluded (single fixed distribution).}
+\caption{Development restriction. Each panel is a country-level scatter of the recoded composite against $\log$ GDP per capita. Red/blue points are the 16 adapters or persona prompts; gray points are the 42-country human overlay. Spearman $\rho$ is reported in the panel title. Read slope \emph{direction} (does trust/patience rise with development?) not the visual steepness: the human overlay is nearly flat ($\rho\approx 0.09$). Persona trust is the overshoot ($\rho=0.73$).}
 \label{fig:devfig}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \begin{subfigure}[b]{0.47\textwidth}
 \includegraphics[width=\textwidth]{figures/fig_map_cultural_distance.png}
@@ -175,77 +176,125 @@ All figures are produced by \texttt{analysis/phase2/14\_report\_figures.py} from
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.47\textwidth}
 \includegraphics[width=\textwidth]{figures/fig_map_pca_axes.png}
-\caption{Two-axis PCA of the mapped items (our surface map).}
+\caption{Two-axis PCA of the mapped items (item \emph{means}).}
 \end{subfigure}
-\caption{Cultural-distance maps. Red diamonds = adapters (* = own country), blue triangles = persona prompts, square = base, X = noise; country dots colored by region.}
+\caption{Two maps of the same 30 items. Red diamonds = adapters (* = own country), blue triangles = persona prompts, square = base, X = noise; unlabeled dots are the remaining WVS countries, colored by region. These maps are \emph{not} two views of one geometry --- see Section~\ref{sec:cfst}.}
 \label{fig:maps}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fig_map_geometry_compare.png}
+\caption{Own-country rank among 42 WVS countries. Chance $=21.5$. CF\_ST (red) uses full option frequencies; PCA (blue) uses recoded item means in the two-axis human projection. Median CF\_ST rank $18.5$; median PCA rank $26$. BRA is the only adapter that is close on \emph{both} (CF\_ST 9, PCA 2). GBR/USA look close on CF\_ST (rank 2) because they sit near CAN, the mid-scale attractor, not because they recovered Britain or the United States.}
+\label{fig:geocomp}
+\end{figure}
+
+\begin{figure}[H]
 \centering
 \begin{subfigure}[b]{0.47\textwidth}
 \includegraphics[width=\textwidth]{figures/fig_histograms_items.png}
-\caption{Item option distributions (Q57, Q69).}
+\caption{Item option distributions (Q57, Q69 $\times$ USA, CHN).}
 \end{subfigure}\hfill
 \begin{subfigure}[b]{0.47\textwidth}
 \includegraphics[width=\textwidth]{figures/fig_radar_gps.png}
-\caption{GPS profile radars (z-scored within country).}
+\caption{GPS profile radars (z-scored \emph{within} country).}
 \end{subfigure}
-\caption{Item-level and dimension-level views for USA, CHN, BRA, EGY.}
+\caption{Item-level and within-country shape. Histograms: black = WVS population; red = adapter; blue = persona; green = base; gray = noise. Q57 is binary generalized trust; Q69 is 1--4 confidence in police. The radar z-scores each model's six composites within that country, so it shows \emph{relative} dimension emphasis, not whether the adapter sits near the human country. Use it only as a within-country shape check against the GPS $z$ profile (black).}
 \label{fig:items}
 \end{figure}
 
-\clearpage
+\section{Why CF\_ST and PCA put the adapters in different places}
+\label{sec:cfst}
+
+The two maps in Fig.~\ref{fig:maps} look like they contradict each other. They do not, once the metric is written down. They also looked worse than they should have in the 19 August draft because of the concatenation bug in Section~\ref{sec:figures}; the geometry below is from the rebuilt files.
+
+\subsection{What CF\_ST is}
+Muthukrishna et al.\ (2020) apply the population-genetic fixation index to survey traits: questions are loci, answers are alleles. For two populations $A$ and $B$ on one item with option values $v$ and probabilities $p^A$, $p^B$,
+\begin{align}
+\mu_A &= \textstyle\sum_k v_k p^A_k,\qquad
+\mu_B = \textstyle\sum_k v_k p^B_k,\qquad
+\bar\mu = (\mu_A+\mu_B)/2, \nonumber\\
+\sigma^2_G &= \tfrac12\bigl[(\mu_A-\bar\mu)^2+(\mu_B-\bar\mu)^2\bigr], \nonumber\\
+\sigma^2_T &= \tfrac12\Bigl[\textstyle\sum_k p^A_k(v_k-\bar\mu)^2 + \textstyle\sum_k p^B_k(v_k-\bar\mu)^2\Bigr], \nonumber\\
+F_{\mathrm{ST}} &= \sigma^2_G / \sigma^2_T \quad (\text{0 if }\sigma^2_T\approx 0). \nonumber
+\end{align}
+Pairwise cultural distance is the mean $F_{\mathrm{ST}}$ over the 30 mapped items, after aligning option grids. $F_{\mathrm{ST}}=0$ if the two response \emph{distributions} are identical; $F_{\mathrm{ST}}=1$ if they are maximally separated. Because $\sigma^2_T$ includes within-group spread, two populations with the same mean but different frequencies (one peaked, one flat; one bimodal, one unimodal) are far apart. That is the point of the metric, and Muthukrishna et al.'s explicit criticism of Hofstede/Kogut--Singh mean-distance measures.
+
+The map in Fig.~\ref{fig:maps}(a) is classical MDS of the joint $42+16+16+2$ distance matrix (countries, adapters, personas, base, noise). MDS places two points close only if their full option-frequency vectors are close.
+
+\subsection{What the PCA map is}
+Fig.~\ref{fig:maps}(b) is not a cultural-distance embedding. It is a two-axis SVD of the $42\times 30$ matrix of \emph{human recoded item means}, with model composites projected onto those axes after subtracting the human column means. Two countries are close if their 30-vector of means is close. Dispersion, bimodality, and which option carries the mass are invisible.
+
+\subsection{Why the locations differ}
+Hard DPO produces over-concentrated output (entropy error $-0.74$). CF\_ST treats that as a large distance to every human population, because humans are diffuse: 11/16 adapters are nearest to Canada, a mid-scale attractor, and the median own-country rank is $18.5$ of 42 (chance $21.5$). PCA only sees the mean, so an adapter can sit nearer a Western cluster on means while remaining far from every country on frequencies. That is Fig.~\ref{fig:maps}(b)'s upper-right adapter cloud versus Fig.~\ref{fig:maps}(a)'s adapter island. Fig.~\ref{fig:geocomp} makes the disagreement quantitative: only BRA is close on both maps; GBR and USA rank 2 on CF\_ST because they sit near CAN, not because they recovered those countries.
+
+The scientific implication is narrow and useful. CF\_ST is the right metric for the H2 claim (``do we reproduce population histograms?''). PCA of means is a picture of the H1/construct-bridge claim (``do country orderings of averages track GPS?''). Using one map to argue the other claim is a category error. We keep both, with this section as the caption.
+
 \section{Interpretation: what do researchers and policy-makers gain?}
 \label{sec:gains}
 
 Our current method does \emph{not} deliver better distributional fit than a country-named prompt, and both are only marginally better than uniform noise on TVD. The contribution is therefore \emph{not} ``we reproduce WVS histograms.'' It is the following, each point anchored in the results above.
 
 \paragraph{1. Weights-only preference direction, with zero microdata.}
-The adapters recover the GPS \emph{direction} (held-out pair accuracy 0.89--0.99, n=132 per country) and the GPS \emph{ordering} of countries on trust and patience ($\rho=0.70$ and 0.42), \emph{without} a country token in any prompt and \emph{without} any individual survey microdata (training used only country-level GPS aggregates through $G=\mathrm{sign}(z)$ labels). This is the anti-leakage claim: the country signal demonstrably lives in the weights. A researcher who needs a \emph{policy} whose preference direction is identified as trained-in --- for counterfactual ``what if this country's preferences'' simulations, for pre-testing instruments, for power analyses --- can use these adapters with a known provenance, whereas prompting is an opaque inference-time manipulation of the same base.
+The adapters recover the GPS \emph{direction} (held-out pair accuracy $0.89$--$0.99$, $n=132$ per country) and the GPS \emph{ordering} of countries on trust ($\rho=0.78$) without a country token in any prompt and without any individual survey microdata (training used only country-level GPS aggregates through $G=\mathrm{sign}(z)$ labels). This is the anti-leakage claim: the country signal demonstrably lives in the weights. A researcher who needs a \emph{policy} whose preference direction is identified as trained-in --- for instrument pre-testing, for power analyses that need a signed preference, for counterfactuals that must not smuggle a country name --- can use these adapters with a known provenance. Prompting is an opaque inference-time manipulation of the same base.
 
 \paragraph{2. A nomological anchor that prompting cannot provide.}
-The adapters satisfy the development restriction (trust/patience rise with $\log$ GDP pc, education partials $+0.56$/$+0.46$) \emph{and} the construct bridge, while the persona prompt fails the bridge and the base model provides no country-level information at all on these surfaces. For a policy-maker asking ``does this simulated population carry the same economic gradient as the real one?,'' only the adapter passes.
+The adapters satisfy the development restriction in sign (trust/patience rise with $\log$ GDP pc, education partials $+0.50$/$+0.46$) \emph{and} the construct bridge on trust, while the persona prompt fails the trust bridge ($\rho=0.06$) and the base model provides no country-level information at all on these surfaces. For a policy-maker asking ``does this simulated population carry the same economic gradient as the real one?,'' only the adapter is even a candidate --- and the gradient is weak, not a substitute for human data.
 
 \paragraph{3. The dispersion problem is measured, not hidden.}
-We quantify exactly where the method fails: pairwise DPO cannot identify population marginals, producing over-concentration (entropy error $-0.74$). Temperature scaling at inference recovers most of the shape (pooled TVD 0.47$\rightarrow$0.33 at $T{=}3$, top-option match unchanged) without touching location. This is a published-diagnostic-grade finding: the shape loss is a softmax artifact, the location loss is structural.
+Pairwise DPO cannot identify population marginals, producing over-concentration (entropy error $-0.74$). Temperature scaling at inference recovers most of the shape (pooled TVD $0.47\to 0.33$ at $T{=}3$, top-option match unchanged) without touching location. The shape loss is a softmax artifact; the location loss is structural.
 
 \paragraph{4. Sign-twins are a development shadow.}
-The 76-country bank collapses to 35 sign profiles; twin proximity on human WVS is explained by shared GDP (partial $\rho=-0.09$). This is a warning to the field: country-level sign patterns are not cultural families.
+The 76-country bank collapses to 35 sign profiles; twin proximity on human WVS is explained by shared GDP (partial $\rho=-0.09$). Country-level sign patterns are not cultural families.
 
 \paragraph{What we cannot claim.}
 We cannot claim histogram reproduction, country-specific dispersion, or magnitudes. The persona baseline quantifies the anti-leakage price at $\sim$0.09 TVD on average. Anyone using these adapters for point prediction of survey distributions should not; anyone using them for preference \emph{direction} with transparent provenance can.
 
-\section{Should we consider soft DPO?}
+\section{Should we consider soft DPO, or Ksennia's extended-prompt bank?}
 \label{sec:softdpo}
-Soft DPO (preference-intensity weighting, e.g.\ Wu et al.\ 2024) addresses exactly one limitation: knife-edge sign labels (patience/risktaking near-zero $z$) by down-weighting weak-preference pairs. It does \emph{not} address the two drivers of the TVD loss: under-dispersion (a pairwise loss never identifies marginals, weighted or not) and level shifts (weighting never encodes base rates). It also cannot fix NLD's directional collapse, which came from strong-sign labels opposing that population's WVS. And any fix that trains on population marginals (KL-to-WVS, moment matching) would contaminate the out-of-sample design --- the paper's core claim is that WVS stays unseen. The legitimate levers are synthetic-side shape (richer multi-option completions), inference-side temperature scaling (verified: fixes shape without touching location), and label-side pruning ($|z|<0.1$ drop). Soft DPO is a designed follow-up, not a fix.
+
+Direction is already captured on the GPS pairs (H1: $0.89$--$0.99$). The remaining failure is H2: population histograms. Two candidate levers were discussed with Ksennia on 19 August: (i) \emph{soft} / intensity-weighted DPO, and (ii) an \emph{extended-prompt} training bank that is not binary yes/no.
+
+\textbf{Soft DPO / intensity weights} (preference-strength as a function of $|z|$; related to Sharifnassab et al.\ 2024 SPO, not Wu et al.\ ICML 2024, which is a different method). This addresses knife-edge sign labels (patience/risktaking near-zero $z$) by down-weighting weak pairs. It does \emph{not} identify population marginals: a pairwise loss, weighted or not, still rewards concentrating mass on the chosen completion. It cannot fix NLD's directional collapse, which came from \emph{strong} signs that oppose that population's WVS. Compute is essentially the current 30-minute adapter. Expected gain: patience/risktaking \emph{direction}, not TVD.
+
+\textbf{Extended-prompt bank.} Prior runs used richer scenario completions; the current bank is binary A/B. Ksennia's estimate is $\sim$2 hours per adapter versus $\sim$30 minutes. This is the only training-side lever that can change the \emph{shape} of the learned distribution without touching WVS, because the model is no longer forced to put mass on a two-point support. It still will not encode base rates unless the completions themselves carry graded intensity. It is also the only lever that tests her qualitative claim that ``binary-only training limits nuance.''
+
+\textbf{Already measured, do not re-spend GPU on.} Inference-time temperature scaling already moves TVD $0.47\to 0.33$ without moving modes. Country-named prompting already beats adapters on TVD by $0.09$. Any histogram-fit objective that is allowed to use a country token should just use the persona baseline.
+
+\textbf{What we will not do.} KL-to-WVS, moment matching, or any loss that trains on population marginals. That contaminates the out-of-sample design --- the paper's core claim is that WVS stays unseen.
+
+\textbf{Recommendation, in order.} (1) Keep temperature scaling as the reported inference diagnostic, not a training change. (2) Run the extended-prompt bank on a 4-country subset (one confirmatory trust/patience pair, one exploratory, one NLD-like conflict, one sign-twin) before any 16-country retrain --- this is the only test of whether richer completions move H2 when H1 is already in hand. (3) Soft DPO / $|z|<0.1$ pruning on the \emph{frozen} bank as a cheap ablation for knife-edge dimensions, not as a histogram fix. If the 4-country extended-prompt subset does not move matched TVD by a predeclared margin (we suggest $0.05$ below current adapter TVD, still above noise is acceptable), stop; the pairwise operator has hit its identification bound.
 
 \section{Journal landscape for the work as it stands}
 \label{sec:journals}
-As it stands, the paper is a \emph{constructive methodology + honest negative-result} contribution, not a ``we reproduce WVS'' claim. The strongest fit is a methods-first venue that rewards identification discipline and accepts negative results:
+The paper is a constructive methodology with an honest negative result on histograms, not a ``we reproduce WVS'' claim. Prestigious general-science journals (Nature, Science, PNAS research article) will desk-reject a 16-country Llama-3.1 adapter study whose primary external metric loses to a one-line country prompt and to uniform noise. That is the right desk rejection: the evidence does not yet support ``LLMs can stand in for populations.''
+
+What the evidence \emph{does} support is a methods paper that changes the question from impersonation to construction, reports the weights-versus-prompt dissociation, and treats distributional failure as a designed identification bound. That is a better paper than a weaker claim in \emph{Review of Experimental Economics}, and it is the only honest path above field-journal default.
+
+A feasible ladder, given current results:
 
 \begin{itemize}
-\item \textbf{Review of Experimental Economics} (the SCA1 home; natural first stop for the lab's line).
-\item \textbf{Sociological Methods \& Research} or \textbf{Political Analysis} (the synthetic-survey critique literature lives here: Bisbee et al.\ 2024, Boelaert et al.\ 2025).
-\item \textbf{Computational Linguistics / ACL Findings} (methodology + evaluation; the SubPOP/Krsteski crowd).
-\item \textbf{PLOS ONE / PNAS Nexus} (broad multidisciplinary, accepts method papers with clear limitations).
-\item \textbf{Nature Human Behaviour / Science Advances} --- only if reframed as the constructive SCA methodology paper (weights-only anchors, zero microdata, anti-leakage) with the distributional failure as a designed boundary, not a bug.
+\item \textbf{Nature Human Behaviour or Science Advances, Article / Registered Report} --- only if the next wave adds (a) the 4-country extended-prompt subset with a predeclared TVD margin, (b) a restricted permutation placebo, and (c) a non-LLM aggregate baseline, and the write-up leads with the protocol and the bound, not with $\rho=0.78$. NHB format is $\le 5{,}000$ words excluding Methods. Current 16-country tables become Extended Data. This is the stretch goal, not the submission this month.
+\item \textbf{PNAS Nexus} --- the realistic prestigious target now. Tao et al.\ (2024) already published cultural-alignment evaluation there; a constructive counterpart with anti-leakage, zero microdata, and an honest noise floor is in-scope. Interdisciplinary, accepts methods with limitations, preprint-friendly.
+\item \textbf{Sociological Methods \& Research} or \textbf{Political Analysis} --- the synthetic-survey critique literature lives here (Bisbee et al.\ 2024; Boelaert et al.\ 2025). Strongest fit for the negative H2 result plus the persona price. Field prestige is high; general-science reach is not.
+\item \textbf{Computational Linguistics / ACL Findings} --- if the contribution is framed as operator identification (pairwise DPO cannot recover marginals; temperature vs prompt vs weights). Competes with SubPOP/Krsteski; they use real microdata, we do not. That contrast is the paper.
+\item \textbf{Review of Experimental Economics} --- SCA1's home. Correct as a fallback, too small as a first try if the lab wants a more prestigious outlet than experimental economics. Do not submit there first solely because SCA1 did.
 \end{itemize}
 
-The current evidence does not yet support a Nature/PNAS-level submission as-is; the negative distributional result is the honest centerpiece, and the journal pitch must be ``here is what a weights-only, zero-microdata policy is and is not identified for,'' with the temperature-scaling and development analyses as the quantitative spine.
+The pitch that fails: ``adapters beat the base on WVS.'' They do not, on TVD. The pitch that can work: ``here is what a weights-only, zero-microdata, aggregate-anchor policy is and is not identified for, with a country-prompt and a noise floor as mandatory baselines.'' Temperature scaling, the construct bridge, and the CF\_ST/PCA distinction are the quantitative spine.
 
 \section{Status of contributions and next steps}
 \label{sec:next}
 \paragraph{Current status.}
-(i) H1: direction recovered on GPS pairs (0.89--0.99). (ii) Construct bridge: trust/patience are the real proxies; adapters transfer their ordering ($\rho=0.70$/0.42); persona does not ($0.06$/0.60). (iii) Development: adapters satisfy the GPS gradient (partials $+0.56$/$+0.46$); persona overshoots; base undefined. (iv) No distributional specificity: CF\_ST rank $\approx$ chance; sign-twins are a development shadow. (v) Temperature fixes shape, not location. (vi) Trust over-generalization: family--outgroup gradient compressed 3.7$\times$. (vii) Persona baseline: prompting beats adapters on TVD, fails the construct bridge --- the anti-leakage price and the weights-vs-prompt dissociation are both now quantified.
+(i) H1: direction recovered on GPS pairs ($0.89$--$0.99$). (ii) Construct bridge: trust/patience are the real proxies; adapters transfer trust ordering ($\rho=0.78$ / $0.42$); persona does not on trust ($0.06$ / $0.60$). (iii) Development: adapters satisfy the GPS gradient in sign (partials $+0.50$/$+0.46$); persona overshoots; base undefined. (iv) No distributional specificity: CF\_ST own-country median rank $18.5$ of 42 (chance $21.5$); 11/16 nearest to CAN; sign-twins are a development shadow. (v) Temperature fixes shape, not location ($0.47\to 0.33$ TVD; top-match unchanged). (vi) Trust over-generalization: family--outgroup gradient compressed $3.7\times$ in 16/16 countries. (vii) Persona baseline: prompting beats adapters on TVD in 15/16 countries, fails the trust bridge --- the anti-leakage price and the weights-vs-prompt dissociation are both quantified. (viii) Audit this round: binary recode-of-mean and CF\_ST grid-concatenation bugs fixed; maps rebuilt; Wu (2024) citation corrected to Sharifnassab et al.\ (2024) for SPO.
 
 \paragraph{Next steps (priority order).}
 \begin{enumerate}
-\item \textbf{Game-theoretic scenario evaluation:} score adapters on trust, patience, altruism, and risk-taking game-theoretic scenarios (public-goods, ultimatum, time-preference tasks) against GPS and WVS benchmarks; the adapters' construct direction should survive, the dispersion boundary should be measured again.
-\item \textbf{OOS evaluation on non-WVS surveys:} AmericasBarometer (USA/MEX locally) and a second instrument; tests whether the construct bridge transfers beyond the 30-item map.
-\item \textbf{New nomological restrictions with cvprofiles:} add rule-of-law, inequality (Gini), and institutional quality restrictions to the trust network; compute the construct-identified range $[L,U]$ for trust using the adapter composites as candidate measures --- the partial-identification instrument makes the adapter-vs-human disagreement itself the measurement conclusion.
-\item \textbf{Soft DPO / label-pruning ablation:} $|z|<0.1$ threshold and preference-intensity weights on the frozen bank; expected to improve patience/risktaking direction, not dispersion.
-\item \textbf{Country-named prompt as a documented baseline:} the persona run is now a committed artifact; report it in every table and figure as the literature-comparison anchor.
+\item \textbf{Extended-prompt 4-country subset} (the Ksennia lever that can still move H2 if direction is already in hand). Predeclare a TVD margin. Do not retrain all 16 until the subset moves.
+\item \textbf{Soft DPO / $|z|<0.1$ prune on the frozen bank} --- cheap, tests knife-edge labels, not expected to fix dispersion. Run after or in parallel with (1), never instead of it if the goal is histogram fit.
+\item \textbf{Restricted permutation placebo} on the same 4-country subset --- without it, H1 recovery is still ``generic synthetic tuning'' as an alternative explanation.
+\item \textbf{OOS on a second instrument} (AmericasBarometer, USA/MEX locally) for the construct bridge, not for TVD heroics.
+\item \textbf{Keep the persona run as a committed baseline} in every table. Game-theoretic scenarios and a new cvprofiles network are useful later; they are not what decides whether the pairwise operator has hit its bound.
 \end{enumerate}
 
 \begin{thebibliography}{9}
@@ -253,9 +302,9 @@ The current evidence does not yet support a Nature/PNAS-level submission as-is; 
 \bibitem{Falk2018} Falk, A., et al.\ (2018). Global evidence on economic preferences. \emph{Quarterly Journal of Economics}, 133(4), 1645--1692.
 \bibitem{PfeiferDalloul2026} Pfeifer, M., \& Dalloul, A. (2026). Can LLMs mimic household surveys? From representative agents to population distributions. SSRN 6703798.
 \bibitem{Bisbee2024} Bisbee, J., et al.\ (2024). Synthetic replacements for human survey data? The perils of large language models. \emph{Political Analysis}.
-\bibitem{Wu2024} Wu, Y., et al.\ (2024). Soft preference optimization: Aligning language models to expert preferences. ICML 2024.
-\bibitem{Tao2024} Tao, Y., Viberg, O., Baker, R.S., \& Kizilcec, R.F. (2024). Cultural bias and cultural alignment of large language models. \emph{PNAS Nexus}, 3(9), pgae346.
-\bibitem{Inglehart2005} Inglehart, R., \& Welzel, C. (2005). \emph{Modernization, Cultural Change, and Democracy}. Cambridge University Press.
+\bibitem{Sharifnassab2024} Sharifnassab, A., Salehkaleybar, S., Ghiassian, S., Kanoria, S., \& Schuurmans, D.\ (2024). Soft Preference Optimization: Aligning language models to expert distributions. arXiv:2405.00747.
+\bibitem{Tao2024} Tao, Y., Viberg, O., Baker, R.S., \& Kizilcec, R.F.\ (2024). Cultural bias and cultural alignment of large language models. \emph{PNAS Nexus}, 3(9), pgae346.
+\bibitem{Inglehart2005} Inglehart, R., \& Welzel, C.\ (2005). \emph{Modernization, Cultural Change, and Democracy}. Cambridge University Press.
 \end{thebibliography}
 
 \end{document}
