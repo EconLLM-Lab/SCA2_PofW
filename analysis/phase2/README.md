@@ -13,6 +13,10 @@ All scripts run from the repo root with the project venv: `unset PYTHONPATH && .
 | `05_trust_split.py` | trust class TVD, over-generalization, CHN/JPN spotlights | Trust target split (family/ingroup/outgroup/institutions) |
 | `06_construct_bridge.py` | `construct_bridge_by_{dimension,item}.csv`, `fig_construct_bridge.png` | WVS-GPS alignment: human layer (42 ctry, Falk-style) vs adapter layer (16) |
 | `07_cultural_distance.py` | `cd_*.csv`, `fig_cultural_distance_map.png`, `fig_cd_matched_rank.png` | CF_ST (Muthukrishna et al. 2020) cultural-distance replication |
+| `08_twin_geometry_reliability_trust.py` | `twin_*.csv`, `trust_class_bridge.csv`, `eval_08_summary.json` | Sign-twin geometry (GPS magnitudes + human CF_ST, permutation nulls); twin-adapter reliability (IDN/EGY, IND/GRC, MEX/RUS); trust-class construct bridge |
+| `09_temperature_scaling.py` | `temp_scale_*.csv` | Inference temperature sweep (T=1..3) on existing option probabilities; shape vs location decomposition |
+| `10_development_restrictions.py` | `development_*.csv` | Nomological test: composite vs log GDP pc (WDI 2015-2019), GPS/human/adapter layers, education partials |
+| `11_twin_gdp.py` | `twin_gdp_pairs.csv` | Sign-twin proximity vs development confound (partial corr on CF_ST) |
 
 Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface schema), `_check_trust.py` (reconciliation diagnostic).
 
@@ -33,6 +37,35 @@ Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface sche
   (beats Falk's Q13-only 0.09; Q13 alone 0.41), negrecip 0.43 (bonus), risk -0.08,
   altruism 0.03, posrecip 0.02. CONSTRUCT_MAP priors confirmed: trust + patience are
   the decent proxies; exploratory dims stay exploratory.
+
+## Headline results (2026-08-19, session 2: twins, temperature, development)
+
+- **Sign-twins are a coarse-but-real GPS partition, and a development shadow.**
+  76 countries -> 35 sign(z) profiles (22 multi-country classes). GPS-magnitude
+  distance within class < between (ratio 0.59, perm p=0.000); human CF_ST within
+  class < between (ratio 0.70, perm p=0.0005). BUT twin GDP gaps are also smaller
+  (0.52 vs 0.92 log pts) and partial corr(CF_ST, twin | GDP gap) = -0.09: the
+  WVS proximity of sign-twins is explained by shared development, not residual
+  culture. Sign classes are NOT a cultural taxonomy.
+- **Twin-adapter reliability.** IDN/EGY (same batch) CF_ST = 7.4e-6 (rank 1/120),
+  IND/GRC = 0.0015 (rank 2); MEX/RUS (Ksennia's runs, different environment) =
+  0.045 (rank 18). Identical labels reproduce to near-copy only within one batch;
+  cross-environment twins diverge ~30x. MEX/RUS divergence is training noise, not
+  country signal.
+- **Temperature scaling fixes shape, not location.** T=1..3 on existing option
+  probs: pooled matched TVD 0.469 -> 0.332; entropy error -0.74 -> +0.12; std error
+  -0.65 -> -0.12; binary TVD 0.238 -> 0.144 (reaches base level 0.168 at T~2-3);
+  ordered 0.494 -> 0.353. Top-option match UNCHANGED at every T (0.452 pooled) —
+  temperature never moves a mode. CF_ST matched rank median 20.5 -> 24.5 (T=2): no
+  location gain. T* per family (entropy match): binary 3.0, ordered 2.0. Shape loss
+  is largely a softmax artifact; direction/location live in the weights.
+- **Development restrictions hold on the confirmatory dimensions.** Adapter trust
+  and patience composites correlate with log GDP pc in the same direction as GPS z
+  (trust +0.085 vs GPS +0.322; patience +0.291 vs +0.584; partials controlling
+  education: trust +0.484, patience +0.460). Exploratory dims fail against both
+  layers (risk +0.347 vs human -0.345; negrecip -0.321 vs GPS +0.215) — the imprint
+  pattern. GPS z (76 ctry): patience +0.584, trust +0.322; human WVS (42): patience
+  +0.092, trust +0.158.
 
 ## Metric note (cultural distance)
 
