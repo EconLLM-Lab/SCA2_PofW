@@ -62,14 +62,14 @@ Ksennia's folders are **copied, never moved** — her originals remain untouched
 
 - Base model `meta-llama/Llama-3.1-8B-Instruct`; DPO + QLoRA (r=16, α=32, β=0.1, 1 epoch, 526 train / 132 eval shared split; `PROMPT_COUNTRY_CONDITIONING=False`). Hyperparameters identical across banks.
 - Production bank: 658 D_syn pairs (G = sign(z)); **not** the QC-599 subset.
-- Label-identical profile pairs within the 16 (from `CO2_RUN.md`, to re-verify against `country_gps.dta`): IND≡GRC, IDN≡EGY, MEX≡RUS ⇒ 13 distinct profiles. These are sign-vector classes, NOT a cultural taxonomy.
+- Label-identical profile pairs within the 16 — **verified from `country_gps.dta` (2026-08-19, `analysis/phase2/03_sign_vector_profiles.py`)**: MEX==RUS, EGY==IDN, GRC==IND ⇒ **13 distinct sign-vector profiles** (not 14; base-8 alone has 7, not 6 — Ksennia's "6 unique" from the meeting notes is not supported by GPS sign vectors; it likely reflects eval-behavioral similarity). These are sign-vector classes, NOT a cultural taxonomy.
 
 ## Data-format notes (for the unified analysis build)
 
 - **GPS reward-recovery row schema** (both banks): `model, eval_country, country, item_id, gps_dimension, prompt, chosen, rejected, generated_answer, ref_chosen_logp, ref_rejected_logp, adapter_chosen_logp, adapter_rejected_logp, ref_margin, adapter_margin, dpo_reward_delta, dpo_pref_prob, dpo_prefers_chosen`.
 - **Base-8 GPS source of truth = `reward_recovery_<CC>_adapter_on_<CC>.csv`** (ISO3, 132 rows incl. header = shared 526/132 eval split, self-mode). `<CC>_adapter.csv` is byte-identical (verified md5 for CHN/MEX/USA) — dedupe.
 - **Stale/legacy artifacts in Ksenia's GPS folder (do NOT use):** `reward_recovery_adapter_summary.csv` + `dimension_summary.csv` use pilot-era `Mexico_adapter`/`US_adapter` naming with a 70-row eval set; `reward_recovery_all_adapters.csv` contains RUS rows only; `*_1.csv` are older duplicates. **Cross-eval (adapter i on country j) exists ONLY for USA↔MEX** (pilot 2×2, summary level only) — recompute per-dimension metrics from the ISO3 row files instead.
-- **WVS eval is matched-only for base8 and co2_8** — `survey_matched_vs_cross_*.csv` shells are EMPTY there. Full 2×2 matched+cross design exists only for USA/MEX (`usamex_canonical/`).
+- **WVS eval designs (verified from the CSVs):** `usamex_canonical` = full 2×2 (base, USA_adapter, MEX_adapter × {USA, MEX}, 35 items/cell); `ksenias_base8` = **matched-only** (8 adapters on own country) + base×8 (its `survey_matched_vs_cross_*.csv` shells are EMPTY); `co2_8` = **FULL 8×8 cross grid** (277 matched + 1939 cross + 277 base rows; EGY eval has 32 items, others 35). The CO2 cross grid is the workhorse for matched-vs-cross analysis on the WVS surface.
 - `population_response_distributions.csv`: identical schema across all runs (`eval_country, question_id, ..., population_prob, weight_column`).
 - Adapter folder naming: base8 uses `US/` (not `USA/`); co2_8 uses ISO3.
 - WVS question map: repo `DPO_eval_WVS/question_map_wvs_edited.csv` — 35 unseen items (30 mapped to 6 GPS dims + 5 demographics). Q12–Q14 thrift/perseverance (patience), Q57/Q106/Q107/Q109/Q174/Q176/Q177/Q178/Q179/Q195 trust-family mapping per the direction audit (`llm-construct-validity` skill).
