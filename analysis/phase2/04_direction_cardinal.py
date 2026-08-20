@@ -130,18 +130,22 @@ def fig_a(acc: pd.DataFrame, cells: pd.DataFrame) -> None:
     ax.set_xlim(0.5, 1.02)
     ax.set_xlabel("held-out pair accuracy (chance = 0.5)")
     ax.set_title("Direction recovered: GPS reward recovery\n(base8 gray · CO2 green)")
-    # right: WVS direction per dimension
+    # right: WVS direction per dimension — composite-level Spearman vs GPS z
     ax = axes[1]
-    frac = cells.groupby("gps_dimension")["z_aligned"].mean().reindex(DIMS)
-    ax.bar(np.arange(len(DIMS)), frac.values, color="#3a7d44", width=0.6)
-    ax.axhline(0.5, color="k", ls="--", lw=0.8)
+    bridge = pd.read_csv(OUT / "construct_bridge_by_dimension.csv").set_index("gps_dimension")
+    frac = bridge["adapter_rho_16"].reindex(DIMS)
+    cols = ["#3a7d44" if v >= 0.3 else "#c1666b" for v in frac.fillna(0)]
+    ax.bar(np.arange(len(DIMS)), frac.values, color=cols, width=0.6)
+    ax.axhline(0, color="k", lw=0.8)
+    ax.axhline(0.3, color="k", ls=":", lw=0.8)
     ax.set_xticks(np.arange(len(DIMS)), DIMS, rotation=25, ha="right")
-    ax.set_ylim(0, 1)
-    ax.set_ylabel("fraction of cells moving toward GPS-sign direction")
-    ax.set_title("WVS OOS items: adapter movement toward the GPS-sign\n"
-                 "direction (vs base) — ~50% => not captured out-of-sample")
-    fig.suptitle("FIG A — direction claim: recovered in-distribution (GPS pairs),\n"
-                 "not out-of-sample (WVS items)", y=1.02, fontsize=12)
+    ax.set_ylim(-0.3, 1)
+    ax.set_ylabel("Spearman rho(adapter composite, GPS z), 16 countries")
+    ax.set_title("WVS OOS items: adapter composite vs GPS z per dimension\n"
+                 "trust/patience/risk/posrecip captured; negrecip/altruism not")
+    fig.suptitle("FIG A — direction claim: recovered in-distribution (GPS pairs)\n"
+                 "and on WVS composites for most dimensions (levels, not magnitude)",
+                 y=1.02, fontsize=12)
     fig.tight_layout()
     fig.savefig(FIG / "fig_direction_ordinal.png", bbox_inches="tight")
     plt.close(fig)
