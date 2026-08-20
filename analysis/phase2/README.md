@@ -70,8 +70,8 @@ Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface sche
 - **Persona prompting beats both the adapters and the unconditioned base on TVD.**
   Base Llama-3.1-8B-Instruct with "typical adult living in COUNTRY" (16 countries,
   35 items, single-choice): pooled TVD 0.375 vs base 0.443 and adapters 0.469;
-  persona wins in 14/16 countries against each (GRC ≈ tie vs adapter; USA ≈ tie vs
-  base). Mean Δ persona−adapter = −0.091; persona−base = −0.067. Persona also has
+  persona wins in 15/16 countries against each (unified surface, script 13).
+  Mean Δ persona−adapter = −0.091; persona−base = −0.067. Persona also has
   the least under-dispersion (entropy err −0.438 vs base −0.540, adapters −0.736)
   and the best top-option match (0.479 vs 0.452/0.451). The anti-leakage design
   (weights-only, no country in prompt) costs ~0.09 TVD on average — the adapters'
@@ -79,8 +79,12 @@ Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface sche
   a simple country-named prompt on the SAME base model does better on the
   distributional surface. Directional constructs (trust/patience ordering) are
   still the adapters' contribution; persona gains are shape/location, not new
-  construct knowledge (raw outputs: `data/phase2/raw/wvs/persona_baseline/`,
-  gitignored; script `12_persona_baseline.py`).
+  construct knowledge. NOTE: the base model is a single fixed distribution
+  (unconditioned prompt) and noise is grid-uniform — their cross-country
+  construct-bridge and development correlations are UNDEFINED and reported as
+  "---" in the unified tables (raw outputs:
+  `data/phase2/raw/wvs/persona_baseline/`, gitignored; scripts
+  `12_persona_baseline.py`, `13_unified_comparison.py`).
 
 ## Metric note (cultural distance)
 
