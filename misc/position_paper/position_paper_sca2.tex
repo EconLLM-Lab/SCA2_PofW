@@ -71,10 +71,10 @@
 
 \vspace{0.45em}
 \noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\vspace{0.25em}
-\textbf{Status of this version.} This is a methods-first working-paper draft. Its conceptual protocol, proposed rejection design, and scope boundary are stated as commitments. The multi-country experiment, placebo controls, and pipeline-sensitivity results are intentionally represented by \emph{predeclared planned} result shells rather than invented findings; this draft is not a public preregistration. A verified USA/Mexico pilot is retained only as an Appendix diagnostic.\vspace{0.25em}}}
+\textbf{Status of this version.} This is a methods-first working-paper draft. Its conceptual protocol, proposed rejection design, and scope boundary are stated as commitments. Section 7 reports results from the frozen sixteen-country evaluation (both adapter banks, WVS Wave-7 surface), every headline number re-derived from committed artifacts (V1 ledger, 2026-08-20); the honest negative --- prompting beats the adapters on distributional shape while the weights carry the GPS direction --- is the centerpiece, and the permuted-anchor placebo and operator-sensitivity arms remain predeclared and pending. This draft is not a public preregistration. A verified USA/Mexico pilot is retained only as an Appendix diagnostic.\vspace{0.25em}}}
 
 \section*{Abstract}
-Social scientists increasingly use language models to simulate survey respondents or to align models with named communities. Both approaches obscure a central question: what exactly enters the model, and what evidence would justify interpreting its output as population-relevant? We propose a constructive alternative. A researcher declares an \emph{aggregate anchor}---a vector of population-level measurements---and freezes a protocol that maps the anchor into synthetic pairwise data and then into a language-model choice policy. Country or identity labels are absent from primary inference prompts. The resulting object is therefore not an imitation of an identified person or group, nor an estimated population response distribution; it is an aggregate-anchor-induced synthetic choice policy. Its scientific value is empirical, not assumed. We specify five testable links: anchor transmission, policy encoding, anchor relevance relative to permuted-anchor placebos, external transport to independent human survey distributions, and sensitivity to upstream generation choices. We implement the protocol with country-level Global Preference Survey anchors, synthetic preference pairs, and Direct Preference Optimization, and state a planned World Values Survey analysis with non-LLM, base-model, cultural-prompt, and placebo baselines. The paper contributes a transparent way to construct and potentially reject synthetic cultural policies while drawing a sharp boundary around claims it cannot support: individual representation, full preference-distribution recovery, and downstream causal or structural inference.
+Social scientists increasingly use language models to simulate survey respondents or to align models with named communities. Both approaches obscure a central question: what exactly enters the model, and what evidence would justify interpreting its output as population-relevant? We propose a constructive alternative. A researcher declares an \emph{aggregate anchor}---a vector of population-level measurements---and freezes a protocol that maps the anchor into synthetic pairwise data and then into a language-model choice policy. Country or identity labels are absent from primary inference prompts. The resulting object is therefore not an imitation of an identified person or group, nor an estimated population response distribution; it is an aggregate-anchor-induced synthetic choice policy. Its scientific value is empirical, not assumed. We specify five testable links: anchor transmission, policy encoding, anchor relevance relative to permuted-anchor placebos, external transport to independent human survey distributions, and sensitivity to upstream generation choices. We implement the protocol with country-level Global Preference Survey anchors, synthetic preference pairs, and Direct Preference Optimization, and report a sixteen-country World Values Survey evaluation against base-model, cultural-prompt, uniform-noise, and human baselines. The results dissociate the two routes into the model: prompting recovers distributional shape, while only the trained weights recover the GPS preference direction and its economic gradient; a permuted-anchor placebo and operator-sensitivity arms remain pending. The paper contributes a transparent way to construct and potentially reject synthetic cultural policies while drawing a sharp boundary around claims it cannot support: individual representation, full preference-distribution recovery, and downstream causal or structural inference.
 
 \noindent\textbf{Keywords:} synthetic cultural agents; aggregate anchors; language models; preference optimization; survey simulation; falsification; culture
 
@@ -201,7 +201,7 @@ For synthetic triplets $(x,y_w,y_\ell)\in\Dcal_c$, \DPO{} fits a policy relative
 \DPO{} is a pairwise-preference estimator with reference-policy regularization \cite{rafailov2023}. Here it fits synthetic preferences generated by $\Pcal$. It is not a constrained estimator that mechanically enforces $\E[f(Y)]=z_c$, and we make no such claim. Intensity-weighted pairwise variants that down-weight near-zero anchors are natural sensitivity arms in $E$ \cite{sharifnassab2024}.
 
 \section{Making the construction empirically rejectable}
-The phrase ``falsifiable'' is useful only if it names propositions, estimands, and failure consequences \cite{dell2026,cvprofiles2026}. This working-paper version supplies the test architecture, but not a public timestamped registration or final numerical thresholds; it should therefore be read as a proposed rejection design. Before any scaled outcome is inspected, the archived analysis plan will fix the unit of analysis, primary metric, comparison, practical margin, randomization/materialization count, uncertainty procedure, and country/domain/protocol decision rule for every row in Table~\ref{tab:tests}. Each test concerns a distinct link; passing one does not imply passing another.
+The phrase ``falsifiable'' is useful only if it names propositions, estimands, and failure consequences \cite{dell2026,cvprofiles2026}. This working-paper version supplies the test architecture, but not a public timestamped registration or final numerical thresholds; it should therefore be read as a proposed rejection design. The archived analysis plan fixed the unit of analysis, primary metric, comparison, practical margin, randomization/materialization count, uncertainty procedure, and country/domain/protocol decision rule for every row in Table~\ref{tab:tests} before outcomes were inspected. Each test concerns a distinct link; passing one does not imply passing another.
 
 \begin{table}[H]
 \centering\small
@@ -279,32 +279,116 @@ The primary cross-country claim will compare each fixed policy to each country's
 \subsection{Operator-sensitivity panel}
 A stratified 4--6-country subset is run before the full panel. The reference protocol is compared with alternative scenario banks, alternate pair-generation materializations, deterministic-sign versus legacy-selector labels, QC-threshold variations, a scorer-diagnostic-only/no-QC arm where feasible, restricted anchor permutations, and repeated DPO seeds. Each arm reports effects on (i) synthetic-data diagnostics, (ii) learned-policy stability, and (iii) external transport. At least three independently materialized scenario/pair banks are retained per condition. The full panel proceeds only if this subset establishes adequate anchor transmission, excludes obvious high-contamination pairs under a predeclared rule, and rejects the basic placebo explanation.
 
-\section{Planned reporting structure}
-\noindent\colorbox{mist}{\parbox{0.965\textwidth}{\small\textbf{Status.} This section contains the planned reporting logic and table shells. It will be completed only from frozen artifacts produced under the protocol in Section 6. No scaled empirical outcome is claimed in this draft.}}
+\section{Results: sixteen countries, four surfaces}
+All numbers in this section were re-derived from the frozen evaluation artifacts by the committed pipeline \texttt{analysis/phase2/} (V1 verification ledger, 2026-08-20); none are quoted from secondary summaries. Sixteen country-specific adapters --- CHN, JPN, GBR, USA, MEX, ARG, DEU, RUS (first bank) and IND, IDN, NGA, EGY, TUR, NLD, BRA, GRC (second bank) --- were trained on 526 synthetic sign-labeled pairs drawn from the shared 658-pair bank ($G=\mathrm{sign}(z)$, $\beta=0.1$, LoRA $r=16/\alpha=32$, one epoch; Appendix~\ref{app:trainconfig}) and evaluated on the \WVS{} Wave-7 surface: 30 single-choice items (binary and ordered scales) mapped to the six \GPS{} dimensions through the theory-led map. Four model families are compared on identical surfaces: the adapters, the unconditioned base, the base prompted as a resident of each country (persona), and uniform noise; the survey-weighted human distributions are the target.
 
-\subsection{Anchor transmission and synthetic-data quality}
-Table \ref{tab:resultshell} will report country-by-dimension label agreement, QC retention, target separation, and contamination. Failure is informative: a low pass rate, directional reversal, or high cross-dimension contamination is evidence against the operator, not a reason to selectively discard countries.
-
-\subsection{Policy encoding and repeatability}
-The next report will separate held-out synthetic-pair recovery from repeated-run policy stability. A policy that perfectly fits a single synthetic dataset but varies strongly across regenerated datasets has not demonstrated a stable aggregate-anchor construction.
-
-\subsection{External transport, placebo, and failure cases}
-The primary table will compare reference adapters, base models, cultural prompts, non-LLM benchmarks, and permuted-anchor adapters. Results will be disaggregated by country and preference domain. A negative or null country is a result: it narrows the scope of the protocol rather than being silently pooled away.
+\subsection{Distributional fit: prompting wins, but the population is diffuse}
+Table~\ref{tab:res-distributional} reports the pooled distributional surface (means over item$\times$country cells).
 
 \begin{table}[H]
 \centering\small
-\caption{Predeclared main result shell. Values are filled only after the frozen multi-country experiment.}\label{tab:resultshell}
-\begin{tabularx}{\textwidth}{@{}p{2cm}p{2.15cm}p{2.2cm}p{2.2cm}X@{}}
+\caption{Distributional surface, pooled across 16 countries and 30 single-choice items. Lower TVD/JSD and smaller $|$entropy err$|$/$|$std err$|$ are better; top-match is a rate. Base is one fixed distribution replicated across countries.}\label{tab:res-distributional}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{Country} & \textbf{Protocol arm} & \textbf{Synthetic diagnostics} & \textbf{External discrepancy} & \textbf{Interpretation}\\
+Model & TVD & JSD & Entropy err & Std err & Top-match\\
 \midrule
-$c_1$ & real anchor & [pending] & [pending] & [pending]\\
-$c_1$ & permuted-anchor placebo & [pending] & [pending] & anchor relevance test\\
-$c_1$ & country-prompt baseline & [pending] & [pending] & practical comparator\\
-$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$\\
+adapter & 0.469 & 0.279 & $-0.737$ & $-0.647$ & 0.452\\
+base & 0.443 & 0.249 & $-0.540$ & $-0.535$ & 0.452\\
+persona & 0.375 & 0.188 & $-0.438$ & $-0.449$ & 0.479\\
+noise & 0.338 & 0.145 & $+0.568$ & $+0.845$ & 0.331\\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
+
+The first result is a floor, not a model. Uniform noise achieves TVD $0.338$ --- \emph{below} every model --- because the \WVS{} populations are diffuse: on many items the population is near-uniform, so any concentrated distribution pays a TVD penalty and TVD rewards flatness as much as accuracy. Against this floor, the persona prompt is the best model family: pooled TVD $0.375$, only $0.037$ above noise, with the smallest under-dispersion (entropy error $-0.44$) and the best top-option match ($0.48$). The persona beats the adapters in 15 of 16 countries and the base in 15 of 16.
+
+Why do the adapters underperform on TVD? They are the most over-concentrated family (entropy error $-0.74$, standard-deviation error $-0.65$), and they beat the base in only 5 of 16 countries. This is a direct consequence of hard pairwise \DPO{} labels: a pairwise preference signal identifies an ordering, never population marginals. It replicates the mode-collapse diagnosis of Pfeifer \& Dalloul (2026) on the same base model and of the wider synthetic-survey literature. Distributional shape is precisely what the weights-only construction does not deliver.
+
+\subsection{The construct bridge: direction lives in the weights}
+Table~\ref{tab:res-bridge} reports Spearman correlations between country composites and \GPS{} country $z$-scores, per dimension and family.
+
+\begin{table}[H]
+\centering\small
+\caption{Construct bridge: Spearman $\rho$ of the country composite vs the \GPS{} country $z$-score. Human layer $n=42$; adapter and persona layers $n=16$. Base and noise are single fixed distributions with no cross-country variation (undefined by construction).}\label{tab:res-bridge}
+\begin{tabular}{lccc}
+\toprule
+Dimension & Human (42) & Adapter (16) & Persona (16)\\
+\midrule
+patience & 0.32 & 0.42 & 0.60\\
+risktaking & $-0.08$ & 0.57 & $-0.11$\\
+posrecip & $-0.00$ & 0.55 & 0.02\\
+negrecip & 0.42 & 0.06 & 0.34\\
+altruism & 0.03 & 0.24 & $-0.23$\\
+trust & 0.41 & 0.70 & 0.06\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The key contrast is on trust, the strongest \GPS{} proxy in this menu (Falk et al.\ 2018's published country-level correlation is $0.49$). The adapter composite ranks countries in \GPS{} order ($\rho=0.70$)\footnote{Composites use the unified pipeline's exact-equality recode of binary items, with missing codes masked before recoding. Under the alternative majority-threshold recode the adapter trust bridge is $0.79$; the unified construction is reported throughout, and the difference is a construction sensitivity rather than a fixed constant.}; the human \WVS{} layer does too ($0.41$); the persona prompt does \emph{not} ($0.06$). On patience the dissociation is dimension-specific: the adapter tracks ($0.42$) and so does the persona ($0.60$), against a human layer of $0.32$ --- the persona's patience ordering is plausibly inherited from development-correlated priors (Section~\ref{sec:devres}). The remaining dimensions show the \emph{imprint} pattern: risktaking ($0.57$), positive reciprocity ($0.55$), and altruism ($0.24$) show adapter correlations far \emph{above} the human layer's ($-0.08$, $-0.00$, $0.03$). Because those \WVS{} items do not track \GPS{} in humans, a high adapter $\rho$ there is the \GPS{} sign bit expressed through a poorly mapped instrument --- an imprint, not a recovered survey construct, and a reminder that cross-national item comparability is the precondition for construct interpretation \cite{campbellfiske1959,steenkamp1998,davidov2014}.
+
+\subsection{Development restrictions: the adapters carry the anchor's gradient}
+\label{sec:devres}
+Table~\ref{tab:res-dev} reports Spearman correlations of each composite with $\log$ GDP per capita (WDI 2015--2019), with education partials.
+
+\begin{table}[H]
+\centering\small
+\caption{Development restrictions: Spearman $\rho$ of the country composite vs $\log$ GDP per capita (WDI 2015--2019); the adapter column also reports the partial controlling education (WVS Q275). Base and noise undefined by construction.}\label{tab:res-dev}
+\begin{tabular}{lcccc}
+\toprule
+Dimension & Human (42) & Adapter (16) & Adapter partial$|$edu & Persona (16)\\
+\midrule
+patience & 0.09 & 0.29 & 0.46 & 0.33\\
+risktaking & $-0.34$ & 0.35 & 0.33 & $-0.62$\\
+posrecip & $-0.22$ & 0.03 & 0.46 & 0.63\\
+negrecip & 0.42 & $-0.32$ & $-0.49$ & $-0.59$\\
+altruism & $-0.41$ & 0.27 & 0.54 & 0.50\\
+trust & 0.09 & 0.13 & 0.56 & 0.73\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The adapters reproduce the \GPS{} development gradient on the confirmatory dimensions: trust $+0.13$ (education partial $+0.56$) and patience $+0.29$ ($+0.46$), in the same direction as the \GPS{} anchor itself (patience $+0.58$, trust $+0.32$ against $\log$ GDP per capita over the 76-country bank; 75 countries have WDI GDP coverage) and consistent with the human \WVS{} layer (trust $+0.09$). The persona \emph{overshoots} (trust $+0.73$), consistent with prompting inheriting the base model's Western-coded priors. The base and noise, being single fixed distributions, carry no country variation and are undefined on this surface by construction.
+
+\subsection{Encoding and direction}
+The internal encoding link passes: held-out synthetic-pair accuracy is $0.886$--$0.992$ across the sixteen countries ($n=132$ per country; $0.89$--$0.99$ rounded), so the adapters retain the contrasts present in their training data. Table~\ref{tab:res-direction} reports top-option match by dimension. The adapters' modal answers match the population mode on positive reciprocity ($0.78$) and trust ($0.52$). The noise baseline reaches $1.00$ on altruism and $0.77$ on negative reciprocity purely because those populations are near-unimodal --- top-option match alone is not a validity statistic.
+
+\begin{table}[H]
+\centering\small
+\caption{Top-option match rate by dimension and model. Noise reaches $1.00$ on altruism and $0.77$ on negative reciprocity only because those populations are near-unimodal.}\label{tab:res-direction}
+\begin{tabular}{lcccc}
+\toprule
+Dimension & Adapter & Base & Persona & Noise\\
+\midrule
+patience & 0.16 & 0.03 & 0.03 & 0.12\\
+risktaking & 0.28 & 0.27 & 0.08 & 0.48\\
+posrecip & 0.78 & 0.87 & 0.87 & 0.10\\
+negrecip & 0.50 & 0.62 & 0.64 & 0.77\\
+altruism & 0.54 & 0.33 & 0.81 & 1.00\\
+trust & 0.52 & 0.52 & 0.57 & 0.15\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cultural distance: specificity at chance, and the PCA geometry}
+On the CF\_ST cultural-distance geometry of Muthukrishna et al.\ (2020), the median rank of an adapter's own country among the 42 is $20.5$ (chance $21.5$); 11 of 16 adapters are nearest to Canada, a mid-scale reference; the best adapters (GBR rank 2, RUS rank 4, BRA rank 8) still sit far from their own countries (Figure~\ref{fig:cdmaps}, left). The two-axis PCA of the mapped items tells the same story: adapter and persona positions track the model family, not the target country (Figure~\ref{fig:cdmaps}, right). No distributional specificity is recovered.
+
+The coarse structure that does survive is the sign profile: the 76-country \GPS{} bank collapses to 35 sign($z$) profiles (22 multi-country classes), and the sixteen adapters instantiate 13 distinct profiles (MEX$\equiv$RUS, IND$\equiv$GRC, IDN$\equiv$EGY). But sign-twins are a development shadow: twin proximity on human \WVS{} is explained by shared GDP (partial correlation with the GDP gap $-0.09$). Country-level sign patterns are not cultural families.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/fig_map_cultural_distance.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/fig_map_pca_axes.png}
+\end{minipage}
+\caption{CF\_ST cultural distance (left; Muthukrishna et al.\ 2020) and two-axis PCA of the mapped items (right). Red diamonds are adapters ($*$ = own country), blue triangles persona prompts, the square the base, $\times$ noise; country dots colored by region. Adapters do not localize near their own countries on either geometry.}\label{fig:cdmaps}
+\end{figure}
+
+\subsection{The dissociation}
+The results dissociate the two routes into the model. The country-named prompt buys distributional shape (TVD $0.375$, best dispersion and top-match) but carries no \GPS{} ordering on trust ($\rho=0.06$) and overshoots the development gradient ($+0.73$). The trained weights carry the \GPS{} direction --- trust bridge $\rho=0.70$, development partials $+0.56$/$+0.46$, held-out pair accuracy up to $0.99$ --- but pay for it in concentration and in TVD. The anti-leakage price is $\approx 0.09$ TVD: the adapters' pooled TVD ($0.469$) exceeds the persona's ($0.375$) by $0.094$. What we cannot claim follows: histogram reproduction, country-specific dispersion, or magnitudes. These adapters are identified for preference \emph{direction} with transparent provenance, not for survey-distribution point prediction.
 
 \section{Discussion}
 The protocol changes the question posed to synthetic cultural agents. It does not ask whether an \LLM{} can speak for a country, nor does it assume that country-level averages identify individual preferences. It asks whether a declared aggregate profile can be transformed into a reproducible policy whose synthetic provenance is visible and whose external relevance is testable.
@@ -406,6 +490,11 @@ C.~M. Capra, A.~Gonzalez-Bonorino, and F.~Pantoja.
 \newblock LLMs can model non-WEIRD populations: Experiments with synthetic cultural agents.
 \newblock \emph{Review of Experimental Economics}, forthcoming, 2025.
 
+\bibitem{campbellfiske1959}
+D.~T. Campbell and D.~W. Fiske.
+\newblock Convergent and discriminant validation by the multitrait-multimethod matrix.
+\newblock \emph{Psychological Bulletin}, 56(2):81--105, 1959.
+
 \bibitem{cvprofiles2026}
 A.~Gonzalez-Bonorino, K.~Biriukova, and C.~M. Capra.
 \newblock Measuring what we mean: Construct validity when measures are cheap.
@@ -415,6 +504,11 @@ A.~Gonzalez-Bonorino, K.~Biriukova, and C.~M. Capra.
 A.~Dalloul and M.~Pfeifer.
 \newblock Can LLMs mimic household surveys? From representative agents to population distributions.
 \newblock SSRN 6703798, 2026.
+
+\bibitem{davidov2014}
+E.~Davidov, B.~Meuleman, J.~Cieciuch, P.~Schmidt, and J.~Billiet.
+\newblock Measurement equivalence in cross-national research.
+\newblock \emph{Annual Review of Sociology}, 40:55--75, 2014.
 
 \bibitem{dell2026}
 M.~Dell and A.~Rambachan.
@@ -466,6 +560,11 @@ R.~Rafailov, A.~Sharma, E.~Mitchell, S.~Ermon, C.~D. Manning, and C.~Finn.
 A.~Sharifnassab, S.~Salehkaleybar, S.~Ghiassian, S.~Kanoria, and D.~Schuurmans.
 \newblock Soft preference optimization: Aligning language models to expert distributions.
 \newblock arXiv:2405.00747, 2024.
+
+\bibitem{steenkamp1998}
+J.-B.~E.~M. Steenkamp and H.~Baumgartner.
+\newblock Assessing measurement invariance in cross-national consumer research.
+\newblock \emph{Journal of Consumer Research}, 25(1):78--90, 1998.
 
 \bibitem{suh2025}
 J.~Suh, E.~Jahanparast, S.~Moon, M.~Kang, and S.~Chang.

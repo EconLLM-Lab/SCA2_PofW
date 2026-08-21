@@ -1,0 +1,17 @@
+adapter,rank_T1,rank_T2
+GBR_adapter,2,2
+USA_adapter,2,2
+RUS_adapter,4,4
+BRA_adapter,8,11
+ARG_adapter,16,17
+NLD_adapter,18,19
+TUR_adapter,18,22
+GRC_adapter,20,29
+DEU_adapter,21,26
+MEX_adapter,24,23
+NGA_adapter,29,30
+JPN_adapter,32,30
+IDN_adapter,33,29
+IND_adapter,34,32
+CHN_adapter,36,35
+EGY_adapter,42,42

@@ -1,0 +1,116 @@
+{
+  "geometry": {
+    "n_gps_countries": 76,
+    "n_distinct_sign_profiles": 35,
+    "n_multi_country_classes": 22,
+    "largest_class_n": 5,
+    "gps_within_euclid": 1.975670754517529,
+    "gps_between_euclid": 3.3521287105996707,
+    "gps_within_between_ratio": 0.5893779520667917,
+    "gps_perm_p_tighter": 0.0,
+    "wvs42_n": 42,
+    "wvs42_n_classes_present": 26,
+    "cfst_within": 0.04388842245595772,
+    "cfst_between": 0.06302075216430929,
+    "cfst_within_between_ratio": 0.696412228491509,
+    "cfst_perm_p_tighter": 0.0005
+  },
+  "reliability": {
+    "offdiag_min": 7.407825201795774e-06,
+    "offdiag_median": 0.12756656369704966,
+    "pairs": [
+      {
+        "pair": "IND\u2261GRC",
+        "cfst_between_adapters": 0.0015449849117455,
+        "cfst_a_vs_base": 0.2306480705745858,
+        "cfst_b_vs_base": 0.2124927788056112,
+        "rank_among_adapter_pairs": 2,
+        "n_adapter_pairs": 120,
+        "pctile": 0.016666666666666666
+      },
+      {
+        "pair": "IDN\u2261EGY",
+        "cfst_between_adapters": 7.407825201795774e-06,
+        "cfst_a_vs_base": 0.0264636017864926,
+        "cfst_b_vs_base": 0.0263647437858474,
+        "rank_among_adapter_pairs": 1,
+        "n_adapter_pairs": 120,
+        "pctile": 0.008333333333333333
+      },
+      {
+        "pair": "MEX\u2261RUS",
+        "cfst_between_adapters": 0.0448389301040462,
+        "cfst_a_vs_base": 0.0643972295319228,
+        "cfst_b_vs_base": 0.127127580052828,
+        "rank_among_adapter_pairs": 18,
+        "n_adapter_pairs": 120,
+        "pctile": 0.15
+      }
+    ]
+  },
+  "trust_bridge": [
+    {
+      "layer_unit": "all12",
+      "human_rho_42": 0.38060124787294386,
+      "n_human": 42,
+      "adapter_rho_16": 0.7941176470588236,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "family",
+      "human_rho_42": 0.21853982659427923,
+      "n_human": 42,
+      "adapter_rho_16": 0.7255336769217332,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "ingroup",
+      "human_rho_42": 0.3417065067660644,
+      "n_human": 42,
+      "adapter_rho_16": 0.6588235294117648,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "outgroup",
+      "human_rho_42": 0.05696458957945062,
+      "n_human": 42,
+      "adapter_rho_16": 0.8147058823529412,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "institutions",
+      "human_rho_42": 0.36893282554088,
+      "n_human": 42,
+      "adapter_rho_16": 0.6529411764705881,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "Q57",
+      "human_rho_42": 0.15031196823596144,
+      "n_human": 42,
+      "adapter_rho_16": 0.8609160647753271,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "Q58",
+      "human_rho_42": 0.21853982659427923,
+      "n_human": 42,
+      "adapter_rho_16": 0.7255336769217332,
+      "n_adapter": 16
+    },
+    {
+      "layer_unit": "Q69",
+      "human_rho_42": 0.5449315290495098,
+      "n_human": 42,
+      "adapter_rho_16": 0.7642857142857141,
+      "n_adapter": 15
+    },
+    {
+      "layer_unit": "Q70",
+      "human_rho_42": 0.4076655052264809,
+      "n_human": 42,
+      "adapter_rho_16": 0.825,
+      "n_adapter": 15
+    }
+  ]
+}
