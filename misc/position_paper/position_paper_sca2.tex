@@ -272,7 +272,9 @@ GLOBE & Societal practices and leadership values & Organizational focus; limited
 \end{table}
 
 \subsection{Baselines and primary comparison}
-Every country is evaluated against four mandatory baselines: (i) the unmodified base model; (ii) a country-named cultural-prompt baseline; (iii) a named non-LLM aggregate benchmark fixed before outcome inspection; and (iv) the restricted permuted-anchor distribution. The country prompt is deliberately included despite violating direct-token anti-leakage because it answers a distinct practical question: whether an explicit persona retrieves useful information more effectively than the constructed policy. The analysis must report provenance-sensitive construction success separately from predictive alignment; a cultural prompt may be practically predictive while failing the former objective.
+Every country is evaluated against four mandatory baselines: (i) the unmodified base model; (ii) a country-named cultural-prompt baseline; (iii) a named non-LLM aggregate benchmark fixed before outcome inspection; and (iv) the restricted permuted-anchor distribution. The country prompt is deliberately included despite violating direct-token anti-leakage because it answers a distinct practical question: whether an explicit persona retrieves useful information more effectively than the constructed policy.
+
+The named non-LLM benchmark is the maximum-entropy anchor transform: for each country--item cell, the anchor's standardized score $z_{c,k}$ is mapped to a target mean on the item's recoded option grid, $\mu=\bar{r}_{q}+\beta z_{c,k}$ with $\beta=0.5$ declared before outcome inspection, and the option distribution is the maximum entropy distribution on that grid subject to the mean constraint (equivalently a single raking step from a uniform seed; Deming \& Stephan 1940; Jaynes 1957; Golan, Judge \& Miller 1996). Infeasible cells (target mean outside the grid) are clamped to the grid boundary, which degenerates to a point mass. A second arm realizes the training signal mechanically: all mass on the anchor-sign option ($z_{c,k}\ge 0\Rightarrow$ high-loading option), the sign-follower. The baseline consumes exactly the adapters' information budget --- declared country-level anchors, no \WVS{} outcome data, no microdata, no \LLM{} --- so the comparison asks whether the \LLM{}-DPO machinery adds anything over a mechanical transformation of the same anchors. The analysis must report provenance-sensitive construction success separately from predictive alignment; a cultural prompt may be practically predictive while failing the former objective.
 
 The primary cross-country claim will compare each fixed policy to each country's human distribution. Under unconditioned prompts, this is \emph{fixed-policy proximity}, not evidence that the model conditions on a country at inference. Country-level permutation tests and cross-country patterns become informative only with more than two adapters. The design will report gains and failures, rather than defining success as a uniformly positive average.
 
@@ -407,6 +409,28 @@ The training-side levers were predeclared in Table~\ref{tab:tests}. An extended-
 
 An explicit anti-contamination commitment: we will not train on population marginals. KL-to-\WVS{} or moment-matching losses would contaminate the out-of-sample design, in which \WVS{} stays unseen. Temperature scaling is reported as a diagnostic, not as a training change.
 
+\subsection{The non-LLM anchor transform}
+Table~\ref{tab:res-nonllm} reports the maximum-entropy anchor transform (armA) and the sign-follower (armB) on the same like-for-like surface: 27 mapped single-choice items (the multi-select battery excluded, as in the canonical construction), pooled over the sixteen countries.
+
+\begin{table}[H]
+\centering\small
+\caption{Like-for-like pooled distributional surface (27 mapped single-choice items, 16 countries). armA is the maximum-entropy anchor transform ($\beta=0.5$); armB is the sign-follower. Lower TVD/JSD and smaller $|$entropy err$|$ are better; top-match is a rate.}\label{tab:res-nonllm}
+\begin{tabular}{lccccc}
+\toprule
+Model & TVD & JSD & Entropy err & Std err & Top-match\\
+\midrule
+noise & 0.349 & 0.147 & $+0.587$ & $+0.371$ & 0.381\\
+armA & 0.351 & 0.150 & $+0.568$ & $+0.363$ & 0.292\\
+persona & 0.366 & 0.179 & $-0.395$ & $-0.418$ & 0.514\\
+base & 0.444 & 0.243 & $-0.491$ & $-0.501$ & 0.467\\
+adapter & 0.470 & 0.278 & $-0.702$ & $-0.629$ & 0.476\\
+armB & 0.717 & 0.588 & $-1.722$ & $-1.247$ & 0.292\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The anchor transform is the flatness floor with an anchor-induced location: its TVD ($0.351$) sits just above uniform noise ($0.349$) and below every \LLM{} family. This is by construction --- maximum entropy against a mean constraint is near-uniform on short grids, and TVD rewards flatness --- so the comparison decomposes the adapters' histogram failure into a location component and a concentration component. The adapters carry the location signal (their modal answers match the population mode on positive reciprocity and trust at higher rates than the anchor transform, $0.78$/$0.52$ versus $0.29$ on both for armA) but pay a concentration penalty that the mechanical transform does not; the sign-follower armB is the worst construction on the surface ($0.717$), confirming that a sign-only signal without any intensity is the least useful anchor realization. On the anchor's own geometry the transform is trivially faithful by construction (its country composites correlate nearly perfectly with the anchors, $\rho\approx 1$), which is why the construct-bridge test is informative only for the trained adapters: $\rho=0.70$ on trust is learned, whereas the transform's is mechanical. The 42-country location geometry ranks armA at the flatness attractor (median own-country rank $27.5$ of $42$, nearest population Kenya for all sixteen) and armB just below chance ($14.0$); neither arm recovers its own country (Supplementary Figure~\ref{fig:S-nonllm-rank}).
+
 \section{Discussion}
 The protocol changes the question posed to synthetic cultural agents. It does not ask whether an \LLM{} can speak for a country, nor does it assume that country-level averages identify individual preferences. It asks whether a declared aggregate profile can be transformed into a reproducible policy whose synthetic provenance is visible and whose external relevance is testable.
 
@@ -528,6 +552,12 @@ The figures below are secondary views of the surfaces reported in the main text;
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig_cross_nearest.png}
 \caption{Own-country TVD versus the nearest other country for each adapter. Own-country bars (red) exceed the nearest-other bars (blue) for every adapter; the anti-specific set (NGA, IDN, MEX, EGY, IND) shows the largest gaps.}\label{fig:S-cross-nearest}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fig_S_nonllm_rank.png}
+\caption{Non-LLM baseline arms on the 42-country location geometry: own-country TVD by own-rank. armA (maximum-entropy anchor transform) clusters near the flatness attractor (median rank $27.5$ of $42$); armB (sign-follower) ranks just below chance ($14.0$). Neither arm recovers its own country.}\label{fig:S-nonllm-rank}
 \end{figure}
 
 \begin{thebibliography}{99}
