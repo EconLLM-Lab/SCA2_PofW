@@ -130,6 +130,14 @@ def load_banks():
 
 
 def model_option_dists(model: str, banks: dict) -> dict:
+    """One unconditioned distribution per model.
+
+    The CO2 combined CSV is a full 8x8 cross grid: each adapter is repeated
+    once per eval_country with *identical* option probabilities. Concatenating
+    those copies makes CF_ST skip every item (grid length mismatch vs human
+    2-4 option vectors) while PCA means still compute. Collapse to the matched
+    eval_country (or the first country for base) before building the PMF.
+    """
     dfs = []
     for bname, df in banks.items():
         d = df[df["model"] == model].copy()
@@ -140,6 +148,12 @@ def model_option_dists(model: str, banks: dict) -> dict:
     df = (df.sort_values("bank_rank")
           .drop_duplicates(["model", "eval_country", "question_id", "option_value"],
                            keep="first"))
+    own = model.replace("_adapter", "") if model.endswith("_adapter") else None
+    if own is not None and (df["eval_country"] == own).any():
+        df = df[df["eval_country"] == own]
+    else:
+        first = df["eval_country"].dropna().iloc[0]
+        df = df[df["eval_country"] == first]
     out = {}
     for q, g in df.groupby("question_id"):
         g = g.sort_values("option_value")
@@ -165,18 +179,32 @@ def persona_option_dists_per_country() -> dict:
     return out
 
 
+def align_pmf(p, v, target_v):
+    """Reindex a PMF onto a shared option grid (missing mass = 0, then renormalize)."""
+    out = np.zeros(len(target_v), dtype=float)
+    for pi, vi in zip(p, v):
+        hits = np.where(np.isclose(target_v, vi))[0]
+        if len(hits):
+            out[hits[0]] += float(pi)
+    s = out.sum()
+    return out / s if s > 0 else out
+
+
 def distance(a, b):
     items = [q for q in ALL_ITEMS if q in a and q in b]
     vals = []
     for q in items:
         pA, vA = a[q]; pB, vB = b[q]
-        if len(pA) != len(pB) or not np.allclose(vA, vB):
+        grid = np.union1d(np.asarray(vA, dtype=float), np.asarray(vB, dtype=float))
+        pa = align_pmf(pA, vA, grid)
+        pb = align_pmf(pB, vB, grid)
+        if pa.sum() < 1e-12 or pb.sum() < 1e-12:
             continue
-        vals.append(cfst(pA, pB, vA))
+        vals.append(cfst(pa, pb, grid))
     return float(np.mean(vals)) if vals else np.nan
 
 
-def recode(v, item):
+def recode_value(v, item):
     v = float(v)
     if item in {"Q59","Q61","Q62","Q63","Q64","Q69","Q70","Q71","Q58","Q60","Q73","Q81"}:
         return 5.0 - v
@@ -192,7 +220,8 @@ def composite_from_dist(d, dim):
     for q in DIM_ITEMS[dim]:
         if q in d:
             p, vv = d[q]
-            vals.append(recode(float((vv * p).sum()), q))
+            rec = np.array([recode_value(v, q) for v in vv])
+            vals.append(float((rec * p).sum()))
     return float(np.mean(vals)) if vals else np.nan
 
 
@@ -334,7 +363,7 @@ def main() -> None:
             m = (v >= 0) & (w > 0)
             if m.sum() < 50:
                 continue
-            row[it] = float((v[m].map(lambda x: recode(x, it)) * w[m]).sum() / w[m].sum())
+            row[it] = float((v[m].map(lambda x: recode_value(x, it)) * w[m]).sum() / w[m].sum())
         hmeans[cc] = row
     H = pd.DataFrame(hmeans).T.dropna(axis=1)
     X = H.values.astype(float)
@@ -345,8 +374,13 @@ def main() -> None:
 
     def model_item_means(m):
         d = model_dists[m]
-        return {q: recode(float((vals * p).sum()), q)
-                for q, (p, vals) in d.items() if q in col_idx}
+        out = {}
+        for q, (p, vals) in d.items():
+            if q not in col_idx:
+                continue
+            rec = np.array([recode_value(v, q) for v in vals])
+            out[q] = float((rec * p).sum())
+        return out
 
     fig, ax = plt.subplots(figsize=(12, 9))
     hidx = [i for i, c in enumerate(H.index) if c not in ADAPTERS]
@@ -395,6 +429,51 @@ def main() -> None:
     fig.savefig(FIG / "fig_map_pca_axes.png", bbox_inches="tight")
     plt.close(fig)
     print("fig_map_pca_axes.png")
+
+    # -------------------------------- geometry contrast: CF_ST rank vs PCA rank
+    geo_rows = []
+    for cc in ADAPTERS:
+        mkey = f"{cc}_adapter"
+        if mkey not in model_dists or cc not in cnames:
+            continue
+        cds = [(c, distance(model_dists[mkey], countries[c])) for c in cnames]
+        cds = [(c, d) for c, d in cds if np.isfinite(d)]
+        cds.sort(key=lambda t: t[1])
+        cfst_rank = next((i + 1 for i, (c, _) in enumerate(cds) if c == cc), np.nan)
+        p = project_model(mkey)
+        if p is None or cc not in list(H.index):
+            pca_rank = np.nan
+            pca_d = np.nan
+        else:
+            hi = list(H.index).index(cc)
+            dists = np.sqrt(((proj_h - p) ** 2).sum(1))
+            order = np.argsort(dists)
+            pca_rank = int(np.where(H.index[order] == cc)[0][0]) + 1
+            pca_d = float(dists[hi])
+        geo_rows.append({"adapter": cc, "cfst_rank_of_42": cfst_rank,
+                         "pca_rank_of_42": pca_rank, "pca_euclid_own": pca_d,
+                         "cfst_own": next((d for c, d in cds if c == cc), np.nan),
+                         "cfst_nearest": cds[0][0] if cds else np.nan})
+    geo = pd.DataFrame(geo_rows)
+    geo.to_csv(OUT / "map_geometry_compare.csv", index=False)
+    print("map_geometry_compare.csv")
+    print(geo.round(3).to_string(index=False))
+    print("median CF_ST own-rank", geo["cfst_rank_of_42"].median(),
+          "| median PCA own-rank", geo["pca_rank_of_42"].median())
+
+    fig, ax = plt.subplots(figsize=(8, 4.6))
+    x = np.arange(len(geo))
+    ax.bar(x - 0.18, geo["cfst_rank_of_42"], 0.36, label="CF_ST rank", color="#c1666b")
+    ax.bar(x + 0.18, geo["pca_rank_of_42"], 0.36, label="PCA rank", color="#5b7a9d")
+    ax.axhline(21.5, color="k", ls="--", lw=0.8, label="chance (21.5)")
+    ax.set_xticks(x, geo["adapter"], fontsize=7)
+    ax.set_ylabel("rank of own country among 42 (1 = closest)")
+    ax.set_title("Why the maps disagree: CF_ST (shape/frequency) vs PCA (item means)")
+    ax.legend(frameon=False, fontsize=8)
+    fig.tight_layout()
+    fig.savefig(FIG / "fig_map_geometry_compare.png", bbox_inches="tight")
+    plt.close(fig)
+    print("fig_map_geometry_compare.png")
 
     # ------------------------------------------------- fig 3: TVD heatmap ---
     mdf = pd.read_csv(OUT / "unified_metrics_long.csv")
@@ -496,8 +575,8 @@ def main() -> None:
             rh, _ = spearmanr(hx, hy)
         else:
             rh = np.nan
-        ax.set_title(f"{dim} composite vs log GDP pc — {model}  "
-                     f"(rho_model={r:.2f}, rho_human={rh:.2f})")
+        ax.set_title(f"{dim} vs log GDP pc ({model})  "
+                     f"rho={r:.2f}  human={rh:.2f}")
         ax.legend(fontsize=6)
     fig.suptitle("Development restriction by dimension and model "
                  "(gray = human reference)", fontsize=11)

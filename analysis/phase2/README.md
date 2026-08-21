@@ -86,6 +86,32 @@ Helpers: `_dump_items.py` (item roster), `_inspect_parquet.py` (WVS surface sche
   `data/phase2/raw/wvs/persona_baseline/`, gitignored; scripts
   `12_persona_baseline.py`, `13_unified_comparison.py`).
 
+## Audit 2026-08-20 (report rebuild)
+
+Two bugs in the 19 August unified pipeline, both now fixed in
+`13_unified_comparison.py` / `14_report_figures.py`:
+
+1. **Binary recode-of-mean.** `recode(E[V])` with `1{mean==1}` collapsed every
+   binary item (Q57/Q12/Q13/Q14/Q174) to 0. Correct is `E[recode(V)]`. Adapter
+   trust Spearman vs GPS z moved **0.70 → 0.78**; posrecip 0.55 → 0.48.
+   Patience/trust development rhos were unchanged (those composites are not
+   dominated by the binary recode).
+2. **CF_ST concatenated the CO2 8×8 grid.** Combined `model_option_probabilities.csv`
+   repeats each adapter 8 times with identical probs. Grouping only on
+   `question_id` produced 16-long vectors vs 2-option human grids → those items
+   were skipped and NaNs filled with the matrix mean. Fix: collapse to the
+   matched `eval_country` before the PMF, and align option grids. Median
+   own-country CF_ST rank is **18.5 of 42** (chance 21.5); 11/16 nearest CAN.
+   PCA of item *means* is a different object (median own-rank 26) — see report
+   §4. Script 07 already used per-file `*_on_*.csv` and was not this bug.
+
+Headline numbers after the fix (unified CSVs): persona TVD 0.375 / base 0.443 /
+adapter 0.469 / noise 0.338; adapter trust ρ=0.78 vs persona 0.06 vs human 0.41;
+education partials adapter trust/patience +0.50/+0.46; H1 pair acc 0.886–0.992.
+
+Next-step lock: extended-prompt 4-country subset *before* 16-country retrain;
+soft DPO / |z|<0.1 prune is for knife-edge labels, not histogram fit.
+
 ## Metric note (cultural distance)
 
 CF_ST = fixation index on survey traits (Muthukrishna et al. 2020, Psych. Science
