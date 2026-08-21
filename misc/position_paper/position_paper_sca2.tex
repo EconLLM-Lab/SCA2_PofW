@@ -60,8 +60,7 @@
 \vspace*{0.65cm}
 {\color{econblue}\rule{\textwidth}{1.1pt}}\\[0.45em]
 {\LARGE\bfseries\color{econblue} Synthetic Cultural Agents from Aggregate Anchors}\\[0.22em]
-{\large\bfseries A Falsifiable Protocol for Constructing Population-Level Choice Policies}\\[0.42em]
-{\small\itshape ``Population-level'' denotes the source of the anchor, not an estimated human response distribution.}\\[0.25em]
+{\large\bfseries A Falsifiable Protocol for Constructing Aggregate-Anchored Choice Policies}\\[0.42em]
 {\color{econblue}\rule{\textwidth}{0.5pt}}\\[0.7em]
 {\large Augusto Gonzalez-Bonorino\textsuperscript{1} \quad Kseniia Biriukova\textsuperscript{2} \quad Monica Capra\textsuperscript{1,3}}\\[0.42em]
 {\small \textsuperscript{1}EconLLM Lab and Arizona State University \quad
@@ -80,7 +79,7 @@ Social scientists increasingly use language models to simulate survey respondent
 \noindent\textbf{Keywords:} synthetic cultural agents; aggregate anchors; language models; preference optimization; survey simulation; falsification; culture
 
 \section{A construction problem, not an impersonation problem}
-Language models are now routinely asked to stand in for people: a prompt supplies a demographic profile, a country name, or a social identity, and the model is asked to answer a survey ``as'' that person or population. This practice is attractive because it is cheap and scalable. It is also scientifically precarious. Prompted synthetic respondents can be highly sensitive to wording and model version, and their distributions can differ materially from human survey distributions \cite{argyle2023,bisbee2024}. More fundamentally, an inference-time persona makes it difficult to distinguish information supplied by the researcher from stereotypes or associations retrieved by the model.
+Language models are now routinely asked to stand in for people: a prompt supplies a demographic profile, a country name, or a social identity, and the model is asked to answer a survey ``as'' that person or population. This practice is attractive because it is cheap and scalable. It is also scientifically precarious. Prompted synthetic respondents can be highly sensitive to wording and model version, and their distributions can differ materially from human survey distributions \cite{argyle2023,bisbee2024,dalloul2026}. More fundamentally, an inference-time persona makes it difficult to distinguish information supplied by the researcher from stereotypes or associations retrieved by the model.
 
 The alternative is not to claim that a model has discovered a culture. It is to construct a model object from declared population-level information and then submit that construction to tests that can fail. We call the resulting object an \emph{aggregate-anchor-induced synthetic choice policy}. The policy is built from a country-level preference profile, but it is not asserted to represent any individual in that country. This boundary matters: evidence that models can flatten or misportray identity groups is a warning against treating synthetic outputs as voices of the people they purport to emulate \cite{wang2025}.
 
@@ -91,7 +90,7 @@ The first implementation uses the Global Preferences Survey (\GPS), which report
 This paper makes four contributions: a formal statement of the aggregate-anchor construction problem and its scientific object; a modular protocol with anti-leakage, provenance, and reproducibility requirements; an empirically testable design built on five links---anchor transmission, policy encoding, anchor relevance, external transport, and operator robustness; and a predeclared multi-country comparison of the constructed policy against base-model, country-prompt, non-LLM, and permuted-anchor baselines, whose results are deliberately not pre-judged here.
 
 \section{Positioning: where this protocol differs}
-The closest literatures differ in both their information source and the location at which that information enters the model. Early ``silicon sample'' work conditions models on detailed respondent profiles and asks whether generated responses resemble human samples \cite{argyle2023}. Subsequent evidence finds instability, distributional mismatch, and inferential risks in such replacement exercises \cite{bisbee2024}. A second family fine-tunes models on human preference or survey-response data. These approaches may be appropriate when individual records or empirical response distributions are available; their claim is correspondingly closer to learned human response behavior. A third family evaluates or aligns models against named cultural communities.
+The closest literatures differ in both their information source and the location at which that information enters the model. Early ``silicon sample'' work conditions models on detailed respondent profiles and asks whether generated responses resemble human samples \cite{argyle2023,abels2026,capra2025}. Subsequent evidence finds instability, distributional mismatch, and inferential risks in such replacement exercises \cite{bisbee2024,boelaert2025,dalloul2026}. A second family fine-tunes models on human preference or survey-response data \cite{suh2025,krsteski2026,cao2025}. These approaches may be appropriate when individual records or empirical response distributions are available; their claim is correspondingly closer to learned human response behavior. A third family evaluates or aligns models against named cultural communities \cite{tao2024}.
 
 \begin{table}[H]
 \centering\small
@@ -108,7 +107,7 @@ Cultural alignment & named community preferences or norms & weights and/or promp
 \end{tabularx}
 \end{table}
 
-The protocol uses familiar computational components but makes no novelty claim for them. A language model provides conditional probabilities over candidate responses; \DPO{} provides a tractable way to fit a policy from pairwise preferences; low-rank adaptation makes separate adapters practical \cite{rafailov2023,hu2022,dettmers2023}. Our contribution is to specify how aggregate measurements enter the synthetic-data operator and how the resulting policy is subjected to tests that distinguish construction success from merely plausible prose.
+The protocol uses familiar computational components but makes no novelty claim for them. A language model provides conditional probabilities over candidate responses \cite{ludwig2026}; \DPO{} provides a tractable way to fit a policy from pairwise preferences; low-rank adaptation makes separate adapters practical \cite{rafailov2023,hu2022,dettmers2023}. Our contribution is to specify how aggregate measurements enter the synthetic-data operator and how the resulting policy is subjected to tests that distinguish construction success from merely plausible prose.
 
 \section{The scientific object and its boundary}
 \subsection{Aggregate anchors}
@@ -199,10 +198,10 @@ For synthetic triplets $(x,y_w,y_\ell)\in\Dcal_c$, \DPO{} fits a policy relative
 \mathcal{L}_{\mathrm{DPO}}(\pi)= -\E_{(x,y_w,y_\ell)\sim\Dcal_c}\left[\log\sigma\!\left(\beta\log\frac{\pi(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}-\beta\log\frac{\pi(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)}\right)\right].
 \label{eq:dpo}
 \end{equation}
-\DPO{} is a pairwise-preference estimator with reference-policy regularization \cite{rafailov2023}. Here it fits synthetic preferences generated by $\Pcal$. It is not a constrained estimator that mechanically enforces $\E[f(Y)]=z_c$, and we make no such claim.
+\DPO{} is a pairwise-preference estimator with reference-policy regularization \cite{rafailov2023}. Here it fits synthetic preferences generated by $\Pcal$. It is not a constrained estimator that mechanically enforces $\E[f(Y)]=z_c$, and we make no such claim. Intensity-weighted pairwise variants that down-weight near-zero anchors are natural sensitivity arms in $E$ \cite{sharifnassab2024}.
 
 \section{Making the construction empirically rejectable}
-The phrase ``falsifiable'' is useful only if it names propositions, estimands, and failure consequences. This working-paper version supplies the test architecture, but not a public timestamped registration or final numerical thresholds; it should therefore be read as a proposed rejection design. Before any scaled outcome is inspected, the archived analysis plan will fix the unit of analysis, primary metric, comparison, practical margin, randomization/materialization count, uncertainty procedure, and country/domain/protocol decision rule for every row in Table~\ref{tab:tests}. Each test concerns a distinct link; passing one does not imply passing another.
+The phrase ``falsifiable'' is useful only if it names propositions, estimands, and failure consequences \cite{dell2026,cvprofiles2026}. This working-paper version supplies the test architecture, but not a public timestamped registration or final numerical thresholds; it should therefore be read as a proposed rejection design. Before any scaled outcome is inspected, the archived analysis plan will fix the unit of analysis, primary metric, comparison, practical margin, randomization/materialization count, uncertainty procedure, and country/domain/protocol decision rule for every row in Table~\ref{tab:tests}. Each test concerns a distinct link; passing one does not imply passing another.
 
 \begin{table}[H]
 \centering\small
@@ -232,7 +231,7 @@ External transport is a predictive-criterion claim: the policy's induced option 
 \widehat P_c(y\mid q)=\frac{\exp\{\ell_{\widehat\pi_c}(y\mid q)\}}{\sum_{j\in\mathcal{Y}_q}\exp\{\ell_{\widehat\pi_c}(j\mid q)\}},
 \label{eq:choiceprob}
 \end{equation}
-and the primary descriptive discrepancy is total variation distance,
+and the primary descriptive discrepancy is total variation distance (with frequency-based fixation indices \cite{muthukrishna2020} as a dispersion-sensitive alternative),
 \begin{equation}
 \mathrm{TVD}(\widehat P_c,P_c)=\frac{1}{2}\sum_{y\in\mathcal{Y}_q}|\widehat P_c(y\mid q)-P_c(y\mid q)|.
 \label{eq:tvd}
@@ -251,7 +250,7 @@ A source must satisfy a small set of conditions before it can anchor the constru
 
 \GPS{} is a defensible first implementation of these criteria. Its country scores are aggregates by construction, derived from measures of six economic preferences that were validated ex ante in incentivized experiments, collected in representative samples across 76 countries---a set that overlaps the \WVS{} Wave 7 country frame. The data are public and citable, and the criteria are fixed before any scaled run.
 
-Alternatives exist if the criteria recommend them: \WVS{}/EVS country means, with the caveat of overlap with typical evaluation surfaces; Schwartz value country scores (PVQ/ESS); Hofstede dimensions; Inglehart--Welzel cultural-map coordinates; and the GLOBE project. Table~\ref{tab:anchor-sources} lists these candidates with their principal caveats. The method is agnostic to the specific source, so long as the criteria above hold.
+Alternatives exist if the criteria recommend them: \WVS{}/EVS country means, with the caveat of overlap with typical evaluation surfaces; Schwartz value country scores (PVQ/ESS); Hofstede dimensions; Inglehart--Welzel cultural-map coordinates \cite{inghlehart2005}; and the GLOBE project. Table~\ref{tab:anchor-sources} lists these candidates with their principal caveats. The method is agnostic to the specific source, so long as the criteria above hold.
 
 \begin{table}[H]
 \centering
@@ -381,10 +380,47 @@ L.~P. Argyle, E.~C. Busby, N.~Fulda, J.~R. Gubler, C.~Rytting, and D.~Wingate.
 \newblock Out of one, many: Using language models to simulate human samples.
 \newblock \emph{Political Analysis}, 31(3):337--351, 2023.
 
+\bibitem{abels2026}
+A.~Abels, E.~Fern\'andez Domingos, A.~Shah, and T.~Lenaerts.
+\newblock Improving cross-cultural survey simulation with calibrated value personas.
+\newblock arXiv:2605.16193, 2026. Under review at VALE 2026.
+
 \bibitem{bisbee2024}
 J.~Bisbee, J.~D. Clinton, C.~Dorff, B.~Kenkel, and J.~M. Larson.
 \newblock Synthetic replacements for human survey data? The perils of large language models.
 \newblock \emph{Political Analysis}, 32(4):401--416, 2024.
+
+\bibitem{boelaert2025}
+J.~Boelaert, S.~Coavoux, E.~Ollion, I.~Petev, and P.~Pr\"ag.
+\newblock Machine bias. How do generative language models answer opinion polls?
+\newblock \emph{Sociological Methods \& Research}, 2025.
+\newblock DOI: \url{https://doi.org/10.1177/00491241251330582}.
+
+\bibitem{cao2025}
+Y.~Cao, H.~Liu, A.~Arora, I.~Augenstein, P.~R\"ottger, and D.~Hershcovich.
+\newblock Specializing large language models to simulate survey response distributions for global populations.
+\newblock In \emph{Proceedings of the 2025 Conference of the North American Chapter of the Association for Computational Linguistics}, pages 3141--3154, 2025.
+
+\bibitem{capra2025}
+C.~M. Capra, A.~Gonzalez-Bonorino, and F.~Pantoja.
+\newblock LLMs can model non-WEIRD populations: Experiments with synthetic cultural agents.
+\newblock \emph{Review of Experimental Economics}, forthcoming, 2025.
+
+\bibitem{cvprofiles2026}
+A.~Gonzalez-Bonorino, K.~Biriukova, and C.~M. Capra.
+\newblock Measuring what we mean: Construct validity when measures are cheap.
+\newblock Working paper, EconLLM Lab, 2026.
+
+\bibitem{dalloul2026}
+A.~Dalloul and M.~Pfeifer.
+\newblock Can LLMs mimic household surveys? From representative agents to population distributions.
+\newblock SSRN 6703798, 2026.
+
+\bibitem{dell2026}
+M.~Dell and A.~Rambachan.
+\newblock Estimation and inference with AI-generated data.
+\newblock NBER Summer Institute Methods Lecture, July 2026.
+\newblock Slides: \url{https://conference.nber.org/confer/2026/SI2026/ML/dell3.pdf}.
 
 \bibitem{dettmers2023}
 T.~Dettmers, A.~Pagnoni, A.~Holtzman, and L.~Zettlemoyer.
@@ -401,10 +437,45 @@ E.~J. Hu, Y.~Shen, P.~Wallis, Z.~Allen-Zhu, Y.~Li, S.~Wang, L.~Wang, and W.~Chen
 \newblock LoRA: Low-rank adaptation of large language models.
 \newblock In \emph{International Conference on Learning Representations}, 2022.
 
+\bibitem{inghlehart2005}
+R.~Inglehart and C.~Welzel.
+\newblock \emph{Modernization, Cultural Change, and Democracy: The Human Development Sequence}.
+\newblock Cambridge University Press, 2005.
+
+\bibitem{krsteski2026}
+S.~Krsteski, G.~Russo, S.~Chang, R.~West, and K.~Gligori\'c.
+\newblock Valid survey simulations with limited human data: The roles of prompting, fine-tuning, and rectification.
+\newblock In \emph{Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics}, pages 10887--10906, 2026.
+
+\bibitem{ludwig2026}
+J.~Ludwig, S.~Mullainathan, and A.~Rambachan.
+\newblock Large language models: An applied econometric framework.
+\newblock \emph{Annual Review of Economics}, 18:283--316, 2026.
+
+\bibitem{muthukrishna2020}
+M.~Muthukrishna, A.~V. Bell, J.~Henrich, C.~M. Curtin, A.~Gedranovich, J.~McInerney, and B.~Thue.
+\newblock Beyond Western, educated, industrial, rich, and democratic (WEIRD) psychology: Measuring and mapping scales of cultural and psychological distance.
+\newblock \emph{Psychological Science}, 31(6):678--701, 2020.
+
 \bibitem{rafailov2023}
 R.~Rafailov, A.~Sharma, E.~Mitchell, S.~Ermon, C.~D. Manning, and C.~Finn.
 \newblock Direct preference optimization: Your language model is secretly a reward model.
 \newblock In \emph{Advances in Neural Information Processing Systems}, 36, 2023.
+
+\bibitem{sharifnassab2024}
+A.~Sharifnassab, S.~Salehkaleybar, S.~Ghiassian, S.~Kanoria, and D.~Schuurmans.
+\newblock Soft preference optimization: Aligning language models to expert distributions.
+\newblock arXiv:2405.00747, 2024.
+
+\bibitem{suh2025}
+J.~Suh, E.~Jahanparast, S.~Moon, M.~Kang, and S.~Chang.
+\newblock Language model fine-tuning on scaled survey data for predicting distributions of public opinions.
+\newblock In \emph{Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics}, 2025.
+
+\bibitem{tao2024}
+Y.~Tao, O.~Viberg, R.~S. Baker, and R.~F. Kizilcec.
+\newblock Cultural bias and cultural alignment of large language models.
+\newblock \emph{PNAS Nexus}, 3(9):pgae346, 2024.
 
 \bibitem{wang2025}
 A.~Wang, J.~Morgenstern, and J.~P. Dickerson.
