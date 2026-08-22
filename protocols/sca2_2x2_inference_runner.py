@@ -75,9 +75,11 @@ def main():
         max_memory={0: f"{int(gpu_mem * 0.92)}MB"} if gpu_mem else None)
     model.eval()
 
-    sub = "base8" if country in BASE8 else "co2_8"
-    print(f"loading adapter {HF_REPO} subfolder={sub}/{country}")
-    pm = PeftModel.from_pretrained(model, HF_REPO, subfolder=f"{sub}/{country}")
+    # Hub quirk: the USA adapter was uploaded as base8/US (no trailing 'A')
+    HUB_NAME = {"USA": "US"}
+    sub = ("base8" if country in BASE8 else "co2_8") + "/" + HUB_NAME.get(country, country)
+    print(f"loading adapter {HF_REPO} subfolder={sub}")
+    pm = PeftModel.from_pretrained(model, HF_REPO, subfolder=sub)
     pm.eval()
 
     rows = []

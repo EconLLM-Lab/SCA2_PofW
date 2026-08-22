@@ -125,18 +125,26 @@ def main() -> None:
 
     # 4 cells x trust composite per country
     cells = {}
-    cells["adapter_uncond"] = {c: trust_composite(uncond.get(f"{c}_adapter", pd.DataFrame())) for c in ADAPTERS}
-    cells["base_uncond"] = {"USA": trust_composite(uncond.get("base", pd.DataFrame()))}  # single fixed
-    cells["adapter_persona"] = {c: trust_composite(two.get(c, pd.DataFrame())) for c in ADAPTERS}
-    cells["base_persona"] = {c: trust_composite(persona.get(c, pd.DataFrame())) for c in ADAPTERS}
+    def comp_or_nan(df):
+        return trust_composite(df) if df is not None and len(df) else np.nan
+    cells["adapter_uncond"] = {c: comp_or_nan(uncond.get(f"{c}_adapter")) for c in ADAPTERS}
+    cells["base_uncond"] = {"USA": comp_or_nan(uncond.get("base"))}  # single fixed
+    cells["adapter_persona"] = {c: comp_or_nan(two.get(c)) for c in ADAPTERS}
+    cells["base_persona"] = {c: comp_or_nan(persona.get(c)) for c in ADAPTERS}
+
+    # ---- completeness gate: refuse to write headline outputs with missing cells
+    missing = [c for c in ADAPTERS if pd.isna(cells["adapter_persona"][c])]
+    if missing:
+        print(f"INCOMPLETE 2x2: missing adapter_persona for {missing} — bridge table NOT written")
+        return
 
     # trust bridge rho per cell (16 countries)
     rows = []
     for cell, comps in cells.items():
         if cell == "base_uncond":
             continue  # single fixed distribution -> undefined
-        comps_arr = np.array([comps[c] for c in ADAPTERS if pd.notna(comps[c])])
-        zs = np.array([z_trust[c] for c in ADAPTERS if pd.notna(comps[c])])
+        comps_arr = np.array([comps[c] for c in ADAPTERS])
+        zs = np.array([z_trust[c] for c in ADAPTERS])
         rho = spearman(comps_arr, zs) if len(comps_arr) == 16 else np.nan
         rows.append({"cell": cell, "trust_bridge_rho": rho,
                      "mean_trust_composite": float(np.nanmean(list(comps.values())))})
@@ -145,9 +153,76 @@ def main() -> None:
     print("\n=== 2x2 trust bridge ===")
     print(bridge.to_string(index=False))
 
-    # TVD per cell (pooled, 30-item surface) — reuse canonical for uncond, compute for persona
-    # (TVD needs the population; use the like-for-like 27-item surface for consistency)
-    print("\n(analysis continues once CSVs land)")
+    # ---- TVD / top-match on the like-for-like surface (metrics byte-identical to 13/16)
+    def load_population() -> pd.DataFrame:
+        fams = []
+        for family, path in [
+            ("usamex_canonical", CANON / "population_response_distributions.csv"),
+            ("ksenias_base8", RAW / "ksenias_base8" / "population_response_distributions.csv"),
+            ("co2_8", RAW / "co2_8" / "population_response_distributions.csv"),
+        ]:
+            if path.exists():
+                d = pd.read_csv(path, usecols=["eval_country", "question_id",
+                                               "option_value", "population_prob"])
+                d["bank"] = family
+                fams.append(d)
+        pop = pd.concat(fams, ignore_index=True)
+        pop["bank_rank"] = pop["bank"].map(BANK_PRECEDENCE)
+        pop = (pop.sort_values("bank_rank")
+                  .drop_duplicates(["eval_country", "question_id", "option_value"], keep="first"))
+        return pop.drop(columns=["bank", "bank_rank"])
+
+    def to_long(df: pd.DataFrame, model: str) -> pd.DataFrame:
+        """Collapse repeated-option rows (measurement blocks) by summing probs."""
+        g = (df.groupby(["question_id", "option_value"], as_index=False)["model_prob"].sum())
+        g["model"] = model
+        g["eval_country"] = df["prompt_country"].iloc[0] if "prompt_country" in df else None
+        return g[["model", "eval_country", "question_id", "option_value", "model_prob"]]
+
+    pop = load_population()
+
+    def item_metrics(opts: pd.DataFrame) -> pd.DataFrame:
+        rows_m = []
+        for (model, ec), g in opts.groupby(["model", "eval_country"]):
+            for q, d in g.groupby("question_id"):
+                d = d.sort_values("option_value")
+                p2 = pop[(pop["eval_country"] == ec) & (pop["question_id"] == q)]
+                merged = pd.DataFrame({
+                    "option_value": d["option_value"].values.astype(float),
+                    "pm": d["model_prob"].values.astype(float),
+                }).merge(p2[["option_value", "population_prob"]], on="option_value", how="inner")
+                if len(merged) < 2:
+                    continue
+                m = merged["option_value"].values.astype(float)
+                pm = merged["pm"].values.astype(float)
+                pp = merged["population_prob"].values.astype(float)
+                pm = pm / pm.sum()
+                pp = pp / pp.sum()
+                tvd = 0.5 * np.abs(pm - pp).sum()
+                top = float(m[np.argmax(pm)])
+                top_p = float(m[np.argmax(pp)])
+                rows_m.append({"model": model, "eval_country": ec, "question_id": q,
+                               "tv_distance": tvd, "top_option_match": float(top == top_p)})
+        return pd.DataFrame(rows_m)
+
+    metrics_parts = []
+    for c in ADAPTERS:
+        metrics_parts.append(item_metrics(to_long(two[c], f"{c}_adapter_persona")))
+    for c in ADAPTERS:
+        metrics_parts.append(item_metrics(to_long(persona[c], f"{c}_persona")))
+    metrics = pd.concat(metrics_parts, ignore_index=True)
+
+    def cell_label(model: str) -> str:
+        if model.endswith("_adapter_persona"):
+            return "adapter_persona"
+        return "base_persona"
+
+    by_cell = (metrics.assign(cell=metrics["model"].map(cell_label))
+                     .groupby("cell")[["tv_distance", "top_option_match"]].mean().reset_index())
+    by_cell.to_csv(OUT / "2x2_tvd.csv", index=False)
+    print("\n=== 2x2 shape metrics (pooled over 16 countries; lower TVD better) ===")
+    print(by_cell.to_string(index=False))
+    print("\nOutputs: 2x2_bridge.csv, 2x2_tvd.csv")
 
 
 if __name__ == "__main__":
