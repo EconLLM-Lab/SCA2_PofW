@@ -26,7 +26,7 @@ REPO = pathlib.Path(__file__).resolve().parents[2]
 OUT = REPO / "analysis" / "phase2" / "outputs"
 RAW = REPO / "data" / "phase2" / "raw" / "wvs"
 CANON = REPO / "DPO_eval_WVS" / "eval_results_wvs_wave7"
-P2 = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else OUT  # 2x2 CSVs dir
+P2 = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else RAW / "persona_adapter"
 
 ADAPTERS = ["ARG","BRA","CHN","DEU","EGY","GBR","GRC","IDN","IND","JPN",
             "MEX","NGA","NLD","RUS","TUR","USA"]
@@ -46,7 +46,7 @@ def recode(raw, item):
 
 
 def trust_composite(model_rows: pd.DataFrame) -> float:
-    """Mean of recoded item means over the 12 trust items."""
+    """Mean of E[recode(V)] over the 12 trust items (frozen G0, matches script 13)."""
     means = []
     for q in TRUST_ITEMS:
         d = model_rows[model_rows["question_id"] == q]
@@ -56,7 +56,9 @@ def trust_composite(model_rows: pd.DataFrame) -> float:
         raw = d["option_value"].values.astype(float)
         if pm.sum() <= 0:
             continue
-        means.append(recode(float((raw * pm).sum()), q))
+        pm = pm / pm.sum()
+        rec = np.array([recode(v, q) for v in raw])
+        means.append(float((rec * pm).sum()))
     return float(np.mean(means)) if means else np.nan
 
 

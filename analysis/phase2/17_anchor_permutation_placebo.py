@@ -7,9 +7,10 @@ PREDECLARED BEFORE OUTCOME INSPECTION (2026-08-20):
   without replacement).
   Primary statistic:  trust construct-bridge Spearman rho — Spearman between
     the 16 (adapter trust composite, GPS country z) pairs under the pairing.
-    Composite = mean of recoded item means over the trust items (unified
-    construction, script 13), computed from the canonical model-option files
-    (bank precedence, matched cells).
+    Composite = mean of E[recode(V)] over the trust items (G0 freeze,
+    script 13): binary Q57 is P(option 1); Likert inversions are linear.
+    recode(E[V]) is forbidden — it zeros Q57. Canonical files, bank
+    precedence, matched cells.
   Secondary: median own-country rank (canonical 42-country matrix, script 15);
              development-trust rho (unified development table).
   Margin: real value > 95th percentile of null (p<=0.05, one-sided).
@@ -48,7 +49,11 @@ def recode(raw, item):
 
 
 def adapter_trust_composites() -> dict[str, float]:
-    """Mean of recoded item means over the 12 trust items (unified, script 13)."""
+    """Mean of E[recode(V)] over the 12 trust items (frozen G0, matches script 13).
+
+    Binary Q57 is P(option 1). Likert inversions are linear, so they commute.
+    Do not recode the raw mean: recode(E[V]) with ==1 zeros Q57 in every country.
+    """
     fams = []
     for family, path in [
         ("usamex_canonical", CANON / "model_option_probabilities.csv"),
@@ -83,7 +88,9 @@ def adapter_trust_composites() -> dict[str, float]:
             raw = d["option_value"].values.astype(float)
             if pm.sum() <= 0:
                 continue
-            item_means.append(recode(float((raw * pm).sum()), q))
+            pm = pm / pm.sum()
+            rec = np.array([recode(v, q) for v in raw])
+            item_means.append(float((rec * pm).sum()))
         if item_means:
             comps[model] = float(np.mean(item_means))
     return comps
@@ -119,6 +126,16 @@ def main() -> None:
                 "dev_trust": float(np.mean(devs)) if devs else np.nan}
 
     real = assignment_stats({c: f"{c}_adapter" for c in ADAPTERS})
+    bridge13 = pd.read_csv(OUT / "unified_construct_bridge.csv")
+    rho13 = float(bridge13.loc[
+        (bridge13["model"] == "adapter") & (bridge13["gps_dimension"] == "trust"),
+        "rho"].iloc[0])
+    if abs(real["trust_bridge"] - rho13) > 5e-3:
+        raise SystemExit(
+            f"G0 self-check FAIL: placebo real {real['trust_bridge']:.4f} "
+            f"!= script-13 adapter trust {rho13:.4f}")
+    print("G0 self-check: placebo real == script-13 adapter trust",
+          round(real["trust_bridge"], 4), round(rho13, 4))
     print("REAL-ANCHOR:", {k: round(v, 4) if pd.notna(v) else None
                            for k, v in real.items()})
 
@@ -157,8 +174,9 @@ def main() -> None:
         OUT / "placebo_null_distributions.csv", index=False)
 
     lines = [
-        "# PLACEBO REPORT — restricted permutation test (2026-08-20)",
+        "# PLACEBO REPORT — restricted permutation test (G0: E[recode], 2026-08-23)",
         f"Null: country->anchor assignment without replacement from the 16 observed anchors (N={N_PERM}, seed={SEED}).",
+        "Construction: E[recode(V)] / P(option 1) on Q57; must match script 13 adapter trust.",
         f"Real-anchor trust bridge rho: {real['trust_bridge']:.3f}",
         f"Real-anchor dev-trust rho: {real['dev_trust']:.3f}",
         f"Real-anchor median own-rank (42-country): {real['median_own_rank']:.1f}",
