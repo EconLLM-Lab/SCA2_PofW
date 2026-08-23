@@ -29,9 +29,9 @@ plus the lab's claim-discipline rules:
 These strings must still appear *or* be replaced by the single frozen construction chosen in G0, with the replacement recorded here:
 
 - TVD: `0.469`, `0.443`, `0.375`, `0.338`
-- Placebo: `0.703`, `0.438`, `p=0.003` (or `p = 0.003`)
+- Placebo: `0.782`, `0.453`, `p=0.001`
 - Held-out: `0.886`, `0.992`, `n=132`
-- 2×2: `0.60`, `0.06`, `0.411` / `0.413` (within-table only)
+- 2×2: `0.60`, `0.06`, `0.78` uncond, `0.411` / `0.413`
 - Temp: `0.469` → `0.332`, top-match `0.452`
 - CF_ST: `20.5`, `11` nearest CAN
 - Sign profiles: `35`, `13`
