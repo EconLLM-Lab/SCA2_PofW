@@ -2,6 +2,8 @@
 
 Four country × survey **parquet** files for **frozen** USA / MEX DPO adapter out-of-sample evaluation.
 
+The parquet files are licensed respondent extracts. They are **not** in git. Rebuild locally with `_build_merge.py` after obtaining WVS Wave 7 from WVSA and AmericasBarometer from LAPOP. Guides and the build script stay in the repository.
+
 ## Start here
 
 | File | What it is |

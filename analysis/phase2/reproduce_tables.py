@@ -13,15 +13,24 @@ What this script needs (our model outputs, not WVS/GPS microdata):
   data/wvs_eval_full/*_WVS_wave7.parquet   # WVS microdata: obtain from WVSA, not us
   synthetic_generation/outputs/gps_sign_relabel_all/gps_z_vectors.json
 
-If the option-probability CSVs are missing locally, set SCA2_EVAL_REMOTE to a
-public rclone remote:path (e.g. sca2drive:SCA2_phase2/eval/wvs) or SCA2_EVAL_URL
-to a zip of that folder, and this script will fetch them into data/phase2/raw/wvs/.
+If the option-probability CSVs are missing locally, this script does **not**
+guess a public URL. Set SCA2_EVAL_REMOTE (rclone remote:path) or SCA2_EVAL_URL
+(zip of that folder) only after those stores are actually published. Until then
+the banks live in gitignored `data/phase2/raw/wvs/` on lab machines.
 
-Adapter *weights* are optional for table regeneration. They live on
-Hugging Face (Bonorinoa/SCA2-phase2-adapters) and are required only to
+Adapter *weights* are optional for table regeneration. The Hugging Face repo
+`Bonorinoa/SCA2-phase2-adapters` is private. Weights are required only to
 re-score new item batteries.
 
-Do NOT publish WVS or GPS microdata. Publish our option-probability CSVs.
+Do NOT publish WVS or GPS microdata. When an eval pack is published, publish
+only our option-probability CSVs.
+
+Human composites in script 13 read `data/wvs_eval_full/*_WVS_wave7.parquet`,
+rebuilt locally from WVSA files (not shipped).
+
+Committed `analysis/phase2/outputs/unified_construct_bridge.csv` is the git
+freeze (adapter trust ρ = 0.78). The working-paper 16×23 trust ρ = 0.80 is a
+later matched surface — do not treat a successful regen of 0.78 as matching 0.80.
 
 Run:  env -u PYTHONPATH .venv/bin/python analysis/phase2/reproduce_tables.py
 """

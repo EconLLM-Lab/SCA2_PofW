@@ -16,7 +16,7 @@
   },
   "files": {
     "USA_WVS_wave7.parquet": {
-      "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/data/merged/USA_WVS_wave7.parquet",
+      "path": "data/merged/USA_WVS_wave7.parquet",
       "n": 2596,
       "ncols": 44,
       "years": [
@@ -100,7 +100,7 @@
       ]
     },
     "MEX_WVS_wave7.parquet": {
-      "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/data/merged/MEX_WVS_wave7.parquet",
+      "path": "data/merged/MEX_WVS_wave7.parquet",
       "n": 1741,
       "ncols": 44,
       "years": [
@@ -184,7 +184,7 @@
       ]
     },
     "USA_Barometer_2012_2019.parquet": {
-      "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/data/merged/USA_Barometer_2012_2019.parquet",
+      "path": "data/merged/USA_Barometer_2012_2019.parquet",
       "n": 6000,
       "ncols": 35,
       "years": [
@@ -532,7 +532,7 @@
       }
     },
     "MEX_Barometer_2012_2019.parquet": {
-      "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/data/merged/MEX_Barometer_2012_2019.parquet",
+      "path": "data/merged/MEX_Barometer_2012_2019.parquet",
       "n": 6238,
       "ncols": 35,
       "years": [
