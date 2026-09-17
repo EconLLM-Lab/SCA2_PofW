@@ -4,17 +4,25 @@ This folder is the public front door. It does **not** retrain sixteen adapters.
 
 ## Two tiers
 
-**Tier A (no extra data).** Confirm that committed analysis artifacts in git match `HASHES.md`. That is what GitHub currently can prove.
+**Tier A (no extra data).** Confirm that committed analysis artifacts in git match `HASHES.md`. That is what GitHub currently can prove. The headline freeze is `analysis/phase2/outputs/paper_a/` (16×23; trust adapter–GPS = 0.80).
 
-**Tier B (lab or post-publication pack).** Regenerate tables from option-probability CSVs + locally rebuilt WVS extracts:
+**Tier B (lab or licensed WVS).** Regenerate tables:
 
 ```bash
-# after licensed WVS extracts exist under data/wvs_eval_full/
-# and eval banks exist under data/phase2/raw/wvs/  OR  SCA2_EVAL_URL is set
+# frozen 16×23 adapter numbers: no extra data
+# 42-country human map: licensed WVS extracts under data/wvs_eval_full/
 env -u PYTHONPATH .venv/bin/python analysis/phase2/reproduce_tables.py
 ```
 
-There is **no** public eval zip and **no** public adapter dump as of this commit. Do not write that into a paper until a URL fetches without authentication.
+Option-probability zip (model outputs only; cold fetch verified 2026-09-17):
+
+```
+https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo
+```
+
+Set `SCA2_EVAL_URL` to that URL if you want a local copy of the scoring files. It is not required to reprint 0.80 from the frozen country–item scores.
+
+Adapter weights on Hugging Face `Bonorinoa/SCA2-phase2-adapters` remain private until the authors flip that repository. They are optional for table regeneration.
 
 ## Notebooks
 
@@ -34,6 +42,6 @@ This is pandas/scipy/pyarrow. It is not the Colab DPO stack.
 
 ## What we will not ship here
 
-WVS or GPS microdata; adapter weights; the gitignored `data/phase2/raw/` banks until a dedicated public zip exists.
+WVS or GPS microdata; adapter weights.
 
 See [`ARXIV_GATES.md`](./ARXIV_GATES.md) for the remaining preprint checklist.

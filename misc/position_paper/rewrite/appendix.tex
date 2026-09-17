@@ -1,0 +1,92 @@
+\appendix
+\section{Construction protocol and worked example}\label{app:protocol}
+The production manifest identifies the sign relabeling run as \path{gps_sign_relabel_all_20260816_004545Z}. Its source is the June 2026 USA--Mexico fixed-response bank. Relabeling deduplicates by dimension and prompt, rejects conflicting A/B text, and applies the sign rule to the recovered common bank. The exported countries exceed the trained panel; an exported label file does not imply that an adapter was fitted. The generation manifest sets \texttt{use\_anchors=false}, so optional WVS anchors are not an input to this recorded source run.
+
+The following pseudocode describes the production logic in \path{synthetic_generation/sca2_datagen/relabel.py}, especially \texttt{build\_triplet\_bank}, \texttt{sign\_choice}, and \path{label_triplet_for_country}. It is explanatory pseudocode rather than a claim that the complete replication package has been released.
+\begin{quote}\ttfamily\small
+Recover shared (scenario, dimension, response A, response B) bank.\\
+Deduplicate on dimension and scenario; fail on conflicting A/B text.\\
+For each group and each shared pair:\\
+\hspace*{1em}Read finite GPS score for the pair's target dimension.\\
+\hspace*{1em}Choose A when score >= 0; otherwise choose B.\\
+\hspace*{1em}Export scenario, chosen text, rejected text; retain metadata.\\
+Fit one adapter jointly on the group's training comparisons.\\
+Score candidate codes for new items with the fixed evaluation prompt.
+\end{quote}
+
+\subsection{A real fixed-response contrast}
+The example below is triplet \texttt{00023ac74dac} in \texttt{triplets\_bank.jsonl}. The target is positive reciprocity. Argentina's exported score is $+0.1596793085$; its chosen option is A. This is an example of a deterministic training label. It does not describe an observed Argentine choice.
+\begin{quote}\small
+\textbf{Scenario.} A fellow student tutored me for free before a critical exam, and now they're facing a tight deadline for their own project and need someone to review their work. Decision: I can either take the time to thoroughly review their project or concentrate on my own study schedule. Trade-off: Helping my fellow student would acknowledge the effort they put into tutoring me, but it would cut into my own study time and potentially impact my performance.
+
+\textbf{Response A.} I'll set aside time to carefully review their work this evening. They went out of their way to help me when it mattered most, and I want to make sure they know their effort made a difference. If I don't take this seriously, it would feel like I'm ignoring the support that helped me succeed.
+
+\textbf{Response B.} I'll let them know I can only do a quick scan tomorrow morning. My exam prep schedule is already packed with material I haven't mastered yet, and I need to be realistic about what I can manage without burning out. I hope they understand my limitations in this situation.
+\end{quote}
+The Argentina metadata records signs $(-,+,-,+,+,-)$ in the order trust, risk taking, patience, altruism, positive reciprocity, negative reciprocity. Its policy is fitted jointly across these signs. A new WVS item, such as Q81 on confidence in charitable organizations, is then scored using the fitted adapter and the fixed code-likelihood readout. The scenario and Q81 are different texts. Their shared proposed dimension is an assumption of the map, and is not established by this example.
+
+\subsection{Profile documentation and generation prompts}
+The rendering function \texttt{build\_cultural\_profile} in \texttt{profiles.py} starts with ``GPS CULTURAL STATE VECTOR (Falk et al. 2018, standardized deviations from global mean):''. Each line has the format ``symbol (dimension) = signed score: magnitude. description''. It describes $|z|<0.10$ as ``near the global average'', $0.10\leq|z|<0.40$ as ``moderately above/below average'', and larger values as ``strongly above/below average''. Scores are printed to two decimals. These thresholds describe profile prose; they do not modify the production sign labels. A legacy model-selection path used profile prose, but it is distinct from the deterministic production path examined here.
+
+The current generation source records the following exact scenario-template instructions:
+\begin{quote}\small
+Context: One realistic sentence establishing the agent, setting, and stakes.\\
+Decision: One sentence stating the two behaviorally plausible options the agent is choosing between.\\
+Trade-off: One sentence making the core target-facet tension explicit without naming high/low GPS scores.
+\end{quote}
+The fixed-pair prompt in \texttt{generate.py} includes these exact requirements:
+\begin{quote}\small
+Generate two opposing responses to this same scenario.\\
+- Response A should load positively on the target dimension: it should express a higher level of the target trait/facet.\\
+- Response B should load negatively on the target dimension: it should express a lower level or absence of the target trait/facet.\\
+- Positive loading does not mean morally better, more polite, or more socially desirable.\\
+- Negative loading does not mean irrational, careless, hostile, or cartoonishly selfish.
+\end{quote}
+Other instructions request matching perspective, tone, length, stakes, and the remaining traits, and prohibit country labels. They express design intentions rather than verified controls. Complete source prompt templates are transcribed in the accompanying \texttt{PROMPT\_SOURCE\_EXCERPTS.md}. Current source text is distinguished there from archived realized evaluation prompts; a complete historical request log tying every generation call to an immutable provider revision has not been verified.
+
+The source manifest names endpoint aliases \texttt{hf-teacher}, \texttt{hf-generator}, and \texttt{hf-scorer}, with temperatures 0.7, 0.8, and 0.1. Current configuration maps them to Llama-3.3-70B-Instruct, Qwen3-32B, and Phi-4 endpoint names. Immutable served revisions remain unverified. The sixteen adapters examined here were produced by deterministic sign relabeling of the shared bank; the scorer was not a production gate. The manifest's requested scenario count does not by itself explain the size of the recovered bank; we use the materialized bank and its 658 unique pairs as the production record.
+
+\subsection{Evaluation prompt and code scoring}
+The saved evaluation preview and \texttt{build\_survey\_user\_prompt} agree on the unconditioned wrapper:
+\begin{quote}\small
+Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
+
+Question:\\
+\emph{[item text]}
+
+Select exactly one response code from the options below.\\
+\emph{[code: label, one option per line]}
+
+Return only the response code, with no words or explanation.
+
+Answer:
+\end{quote}
+For the persona condition, the first sentence becomes ``Answer this questionnaire as a typical adult living in \emph{[country name]}.'' The tokenizer applies the chat template with a generation prompt. Candidate completion strings are a leading space followed by a code. Their log probabilities are summed without length normalization, then normalized across codes at unit temperature. This is the readout in equation~\eqref{eq:readout}. Saved prompt previews include the rendered chat wrapper. The complete realized wrapper for Q57 is reproduced in the accompanying prompt document; it should be preserved when replaying the stored specification.
+
+\section{Training configuration and historical diagnostics}\label{app:training}
+The inspected CO2 multi-country notebook records Llama-3.1-8B-Instruct, 4-bit NF4 with double quantization and fp16 base compute, attention-projection LoRA modules \texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, and \texttt{o\_proj}, rank 16, scaling 32, and dropout 0.05. It uses DPO beta 0.1, learning rate $10^{-4}$ with cosine scheduling, one epoch, per-device batch size 1, and 16 gradient-accumulation steps. The maximum length is 768 with \texttt{keep\_end} truncation. Trainable parameters are converted to fp32 after trainer initialization. The source has the warmup-ratio assignment commented out, so the prior draft's claim that every adapter used warmup 0.03 is not retained.
+
+These are inspected notebook settings. Their correspondence with every stored checkpoint remains to be established. The release package still needs an immutable checkpoint-to-run configuration manifest, exact dependency versions, and reference-log-probability provenance. Stored evidence supports the shared-bank 526/132 training/holdout counts and the Russia split exception reported in the main text. The notebook records a Tesla T4 run; account tier and historical billing have not been established, so no free-compute or cost claim is made.
+
+A historical language-model diagnostic scored generated responses on all six GPS dimensions. It did not exclude pairs from production sign relabeling. Pair loadings remain generator judgments, and the shared bank is mixed-trait. Unused process diagnostics are not evidence of trait isolation. A new bank or a newly imposed exclusion rule would be a separate construction experiment.
+
+\section{Measurement specification and sensitivity status}\label{app:measurement}
+The strict panel uses Table~\ref{tab:map}'s common item set for every country and arm. We remove raw WVS missing codes $-1$ through $-5$ and nonfinite observations before any transformation, retaining valid zero membership responses. Human item means use positive \texttt{W\_WEIGHT} weights and require at least fifty valid positive-weight responses per cell. All retained strict-panel cells pass that requirement in the saved audit.
+
+The recodes inherited from the declared analysis are $g_{57}(v)=1\{v=1\}$; $g_q(v)=5-v$ for Q58--Q64, Q73, and Q81; and $g_q(v)=11-v$ for Q177 and Q179. Other retained items use their raw codes. For a model, each code is recoded before taking its probability-weighted expectation. For humans, each valid answer is recoded before its weighted mean. Proposed dimension composites are unweighted averages of these item means, without standardizing their ranges. This makes scale ranges part of the composite definition. Unit-range recoding is a separate sensitivity specification in the saved audit; the reported surface retains its original scales.
+
+The historic Q69--Q71 bridge recoded negative missing values before masking. That can turn missingness into valid-looking positive scores. Those items do not enter the strict panel. Earlier broad-panel institutional-trust coefficients from that faulty sequence are retired. A corrected broader human-only comparison uses a different country sample and must not be substituted for a matched model--human comparison. We retain Egypt in the primary sample. Table~\ref{tab:egypt} separates Egypt removal from restoration of Q69--Q71 on the remaining fifteen countries, using frozen item scores and no adapter refit. Adapter--GPS trust remains between $0.79$ and $0.81$ across those surfaces. Human--GPS association moves more when the institutional items are restored.
+\input{tables/egypt_robustness}
+
+The main intervals use common country-bootstrap draws (seed 20260905; 2,000 draws), average ranks for ties, and undefined values for constant vectors. Sign-profile resampling retains every member of each selected profile; the equal-profile analysis instead averages within profiles before ranking. Leave-country-out and leave-item-out results describe influence on this observed panel. None of these intervals includes repeated model fitting, respondent resampling, or GPS measurement error. An assignment permutation of the sixteen GPS trust $z$ values across the frozen adapter composites (seed 20260820; 1,000 draws) yields a real Spearman of $0.80$, a null median of $0.00$, and one-sided $p=0.002$. Adapters were not refit, and the test does not retrain on permuted sign labels. Retrained anchor-permutation experiments, new scenario banks, repeated training seeds, and independent survey batteries remain unrun validation tasks.
+
+The same recodes on the forty-two-country GPS--WVS intersection supply a human-only criterion check on the map (Table~\ref{tab:human42}). Adapter scores are not recomputed in that table.
+
+\input{tables/human42}
+
+\section{Prospective human item-screening protocol}\label{app:humanscreen}
+This manuscript does not field a new survey. The intended use of the fitted policies is to score candidate item text against declared GPS anchors before a human pilot. The following protocol is recorded so that a later study can test that use without changing the present construction.
+
+A researcher predeclares a battery of candidate items, their recodes, and which GPS coordinate each item is proposed to track. Frozen adapters from the present study score those items with the unconditioned space-prefixed code-likelihood readout. Country composites are then ranked against GPS $z$. Interpretation is comparative. Items that recover GPS order about as strongly as the nine-item trust map does in the forty-two-country human panel are retained as aligned candidates. Items that recover GPS order strongly where the corresponding human association on already-fielded items is near zero are set aside as likely echo of the training signs. Items that fail to recover GPS order where the human map is strong are set aside as non-transporting.
+
+A human check then fields a small number of retained and flagged items in a predeclared set of countries, using the same recodes. The confirmatory estimand is human--GPS country-rank association on the new items, with a secondary adapter--human association. The study does not treat adapter--GPS alone as construct validation. Ethics review, consent, and sample-size planning belong to that later study.

@@ -14,11 +14,14 @@ This repository is the methods archive for a working paper. It is not a packaged
 
 | Paper | File | Status |
 |---|---|---|
-| **Synthetic Cultural Agents from Aggregate Anchors** (Gonzalez-Bonorino, Biriukova, Capra) | [`misc/position_paper/position_paper_sca2.pdf`](./misc/position_paper/position_paper_sca2.pdf) | Working-paper draft. Do not treat the USA/MEX pilot as the headline result. |
+| **Synthetic Cultural Agents from Aggregate Anchors** (Gonzalez-Bonorino, Biriukova, Capra) | [`misc/position_paper/rewrite/`](./misc/position_paper/rewrite/) | Current partitioned draft. PDF: [`position_paper_sca2_arxiv.pdf`](./misc/position_paper/rewrite/position_paper_sca2_arxiv.pdf). |
+| Frozen circulating PDF | [`misc/position_paper/position_paper_sca2.pdf`](./misc/position_paper/position_paper_sca2.pdf) | Do not overwrite. |
 
 A construct-validity instrument paper lives in a separate lane (`cvprofiles`). It is not this repo's contribution.
 
 **Replication entry:** [`replication/README.md`](./replication/README.md).
+
+Headline surface: sixteen countries × twenty-three WVS items. Trust adapter–GPS Spearman is **0.80**. Do not quote the older 30-item construct table (0.78) as current.
 
 ---
 
@@ -27,12 +30,12 @@ A construct-validity instrument paper lives in a separate lane (`cvprofiles`). I
 | Object | Where | Public? |
 |---|---|---|
 | Code, protocol, committed analysis tables/figures | this GitHub repo | Yes (MIT) |
-| Sixteen-country option-probability banks | local `data/phase2/raw/` (gitignored) | **Not yet.** Set `SCA2_EVAL_URL` / `SCA2_EVAL_REMOTE` when a zip is published. |
-| Adapter weights | Hugging Face `Bonorinoa/SCA2-phase2-adapters` | **Private.** Optional for table regeneration; required only to score new item text. |
+| Sixteen-country option-probability zip | [Drive download](https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo) | Yes (model outputs only). Set `SCA2_EVAL_URL` to that URL. |
+| Adapter weights | Hugging Face `Bonorinoa/SCA2-phase2-adapters` | **Private** until the authors flip the repo. Optional for table regeneration; required only to score new item text. |
 | GPS country/individual files | briq / Falk et al. (2018) | Obtain from the source. Not redistributed. |
-| WVS Wave 7 microdata | World Values Survey Association (DOI [10.14281/18241.18](https://doi.org/10.14281/18241.18)) | Obtain from the source. Derived respondent extracts are **not** shipped. Rebuild with `data/wvs_eval_full/_build_wvs_eval_full.py`. |
+| WVS Wave 7 microdata | World Values Survey Association | Obtain from the source. Derived respondent extracts are **not** shipped. Rebuild with `data/wvs_eval_full/_build_wvs_eval_full.py`. |
 
-`analysis/phase2/reproduce_tables.py` regenerates headline tables **if** you already have licensed WVS extracts and the eval banks. Committed CSVs under `analysis/phase2/outputs/` are the frozen numbers in git. The draft's 16×23 trust ρ = 0.80 is a later matched surface than the committed construct table (trust ρ = 0.78). See `replication/ARXIV_GATES.md`.
+`analysis/phase2/reproduce_tables.py` regenerates headline tables from frozen country–item scores in `analysis/phase2/outputs/paper_a/`. Licensed WVS extracts are needed only for the forty-two-country human map.
 
 ---
 
@@ -45,7 +48,7 @@ A construct-validity instrument paper lives in a separate lane (`cvprofiles`). I
 | **Synthetic pair generation** | [`synthetic_generation/`](./synthetic_generation/) |
 | **Historical DPO notebooks** | [`DPO_train_test/`](./DPO_train_test/) — Colab-class T4 jobs, not a free-tier 16-adapter run |
 | **WVS scoring notebooks** | [`DPO_eval_WVS/`](./DPO_eval_WVS/) |
-| **Working paper** | [`misc/position_paper/`](./misc/position_paper/) |
+| **Working paper** | [`misc/position_paper/rewrite/`](./misc/position_paper/rewrite/) |
 
 The `sca2` CLI audits a frozen protocol. `train` / `eval` / `generate --materialize` refuse execution by design.
 
