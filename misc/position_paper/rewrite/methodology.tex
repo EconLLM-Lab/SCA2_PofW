@@ -1,0 +1,74 @@
+\section{Methodology}\label{sec:methodology}
+We separate the declared population input from the information already present in the models. The researcher chooses aggregate anchors, the synthetic contrast protocol, the fitting procedure, and the evaluation prompt. Declaring these inputs makes the conditioning rule inspectable. It does not restrict all information that can influence the fitted policy.
+
+\subsection{From aggregate anchors to synthetic comparisons}
+Let $z_c=(z_{c1},\ldots,z_{cK})$ contain the aggregate scores for group $c$. In this application, the coordinates describe trust, risk taking, patience, altruism, positive reciprocity, and negative reciprocity. The production protocol uses the binary profile $s_{ck}=1\{z_{ck}\geq0\}$. A teacher and a response generator supply a shared bank $B=\{(x_i,k_i,y_i^+,y_i^-)\}$, where $x_i$ is a scenario and the two responses are intended to express higher and lower levels of dimension $k_i$. These intended loadings are generator judgments, rather than experimentally verified trait manipulations.
+
+For each group, the deterministic label is
+\begin{equation}
+(y_{w,i},y_{\ell,i})=\begin{cases}(y_i^+,y_i^-),&z_{c,k_i}\geq0,\\(y_i^-,y_i^+),&z_{c,k_i}<0.\end{cases}
+\label{eq:sign_rule}
+\end{equation}
+The production relabeling path reuses fixed scenario and response text. Country identifiers and quantitative profile prose remain metadata; neither is supplied as a country-specific training prompt in this path. Profile rendering documents signs and magnitudes, but magnitudes do not affect these labels. Figure~\ref{fig:pipeline} shows this distinction. Appendix~\ref{app:protocol} gives an actual bank example, prompt excerpts, and source-backed pseudocode.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Latex,node distance=7mm and 8mm,every node/.style={font=\small,align=center},box/.style={draw,rounded corners,text width=37mm,minimum height=13mm}]
+\node[box] (bank) {Shared scenario bank\\Fixed A/B responses};
+\node[box,right=of bank] (label) {Deterministic labels\\$z_{ck}\geq0$: choose A};
+\node[box,right=of label] (fit) {Joint DPO fitting\\One adapter per group};
+\node[box,below=of label] (sign) {Declared GPS anchors\\Only signs enter labels};
+\node[box,below=of fit] (score) {New survey item\\Code likelihoods; no country name};
+\draw[->] (bank)--(label);\draw[->] (sign)--(label);\draw[->] (label)--(fit);\draw[->] (fit)--(score);
+\end{tikzpicture}
+\caption{Production construction and readout. Profile prose and score magnitudes document the anchors but do not feed the deterministic label rule. The shared bank and the pretrained model also influence the resulting policy.}\label{fig:pipeline}
+\end{figure}
+
+If two anchor vectors have identical signs, they induce identical labels on the same bank. Holding the split and fitting randomness fixed therefore leaves the fitting problem unchanged. Distinct fitted outputs among such groups cannot be interpreted as recovery of anchor magnitudes. Moreover, a dimension-specific evaluation does not isolate a dimension-specific adapter: all coordinates contribute to the same fitted policy. A changed sign vector defines an intervention on the construction algorithm only. It does not identify a human preference counterfactual.
+
+\begin{quote}\small
+\textbf{Source-bank polarity.} The United States is non-negative on all six GPS coordinates, so every training pair is labeled chosen~A. Mexico is negative on all six, so every pair is labeled chosen~B. On this bank, the USA--Mexico contrast is a global polarity flip of the same 658 scenarios.
+\end{quote}
+
+The map from declared signs through the shared bank to a fitted policy is a construction. The researcher supplies $z_c$, applies the labeling rule, and obtains $\widehat\pi_c$. Identification would require invertibility of a named parameter from observed WVS option probabilities. The present design does not recover $z_c$, the magnitudes $|z_{ck}|$, a single GPS coordinate, or a cultural utility. Rank association between adapter scores and GPS on held-out item text is criterion evidence for the construction. Whether fitted policies differ only as a function of the assigned sign vector remains a separate question.
+
+\subsection{DPO as a pairwise choice estimator}
+We treat a language model as a conditional distribution $\pi_\theta(y\mid x)$ over response sequences \cite{ludwig2026}. Under a Bradley--Terry model,
+\begin{equation}
+\Pr(y_w\succ y_\ell\mid x)=\sigma\{r(x,y_w)-r(x,y_\ell)\},\qquad \sigma(t)=(1+e^{-t})^{-1}.
+\end{equation}
+Independent type-I extreme-value utility shocks provide the usual random-utility interpretation \cite{bradleyterry1952}. Here the observed labels are deterministic synthetic choices; we use this likelihood as a fitting criterion rather than as an estimated model of human choice noise.
+
+The KL-regularized policy problem maximizes expected reward minus $\beta D_{\mathrm{KL}}(\pi\Vert\pi_{\mathrm{ref}})$ for $\beta>0$. On the support of the reference policy, its unrestricted optimum obeys
+\begin{equation}
+r(x,y)=\beta\log\frac{\pi^*(y\mid x)}{\pi_{\mathrm{ref}}(y\mid x)}+\beta\log Z(x).
+\label{eq:reward}
+\end{equation}
+The input-specific additive term cancels from pairwise reward differences. Substitution gives the DPO loss \cite{rafailov2023}:
+\begin{align}
+\Delta_\theta(x,y_w,y_\ell)&=\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}-\log\frac{\pi_\theta(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)},\\
+\mathcal L_c(\theta)&=-\frac{1}{|\mathcal D_c|}\sum_{(x,y_w,y_\ell)\in\mathcal D_c}\log\sigma\{\beta\Delta_\theta(x,y_w,y_\ell)\}.
+\label{eq:dpo}
+\end{align}
+This is a regularized Bradley--Terry interpretation through the reference-policy parameterization. It does not require an additional explicit KL term in the implemented loss. Finite synthetic comparisons constrain fitted margins on their support; they do not identify all responses, population marginals, or a unique human utility function.
+
+QLoRA restricts the parameters that can move while keeping the quantized base fixed \cite{hu2022,dettmers2023}. We write the fitted policy as $\widehat\pi_c=\pi_{\theta_0+\Delta\theta_c}$. This efficient parameterization changes the feasible policy class, whereas the pairwise likelihood remains the DPO criterion. The unrestricted optimum in equation~\eqref{eq:reward} need not be attained in this class. We retain Llama~3.1 8B Instruct because its limitations in prompted survey simulations provide a relevant setting for testing whether weight-embedded signals survive where prompting is weak \cite{dalloul2026}.
+
+\subsection{Readout and empirical implications}
+For an item $q$, let $a_{qj}$ be the token sequence of candidate response code $j$, including the prescribed leading space. We compute its teacher-forced log probability by summing conditional token log probabilities,
+\begin{equation}
+\ell_{cqj}=\sum_t\log\widehat\pi_c(a_{qjt}\mid q,a_{qj,<t}),\qquad
+\widehat P_c(j\mid q)=\frac{\exp\ell_{cqj}}{\sum_h\exp\ell_{cqh}}.
+\label{eq:readout}
+\end{equation}
+The denominator is restricted to the supplied candidate codes. Code tokenization, leading whitespace, item wording, and option order are therefore part of the scoring specification. The forward pass requires an autoregressive model but no sampled answer; optional generated text is a separate output. The normalized code probabilities are a scoring convention whose dispersion need not match population choice frequencies.
+
+For item recode $g_q$, the policy score is $\sum_jg_q(j)\widehat P_c(j\mid q)$. Human scores use the same recode on valid answers before a survey-weighted average. We average item scores within each declared composite and compare country ranks. Appendix~\ref{app:measurement} records the item set, raw-code recodes, missingness rules, and aggregation choices. Group aggregation and aggregation across items are separate operations.
+
+Held-out synthetic-label recovery asks whether the fitted relative margin improves over the reference, while raw choice accuracy asks whether the chosen response has higher likelihood. Policy--GPS rank association on new text asks whether anchor ordering transfers. Human--GPS association assesses the coherence of a proposed survey composite with the anchor. Policy--human association measures agreement with the survey's country ordering. These are distinct empirical implications. Their joint pattern contributes evidence about measurement, but two correlations do not establish construct sharing or measurement invariance \cite{campbellfiske1959,davidov2014,steenkamp1998}.
+
+We assess distributional resemblance separately with
+\begin{equation}
+\mathrm{TVD}_{cq}=\tfrac12\sum_j|\widehat P_c(j\mid q)-P_c^{H}(j\mid q)|.
+\end{equation}
+A country-named persona comparator changes the information supplied at inference as well as the conditioning route. The weights-by-prompts comparison is consequently a configuration sensitivity check. Isolating conditioning route would require, among other controls, a prompt receiving the same anchor information. Unconditioned evaluation removes direct country-name conditioning; it does not isolate anchor effects from every other source of variation.
