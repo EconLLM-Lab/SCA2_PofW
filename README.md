@@ -21,7 +21,7 @@ A construct-validity instrument paper lives in a separate lane (`cvprofiles`). I
 
 **Replication entry:** [`replication/README.md`](./replication/README.md).
 
-Headline surface: sixteen countries × twenty-three WVS items. Trust adapter–GPS Spearman is **0.80**. Do not quote the older 30-item construct table (0.78) as current.
+Headline surface: sixteen countries × twenty-three WVS items, from two saved evaluation jobs. Trust adapter–GPS Spearman is **0.74** [0.44, 0.88]. That is coarse sign transfer, not recovery of within-sign magnitudes. Do not quote 0.80, and do not quote the older 30-item construct table (0.78).
 
 ---
 
@@ -30,12 +30,12 @@ Headline surface: sixteen countries × twenty-three WVS items. Trust adapter–G
 | Object | Where | Public? |
 |---|---|---|
 | Code, protocol, committed analysis tables/figures | this GitHub repo | Yes (MIT) |
-| Sixteen-country option-probability zip | [Drive download](https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo) | Yes (model outputs only). Set `SCA2_EVAL_URL` to that URL. |
-| Adapter weights | Hugging Face `Bonorinoa/SCA2-phase2-adapters` | **Private** until the authors flip the repo. Optional for table regeneration; required only to score new item text. |
+| Sixteen-country option-probability zip | [Drive download](https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo) | Posted 2026-09-17. Model outputs only. It is not the source of the 0.74 headline. |
+| Adapter weights | Hugging Face `Bonorinoa/SCA2-phase2-adapters` | **Not public.** Optional for reprinting the committed tables. Required only to score new item text. |
 | GPS country/individual files | briq / Falk et al. (2018) | Obtain from the source. Not redistributed. |
 | WVS Wave 7 microdata | World Values Survey Association | Obtain from the source. Derived respondent extracts are **not** shipped. Rebuild with `data/wvs_eval_full/_build_wvs_eval_full.py`. |
 
-`analysis/phase2/reproduce_tables.py` regenerates headline tables from frozen country–item scores in `analysis/phase2/outputs/paper_a/`. Licensed WVS extracts are needed only for the forty-two-country human map.
+`analysis/phase2/reproduce_tables.py` reprints the headline from the committed file `analysis/phase2/outputs/paper_a/country_item_scores.csv`. The file named `country_item_scores_SUPERSEDED_stitched_20260925.csv` in that folder is the older USA/Mexico testing merge. Do not use it. A USA/Mexico testing evaluation that used to live in `DPO_eval_WVS/eval_results_wvs_wave7/` was removed on 2026-09-25.
 
 ---
 
@@ -47,7 +47,7 @@ Headline surface: sixteen countries × twenty-three WVS items. Trust adapter–G
 | **Protocol / sign-labeling CLI** | [`sca2/README.md`](./sca2/README.md), [`protocols/`](./protocols/) |
 | **Synthetic pair generation** | [`synthetic_generation/`](./synthetic_generation/) |
 | **Historical DPO notebooks** | [`DPO_train_test/`](./DPO_train_test/) — Colab-class T4 jobs, not a free-tier 16-adapter run |
-| **WVS scoring notebooks** | [`DPO_eval_WVS/`](./DPO_eval_WVS/) |
+| **WVS scoring notebooks** | [`DPO_eval_WVS/`](./DPO_eval_WVS/) — scoring code. Not the paper's result tables. |
 | **Working paper** | [`misc/position_paper/rewrite/`](./misc/position_paper/rewrite/) |
 
 The `sca2` CLI audits a frozen protocol. `train` / `eval` / `generate --materialize` refuse execution by design.
@@ -69,6 +69,8 @@ Reliable uses, when the tests support them: scoring new item text against a decl
 Unreliable uses: speaking for individuals; recovering response-distribution shape; causal or policy counterfactuals; treating adapters as national cultures.
 
 ---
+
+The study had no funding. No author has a competing interest.
 
 ## License
 

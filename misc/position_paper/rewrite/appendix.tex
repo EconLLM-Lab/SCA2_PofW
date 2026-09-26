@@ -1,8 +1,9 @@
 \appendix
 \section{Construction protocol and worked example}\label{app:protocol}
-The production manifest identifies the sign relabeling run as \path{gps_sign_relabel_all_20260816_004545Z}. Its source is the June 2026 USA--Mexico fixed-response bank. Relabeling deduplicates by dimension and prompt, rejects conflicting A/B text, and applies the sign rule to the recovered common bank. The exported countries exceed the trained panel; an exported label file does not imply that an adapter was fitted. The generation manifest sets \texttt{use\_anchors=false}, so optional WVS anchors are not an input to this recorded source run.
 
-The following pseudocode describes the production logic in \path{synthetic_generation/sca2_datagen/relabel.py}, especially \texttt{build\_triplet\_bank}, \texttt{sign\_choice}, and \path{label_triplet_for_country}. It is explanatory pseudocode rather than a claim that the complete replication package has been released.
+The implemented manifest identifies the sign relabeling run as \path{gps_sign_relabel_all_20260816_004545Z}. Its source is the June 2026 USA--Mexico fixed-response bank. Relabeling deduplicates by dimension and prompt, rejects conflicting A/B text, and applies the sign rule to the recovered common bank. The exported countries exceed the trained panel; an exported label file does not imply that an adapter was fitted. The generation manifest sets \texttt{use\_anchors=false}, so optional WVS anchors are not an input to this recorded source run.
+
+The following pseudocode describes the implemented logic in \path{synthetic_generation/sca2_datagen/relabel.py}, especially \texttt{build\_triplet\_bank}, \texttt{sign\_choice}, and \path{label_triplet_for_country}. It is explanatory pseudocode rather than a claim that the complete replication package has been released.
 \begin{quote}\ttfamily\small
 Recover shared (scenario, dimension, response A, response B) bank.\\
 Deduplicate on dimension and scenario; fail on conflicting A/B text.\\
@@ -26,7 +27,7 @@ The example below is triplet \texttt{00023ac74dac} in \texttt{triplets\_bank.jso
 The Argentina metadata records signs $(-,+,-,+,+,-)$ in the order trust, risk taking, patience, altruism, positive reciprocity, negative reciprocity. Its policy is fitted jointly across these signs. A new WVS item, such as Q81 on confidence in charitable organizations, is then scored using the fitted adapter and the fixed code-likelihood readout. The scenario and Q81 are different texts. Their shared proposed dimension is an assumption of the map, and is not established by this example.
 
 \subsection{Profile documentation and generation prompts}
-The rendering function \texttt{build\_cultural\_profile} in \texttt{profiles.py} starts with ``GPS CULTURAL STATE VECTOR (Falk et al. 2018, standardized deviations from global mean):''. Each line has the format ``symbol (dimension) = signed score: magnitude. description''. It describes $|z|<0.10$ as ``near the global average'', $0.10\leq|z|<0.40$ as ``moderately above/below average'', and larger values as ``strongly above/below average''. Scores are printed to two decimals. These thresholds describe profile prose; they do not modify the production sign labels. A legacy model-selection path used profile prose, but it is distinct from the deterministic production path examined here.
+The rendering function \texttt{build\_cultural\_profile} in \texttt{profiles.py} starts with ``GPS CULTURAL STATE VECTOR (Falk et al. 2018, standardized deviations from global mean):''. Each line has the format ``symbol (dimension) = signed score: magnitude. description''. It describes $|z|<0.10$ as ``near the global average'', $0.10\leq|z|<0.40$ as ``moderately above/below average'', and larger values as ``strongly above/below average''. Scores are printed to two decimals. These thresholds describe profile prose; they do not modify the implemented sign labels. A legacy model-selection path used profile prose, but it is distinct from the deterministic path examined here.
 
 The current generation source records the following exact scenario-template instructions:
 \begin{quote}\small
@@ -44,10 +45,10 @@ Generate two opposing responses to this same scenario.\\
 \end{quote}
 Other instructions request matching perspective, tone, length, stakes, and the remaining traits, and prohibit country labels. They express design intentions rather than verified controls. Complete source prompt templates are transcribed in the accompanying \texttt{PROMPT\_SOURCE\_EXCERPTS.md}. Current source text is distinguished there from archived realized evaluation prompts; a complete historical request log tying every generation call to an immutable provider revision has not been verified.
 
-The source manifest names endpoint aliases \texttt{hf-teacher}, \texttt{hf-generator}, and \texttt{hf-scorer}, with temperatures 0.7, 0.8, and 0.1. Current configuration maps them to Llama-3.3-70B-Instruct, Qwen3-32B, and Phi-4 endpoint names. Immutable served revisions remain unverified. The sixteen adapters examined here were produced by deterministic sign relabeling of the shared bank; the scorer was not a production gate. The manifest's requested scenario count does not by itself explain the size of the recovered bank; we use the materialized bank and its 658 unique pairs as the production record.
+The source manifest names endpoint aliases \texttt{hf-teacher}, \texttt{hf-generator}, and \texttt{hf-scorer}, with temperatures 0.7, 0.8, and 0.1. Current configuration maps them to Llama-3.3-70B-Instruct, Qwen3-32B, and Phi-4 endpoint names. Immutable served revisions remain unverified. The sixteen adapters examined here were produced by deterministic sign relabeling of the shared bank; the scorer was not an implementation gate. The manifest's requested scenario count does not by itself explain the size of the recovered bank; we use the materialized bank and its 658 unique pairs as the recorded bank.
 
 \subsection{Evaluation prompt and code scoring}
-The saved evaluation preview and \texttt{build\_survey\_user\_prompt} agree on the unconditioned wrapper:
+The saved evaluation preview and \texttt{build\_survey\_user\_prompt} agree on the prompt wrapper without country tokens:
 \begin{quote}\small
 Answer this questionnaire as an individual person. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.
 
@@ -66,27 +67,66 @@ For the persona condition, the first sentence becomes ``Answer this questionnair
 \section{Training configuration and historical diagnostics}\label{app:training}
 The inspected CO2 multi-country notebook records Llama-3.1-8B-Instruct, 4-bit NF4 with double quantization and fp16 base compute, attention-projection LoRA modules \texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, and \texttt{o\_proj}, rank 16, scaling 32, and dropout 0.05. It uses DPO beta 0.1, learning rate $10^{-4}$ with cosine scheduling, one epoch, per-device batch size 1, and 16 gradient-accumulation steps. The maximum length is 768 with \texttt{keep\_end} truncation. Trainable parameters are converted to fp32 after trainer initialization. The source has the warmup-ratio assignment commented out, so the prior draft's claim that every adapter used warmup 0.03 is not retained.
 
-These are inspected notebook settings. Their correspondence with every stored checkpoint remains to be established. The release package still needs an immutable checkpoint-to-run configuration manifest, exact dependency versions, and reference-log-probability provenance. Stored evidence supports the shared-bank 526/132 training/holdout counts and the Russia split exception reported in the main text. The notebook records a Tesla T4 run; account tier and historical billing have not been established, so no free-compute or cost claim is made.
+These are inspected notebook settings. Their correspondence with every stored checkpoint remains to be established. The replication package still needs an immutable checkpoint-to-run configuration manifest, exact dependency versions, and reference-log-probability provenance. Stored evidence supports the shared-bank 526/132 training/holdout counts and the Russia split exception reported in the main text. The inspected notebooks do not record why Russia's holdout differs from that shared split. The notebook records a Tesla T4 run; account tier and historical billing have not been established, so no free-compute or cost claim is made.
 
-A historical language-model diagnostic scored generated responses on all six GPS dimensions. It did not exclude pairs from production sign relabeling. Pair loadings remain generator judgments, and the shared bank is mixed-trait. Unused process diagnostics are not evidence of trait isolation. A new bank or a newly imposed exclusion rule would be a separate construction experiment.
+A historical language-model diagnostic scored generated responses on all six GPS dimensions. It did not exclude pairs from implemented sign relabeling. Pair loadings remain generator judgments, and the shared bank is mixed-trait. Unused process diagnostics are not evidence of trait isolation. A new bank or a newly imposed exclusion rule would be a separate construction experiment.
 
 \section{Measurement specification and sensitivity status}\label{app:measurement}
 The strict panel uses Table~\ref{tab:map}'s common item set for every country and arm. We remove raw WVS missing codes $-1$ through $-5$ and nonfinite observations before any transformation, retaining valid zero membership responses. Human item means use positive \texttt{W\_WEIGHT} weights and require at least fifty valid positive-weight responses per cell. All retained strict-panel cells pass that requirement in the saved audit.
 
 The recodes inherited from the declared analysis are $g_{57}(v)=1\{v=1\}$; $g_q(v)=5-v$ for Q58--Q64, Q73, and Q81; and $g_q(v)=11-v$ for Q177 and Q179. Other retained items use their raw codes. For a model, each code is recoded before taking its probability-weighted expectation. For humans, each valid answer is recoded before its weighted mean. Proposed dimension composites are unweighted averages of these item means, without standardizing their ranges. This makes scale ranges part of the composite definition. Unit-range recoding is a separate sensitivity specification in the saved audit; the reported surface retains its original scales.
 
-The historic Q69--Q71 bridge recoded negative missing values before masking. That can turn missingness into valid-looking positive scores. Those items do not enter the strict panel. Earlier broad-panel institutional-trust coefficients from that faulty sequence are retired. A corrected broader human-only comparison uses a different country sample and must not be substituted for a matched model--human comparison. We retain Egypt in the primary sample. Table~\ref{tab:egypt} separates Egypt removal from restoration of Q69--Q71 on the remaining fifteen countries, using frozen item scores and no adapter refit. Adapter--GPS trust remains between $0.79$ and $0.81$ across those surfaces. Human--GPS association moves more when the institutional items are restored.
-\input{tables/egypt_robustness}
+An earlier path transformed negative missing codes before exclusion. The corrected analyses exclude missing values before recoding, and Q69--Q71 enter only the sensitivity surface. A corrected broader human-only comparison uses a different country sample and must not be substituted for a matched model--human comparison. We retain Egypt in the primary sample. Earlier numeric Egypt robustness checks were computed on a superseded score file and are not reported as checks of the current trust result.
 
-The main intervals use common country-bootstrap draws (seed 20260905; 2,000 draws), average ranks for ties, and undefined values for constant vectors. Sign-profile resampling retains every member of each selected profile; the equal-profile analysis instead averages within profiles before ranking. Leave-country-out and leave-item-out results describe influence on this observed panel. None of these intervals includes repeated model fitting, respondent resampling, or GPS measurement error. An assignment permutation of the sixteen GPS trust $z$ values across the frozen adapter composites (seed 20260820; 1,000 draws) yields a real Spearman of $0.80$, a null median of $0.00$, and one-sided $p=0.002$. Adapters were not refit, and the test does not retrain on permuted sign labels. Retrained anchor-permutation experiments, new scenario banks, repeated training seeds, and independent survey batteries remain unrun validation tasks.
+Table~\ref{tab:items} details the 26 candidate items, their proposed GPS links, recode transformations, valid ranges, and analysis status.
+
+\begin{table}[p]\centering\tiny\renewcommand{\arraystretch}{0.95}\setlength{\tabcolsep}{3pt}
+\caption{Item measurement table showing candidate WVS indicators, proposed GPS links, abbreviated questionnaire wording, recode functions $g(v)$, valid ranges, and analysis status.}\label{tab:items}
+\begin{tabularx}{\textwidth}{llXccc}\toprule
+WVS & GPS link & Abbreviated wording & $g(v)$ & Range & Status \\\midrule
+Q57 & GPS trust & Most people can be trusted (1) vs need to be very careful (2) & $1\{v=1\}$ & 0--1 & primary rectangle \\
+Q58 & GPS trust & Trust: your family (1 trust completely \dots\ 4 do not trust at all) & $5-v$ & 1--4 & primary rectangle \\
+Q59 & GPS trust & Trust: your neighborhood (1 trust completely \dots\ 4 do not trust at all) & $5-v$ & 1--4 & primary rectangle \\
+Q60 & GPS trust & Trust: people you know personally (1 trust completely \dots\ 4 do not trust at all) & $5-v$ & 1--4 & primary rectangle \\
+Q61 & GPS trust & Trust: people you meet for the first time (1 trust completely \dots\ 4 do not trust at all) & $5-v$ & 1--4 & primary rectangle \\
+Q62 & GPS trust & Trust: people of another religion (1 trust completely \dots\ 4 do not trust at all) & $5-v$ & 1--4 & primary rectangle \\
+Q63 & GPS trust & Trust: people of another nationality (1 trust completely \dots\ 4 do not trust at all) & $5-v$ & 1--4 & primary rectangle \\
+Q64 & GPS trust & Confidence: the churches (1 a great deal \dots\ 4 none at all). Questionnaire prints `The [churches]1' with footnote: replace with the relevant cultural term. & $5-v$ & 1--4 & primary rectangle \\
+Q73 & GPS trust & Confidence: parliament (1 a great deal \dots\ 4 none at all) & $5-v$ & 1--4 & primary rectangle \\
+Q43 & GPS patience & Less importance placed on work in our lives: good (1) / don't mind (2) / bad (3) & $v$ & 1--3 & exploratory bridge \\
+Q50 & GPS patience & Satisfaction with the financial situation of the household (1 completely dissatisfied \dots\ 10 completely satisfied) & $v$ & 1--10 & exploratory bridge \\
+Q106 & GPS risk taking & Incomes should be made more equal (1) vs greater incentives for individual effort (10) & $v$ & 1--10 & exploratory bridge \\
+Q107 & GPS risk taking & Private ownership of business and industry should be increased (1) vs government ownership of business and industry should be increased (10) & $v$ & 1--10 & exploratory bridge \\
+Q109 & GPS risk taking & Competition is good (1) vs competition is harmful (10) & $v$ & 1--10 & exploratory bridge \\
+Q178 & GPS risk taking & Justifiable: avoiding a fare on public transport (1 never justifiable \dots\ 10 always justifiable) & $v$ & 1--10 & exploratory bridge \\
+Q81 & GPS positive reciprocity & Confidence: charitable or humanitarian organizations (1 a great deal \dots\ 4 none at all) & $5-v$ & 1--4 & exploratory bridge \\
+Q176 & GPS negative reciprocity & Agree/disagree: nowadays one often has trouble deciding which moral rules are the right ones to follow (1 completely agree \dots\ 10 completely disagree) & $v$ & 1--10 & exploratory bridge \\
+Q177 & GPS negative reciprocity & Justifiable: claiming government benefits to which you are not entitled (1 never \dots\ 10 always) & $11-v$ & 1--10 & exploratory bridge \\
+Q179 & GPS negative reciprocity & Justifiable: stealing property (1 never \dots\ 10 always) & $11-v$ & 1--10 & exploratory bridge \\
+Q195 & GPS negative reciprocity & Justifiable: death penalty (1 never \dots\ 10 always) & $v$ & 1--10 & exploratory bridge \\
+Q99 & GPS altruism & Membership: environmental organization (2 active member / 1 inactive member / 0 don't belong) & $v$ & 0--2 & exploratory bridge \\
+Q101 & GPS altruism & Membership: humanitarian or charitable organization (2 active / 1 inactive / 0 don't belong or not a member) & $v$ & 0--2 & exploratory bridge \\
+Q103 & GPS altruism & Membership: self-help group, mutual aid group (2 active / 1 inactive / 0 don't belong) & $v$ & 0--2 & exploratory bridge \\
+Q69 & GPS trust & Confidence: the police (1 a great deal \dots\ 4 none at all) & script $5-v$; tex not stated & 1--4 & sensitivity only \\
+Q70 & GPS trust & Confidence: the courts (1 a great deal \dots\ 4 none at all) & script $5-v$; tex not stated & 1--4 & sensitivity only \\
+Q71 & GPS trust & Confidence: the government (1 a great deal \dots\ 4 none at all) & script $5-v$; tex not stated & 1--4 & sensitivity only \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}
+\raggedright\emph{Note:} 26 item rows from the measurement specification: 23 in the primary rectangle and Q69--Q71 as sensitivity-only rows outside that rectangle. Patience Q43 and Q50 are separate rows rather than a pooled composite. Status ``primary rectangle'' records items not designated with a separate status in source. Wording, recodes $g(v)$, ranges, and status follow the project measurement inventory.
+\end{table}
+
+The main intervals use common country-bootstrap draws (seed 20260905; 2,000 draws), average ranks for ties, and undefined values for constant vectors. Sign-profile resampling retains every member of each selected profile; the equal-profile analysis instead averages within profiles before ranking. Leave-country-out and leave-item-out results describe influence on this observed panel. None of these intervals includes repeated model fitting, respondent resampling, or GPS measurement error. An assignment permutation of the sixteen GPS trust $z$ values across the frozen adapter composites (seed 20260820; 1,000 draws) yields the observed trust rank correlation well above the permutation null, with a null median of $0.00$. Adapters were not refit, and the test does not retrain on permuted sign labels. Retrained anchor-permutation experiments, new scenario banks, repeated training seeds, and independent survey batteries remain unrun validation tasks.
 
 The same recodes on the forty-two-country GPS--WVS intersection supply a human-only criterion check on the map (Table~\ref{tab:human42}). Adapter scores are not recomputed in that table.
 
+In Table~\ref{tab:human42}, $n$ denotes the number of countries entering the row.
+
 \input{tables/human42}
 
-\section{Prospective human item-screening protocol}\label{app:humanscreen}
+\section{Proposed validation design}\label{app:humanscreen}
 This manuscript does not field a new survey. The intended use of the fitted policies is to score candidate item text against declared GPS anchors before a human pilot. The following protocol is recorded so that a later study can test that use without changing the present construction.
 
-A researcher predeclares a battery of candidate items, their recodes, and which GPS coordinate each item is proposed to track. Frozen adapters from the present study score those items with the unconditioned space-prefixed code-likelihood readout. Country composites are then ranked against GPS $z$. Interpretation is comparative. Items that recover GPS order about as strongly as the nine-item trust map does in the forty-two-country human panel are retained as aligned candidates. Items that recover GPS order strongly where the corresponding human association on already-fielded items is near zero are set aside as likely echo of the training signs. Items that fail to recover GPS order where the human map is strong are set aside as non-transporting.
+A researcher predeclares a battery of candidate items, their recodes, and which GPS coordinate each item is proposed to track. Frozen adapters from the present study score those items with the space-prefixed code-likelihood readout without country tokens. Country composites are then ranked against GPS $z$. Interpretation is comparative. Items that recover GPS order about as strongly as the nine-item trust map does in the forty-two-country human panel are retained as aligned candidates. Items that recover GPS order strongly where the corresponding human association on already-fielded items is near zero are set aside as likely echo of the training signs. Items that fail to recover GPS order where the human map is strong are set aside as non-transporting.
 
 A human check then fields a small number of retained and flagged items in a predeclared set of countries, using the same recodes. The confirmatory estimand is human--GPS country-rank association on the new items, with a secondary adapter--human association. The study does not treat adapter--GPS alone as construct validation. Ethics review, consent, and sample-size planning belong to that later study.

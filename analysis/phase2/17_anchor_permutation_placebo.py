@@ -34,7 +34,7 @@ TRUST_ITEMS = ["Q57", "Q59", "Q61", "Q62", "Q63", "Q64", "Q69", "Q70",
                "Q71", "Q58", "Q60", "Q73"]
 INVERT_1_4 = {"Q59", "Q61", "Q62", "Q63", "Q64", "Q69", "Q70", "Q71", "Q58", "Q60", "Q73"}
 BINARY_TRUST = {"Q57"}
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 N_PERM = 1000
 SEED = 20260820
 

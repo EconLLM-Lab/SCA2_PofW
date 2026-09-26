@@ -33,7 +33,7 @@ GPS_DTA = REPO / "data" / "GPS" / "GPS_dataset_country_level" / "country_gps.dta
 CO2_SUMMARY = REPO / "DPO_train_test" / "CO2_run" / "eval_results_summary.csv"
 
 DIMS = ["altruism", "negrecip", "patience", "posrecip", "risktaking", "trust"]
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 plt.rcParams.update({"figure.dpi": 150, "font.size": 9, "axes.titlesize": 10})
 
 

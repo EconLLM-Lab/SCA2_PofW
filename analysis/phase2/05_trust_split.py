@@ -43,7 +43,7 @@ TRUST_CLASS = {
     "Q71": "institutions", "Q73": "institutions",
 }
 CLASS_ORDER = ["family", "ingroup", "outgroup", "institutions"]
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 plt.rcParams.update({"figure.dpi": 150, "font.size": 9, "axes.titlesize": 10})
 
 

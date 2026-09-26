@@ -1,27 +1,27 @@
-# Priority fixes before arXiv
+# Paper supplement status
 
-Living list. Headline surface is 16 countries × 23 items; trust adapter–GPS = **0.80**.
+Headline surface is 16 countries × 23 items. Trust adapter–GPS is **0.74** [0.44, 0.88]. Do not quote 0.80.
 
-## Closed in this freeze
+The committed source of that number is `analysis/phase2/outputs/paper_a/country_item_scores.csv`. The file `country_item_scores_SUPERSEDED_stitched_20260925.csv` is the older USA/Mexico testing merge. It is kept so the change can be audited. It is not a paper result.
 
-1. Identification language: omitting country names closes a prompting channel. It does not identify human preferences or erase pretrained associations. **In the draft.**
-2. Sign-only labeling, 13 profiles / 16 countries, Russia's different holdout. Magnitudes do not enter labels. **In the draft.**
-3. DPO as reparameterized Bradley–Terry. GPS country scores are survey measures selected through experimental validation. **In the draft.**
-4. One trust composite on the 16×23 rectangle (9 items, no Q69–Q71). Frozen in `analysis/phase2/outputs/paper_a/` and `reproduce_tables.py`. The older 30-item 0.78 table is superseded.
-5. Egypt kept. Q69–Q71 reported on the 15-country subset and on the 42-country human map.
-6. Q43/Q50 split everywhere.
-7. Phi-4 contamination demoted to an unused diagnostic.
-10. Public eval zip of option-probability CSVs. Cold fetch verified:
-    https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo
-11. Hugging Face adapters may stay private; the paper says weights are optional for table regen.
+## Closed for this preprint
 
-## Still open (paper polish, not new compute)
+1. Omitting the country name closes a prompting channel. It does not erase pretrained associations.
+2. Labels are GPS signs. Sixteen countries, thirteen sign profiles. Russia's holdout differs. Magnitudes do not enter the labels.
+3. The trust result is coarse sign transfer on the nine-item map. Human agreement is unresolved.
+4. The country-prompt comparison is in the results. Checkpoint parity was not established, so it is not an abstract claim.
+5. Q43 and Q50 stay separate.
+6. The Egypt numeric table that used the superseded score file is not part of the paper folder.
+7. The USA/Mexico testing evaluation in `DPO_eval_WVS/eval_results_wvs_wave7/` was removed. Both waves of eight remain.
+8. No funding. No competing interests. Confirmed by Augusto on 2026-09-25.
+9. Adapter weights are not public. Reprinting the committed tables does not require them.
 
-8. Figure/caption mismatches on leftover 30-item exhibits. The current draft's Figure 2 is the 16×23 associations plot.
-9. SMR abstract ≤150 words when that venue is in play. Not required for arXiv.
-12. Git history still contains old WVS/Barometer blobs. Do not rewrite history. A journal pack should use a fresh zip.
-13. `profiling_and_datagen.ipynb` and `training.ipynb` remain optional protocol demos.
+## Not the paper supplement
 
-## Not required before a narrow preprint
+- `DPO_eval_WVS/` holds scoring notebooks. It is not the result archive.
+- The Drive zip posted 2026-09-17 is an earlier model-output archive. It is not the source of 0.74.
+- Seminar notes under `misc/presentation/` are not the paper.
 
-Retraining 16 adapters; QC-gated bank; OpenRouter rewiring of the historical bank; operator-sensitivity GPU panel; flipping the whole Drive bucket public; making Hugging Face public (authors can flip `Bonorinoa/SCA2-phase2-adapters` when ready).
+## Not required before posting
+
+Retraining, a second contrast bank, a matched anchor-prompt arm, and making the adapter weights public.

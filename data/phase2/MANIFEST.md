@@ -27,9 +27,8 @@ SCA2_phase2/
     │   ├── ksenias_base8/       ← row-level + summaries (incl. cross-country pairs)
     │   └── co2_8/               ← row-level (self-mode) + all_adapters
     └── wvs/                     ← WVS Wave-7 OOS distributional eval (TVD/JSD/Brier/CE/Wasserstein/ECE)
-        ├── ksenias_base8/       ← matched-only, 8 countries
-        ├── co2_8/               ← matched-only, 8 countries
-        └── usamex_canonical/    ← full 2×2 matched+cross (from repo DPO_eval_WVS)
+        ├── ksenias_base8/       ← first wave of eight, including the USA and Mexico scores used in the paper
+        └── co2_8/               ← second wave of eight
 ```
 
 ## Adapters live on HuggingFace Hub (decision 2026-08-19)
@@ -54,7 +53,7 @@ Load with `PeftModel.from_pretrained(base, "Bonorinoa/SCA2-phase2-adapters", sub
 | `eval/wvs/ksenias_base8/` | Shared folder `16skQIR7m6YjINxlH1Ma9wXa1rkC-5eN7` ("eval_results_wvs_wave7_new", Ksennia) | 76 | 49.8 MB | 2026-08-19 |
 | `eval/gps/co2_8/` | `MyDrive/DPO_CO2/eval_results/` (EconLLM CO2 run) | 18 | 4.9 MB | 2026-08-19 |
 | `eval/wvs/co2_8/` | `MyDrive/DPO_CO2/eval_results_wvs_wave7/` (EconLLM CO2 run) | 237 | 223.6 MB | 2026-08-19 |
-| `eval/wvs/usamex_canonical/` | repo `DPO_eval_WVS/eval_results_wvs_wave7/` | 45 | 18 MB | 2026-08-19 (upload pending) |
+| `eval/wvs/usamex_canonical/` | Removed 2026-09-25. Pilot USA/MEX scoring. Do not restore into headline statistics. | — | — | removed |
 | `docs/CO2_run/` | repo `DPO_train_test/CO2_run/` (CO2_RUN.md, eval summary, scripts, WVS docx/PNG) | 17 | 19.5 MB | 2026-08-19 |
 | `analysis/` | repo `analysis/phase2/` (11 scripts + outputs + 10 figures + README) | 65 | 7.6 MB | 2026-08-19 |
 | `adapters/base8/` | Shared folder `1IopTI6n9xMMNihsoRu-8B_DGQ-qX-3hs` ("dpo_qlora_adapters", Ksennia) | 274 | 4.23 GB | 2026-08-19 |
@@ -78,7 +77,7 @@ Ksennia's folders are **copied, never moved** — her originals remain untouched
 - **GPS reward-recovery row schema** (both banks): `model, eval_country, country, item_id, gps_dimension, prompt, chosen, rejected, generated_answer, ref_chosen_logp, ref_rejected_logp, adapter_chosen_logp, adapter_rejected_logp, ref_margin, adapter_margin, dpo_reward_delta, dpo_pref_prob, dpo_prefers_chosen`.
 - **Base-8 GPS source of truth = `reward_recovery_<CC>_adapter_on_<CC>.csv`** (ISO3, 132 rows incl. header = shared 526/132 eval split, self-mode). `<CC>_adapter.csv` is byte-identical (verified md5 for CHN/MEX/USA) — dedupe.
 - **Stale/legacy artifacts in Ksenia's GPS folder (do NOT use):** `reward_recovery_adapter_summary.csv` + `dimension_summary.csv` use pilot-era `Mexico_adapter`/`US_adapter` naming with a 70-row eval set; `reward_recovery_all_adapters.csv` contains RUS rows only; `*_1.csv` are older duplicates. **Cross-eval (adapter i on country j) exists ONLY for USA↔MEX** (pilot 2×2, summary level only) — recompute per-dimension metrics from the ISO3 row files instead.
-- **WVS eval designs (verified from the CSVs):** `usamex_canonical` = full 2×2 (base, USA_adapter, MEX_adapter × {USA, MEX}, 35 items/cell); `ksenias_base8` = **matched-only** (8 adapters on own country) + base×8 (its `survey_matched_vs_cross_*.csv` shells are EMPTY); `co2_8` = **FULL 8×8 cross grid** (277 matched + 1939 cross + 277 base rows; EGY eval has 32 items, others 35). The CO2 cross grid is the workhorse for matched-vs-cross analysis on the WVS surface.
+- **WVS eval designs:** `ksenias_base8` is the first wave of eight, matched to each country's own adapter, and is the USA/Mexico source for the paper. `co2_8` is the second wave. The removed `usamex_canonical` testing run is not a current design.
 - `population_response_distributions.csv`: identical schema across all runs (`eval_country, question_id, ..., population_prob, weight_column`).
 - **Aux data (repo, tracked):** `data/phase2/aux/wdi.csv` — World Bank WDI `NY.GDP.PCAP.PP.KD` (PPP, constant 2017 US$), 2015–2019, all countries (from the cvprofiles lane cache). Used by `analysis/phase2/10_development_restrictions.py` and `11_twin_gdp.py`; scripts fall back to the cvprofiles cache if the local copy is missing. Education control is Q275 (WVS ISCED) computed from the local parquets — no fetch needed.
 - **Session-2 analysis outputs (2026-08-19, in `analysis/outputs/`):** `twin_gps_clusters.csv`, `twin_wvs_cfst.csv`, `twin_adapter_cfst.csv`, `twin_adapter_itemdiff.csv`, `trust_class_bridge.csv`, `eval_08_summary.json` (twins + trust classes); `temp_scale_{pooled,by_family,by_country,Tstar,cfst_rank,base_reference}.csv` (temperature sweep); `development_restrictions.csv` + `development_{human,adapter}_by_country.csv` + `twin_gdp_pairs.csv` (development tests).
@@ -93,9 +92,7 @@ Ksennia's folders are **copied, never moved** — her originals remain untouched
 rclone copy ksenias_gps: <repo>/data/phase2/raw/gps/ksenias_base8/
 rclone copy ksenias_wvs: <repo>/data/phase2/raw/wvs/ksenias_base8/
 rclone copy sca2drive:SCA2_phase2/eval/wvs/co2_8 <repo>/data/phase2/raw/wvs/co2_8/
-
-# Push updated canonical eval to Drive
-rclone copy <repo>/data/phase2/raw/wvs/usamex_canonical/ sca2drive:SCA2_phase2/eval/wvs/usamex_canonical/
+# Do not copy or restore usamex_canonical. That testing run was removed.
 ```
 
 - rclone config: `~/.config/rclone/rclone.conf` (refresh token auto-renews).

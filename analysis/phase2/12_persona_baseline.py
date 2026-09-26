@@ -30,7 +30,7 @@ PERSONA_CSV = pathlib.Path("/tmp/persona_out/model_option_probabilities_persona.
 
 ADAPTERS = ["CHN","JPN","GBR","USA","MEX","ARG","DEU","RUS",
             "IND","IDN","NGA","EGY","TUR","NLD","BRA","GRC"]
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 MULTI_SELECT = "multiple_response_max_5"
 
 

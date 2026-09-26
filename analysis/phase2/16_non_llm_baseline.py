@@ -70,7 +70,7 @@ INVERT_1_4 = {"Q59", "Q61", "Q62", "Q63", "Q64", "Q69", "Q70", "Q71", "Q58", "Q6
 INVERT_10 = {"Q177", "Q179"}
 BINARY_TRUST = {"Q57", "Q12", "Q13", "Q14", "Q174"}
 
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 ADAPTERS = ["ARG", "BRA", "CHN", "DEU", "EGY", "GBR", "GRC", "IDN", "IND", "JPN",
             "MEX", "NGA", "NLD", "RUS", "TUR", "USA"]
 

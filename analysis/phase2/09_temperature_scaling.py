@@ -41,7 +41,7 @@ ADAPTERS = [c + "_adapter" for c in [
     "CHN", "JPN", "GBR", "USA", "MEX", "ARG", "DEU", "RUS",
     "IND", "IDN", "NGA", "EGY", "TUR", "NLD", "BRA", "GRC"]]
 TEMPS = [1.0, 1.25, 1.5, 2.0, 3.0]
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 
 
 def load_options() -> pd.DataFrame:

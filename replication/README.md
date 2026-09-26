@@ -4,7 +4,7 @@ This folder is the public front door. It does **not** retrain sixteen adapters.
 
 ## Two tiers
 
-**Tier A (no extra data).** Confirm that committed analysis artifacts in git match `HASHES.md`. That is what GitHub currently can prove. The headline freeze is `analysis/phase2/outputs/paper_a/` (16×23; trust adapter–GPS = 0.80).
+**Tier A (no extra data).** Confirm that committed analysis artifacts in git match `HASHES.md`. The headline file is `analysis/phase2/outputs/paper_a/country_item_scores.csv` (16×23; trust adapter–GPS = 0.74). Do not open the superseded stitch in that folder.
 
 **Tier B (lab or licensed WVS).** Regenerate tables:
 
@@ -14,15 +14,15 @@ This folder is the public front door. It does **not** retrain sixteen adapters.
 env -u PYTHONPATH .venv/bin/python analysis/phase2/reproduce_tables.py
 ```
 
-Option-probability zip (model outputs only; cold fetch verified 2026-09-17):
+Option-probability zip posted 2026-09-17 (model outputs only). It is not required to reprint 0.74, and it is not the source of that number:
 
 ```
 https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo
 ```
 
-Set `SCA2_EVAL_URL` to that URL if you want a local copy of the scoring files. It is not required to reprint 0.80 from the frozen country–item scores.
+Set `SCA2_EVAL_URL` to that URL only if you want a local copy of those scoring files. Reprint the headline from the committed country–item scores.
 
-Adapter weights on Hugging Face `Bonorinoa/SCA2-phase2-adapters` remain private until the authors flip that repository. They are optional for table regeneration.
+Adapter weights on Hugging Face `Bonorinoa/SCA2-phase2-adapters` are not public. They are optional for reprinting the committed tables.
 
 ## Notebooks
 

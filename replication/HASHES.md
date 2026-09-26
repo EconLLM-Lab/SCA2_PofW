@@ -1,12 +1,15 @@
 # SHA-256 of artifacts
 
-## Paper A locked surface (16 countries x 23 items; trust adapter-GPS = 0.80)
+## Paper A locked surface (16 countries x 23 items; trust adapter-GPS = 0.74)
 
-5654cab638bea02c7e6e1e8b8f55d2ea9074cb66af9ac809e3011372df018791  analysis/phase2/outputs/paper_a/country_item_scores.csv
+Two-wave file, 2026-09-25. USA and Mexico come from `ksenias_base8`, not the removed testing evaluation.
+The stitched file that produced 0.80 is `country_item_scores_SUPERSEDED_stitched_20260925.csv` (sha256 5654cab638bea02c7e6e1e8b8f55d2ea9074cb66af9ac809e3011372df018791). Do not quote 0.80.
+
+f81feeb0c1aa1b5201fe75238f840569544d057382a1b2b2909b0d64cf4af5a7  analysis/phase2/outputs/paper_a/country_item_scores.csv
 3965933c165558f95974097e582d2bd706b067008f6706245fd06db417b4582a  analysis/phase2/outputs/paper_a/human_gps_map.csv
 8fe7b0257edcb9a7fbd2701ef1ea4e661afb274f3c1adc6dfb9b3501a7a55769  sca2_public_eval.zip
 
-Public eval zip (model option probabilities only; cold fetch verified 2026-09-17):
+Public eval zip posted 2026-09-17. Model outputs only. Not the source of the 0.74 headline:
 https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo
 
 ## Superseded 30-item unified pipeline (not Paper A)

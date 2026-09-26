@@ -56,7 +56,7 @@ PRIOR = {"trust": "HIGH", "patience": "LOW-MOD", "risktaking": "LOW",
          "posrecip": "VERY LOW", "negrecip": "LOW", "altruism": "LOW"}
 FALK_RHO = {"trust": 0.49, "patience": 0.09, "altruism": 0.20,
             "risktaking": 0.32, "posrecip": np.nan, "negrecip": np.nan}
-BANK_PRECEDENCE = {"usamex_canonical": 0, "ksenias_base8": 1, "co2_8": 2}
+BANK_PRECEDENCE = {"ksenias_base8": 0, "co2_8": 1}
 
 
 def recode(raw: pd.Series, item: str) -> pd.Series:

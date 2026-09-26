@@ -1,78 +1,9 @@
-# DPO Adapter Evaluation on Unseen WVS Survey Questions
+# WVS scoring notebooks
 
-**Canonical Out-of-Sample (OOS) Evaluation Surface**  
-**EconLLM Lab** · [`github.com/EconLLM-Lab/SCA2_PofW`](https://github.com/EconLLM-Lab/SCA2_PofW)
+This folder holds the scoring notebooks and the item map. It is not the paper's result archive.
 
-This folder contains the canonical evaluation pipeline and empirical results for assessing the base Llama model (`meta-llama/Llama-3.1-8B-Instruct`) and country-specific DPO+QLoRA adapters (`USA_adapter` and `MEX_adapter`) against empirical population response distributions from Wave 7 of the World Values Survey (WVS).
+The USA–Mexico testing outputs that used to live in `eval_results_wvs_wave7/` were removed on 2026-09-25. They are not a supplement to the current draft. Do not restore them into the headline.
 
----
+The paper's country–item scores are `analysis/phase2/outputs/paper_a/country_item_scores.csv`. The draft is `misc/position_paper/rewrite/`. Replication notes are `replication/README.md`.
 
-## Folder Structure
-
-```
-DPO_eval_WVS/
-├── DPO_survey_distribution_evaluation.ipynb  # Primary scoring notebook: log-prob extraction & distribution metrics
-├── GPS_vs_WVS_evaluation_analysis.ipynb      # Statistical analysis, bootstrap CIs, matched-vs-cross & visualization
-├── question_map_wvs_edited.csv               # 35 unseen WVS items (30 mapped to 6 GPS dimensions, 5 demographics)
-├── README.md                                 # This documentation file
-└── eval_results_wvs_wave7/                   # Canonical result tables & summary CSVs
-    ├── survey_question_metrics_all_models.csv
-    ├── survey_adapter_improvement_vs_base_summary.csv
-    ├── survey_matched_vs_cross_specificity_summary.csv
-    ├── survey_probability_calibration_ece.csv
-    ├── survey_signed_moment_and_top_option_summary.csv
-    ├── survey_metrics_by_gps_dimension_wide.csv
-    └── survey_metric_bootstrap_summary.csv
-```
-
----
-
-## Methodology & Option-Likelihood Scoring
-
-Unlike open-ended text generation, this evaluation assesses LLMs as **population option-probability simulators**:
-1. **Unconditioned Prompting (`PROMPT_COUNTRY_CONDITIONING = False`):** To ensure observed behavioral differences originate from learned adapter weights rather than prompt tokens, country names (e.g., "in Mexico") are omitted from prompts.
-2. **Log-Likelihood Extraction:** For every question, the model computes log-probabilities for all valid response codes (e.g., 1–10 scale, Yes/No, 4-point Likert).
-3. **Softmax Normalization:** Option log-probabilities are normalized into a predicted discrete choice distribution $\hat{P} = (\hat{p}_1, \dots, \hat{p}_K)$.
-4. **Weighted Benchmark Comparison:** $\hat{P}$ is compared against survey-weighted population distributions $P_{\text{WVS}}$ using:
-   * Total Variation Distance (TVD)
-   * Jensen-Shannon Divergence (JSD)
-   * Brier Score & Cross-Entropy
-   * Wasserstein Distance & Moment Errors (Mean/Std Error for ordered scales)
-   * Expected Calibration Error (ECE) & Dispersion Bias
-
-### $2 \times 2$ Experimental Design Matrix:
-* Base Model on USA WVS & Base Model on MEX WVS
-* USA Adapter on USA WVS (Matched) & USA Adapter on MEX WVS (Cross)
-* MEX Adapter on MEX WVS (Matched) & MEX Adapter on USA WVS (Cross)
-
----
-
-## Summary of Empirical Findings
-
-| Evaluation Target | Model / Adapter | TVD ↓ | JSD ↓ | ECE ↓ | Matched vs Cross (% Matched Better) |
-|---|---|---|---|---|---|
-| **MEX WVS Data** | Base Model (`Llama-3.1-8B`) | 0.5211 | 0.2165 | 0.0919 | — |
-| **MEX WVS Data** | **MEX Adapter (Matched)** | **0.4882** | **0.2010** | 0.0967 | **97.1%** |
-| **MEX WVS Data** | USA Adapter (Cross) | 0.6377 | 0.2965 | 0.1220 | — |
-| **USA WVS Data** | **Base Model (`Llama-3.1-8B`)** | **0.3958** | **0.1439** | **0.0654** | — |
-| **USA WVS Data** | MEX Adapter (Cross) | 0.3888 | 0.1405 | 0.0719 | — |
-| **USA WVS Data** | USA Adapter (Matched) | 0.5258 | 0.2246 | 0.0958 | 11.4% |
-
-### Key Takeaways:
-1. **MEX Adapter Distributional Alignment:** On MEX WVS items, the MEX adapter's predicted response distribution lies closer to Mexico's observed response distribution than the USA adapter's does on 97.1% of questions ($\Delta \text{TVD} = 0.1495$, $\text{95% CI}: [0.0964, 0.2152]$). With unconditioned prompts this reflects what the adapter weights learned — but it measures which adapter's **fixed** distribution sits closer to each country's responses, not country-conditioned inference behavior (see design note below).
-2. **USA Adapter Degradation:** Fine-tuning on synthetic US pairs degrades fidelity to WVS response distributions relative to the base model on **both** eval countries (USA TVD $0.3958 \rightarrow 0.5258$; also worse on MEX data). The mechanism (e.g., pretraining-prior interaction vs. overfit to the synthetic scenario format) is not identified by this design.
-3. **Under-Dispersion:** Softmax option scoring exhibits structural over-confidence, under-estimating real human variance (dispersion bias $-1.15$ to $-1.63$).
-
-> **Design note (interpretation boundary):** with `PROMPT_COUNTRY_CONDITIONING = False`, each model emits identical option probabilities across eval countries (the `_on_USA` and `_on_MEX` files differ only in the `eval_country` label). "Matched vs cross" therefore compares each adapter's single fixed distribution against each country's observed response distribution. It does **not** demonstrate that an adapter conditions on or "knows" its target country at inference time. Country-specificity of behavior is a separate question addressed by the predeclared multi-country design (restricted permutation distribution + operator-sensitivity panel) in the working paper ([`../misc/position_paper/position_paper_sca2.pdf`](../misc/position_paper/position_paper_sca2.pdf), §6); the two-country numbers above are retained as a proof-of-concept diagnostic (Appendix A).
-
----
-
-## Dependencies
-
-* `transformers>=4.41.0`
-* `accelerate>=0.30.0`
-* `peft>=0.11.1`
-* `bitsandbytes>=0.46.1`
-* `pyarrow>=15.0.0`
-* `scipy>=1.10.0`
-* `matplotlib>=3.7.0`
+The notebooks here are historical scoring code. Their old two-country tables are not the sixteen-country result.

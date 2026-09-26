@@ -2,7 +2,7 @@
 """Paper A locked surface: 16x23 freeze + 42-country human map.
 
 Does not call models. Recodes match Appendix C / 13_unified_comparison.recode_value.
-Headline adapter-GPS trust on the 16x9 rectangle must equal 0.80.
+Headline adapter-GPS trust on the 16x9 rectangle must equal 0.74.
 
 Run: env -u PYTHONPATH .venv/bin/python analysis/phase2/22_paper_a_surface.py
 """
@@ -166,8 +166,8 @@ def main() -> None:
     human16 = arm_composite(items, "human", TRUST9, PANEL16)
     rho_a = spearman(adapter16, z16)
     rho_h = spearman(human16, z16)
-    if abs(rho_a - 0.80) > 5e-3:
-        raise SystemExit(f"SURFACE MISMATCH: adapter-GPS trust={rho_a}, expected 0.80")
+    if abs(rho_a - 0.74) > 5e-3:
+        raise SystemExit(f"SURFACE MISMATCH: adapter-GPS trust={rho_a}, expected 0.74")
     if abs(rho_h - 0.39) > 2e-2:
         raise SystemExit(f"SURFACE MISMATCH: human-GPS trust 16x9={rho_h}, expected ~0.39")
 

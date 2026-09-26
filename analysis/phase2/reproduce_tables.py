@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate Paper A headline tables from frozen scores + licensed WVS extracts.
 
-Paper A surface is 16 countries x 23 items (trust adapter-GPS = 0.80).
+Paper A surface is 16 countries x 23 items (trust adapter-GPS = 0.74).
 This script does **not** rerun the older 30-item unified construct table (0.78).
 
 Required for the locked 16x23 adapter numbers:
@@ -13,7 +13,7 @@ Required for the 42-country human map:
   data/wvs_eval_full/*_WVS_wave7.parquet   # obtain from WVSA, not us
   data/GPS/GPS_dataset_country_level/country_gps.dta
 
-Optional model-output zip (not required to reprint 0.80):
+Optional model-output zip (not the source of 0.74):
   SCA2_EVAL_URL=https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo
 
 Adapter weights are optional for table regeneration.
