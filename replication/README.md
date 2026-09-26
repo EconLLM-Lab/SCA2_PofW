@@ -22,7 +22,7 @@ https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo
 
 Set `SCA2_EVAL_URL` to that URL only if you want a local copy of those scoring files. Reprint the headline from the committed country–item scores.
 
-Adapter weights on Hugging Face `Bonorinoa/SCA2-phase2-adapters` are not public. They are optional for reprinting the committed tables.
+Adapter weights are at Hugging Face `Bonorinoa/SCA2-phase2-adapters`, commit `03c43dfd27c9535283feb78ffa727da3bfa1b966`. A Hugging Face account and acceptance of the repository gate are required to download them. Reprinting the committed tables does not require them.
 
 ## Notebooks
 

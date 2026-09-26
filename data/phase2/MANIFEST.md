@@ -33,7 +33,7 @@ SCA2_phase2/
 
 ## Adapters live on HuggingFace Hub (decision 2026-08-19)
 
-**`Bonorinoa/SCA2-phase2-adapters`** (private model repo) — 16 QLoRA adapters:
+**`Bonorinoa/SCA2-phase2-adapters`** (gated model repo, commit `03c43dfd27c9535283feb78ffa727da3bfa1b966`) — 16 QLoRA adapters:
 
 | Subfolder | Countries | Files |
 |---|---|---|
@@ -103,4 +103,4 @@ rclone copy sca2drive:SCA2_phase2/eval/wvs/co2_8 <repo>/data/phase2/raw/wvs/co2_
 1. **rclone shared client_id is being retired during 2026** — plan a custom client_id (Google Cloud project) before then; the token in this manifest's remotes was minted 2026-08-19.
 2. **agonz439's Drive has a personal cap of ~20 GiB** (`rclone about`'s pool numbers are the university quota, NOT yours). Observed: `storageQuotaExceeded` at 19.5 GiB used (2026-08-19). Budget Colab outputs accordingly; trash counts against quota — empty it periodically (`rclone cleanup sca2drive:` — destroys trashed files permanently).
 3. Local mirror is a *working copy* — Drive is canonical for eval; HF is canonical for adapters.
-4. Adapters: HF private repo `Bonorinoa/SCA2-phase2-adapters` is the canonical home; local `data/phase2/adapters/` (7.6 GB) is the backup. Do not delete both.
+4. Adapters: HF repo `Bonorinoa/SCA2-phase2-adapters` is the canonical home. Download requires a Hugging Face account and acceptance of the repository gate. Local `data/phase2/adapters/` (7.6 GB) is the backup. Do not delete both.

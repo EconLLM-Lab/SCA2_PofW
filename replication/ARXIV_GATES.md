@@ -14,7 +14,7 @@ The committed source of that number is `analysis/phase2/outputs/paper_a/country_
 6. The Egypt numeric table that used the superseded score file is not part of the paper folder.
 7. The USA/Mexico testing evaluation in `DPO_eval_WVS/eval_results_wvs_wave7/` was removed. Both waves of eight remain.
 8. No funding. No competing interests. Confirmed by Augusto on 2026-09-25.
-9. Adapter weights are not public. Reprinting the committed tables does not require them.
+9. Adapter weights are released at `Bonorinoa/SCA2-phase2-adapters`, commit `03c43dfd27c9535283feb78ffa727da3bfa1b966`. Download requires a Hugging Face account and acceptance of the repository gate. Reprinting the committed tables does not require them.
 
 ## Not the paper supplement
 
@@ -24,4 +24,4 @@ The committed source of that number is `analysis/phase2/outputs/paper_a/country_
 
 ## Not required before posting
 
-Retraining, a second contrast bank, a matched anchor-prompt arm, and making the adapter weights public.
+Retraining, a second contrast bank, and a matched anchor-prompt arm.

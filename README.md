@@ -31,7 +31,7 @@ Headline surface: sixteen countries × twenty-three WVS items, from two saved ev
 |---|---|---|
 | Code, protocol, committed analysis tables/figures | this GitHub repo | Yes (MIT) |
 | Sixteen-country option-probability zip | [Drive download](https://drive.google.com/uc?export=download&id=1lIAx0ueSpgaZPmAzNbFSD31ddGQH7Nqo) | Posted 2026-09-17. Model outputs only. It is not the source of the 0.74 headline. |
-| Adapter weights | Hugging Face `Bonorinoa/SCA2-phase2-adapters` | **Not public.** Optional for reprinting the committed tables. Required only to score new item text. |
+| Adapter weights | Hugging Face [`Bonorinoa/SCA2-phase2-adapters`](https://huggingface.co/Bonorinoa/SCA2-phase2-adapters), commit `03c43dfd27c9535283feb78ffa727da3bfa1b966` | Released. A Hugging Face account and acceptance of the repository gate are required to download them. Reprinting the committed tables does not require them. |
 | GPS country/individual files | briq / Falk et al. (2018) | Obtain from the source. Not redistributed. |
 | WVS Wave 7 microdata | World Values Survey Association | Obtain from the source. Derived respondent extracts are **not** shipped. Rebuild with `data/wvs_eval_full/_build_wvs_eval_full.py`. |
 
