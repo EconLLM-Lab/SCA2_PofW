@@ -40,8 +40,8 @@ python -m pip install -r replication/requirements-tables.txt
 
 This is pandas/scipy/pyarrow. It is not the Colab DPO stack.
 
-## What we will not ship here
+## What this folder does not contain
 
-WVS or GPS microdata; adapter weights.
+WVS or GPS microdata. Adapter weights are not in this git tree. They are at Hugging Face `Bonorinoa/SCA2-phase2-adapters`, commit `03c43dfd27c9535283feb78ffa727da3bfa1b966`.
 
 See [`ARXIV_GATES.md`](./ARXIV_GATES.md) for the remaining preprint checklist.
