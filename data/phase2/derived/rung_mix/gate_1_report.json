@@ -1,0 +1,140 @@
+{
+  "bank_sha256_16": "bcddc650ea37d8f0",
+  "seed": 20260822,
+  "train_frac": 0.8,
+  "split_design": "shared_partition_v1.1",
+  "rungs": {
+    "-3": {
+      "n_train": 479,
+      "n_holdout": 120,
+      "dims_train": {
+        "negative_reciprocity": 88,
+        "trust": 88,
+        "positive_reciprocity": 87,
+        "altruism": 87,
+        "risk_taking": 68,
+        "patience": 61
+      },
+      "dims_holdout": {
+        "altruism": 22,
+        "trust": 22,
+        "negative_reciprocity": 22,
+        "positive_reciprocity": 22,
+        "risk_taking": 17,
+        "patience": 15
+      },
+      "prompt_leakage": 0
+    },
+    "-2": {
+      "n_train": 479,
+      "n_holdout": 120,
+      "dims_train": {
+        "negative_reciprocity": 88,
+        "trust": 88,
+        "positive_reciprocity": 87,
+        "altruism": 87,
+        "risk_taking": 68,
+        "patience": 61
+      },
+      "dims_holdout": {
+        "altruism": 22,
+        "trust": 22,
+        "negative_reciprocity": 22,
+        "positive_reciprocity": 22,
+        "risk_taking": 17,
+        "patience": 15
+      },
+      "prompt_leakage": 0
+    },
+    "-1": {
+      "n_train": 479,
+      "n_holdout": 120,
+      "dims_train": {
+        "negative_reciprocity": 88,
+        "trust": 88,
+        "positive_reciprocity": 87,
+        "altruism": 87,
+        "risk_taking": 68,
+        "patience": 61
+      },
+      "dims_holdout": {
+        "altruism": 22,
+        "trust": 22,
+        "negative_reciprocity": 22,
+        "positive_reciprocity": 22,
+        "risk_taking": 17,
+        "patience": 15
+      },
+      "prompt_leakage": 0
+    },
+    "1": {
+      "n_train": 479,
+      "n_holdout": 120,
+      "dims_train": {
+        "negative_reciprocity": 88,
+        "trust": 88,
+        "positive_reciprocity": 87,
+        "altruism": 87,
+        "risk_taking": 68,
+        "patience": 61
+      },
+      "dims_holdout": {
+        "altruism": 22,
+        "trust": 22,
+        "negative_reciprocity": 22,
+        "positive_reciprocity": 22,
+        "risk_taking": 17,
+        "patience": 15
+      },
+      "prompt_leakage": 0
+    },
+    "2": {
+      "n_train": 479,
+      "n_holdout": 120,
+      "dims_train": {
+        "negative_reciprocity": 88,
+        "trust": 88,
+        "positive_reciprocity": 87,
+        "altruism": 87,
+        "risk_taking": 68,
+        "patience": 61
+      },
+      "dims_holdout": {
+        "altruism": 22,
+        "trust": 22,
+        "negative_reciprocity": 22,
+        "positive_reciprocity": 22,
+        "risk_taking": 17,
+        "patience": 15
+      },
+      "prompt_leakage": 0
+    },
+    "3": {
+      "n_train": 479,
+      "n_holdout": 120,
+      "dims_train": {
+        "negative_reciprocity": 88,
+        "trust": 88,
+        "positive_reciprocity": 87,
+        "altruism": 87,
+        "risk_taking": 68,
+        "patience": 61
+      },
+      "dims_holdout": {
+        "altruism": 22,
+        "trust": 22,
+        "negative_reciprocity": 22,
+        "positive_reciprocity": 22,
+        "risk_taking": 17,
+        "patience": 15
+      },
+      "prompt_leakage": 0
+    }
+  },
+  "scoring": {
+    "questions": 35,
+    "options": 328,
+    "prompt_source": "usamex_canonical/base_on_USA (verified vs adapter file)"
+  },
+  "gate_1": "PASS"
+}
