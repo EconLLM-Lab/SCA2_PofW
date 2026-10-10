@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""Paper B — cohort runner: prepare (CPU) then train (GPU) with resume.
+
+Skips countries already prepared / already trained, writes a run manifest, and
+logs per-country minutes. Designed to run inside a Colab GPU session; safe to
+re-run after any interruption.
+
+Usage (Colab GPU):
+  export HF_TOKEN=...
+  export SCA2_PB_DATA_ROOT=/content/drive/MyDrive/SCA2_paper_b
+  python paper_b/run_cohort.py --wave 1        # first half
+  python paper_b/run_cohort.py --wave 2        # second half
+  python paper_b/run_cohort.py --countries ARG # pilot
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import config as C
+
+WAVES = {1: C.COHORT[:21], 2: C.COHORT[21:]}
+
+
+def load_manifest() -> dict:
+    if C.RUN_MANIFEST_FILE.exists():
+        return json.loads(C.RUN_MANIFEST_FILE.read_text())
+    return {"protocol": "paper_b frozen 2026-10-09", "countries": {}}
+
+
+def save_manifest(m: dict) -> None:
+    C.DATA_ROOT.mkdir(parents=True, exist_ok=True)
+    C.RUN_MANIFEST_FILE.write_text(json.dumps(m, indent=2))
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--wave", type=int, choices=[1, 2])
+    ap.add_argument("--countries", nargs="*")
+    ap.add_argument("--skip-prepare", action="store_true")
+    ap.add_argument("--dry-run", action="store_true", help="prepare only, do not train")
+    a = ap.parse_args()
+
+    if a.countries:
+        countries = [c.upper() for c in a.countries]
+    elif a.wave:
+        countries = WAVES[a.wave]
+    else:
+        countries = C.COHORT
+    bad = [c for c in countries if c not in C.COHORT]
+    if bad:
+        print(f"refusing unknown: {bad}")
+        return 2
+    print(f"cohort run: {len(countries)} countries {'(dry-run)' if a.dry_run else ''}")
+
+    C.LOG_DIR.mkdir(parents=True, exist_ok=True)
+    m = load_manifest()
+
+    if not a.skip_prepare:
+        import subprocess
+        cmd = [sys.executable, str(Path(__file__).parent / "prepare_data.py"), "--countries", *countries]
+        print(">>> prepare_data:", " ".join(cmd))
+        rc = subprocess.call(cmd)
+        if rc != 0:
+            print(f"prepare failed (rc={rc})")
+            return rc
+
+    if a.dry_run:
+        print("dry-run: prepared only")
+        return 0
+
+    from train_country import train_country  # imported here so prepare-only runs need no torch
+
+    t0 = time.time()
+    for i, cc in enumerate(countries, 1):
+        rec = m["countries"].get(cc, {})
+        if (C.ADAPTER_DIR / cc / "adapter_config.json").exists() and rec.get("status") == "done":
+            print(f"[{i}/{len(countries)}] {cc}: done, skip")
+            continue
+        print(f"[{i}/{len(countries)}] {cc}: training...")
+        try:
+            out = train_country(cc)
+            rec = {"status": "done", "adapter_dir": str(out),
+                   "run_record": json.loads((out / "run_record.json").read_text())}
+        except Exception as e:  # noqa: BLE001 — record and continue the cohort
+            rec = {"status": "error", "error": f"{type(e).__name__}: {e}"}
+            print(f"  !! {cc}: {rec['error']}")
+        m["countries"][cc] = rec
+        save_manifest(m)
+
+    done = sum(1 for r in m["countries"].values() if r.get("status") == "done")
+    print(f"\ncohort done: {done} adapters | elapsed {(time.time()-t0)/60:.1f} min")
+    save_manifest(m)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
