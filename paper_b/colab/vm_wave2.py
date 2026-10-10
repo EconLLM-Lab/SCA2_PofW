@@ -5,6 +5,7 @@ REPO = "/content/SCA2_PofW"
 LOG = "/content/drive/MyDrive/SCA2_paper_b/logs/wave2.log"
 os.makedirs(os.path.dirname(LOG), exist_ok=True)
 env = dict(os.environ, SCA2_PB_DATA_ROOT="/content/drive/MyDrive/SCA2_paper_b",
+           PYTHONUNBUFFERED="1",
            ACCELERATE_MIXED_PRECISION="fp16", PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True",
            TRANSFORMERS_NO_BF16="1")
 with open(LOG, "a") as lg:
