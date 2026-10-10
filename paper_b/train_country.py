@@ -93,6 +93,12 @@ def train_country(country_code: str) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     trainer.model.save_pretrained(str(out_dir))
     tok.save_pretrained(str(out_dir))
+    # prune intermediate checkpoints: they dominate the artifact size and are
+    # never used (a crashed country is retrained whole, not resumed mid-training)
+    import glob as _glob
+    import shutil as _shutil
+    for ck in _glob.glob(str(out_dir / "checkpoint-*")):
+        _shutil.rmtree(ck, ignore_errors=True)
     (out_dir / "run_record.json").write_text(json.dumps({
         "country": country_code, "adapter_dir": str(out_dir),
         "train_file": str(data_file), "n_train": len(ds),
