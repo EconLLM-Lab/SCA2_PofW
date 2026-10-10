@@ -26,15 +26,27 @@ import config as C
 WAVES = {1: C.COHORT[:21], 2: C.COHORT[21:]}
 
 
-def load_manifest() -> dict:
-    if C.RUN_MANIFEST_FILE.exists():
-        return json.loads(C.RUN_MANIFEST_FILE.read_text())
+def manifest_path(wave):
+    # per-wave manifest: two concurrent sessions must not clobber one index file
+    if wave:
+        return C.RUN_MANIFEST_FILE.with_name(f"run_manifest_wave{wave}.json")
+    return C.RUN_MANIFEST_FILE
+
+
+def load_manifest(path) -> dict:
+    if path.exists():
+        try:
+            return json.loads(path.read_text())
+        except json.JSONDecodeError:  # never let a partial/concurrent write kill a wave
+            return {"protocol": "paper_b frozen 2026-10-09", "countries": {}}
     return {"protocol": "paper_b frozen 2026-10-09", "countries": {}}
 
 
-def save_manifest(m: dict) -> None:
+def save_manifest(path, m: dict) -> None:
     C.DATA_ROOT.mkdir(parents=True, exist_ok=True)
-    C.RUN_MANIFEST_FILE.write_text(json.dumps(m, indent=2))
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(m, indent=2))
+    tmp.replace(path)
 
 
 def main() -> int:
@@ -58,7 +70,8 @@ def main() -> int:
     print(f"cohort run: {len(countries)} countries {'(dry-run)' if a.dry_run else ''}")
 
     C.LOG_DIR.mkdir(parents=True, exist_ok=True)
-    m = load_manifest()
+    mpath = manifest_path(a.wave)
+    m = load_manifest(mpath)
 
     if not a.skip_prepare:
         import subprocess
@@ -78,8 +91,9 @@ def main() -> int:
     t0 = time.time()
     for i, cc in enumerate(countries, 1):
         rec = m["countries"].get(cc, {})
-        if (C.ADAPTER_DIR / cc / "adapter_config.json").exists() and rec.get("status") == "done":
-            print(f"[{i}/{len(countries)}] {cc}: done, skip")
+        # resume on the filesystem fact (adapter present), not on manifest bookkeeping
+        if (C.ADAPTER_DIR / cc / "adapter_config.json").exists():
+            print(f"[{i}/{len(countries)}] {cc}: adapter present, skip")
             continue
         print(f"[{i}/{len(countries)}] {cc}: training...")
         try:
@@ -90,11 +104,11 @@ def main() -> int:
             rec = {"status": "error", "error": f"{type(e).__name__}: {e}"}
             print(f"  !! {cc}: {rec['error']}")
         m["countries"][cc] = rec
-        save_manifest(m)
+        save_manifest(mpath, m)
 
     done = sum(1 for r in m["countries"].values() if r.get("status") == "done")
     print(f"\ncohort done: {done} adapters | elapsed {(time.time()-t0)/60:.1f} min")
-    save_manifest(m)
+    save_manifest(mpath, m)
     return 0
 
 
