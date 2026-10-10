@@ -62,3 +62,7 @@ REF_CACHE_FILE = DATA_ROOT / "shared_reference_logps.jsonl"
 REF_MANIFEST_FILE = DATA_ROOT / "shared_reference_logps_manifest.json"
 RUN_MANIFEST_FILE = DATA_ROOT / "run_manifest.json"
 LOG_DIR = DATA_ROOT / "logs"
+
+# Durable artifact bus: adapters are uploaded here straight from the VM via HTTPS,
+# independent of the Colab Drive FUSE (which uploads lazily and has lost data twice).
+HF_ADAPTER_REPO = "Bonorinoa/SCA2-paper-b-adapters"

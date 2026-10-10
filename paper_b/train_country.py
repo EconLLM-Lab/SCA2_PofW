@@ -99,6 +99,7 @@ def train_country(country_code: str) -> Path:
     import shutil as _shutil
     for ck in _glob.glob(str(out_dir / "checkpoint-*")):
         _shutil.rmtree(ck, ignore_errors=True)
+
     (out_dir / "run_record.json").write_text(json.dumps({
         "country": country_code, "adapter_dir": str(out_dir),
         "train_file": str(data_file), "n_train": len(ds),
@@ -107,6 +108,19 @@ def train_country(country_code: str) -> Path:
         "max_length": C.MAX_LENGTH, "grad_accum": C.GRADIENT_ACCUMULATION_STEPS,
         "train_minutes": round(mins, 2), "bank_run_id": C.BANK_RUN_ID,
     }, indent=2))
+
+    # durable artifact bus: push the pruned adapter straight to the HF Hub over HTTPS.
+    # Wrapped so a hub hiccup never fails a completed training run.
+    try:
+        from huggingface_hub import HfApi
+        HfApi().upload_folder(
+            repo_id=C.HF_ADAPTER_REPO, repo_type="dataset",
+            folder_path=str(out_dir), path_in_repo=f"adapters/{country_code}",
+            commit_message=f"{country_code} adapter (paper_b frozen protocol)",
+        )
+        print(f"HF upload ok -> {C.HF_ADAPTER_REPO}/adapters/{country_code}")
+    except Exception as e:  # noqa: BLE001
+        print(f"HF upload FAILED for {country_code}: {type(e).__name__}: {e}")
     print(f"saved adapter -> {out_dir} in {mins:.1f} min")
 
     del trainer, model, ds
