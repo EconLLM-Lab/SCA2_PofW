@@ -113,9 +113,9 @@ def main() -> int:
         for (p, c) in todo:
             v = seq_logprob(p, c)
             f.write(json.dumps({"prompt": p, "completion": c, "ref_logp": v}, ensure_ascii=False) + "\n")
-            f.flush(); os.fsync(f.fileno())
             n += 1
             if n % 25 == 0 or n == len(todo):
+                f.flush(); os.fsync(f.fileno())  # Drive FUSE: batch the sync
                 el = time.time() - t0
                 msg = f"  {n}/{len(todo)} pairs | {el/60:.1f} min | {el/max(n,1):.2f}s/pair"
                 print(msg); log.write(msg + "\n"); log.flush()
