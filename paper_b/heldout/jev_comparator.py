@@ -13,7 +13,8 @@ Fixed rule (decided 2026-10-14, before any pool item was sent):
               probabilities are calibrated by design, so 0.5 = "more likely than not")
   call 2      for an assigned item only, a Noul naming that dimension: does choosing the
               first listed response reveal more of it than choosing the last?
-  sign        -1 if P(first = more) >= 0.5 (higher codes = less of the trait), else +1
+  sign        -1 if P(first = more) >= 0.5 (higher codes = less of the trait), else +1;
+              an exact 0.5 resolves to -1, and exact call-1 ties resolve by DEFS order
   validation  the 23 battery items (already analysed) are scored against the frozen
               mapping and frozen recodes; reported, never used to tune anything.
 Every request and answer is cached to a JSONL file and frozen with the selection.
@@ -122,7 +123,10 @@ class Cache:
 
 
 def _ascending(codes: list[str], labels: list[str]) -> tuple[list[str], list[str]]:
-    pairs = sorted(zip(codes, labels), key=lambda cl: float(cl[0]))
+    try:
+        pairs = sorted(zip(codes, labels), key=lambda cl: float(cl[0]))
+    except ValueError as exc:
+        raise ValueError(f"non-numeric response code in {codes!r}; fix the pool row") from exc
     return [c for c, _ in pairs], [l for _, l in pairs]
 
 
@@ -134,7 +138,8 @@ def classify(item: str, question: str, codes: list[str], labels: list[str],
     q1 = {"dimension": {"type": "choice", "instructions": DIM_INSTRUCTIONS, "criteria": DEFS}}
     a1 = cache.get_or_call(f"{item}|dimension", state, q1, call)["answers"]["dimension"]
     probs = a1["probabilities"]
-    top = max(probs, key=probs.get)
+    order = list(DEFS)                    # exact ties resolve by DEFS order (registered)
+    top = max(order, key=lambda k: (probs.get(k, 0.0), -order.index(k)))
     out = {"question_id": item, "top_choice": top, "top_prob": float(probs[top]),
            **{f"p_{d}": float(probs.get(d, 0.0)) for d in DIMS + ["none"]}}
     assigned = top != "none" and probs[top] >= TAU
@@ -149,6 +154,31 @@ def classify(item: str, question: str, codes: list[str], labels: list[str],
         out["p_first_more"] = p
         out["sign"] = -1 if p >= 0.5 else 1
     return out
+
+
+K_RUNS = 5          # independent repeat calls per item (registered after rerun instability)
+K_MAJORITY = 3      # an item is assigned only if >= 3 of 5 runs give the same (dimension, sign)
+
+
+def aggregate(runs: list[pd.DataFrame]) -> pd.DataFrame:
+    """Majority of (dimension, sign) over independent runs; anything short of K_MAJORITY -> none."""
+    if len(runs) != K_RUNS:
+        raise ValueError(f"expected {K_RUNS} runs, got {len(runs)}")
+    ids = list(runs[0].question_id)
+    for r in runs[1:]:
+        if list(r.question_id) != ids:
+            raise ValueError("runs cover different items or orders")
+    rows = []
+    for i, q in enumerate(ids):
+        votes = [(r.iloc[i].dimension, int(r.iloc[i].sign)) for r in runs]
+        best = max(set(votes), key=lambda v: (votes.count(v), v[0] != "none"))
+        n = votes.count(best)
+        dim, sign = best if (n >= K_MAJORITY and best[0] != "none") else ("none", 0)
+        rows.append({"question_id": q, "dimension": dim, "sign": sign, "votes": n,
+                     "assign_rate": sum(v[0] != "none" for v in votes) / K_RUNS,
+                     "mean_top_prob": float(sum(r.iloc[i].top_prob for r in runs) / K_RUNS),
+                     "votes_detail": ";".join(f"{d}:{s:+d}" for d, s in votes)})
+    return pd.DataFrame(rows)
 
 
 def frozen_battery() -> pd.DataFrame:
@@ -178,9 +208,19 @@ def main() -> int:
     import argparse
     ap = argparse.ArgumentParser(description="Jev face-reading comparator")
     ap.add_argument("--set", choices=["battery", "pool"], required=True)
+    ap.add_argument("--aggregate", nargs="*", default=None,
+                    help="run directories to combine by majority (K_RUNS of them)")
     ap.add_argument("--out-dir", default=str(HERE / "jev"))
     a = ap.parse_args()
     out = Path(a.out_dir)
+    if a.aggregate is not None:
+        name = "jev_battery.csv" if a.set == "battery" else "face_valid_jev.csv"
+        agg = aggregate([pd.read_csv(Path(d) / name) for d in a.aggregate])
+        agg.to_csv(out / f"majority_{name}", index=False)
+        s = agg[agg.dimension != "none"]
+        print(f"{a.set}: {len(agg)} items | assigned {len(s)} {s.dimension.value_counts().to_dict()} "
+              f"| unanimous {int((s.votes == K_RUNS).sum())}")
+        return 0
     cache = Cache(out / f"jev_raw_{a.set}.jsonl")
     call = make_caller()
     if a.set == "battery":

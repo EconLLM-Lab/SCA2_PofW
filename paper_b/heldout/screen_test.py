@@ -58,7 +58,13 @@ def _spearman_cols(h: np.ndarray, g: np.ndarray) -> np.ndarray:
     return out
 
 
+def _no_abstentions(sel: pd.DataFrame, name: str) -> None:
+    if (sel["sign"] == 0).any() or (sel["top_dimension"] == "none").any():
+        raise ValueError(f"{name}: abstained rows (sign 0 / 'none') must be dropped before scoring")
+
+
 def item_agreement(sel: pd.DataFrame, human: pd.DataFrame, gps: pd.DataFrame) -> pd.DataFrame:
+    _no_abstentions(sel, "item_agreement")
     countries = human.index.intersection(gps.index)
     h = human.loc[countries, sel.question_id].to_numpy(float)
     g = gps.loc[countries, sel.top_dimension].to_numpy(float)
@@ -78,6 +84,8 @@ def compare(sel_a: pd.DataFrame, sel_b: pd.DataFrame, human: pd.DataFrame, gps: 
 
     sel_*: question_id, top_dimension, sign (already restricted to the items each route uses).
     """
+    _no_abstentions(sel_a, "sel_a")
+    _no_abstentions(sel_b, "sel_b")
     countries = human.index.intersection(gps.index)
 
     def A(sel, h, g):

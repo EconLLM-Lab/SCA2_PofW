@@ -73,3 +73,13 @@ def test_compare_detects_a_better_route_and_ties_with_itself():
     assert res["D"] > 0.4 and res["ci95"][0] > 0
     same = ST.compare(good, good, hum, gps, boot=50, seed=2)
     assert same["D"] == 0 and same["ci95"] == [0.0, 0.0]
+
+
+def test_abstained_rows_are_refused():
+    sel, hum, gps = _world(signal=1.0)
+    s = sel[sel.primary_selected][["question_id", "top_dimension", "sign"]].copy()
+    bad = s.copy(); bad.iloc[0, bad.columns.get_loc("sign")] = 0
+    with pytest.raises(ValueError, match="abstained"):
+        ST.compare(s, bad, hum, gps, boot=5)
+    with pytest.raises(ValueError, match="abstained"):
+        ST.item_agreement(bad, hum, gps)

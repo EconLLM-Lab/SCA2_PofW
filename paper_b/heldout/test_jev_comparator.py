@@ -97,3 +97,24 @@ def test_cache_key_changes_with_the_prompt(tmp_path):
     J.classify("Q6", "wording A", ["1", "2"], ["a", "b"], f, J.Cache(p))
     J.classify("Q6", "wording B", ["1", "2"], ["a", "b"], f, J.Cache(p))
     assert calls.count("dimension") == 2
+
+
+def test_ties_resolve_by_defs_order_and_bad_codes_fail_loudly(tmp_path):
+    import pytest
+    r = J.classify("Q7", "x", ["1", "2"], ["a", "b"],
+                   _fake({"none": 0.4, "altruism": 0.6, "trust": 0.6}), J.Cache(tmp_path / "c.jsonl"))
+    assert r["dimension"] == "trust"
+    with pytest.raises(ValueError, match="non-numeric"):
+        J.classify("Q8", "x", ["1", "DK"], ["a", "b"], _fake({"trust": 0.9}), J.Cache(tmp_path / "d.jsonl"))
+
+
+def test_majority_aggregation():
+    import pandas as pd, pytest
+    def run(d, s):
+        return pd.DataFrame({"question_id": ["Q1"], "dimension": [d], "sign": [s], "top_prob": [0.6]})
+    agg = J.aggregate([run("trust", -1)] * 3 + [run("none", 0)] * 2)
+    assert agg.iloc[0].dimension == "trust" and agg.iloc[0].votes == 3
+    agg = J.aggregate([run("trust", -1)] * 2 + [run("trust", 1)] * 1 + [run("none", 0)] * 2)
+    assert agg.iloc[0].dimension == "none"                 # sign split -> no majority
+    with pytest.raises(ValueError):
+        J.aggregate([run("trust", -1)] * 4)
