@@ -63,3 +63,13 @@ def test_wrong_signs_give_negative_A():
 def test_human_read_is_guarded(tmp_path):
     with pytest.raises(RuntimeError, match="BLOCKED"):
         ST.load_heldout_human(tmp_path / "human.csv", freeze_path=tmp_path / "FREEZE.json")
+
+
+def test_compare_detects_a_better_route_and_ties_with_itself():
+    sel, hum, gps = _world(signal=1.0)
+    good = sel[sel.primary_selected][["question_id", "top_dimension", "sign"]]
+    bad = good.assign(top_dimension=["negrecip"] * len(good))      # wrong dimension
+    res = ST.compare(good, bad, hum, gps, boot=300, seed=2)
+    assert res["D"] > 0.4 and res["ci95"][0] > 0
+    same = ST.compare(good, good, hum, gps, boot=50, seed=2)
+    assert same["D"] == 0 and same["ci95"] == [0.0, 0.0]

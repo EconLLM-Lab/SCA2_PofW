@@ -1,0 +1,54 @@
+{
+ "Q44": {
+  "action": "none",
+  "reason": "matches only the battery title 'Future changes'; whether more emphasis on technology is patient is not readable from the wording"
+ },
+ "Q45": {
+  "action": "none",
+  "reason": "matches only the battery title 'Future changes'; respect for authority is not a patience construct"
+ },
+ "Q120": {
+  "action": "none",
+  "reason": "perceived risk of being punished for bribery, a belief about enforcement, not willingness to take risks"
+ },
+ "Q126": {
+  "action": "none",
+  "reason": "belief that immigration raises terrorism risk, an opinion about immigration, not risk preference"
+ },
+ "Q127": {
+  "action": "none",
+  "reason": "belief that immigration helps poor people, an opinion about immigration, not the respondent's altruism"
+ },
+ "Q131": {
+  "action": "none",
+  "reason": "perceived neighbourhood safety describes the environment, not the respondent's risk preference"
+ },
+ "Q137": {
+  "action": "none",
+  "reason": "reported frequency of street violence describes the neighbourhood, not the respondent's reciprocity"
+ },
+ "Q231": {
+  "action": "none",
+  "reason": "reported frequency of voter intimidation describes elections, not the respondent's reciprocity"
+ },
+ "Q234": {
+  "action": "none",
+  "reason": "importance of honest elections is a democratic value; 'honest' does not make it a trust item"
+ },
+ "Q16": {
+  "action": "flip",
+  "reason": "code 1 'Important' (mentioned) = more unselfishness, so higher code = less altruism"
+ },
+ "Q150": {
+  "action": "flip",
+  "reason": "code 1 Freedom, code 2 Security; choosing security = less risk-taking, so higher code = less"
+ },
+ "Q213": {
+  "action": "flip",
+  "reason": "code 1 'Have done' (donated) = more altruism, so higher code = less"
+ },
+ "_meta": {
+  "reviewer": "Hermes draft 2026-10-14; awaiting Augusto's confirmation",
+  "confirmed_without_change": "Q65-Q89 confidence items (-1: 'A great deal' first); Q139-Q141 precautions taken for security (+1: 'Yes' first = less risk-taking); Q189, Q190, Q191, Q194 justifiable violence (+1), kept for consistency with the frozen battery, which already maps justifiability items to negative reciprocity"
+ }
+}

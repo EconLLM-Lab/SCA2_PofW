@@ -72,6 +72,31 @@ def _A(human_mat, gps, countries, items_idx, dims, signs) -> float:
     return float(np.nanmean(np.asarray(signs) * _spearman_cols(h, g)))
 
 
+def compare(sel_a: pd.DataFrame, sel_b: pd.DataFrame, human: pd.DataFrame, gps: pd.DataFrame,
+            *, boot: int = BOOT_DRAWS, seed: int = PERM_SEED) -> dict:
+    """D = A(sel_a) - A(sel_b), each on its own items and signs; paired country bootstrap.
+
+    sel_*: question_id, top_dimension, sign (already restricted to the items each route uses).
+    """
+    countries = human.index.intersection(gps.index)
+
+    def A(sel, h, g):
+        return float(np.nanmean(sel.sign.to_numpy() * _spearman_cols(
+            h[sel.question_id].to_numpy(float), g[list(sel.top_dimension)].to_numpy(float))))
+
+    h0, g0 = human.loc[countries], gps.loc[countries]
+    a, b = A(sel_a, h0, g0), A(sel_b, h0, g0)
+    rng = np.random.default_rng(seed)
+    ds = np.empty(boot)
+    for k in range(boot):
+        cb = countries[rng.integers(0, len(countries), len(countries))]
+        h, g = human.loc[cb].reset_index(drop=True), gps.loc[cb].reset_index(drop=True)
+        ds[k] = A(sel_a, h, g) - A(sel_b, h, g)
+    return {"A_a": a, "A_b": b, "D": a - b, "n_a": int(len(sel_a)), "n_b": int(len(sel_b)),
+            "ci95": [float(np.nanpercentile(ds, 2.5)), float(np.nanpercentile(ds, 97.5))],
+            "boot": boot, "seed": seed}
+
+
 def screen(selection: pd.DataFrame, human: pd.DataFrame, gps: pd.DataFrame, *,
            draws: int = PERM_DRAWS, seed: int = PERM_SEED, boot: int = BOOT_DRAWS) -> dict:
     sel = selection[selection.primary_selected.astype(bool)].reset_index(drop=True)
