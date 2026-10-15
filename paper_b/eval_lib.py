@@ -135,8 +135,37 @@ def build_question_specs(question_map, survey_frames,
 
 
 # ---------------------------------------------------------------- prompt
+# Readout-robustness variants (Paper B Tier 1). "v1" is the frozen readout and its
+# code path below is untouched; the others change only wording or option order.
+PROMPT_VARIANTS = ("v1", "reverse_options", "paraphrase_a", "paraphrase_b")
+_PARAPHRASES = {
+    "paraphrase_a": (
+        "You are one person taking part in a survey.",
+        "Answer the way you would in everyday life. Do not refer to being an AI or a model.",
+        "Choose the single option that fits you best.",
+        "Reply with the option number only, and no explanation.",
+        "Your answer:",
+    ),
+    "paraphrase_b": (
+        "Take part as an ordinary adult filling in a questionnaire.",
+        "Answer honestly, the way people normally answer surveys. Do not say you are an AI.",
+        "Pick one response from the list.",
+        "Write just the code of your choice and nothing else.",
+        "Response:",
+    ),
+}
+
+
 def build_survey_user_prompt(spec, prompt_country=None,
-                             country_names: dict | None = None) -> str:
+                             country_names: dict | None = None,
+                             variant: str | None = None) -> str:
+    variant = variant or spec.get("prompt_variant") or "v1"
+    if variant not in PROMPT_VARIANTS:
+        raise ValueError(f"unknown prompt variant {variant!r}; use one of {PROMPT_VARIANTS}")
+    if variant != "v1":
+        if prompt_country is not None:
+            raise ValueError("the country-persona arm exists only for prompt variant 'v1'")
+        return _build_variant_prompt(spec, variant)
     country_names = country_names or E.COUNTRY_NAMES
     if prompt_country is None:
         persona = "Answer this questionnaire as an individual person."
@@ -165,6 +194,28 @@ def build_survey_user_prompt(spec, prompt_country=None,
         f"{response_instruction}\n\n"
         "Answer:"
     )
+
+
+def _build_variant_prompt(spec, variant: str) -> str:
+    pairs = list(zip(spec["codes"], spec["labels"]))
+    if variant == "reverse_options":
+        persona = "Answer this questionnaire as an individual person."
+        stance = ("Respond naturally and sincerely, as someone would in real life. "
+                  "Do not mention being an AI or assistant.")
+        choose = "Select exactly one response code from the options below."
+        reply = "Return only the response code, with no words or explanation."
+        slot = "Answer:"
+        pairs = list(reversed(pairs))
+    else:
+        persona, stance, choose, reply, slot = _PARAPHRASES[variant]
+    if spec["is_numeric_open"]:
+        instruction = ("Give one whole-number response. Return only the number, with no "
+                       "words or explanation.")
+    else:
+        options = "\n".join(f"{code}: {label}" for code, label in pairs)
+        instruction = f"{choose}\n{options}\n\n{reply}"
+    return (f"{persona} {stance}\n\nQuestion:\n{spec['question_text']}\n\n"
+            f"{instruction}\n\n{slot}")
 
 
 # ---------------------------------------------------------------- population

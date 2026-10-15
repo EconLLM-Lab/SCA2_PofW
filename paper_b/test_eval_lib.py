@@ -241,3 +241,47 @@ def test_builder_default_records_no_skips_and_fail_is_loud(question_map, archive
     frames = L.load_survey_frames(["GBR"])
     with pytest.raises(ValueError, match="no valid responses"):
         L.build_population_distributions(specs, frames)
+
+
+# ---------------------------------------------------------------- readout variants
+_VSPEC = {"is_numeric_open": False, "codes": ["1", "2", "3"], "labels": ["a", "b", "c"],
+          "question_text": "Q?"}
+
+
+def test_v1_prompt_is_byte_identical_to_the_frozen_readout():
+    import hashlib
+    import build_scoring_spec as B
+    spec = B.build_scoring_spec(L.load_question_map(), numeric_support={}, battery="strict")
+    assert B.spec_sha256(spec) == \
+        "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6"
+    text = L.build_survey_user_prompt(spec["questions"][0])
+    assert hashlib.sha256(text.encode()).hexdigest()[:16] == "f51da2a3b446b11b"
+    assert L.build_survey_user_prompt(spec["questions"][0], variant="v1") == text
+
+
+def test_reverse_options_reverses_order_and_keeps_codes():
+    rev = L.build_survey_user_prompt(_VSPEC, variant="reverse_options")
+    assert rev.index("3: c") < rev.index("2: b") < rev.index("1: a")
+
+
+def test_paraphrases_differ_and_keep_the_answer_slot():
+    v1 = L.build_survey_user_prompt(_VSPEC)
+    a = L.build_survey_user_prompt(_VSPEC, variant="paraphrase_a")
+    b = L.build_survey_user_prompt(_VSPEC, variant="paraphrase_b")
+    assert len({v1, a, b}) == 3
+    for t in (a, b):
+        assert "1: a" in t and "Q?" in t and t.rstrip().endswith(":")
+
+
+def test_variant_is_read_from_the_spec_entry():
+    spec = dict(_VSPEC, prompt_variant="reverse_options")
+    assert L.build_survey_user_prompt(spec) == \
+        L.build_survey_user_prompt(_VSPEC, variant="reverse_options")
+
+
+def test_unknown_variant_and_persona_variant_refused():
+    import pytest
+    with pytest.raises(ValueError, match="variant"):
+        L.build_survey_user_prompt(_VSPEC, variant="nope")
+    with pytest.raises(ValueError, match="persona"):
+        L.build_survey_user_prompt(_VSPEC, prompt_country="CHN", variant="paraphrase_a")

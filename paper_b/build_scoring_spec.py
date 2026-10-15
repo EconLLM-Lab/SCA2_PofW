@@ -42,7 +42,8 @@ def strict_item_ids() -> set[str]:
 
 def build_scoring_spec(question_map, numeric_support: dict[str, list[str]],
                        battery: str = "strict", sanitized: bool = False,
-                       expect_missing: bool = True) -> dict:
+                       expect_missing: bool = True, prompt_variant: str = "v1",
+                       heldout_items: list[str] | None = None) -> dict:
     """Model-only spec from the question map. No survey frames are touched.
 
     numeric_support is REQUIRED whenever the (filtered) battery contains a
@@ -66,8 +67,20 @@ def build_scoring_spec(question_map, numeric_support: dict[str, list[str]],
         keep |= {str(q) for q, rt in zip(question_map["Question"],
                                          question_map["ResponseType"])
                  if str(rt) == "numeric_open"}
+    elif battery == "heldout":
+        if not heldout_items:
+            raise ValueError("battery='heldout' requires heldout_items")
+        keep = {str(q) for q in heldout_items}
+        if keep & strict_item_ids():
+            raise ValueError(f"held-out battery may not overlap the 23 strict items: "
+                             f"{sorted(keep & strict_item_ids())}")
+        missing = keep - set(question_map["Question"].astype(str))
+        if missing:
+            raise ValueError(f"held-out items missing from the question map: {sorted(missing)}")
     else:
-        raise ValueError(f"unknown battery {battery!r} (use strict|archive)")
+        raise ValueError(f"unknown battery {battery!r} (use strict|archive|heldout)")
+    if prompt_variant not in L.PROMPT_VARIANTS:
+        raise ValueError(f"unknown prompt variant {prompt_variant!r}")
 
     questions = []
     for _, row in question_map.iterrows():
@@ -96,13 +109,20 @@ def build_scoring_spec(question_map, numeric_support: dict[str, list[str]],
         }
         if not sanitized:
             entry["question_text"] = str(row["StandaloneQuestion"])
+        if prompt_variant != "v1":  # v1 specs stay byte-identical to the frozen surface
+            entry["prompt_variant"] = prompt_variant
         questions.append(entry)
 
     if battery == "strict" and len(questions) != len(keep):
         raise AssertionError(
             f"strict battery must yield exactly {len(keep)} questions, got {len(questions)}")
-    return {"battery": battery, "sanitized": bool(sanitized),
+    if battery == "heldout" and len(questions) != len(keep):
+        raise AssertionError(f"held-out battery yielded {len(questions)} of {len(keep)} items")
+    spec = {"battery": battery, "sanitized": bool(sanitized),
             "n_questions": len(questions), "questions": questions}
+    if prompt_variant != "v1":
+        spec["prompt_variant"] = prompt_variant
+    return spec
 
 
 def spec_sha256(spec: dict) -> str:
@@ -122,7 +142,11 @@ def write_spec(spec: dict, path: Path) -> Path:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--battery", choices=["strict", "archive"], default="strict")
+    ap.add_argument("--battery", choices=["strict", "archive", "heldout"], default="strict")
+    ap.add_argument("--prompt-variant", default="v1", choices=list(L.PROMPT_VARIANTS))
+    ap.add_argument("--question-map", default=None,
+                    help="alternate question map CSV (the held-out pool); default: frozen map")
+    ap.add_argument("--heldout-items-file", default=None, help="JSON list of held-out item ids")
     ap.add_argument("--out", required=True, help="output spec JSON path (local)")
     ap.add_argument("--sanitized", action="store_true",
                     help="omit question_text (for the durable/uploadable copy)")
@@ -130,13 +154,15 @@ def main() -> int:
                     help="JSON file {question_id: [codes]} pinning numeric grids")
     a = ap.parse_args()
 
-    qmap = L.load_question_map()
+    qmap = L.load_question_map(a.question_map) if a.question_map else L.load_question_map()
+    heldout = json.loads(Path(a.heldout_items_file).read_text()) if a.heldout_items_file else None
     grids: dict[str, list[str]] = {}
     if a.numeric_grid_json:
         grids = {k: [str(c) for c in v]
                  for k, v in json.loads(Path(a.numeric_grid_json).read_text()).items()}
     spec = build_scoring_spec(qmap, numeric_support=grids, battery=a.battery,
-                              sanitized=a.sanitized)
+                              sanitized=a.sanitized, prompt_variant=a.prompt_variant,
+                              heldout_items=heldout)
     write_spec(spec, Path(a.out))
     return 0
 

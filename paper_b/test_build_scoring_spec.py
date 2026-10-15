@@ -95,3 +95,36 @@ class TestSpecIntegrity:
         bad = bad[bad.Question != "Q81"]  # strict battery item absent
         with pytest.raises(ValueError, match="Q81"):
             B.build_scoring_spec(bad, numeric_support={}, battery="strict")
+
+
+# ---------------------------------------------------------------- Tier 1 extensions
+def test_variant_spec_changes_sha_and_v1_does_not():
+    import eval_lib as L
+    from build_scoring_spec import build_scoring_spec, spec_sha256
+    qmap = L.load_question_map()
+    v1 = build_scoring_spec(qmap, numeric_support={}, battery="strict")
+    v1b = build_scoring_spec(qmap, numeric_support={}, battery="strict", prompt_variant="v1")
+    rev = build_scoring_spec(qmap, numeric_support={}, battery="strict",
+                             prompt_variant="reverse_options")
+    assert spec_sha256(v1) == spec_sha256(v1b)
+    assert "prompt_variant" not in v1 and rev["prompt_variant"] == "reverse_options"
+    assert all(q["prompt_variant"] == "reverse_options" for q in rev["questions"])
+    assert spec_sha256(rev) != spec_sha256(v1)
+
+
+def test_heldout_battery_from_an_external_map():
+    import pandas as pd
+    from build_scoring_spec import build_scoring_spec
+    qmap = pd.DataFrame([
+        {"Question": q, "ResponseType": "scale_1_4", "ResponseCodes": "1; 2; 3; 4",
+         "ResponseLabels": "A lot; Some; Little; None", "StandaloneQuestion": f"Item {q} text?",
+         "gps_dimension": ""} for q in ("Q150", "Q151", "Q57")])
+    spec = build_scoring_spec(qmap, numeric_support={}, battery="heldout",
+                              heldout_items=["Q150", "Q151"])
+    assert spec["battery"] == "heldout" and spec["n_questions"] == 2
+    assert [q["question_id"] for q in spec["questions"]] == ["Q150", "Q151"]
+    import pytest
+    with pytest.raises(ValueError, match="overlap"):
+        build_scoring_spec(qmap, numeric_support={}, battery="heldout", heldout_items=["Q57"])
+    with pytest.raises(ValueError, match="missing from the question map"):
+        build_scoring_spec(qmap, numeric_support={}, battery="heldout", heldout_items=["Q999"])
