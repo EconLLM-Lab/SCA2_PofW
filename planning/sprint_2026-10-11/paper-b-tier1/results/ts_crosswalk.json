@@ -1,0 +1,1087 @@
+{
+ "Q43": {
+  "wvs7_label": "Future changes: Less importance placed on work",
+  "accepted": "E015",
+  "accepted_label": "Future changes: Less importance placed on work",
+  "candidates": {
+   "E015": {
+    "label": "Future changes: Less importance placed on work",
+    "r": 1.0
+   },
+   "E014": {
+    "label": "Future changes: Less emphasis on money and material possessions",
+    "r": NaN
+   },
+   "E016": {
+    "label": "Future changes: More emphasis on technology",
+    "r": -0.5017866680581642
+   },
+   "E017": {
+    "label": "Future changes: More emphasis on individual",
+    "r": NaN
+   },
+   "E019": {
+    "label": "Future changes: More emphasis on family life",
+    "r": NaN
+   },
+   "E018": {
+    "label": "Future changes: Greater respect for authority",
+    "r": -0.1346037359300132
+   },
+   "E020": {
+    "label": "Future changes: A simple and more natural lifestyle",
+    "r": NaN
+   },
+   "A112": {
+    "label": "Reasons voluntary work: Time on my hands",
+    "r": NaN
+   },
+   "A117": {
+    "label": "Reasons voluntary work: Bring about social or political change",
+    "r": NaN
+   },
+   "E275": {
+    "label": "Degree of agreement: On the whole, women are less corrupt than men",
+    "r": -0.09063183782708797
+   }
+  }
+ },
+ "Q50": {
+  "wvs7_label": "Satisfaction with financial situation of household",
+  "accepted": "C006",
+  "accepted_label": "Satisfaction with financial situation of household",
+  "candidates": {
+   "C006": {
+    "label": "Satisfaction with financial situation of household",
+    "r": 1.0
+   },
+   "A170": {
+    "label": "Satisfaction with your life",
+    "r": 0.8559802522918837
+   },
+   "D002": {
+    "label": "Satisfaction with home life",
+    "r": NaN
+   },
+   "E110": {
+    "label": "Satisfaction with the way democracy develops",
+    "r": NaN
+   },
+   "E125": {
+    "label": "Satisfaction with the people in national office",
+    "r": NaN
+   },
+   "C033": {
+    "label": "Job satisfaction",
+    "r": NaN
+   },
+   "X013": {
+    "label": "Number of people in household",
+    "r": 0.033739502180948754
+   },
+   "A058": {
+    "label": "Spend time with friends",
+    "r": NaN
+   },
+   "C008": {
+    "label": "Work compared with Leisure",
+    "r": NaN
+   },
+   "E069_44": {
+    "label": "Confidence: Confidence in CER with Australia",
+    "r": NaN
+   }
+  }
+ },
+ "Q57": {
+  "wvs7_label": "Most people can be trusted",
+  "accepted": "A165",
+  "accepted_label": "Most people can be trusted",
+  "candidates": {
+   "A165": {
+    "label": "Most people can be trusted",
+    "r": 0.9999999999999998
+   },
+   "E232": {
+    "label": "Democracy: People can change the laws in referendums.",
+    "r": NaN
+   },
+   "A168": {
+    "label": "Do you think most people try to take advantage of you",
+    "r": NaN
+   },
+   "C042B5": {
+    "label": "Why people work: work most important in my life",
+    "r": NaN
+   },
+   "A168A": {
+    "label": "Do you think most people try to take advantage of you (10 point scale)",
+    "r": NaN
+   },
+   "C042B2": {
+    "label": "Why people work: I do the best I can regardless of pay",
+    "r": NaN
+   },
+   "A124_34": {
+    "label": "Neighbours: Black people",
+    "r": NaN
+   },
+   "A124_35": {
+    "label": "Neighbours: White people",
+    "r": NaN
+   },
+   "A124_36": {
+    "label": "Neighbours: Coloured people",
+    "r": NaN
+   },
+   "G007_64": {
+    "label": "Trust: People in general",
+    "r": NaN
+   }
+  }
+ },
+ "Q58": {
+  "wvs7_label": "Trust: Your family",
+  "accepted": "D001_B",
+  "accepted_label": "How much you trust: Your family (B)",
+  "candidates": {
+   "D001": {
+    "label": "How much do you trust your family",
+    "r": NaN
+   },
+   "D001_B": {
+    "label": "How much you trust: Your family (B)",
+    "r": 1.0
+   },
+   "G007_03": {
+    "label": "Trust: Nepalis",
+    "r": NaN
+   },
+   "G007_06": {
+    "label": "Trust: Mestizo",
+    "r": NaN
+   },
+   "G007_07": {
+    "label": "Trust: Indians",
+    "r": NaN
+   },
+   "G007_09": {
+    "label": "Trust: Hausas",
+    "r": NaN
+   },
+   "G007_10": {
+    "label": "Trust: Igbos",
+    "r": NaN
+   },
+   "G007_11": {
+    "label": "Trust: Yorubas",
+    "r": NaN
+   },
+   "G007_12": {
+    "label": "Trust: Ghanaians",
+    "r": NaN
+   },
+   "G007_13": {
+    "label": "Trust: Czechs",
+    "r": NaN
+   }
+  }
+ },
+ "Q59": {
+  "wvs7_label": "Trust: Your neighborhood",
+  "accepted": "G007_18_B",
+  "accepted_label": "Trust: Your neighborhood (B)",
+  "candidates": {
+   "G007_18": {
+    "label": "Trust: Your neighborhood",
+    "r": NaN
+   },
+   "G007_18_B": {
+    "label": "Trust: Your neighborhood (B)",
+    "r": 0.9999999999999998
+   },
+   "G007_03": {
+    "label": "Trust: Nepalis",
+    "r": NaN
+   },
+   "G007_06": {
+    "label": "Trust: Mestizo",
+    "r": NaN
+   },
+   "G007_07": {
+    "label": "Trust: Indians",
+    "r": NaN
+   },
+   "G007_09": {
+    "label": "Trust: Hausas",
+    "r": NaN
+   },
+   "G007_10": {
+    "label": "Trust: Igbos",
+    "r": NaN
+   },
+   "G007_11": {
+    "label": "Trust: Yorubas",
+    "r": NaN
+   },
+   "G007_12": {
+    "label": "Trust: Ghanaians",
+    "r": NaN
+   },
+   "G007_13": {
+    "label": "Trust: Czechs",
+    "r": NaN
+   }
+  }
+ },
+ "Q60": {
+  "wvs7_label": "Trust: People you know personally",
+  "accepted": "G007_33_B",
+  "accepted_label": "Trust: People you know personally (B)",
+  "candidates": {
+   "G007_33_B": {
+    "label": "Trust: People you know personally (B)",
+    "r": 1.0
+   },
+   "G007_64": {
+    "label": "Trust: People in general",
+    "r": NaN
+   },
+   "G007_01": {
+    "label": "Trust: Other people in country",
+    "r": NaN
+   },
+   "G007_32": {
+    "label": "Trust: Soviet Union people",
+    "r": NaN
+   },
+   "G007_61": {
+    "label": "Trust: Canadian people in general",
+    "r": NaN
+   },
+   "G007_35_B": {
+    "label": "Trust: People of another religion (B)",
+    "r": 0.638747215438912
+   },
+   "G007_36_B": {
+    "label": "Trust: People of another nationality (B)",
+    "r": 0.7387247582795133
+   },
+   "C042B7": {
+    "label": "Why people work: don\u00e2\u0080\u0099t know",
+    "r": NaN
+   },
+   "G007_34_B": {
+    "label": "Trust: People you meet for the first time (B)",
+    "r": 0.7713161554021878
+   },
+   "G007_03": {
+    "label": "Trust: Nepalis",
+    "r": NaN
+   }
+  }
+ },
+ "Q61": {
+  "wvs7_label": "Trust: People you meet for the first time",
+  "accepted": "G007_34_B",
+  "accepted_label": "Trust: People you meet for the first time (B)",
+  "candidates": {
+   "G007_34_B": {
+    "label": "Trust: People you meet for the first time (B)",
+    "r": 0.9999999999999998
+   },
+   "G007_64": {
+    "label": "Trust: People in general",
+    "r": NaN
+   },
+   "G007_01": {
+    "label": "Trust: Other people in country",
+    "r": NaN
+   },
+   "G007_32": {
+    "label": "Trust: Soviet Union people",
+    "r": NaN
+   },
+   "G007_61": {
+    "label": "Trust: Canadian people in general",
+    "r": NaN
+   },
+   "G007_33_B": {
+    "label": "Trust: People you know personally (B)",
+    "r": 0.7713161554021878
+   },
+   "G007_35_B": {
+    "label": "Trust: People of another religion (B)",
+    "r": 0.7348350440786419
+   },
+   "G007_36_B": {
+    "label": "Trust: People of another nationality (B)",
+    "r": 0.7769708505293454
+   },
+   "E190": {
+    "label": "Why are there people living in need: first",
+    "r": NaN
+   },
+   "A060": {
+    "label": "Spend time with people at your church, mosque or synagogue",
+    "r": NaN
+   }
+  }
+ },
+ "Q62": {
+  "wvs7_label": "Trust: People of another religion",
+  "accepted": "G007_35_B",
+  "accepted_label": "Trust: People of another religion (B)",
+  "candidates": {
+   "G007_35_B": {
+    "label": "Trust: People of another religion (B)",
+    "r": 1.0
+   },
+   "G007_36_B": {
+    "label": "Trust: People of another nationality (B)",
+    "r": 0.8436633906193689
+   },
+   "G007_64": {
+    "label": "Trust: People in general",
+    "r": NaN
+   },
+   "A124_12": {
+    "label": "Neighbours: People of a different religion",
+    "r": 0.5134166131071464
+   },
+   "A124_13": {
+    "label": "Neighbours: People of the same religion",
+    "r": NaN
+   },
+   "G007_01": {
+    "label": "Trust: Other people in country",
+    "r": NaN
+   },
+   "G007_32": {
+    "label": "Trust: Soviet Union people",
+    "r": NaN
+   },
+   "G007_61": {
+    "label": "Trust: Canadian people in general",
+    "r": NaN
+   },
+   "G007_33_B": {
+    "label": "Trust: People you know personally (B)",
+    "r": 0.638747215438912
+   },
+   "G007_34_B": {
+    "label": "Trust: People you meet for the first time (B)",
+    "r": 0.7348350440786419
+   }
+  }
+ },
+ "Q63": {
+  "wvs7_label": "Trust: People of another nationality",
+  "accepted": "G007_36_B",
+  "accepted_label": "Trust: People of another nationality (B)",
+  "candidates": {
+   "G007_36_B": {
+    "label": "Trust: People of another nationality (B)",
+    "r": 1.0
+   },
+   "G007_35_B": {
+    "label": "Trust: People of another religion (B)",
+    "r": 0.8436633906193689
+   },
+   "G007_64": {
+    "label": "Trust: People in general",
+    "r": NaN
+   },
+   "G007_01": {
+    "label": "Trust: Other people in country",
+    "r": NaN
+   },
+   "G007_32": {
+    "label": "Trust: Soviet Union people",
+    "r": NaN
+   },
+   "G007_52": {
+    "label": "Trust: Chinese Zhuan Nationality",
+    "r": NaN
+   },
+   "G007_53": {
+    "label": "Trust: Chinese Hui Nationality",
+    "r": NaN
+   },
+   "G007_61": {
+    "label": "Trust: Canadian people in general",
+    "r": NaN
+   },
+   "G007_33_B": {
+    "label": "Trust: People you know personally (B)",
+    "r": 0.7387247582795133
+   },
+   "G007_34_B": {
+    "label": "Trust: People you meet for the first time (B)",
+    "r": 0.7769708505293454
+   }
+  }
+ },
+ "Q64": {
+  "wvs7_label": "Confidence: Churches",
+  "accepted": "E069_01",
+  "accepted_label": "Confidence: Churches",
+  "candidates": {
+   "E069_01": {
+    "label": "Confidence: Churches",
+    "r": 1.0
+   },
+   "E069_04": {
+    "label": "Confidence: The Press",
+    "r": 0.2602219629637957
+   },
+   "E069_06": {
+    "label": "Confidence: The Police",
+    "r": -0.17784565636518646
+   },
+   "E069_07": {
+    "label": "Confidence: Parliament",
+    "r": 0.20224170257439192
+   },
+   "E069_10": {
+    "label": "Confidence: Television",
+    "r": 0.3321544646398476
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": 0.2932030148101598
+   },
+   "E069_19": {
+    "label": "Confidence: NATO",
+    "r": 0.008439859688233329
+   },
+   "E069_24": {
+    "label": "Confidence: The NAFTA",
+    "r": NaN
+   },
+   "E069_26": {
+    "label": "Confidence: The Mercosur",
+    "r": NaN
+   },
+   "E069_27": {
+    "label": "Confidence: The SAARC",
+    "r": NaN
+   }
+  }
+ },
+ "Q73": {
+  "wvs7_label": "Confidence: Parliament",
+  "accepted": "E069_07",
+  "accepted_label": "Confidence: Parliament",
+  "candidates": {
+   "E069_07": {
+    "label": "Confidence: Parliament",
+    "r": 0.9999999999999998
+   },
+   "E069_01": {
+    "label": "Confidence: Churches",
+    "r": 0.20224170257439192
+   },
+   "E069_04": {
+    "label": "Confidence: The Press",
+    "r": 0.8048381025075462
+   },
+   "E069_06": {
+    "label": "Confidence: The Police",
+    "r": 0.5187008899366655
+   },
+   "E069_10": {
+    "label": "Confidence: Television",
+    "r": 0.79001427036615
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": 0.9388139396887525
+   },
+   "E069_19": {
+    "label": "Confidence: NATO",
+    "r": 0.565302904716247
+   },
+   "E069_24": {
+    "label": "Confidence: The NAFTA",
+    "r": NaN
+   },
+   "E069_26": {
+    "label": "Confidence: The Mercosur",
+    "r": NaN
+   },
+   "E069_27": {
+    "label": "Confidence: The SAARC",
+    "r": NaN
+   }
+  }
+ },
+ "Q81": {
+  "wvs7_label": "Confidence: Charitable or humanitarian organizations",
+  "accepted": "E069_40",
+  "accepted_label": "Confidence: Charitable or humanitarian organizations",
+  "candidates": {
+   "E069_40": {
+    "label": "Confidence: Charitable or humanitarian organizations",
+    "r": 1.0
+   },
+   "A080_01": {
+    "label": "Member: Humanitarian or charitable organization",
+    "r": -0.4270309128157259
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": -0.44837746301447357
+   },
+   "E069_55": {
+    "label": "Confidence: The Organization of the Islamic World",
+    "r": NaN
+   },
+   "E069_23": {
+    "label": "Confidence: The Organization for African Unity-OAU",
+    "r": NaN
+   },
+   "E069_46": {
+    "label": "Confidence: Non governmental Organizations (NGOs)",
+    "r": NaN
+   },
+   "E069_56": {
+    "label": "Confidence: The Organization of American States (OAE)",
+    "r": NaN
+   },
+   "E069_61": {
+    "label": "Confidence: The World Trade Organization (WTO)",
+    "r": 0.6524658136142594
+   },
+   "E069_62": {
+    "label": "Confidence: The World Health Organization (WHO)",
+    "r": 0.8415310142188013
+   },
+   "A082": {
+    "label": "Voluntary work: Unpaid work religious or church organization",
+    "r": NaN
+   }
+  }
+ },
+ "Q99": {
+  "wvs7_label": "Active/Inactive membership: Environmental organization",
+  "accepted": "A103",
+  "accepted_label": "Active/Inactive membership of environmental organization",
+  "candidates": {
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 1.0
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.8131767414851782
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.9156344893505066
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 0.790385706691755
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 0.31068993059238753
+   },
+   "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "r": 0.6871455814313208
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.7757467028773171
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.7031945125297104
+   },
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 0.7687080905964925
+   },
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 0.8785586580025386
+   }
+  }
+ },
+ "Q101": {
+  "wvs7_label": "Active/Inactive membership: charitable/humanitarian organization",
+  "accepted": "A105",
+  "accepted_label": "Active/Inactive membership of charitable/humanitarian organization",
+  "candidates": {
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 1.0
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.790385706691755
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.8234137719162289
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.6559611843278665
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 0.2658090532674915
+   },
+   "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "r": 0.5906097953829442
+   },
+   "A080_01": {
+    "label": "Member: Humanitarian or charitable organization",
+    "r": 0.9584150299746163
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.6344234145054
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.5518361940877571
+   },
+   "E069_40": {
+    "label": "Confidence: Charitable or humanitarian organizations",
+    "r": -0.44837746301447357
+   }
+  }
+ },
+ "Q103": {
+  "wvs7_label": "Active/Inactive membership: self-help group, mutual aid group",
+  "accepted": "A106C",
+  "accepted_label": "Active/Inactive membership: Self-help group, mutual aid group",
+  "candidates": {
+   "A106C": {
+    "label": "Active/Inactive membership: Self-help group, mutual aid group",
+    "r": 0.9999999999999999
+   },
+   "A080_02": {
+    "label": "Member: Self-help group, mutual aid group",
+    "r": 0.9518386470312207
+   },
+   "A106D": {
+    "label": "Active/Inactive membership: Women\u00e2\u0080\u0099s group",
+    "r": 0.8343933107542295
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.6516256855622866
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.6450495831728975
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.8297096931130489
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.6906392180491407
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.8465471860607703
+   },
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 0.6490830487225345
+   },
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 0.7952572517913636
+   }
+  }
+ },
+ "Q106": {
+  "wvs7_label": "Incomes should be made more equal vs There should be greater incentives for indi",
+  "accepted": "E035",
+  "accepted_label": "Income equality",
+  "candidates": {
+   "E058": {
+    "label": "Our government should be made much more open to the public",
+    "r": NaN
+   },
+   "D058": {
+    "label": "Husband and wife should both contribute to income",
+    "r": NaN
+   },
+   "E129B": {
+    "label": "How much more foreign aid this country should contribute",
+    "r": NaN
+   },
+   "E233A": {
+    "label": "Democracy: The state makes people's incomes equal",
+    "r": 0.06917979294976488
+   },
+   "E218": {
+    "label": "Because of science and technology, there will be more opportunities for the next",
+    "r": 0.30691499443726744
+   },
+   "D066": {
+    "label": "Problem if women have more income than husband (4 categories)",
+    "r": NaN
+   },
+   "D066_01": {
+    "label": "Problem if women have more income than husband (5 categories)",
+    "r": -0.28430093313071725
+   },
+   "D066_B": {
+    "label": "Problem if women have more income than husband (3 categories)",
+    "r": -0.4072505046235515
+   },
+   "C001": {
+    "label": "Jobs scarce: Men should have more right to a job than women (3 categories)",
+    "r": -0.343391619013887
+   },
+   "C001_01": {
+    "label": "Jobs scarce: Men should have more right to a job than women (5 categories)",
+    "r": -0.2648821594047389
+   },
+   "E035": {
+    "label": "Income equality",
+    "r": 1.0
+   }
+  }
+ },
+ "Q107": {
+  "wvs7_label": "Private vs state ownership of business",
+  "accepted": "E036",
+  "accepted_label": "Private vs state ownership of business",
+  "candidates": {
+   "E036": {
+    "label": "Private vs state ownership of business",
+    "r": 1.0
+   },
+   "A009": {
+    "label": "State of health (subjective)",
+    "r": 0.05721718705445329
+   },
+   "C060": {
+    "label": "How business and industry should be managed",
+    "r": NaN
+   },
+   "E119": {
+    "label": "Government order vs. freedom",
+    "r": NaN
+   },
+   "B008": {
+    "label": "Protecting environment vs. Economic growth",
+    "r": 0.08640282980069139
+   },
+   "B016": {
+    "label": "Tradition vs. high economic growth",
+    "r": NaN
+   },
+   "E063": {
+    "label": "Current society: Egalitarian vs. competitive society",
+    "r": NaN
+   },
+   "E065": {
+    "label": "Current society: Regulated vs. responsible society",
+    "r": NaN
+   },
+   "E066": {
+    "label": "Society aimed: egalitarian vs. competitive",
+    "r": NaN
+   },
+   "E068": {
+    "label": "Society aimed: regulated vs. responsible society",
+    "r": NaN
+   }
+  }
+ },
+ "Q109": {
+  "wvs7_label": "Competition good or harmful",
+  "accepted": "E039",
+  "accepted_label": "Competition good or harmful",
+  "candidates": {
+   "E039": {
+    "label": "Competition good or harmful",
+    "r": 1.0
+   },
+   "E062": {
+    "label": "Importation of goods",
+    "r": NaN
+   },
+   "A169": {
+    "label": "Good human relationships",
+    "r": NaN
+   },
+   "E032": {
+    "label": "Freedom or equality",
+    "r": NaN
+   },
+   "F022": {
+    "label": "Statement: good and evil",
+    "r": NaN
+   },
+   "A124_20": {
+    "label": "Neighbours: Indians or Lebanese",
+    "r": NaN
+   },
+   "A124_21": {
+    "label": "Neighbours: Chinese or Philippino Chinese",
+    "r": NaN
+   },
+   "C011": {
+    "label": "Important in a job: good pay",
+    "r": NaN
+   },
+   "C013": {
+    "label": "Important in a job: good job security",
+    "r": NaN
+   },
+   "C015": {
+    "label": "Important in a job: good hours",
+    "r": NaN
+   }
+  }
+ },
+ "Q176": {
+  "wvs7_label": "Degree of agreement: Nowadays one often has trouble deciding which moral rules a",
+  "accepted": "F206",
+  "accepted_label": "Degree of agreement: Nowadays one often has trouble deciding which moral rules a",
+  "candidates": {
+   "F206": {
+    "label": "Degree of agreement: Nowadays one often has trouble deciding which moral rules a",
+    "r": 1.0
+   },
+   "D054": {
+    "label": "One of main goals in life has been to make my parents proud",
+    "r": 0.07375534526838046
+   },
+   "E275": {
+    "label": "Degree of agreement: On the whole, women are less corrupt than men",
+    "r": -0.04879332346255476
+   },
+   "F028B": {
+    "label": "How often to you pray",
+    "r": 0.20925701861420956
+   },
+   "C031": {
+    "label": "Degree of pride in your work",
+    "r": NaN
+   },
+   "E255": {
+    "label": "How often use of PC",
+    "r": NaN
+   },
+   "D076": {
+    "label": "More than one wife",
+    "r": NaN
+   },
+   "E150": {
+    "label": "How often follows politics in the news",
+    "r": NaN
+   },
+   "F010": {
+    "label": "Life has no meaning",
+    "r": NaN
+   },
+   "F027": {
+    "label": "Which former religious denomination",
+    "r": NaN
+   }
+  }
+ },
+ "Q177": {
+  "wvs7_label": "Justifiable: Claiming government benefits to which you are not entitled",
+  "accepted": "F114A",
+  "accepted_label": "Justifiable: Claiming government benefits to which you are not entitled",
+  "candidates": {
+   "F114A": {
+    "label": "Justifiable: Claiming government benefits to which you are not entitled",
+    "r": 1.0
+   },
+   "F105": {
+    "label": "Religious leaders should not influence government",
+    "r": NaN
+   },
+   "A208": {
+    "label": "Older people are not respected much these days",
+    "r": NaN
+   },
+   "F168": {
+    "label": "Democracy is a Western form of government that is not compatible with Islam",
+    "r": NaN
+   },
+   "E117B": {
+    "label": "Political system: Having a system governed by religious law in which there are n",
+    "r": -0.3844910601665568
+   },
+   "E037": {
+    "label": "Government responsibility",
+    "r": -0.36134052595372734
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": 0.021737497948300752
+   },
+   "F118": {
+    "label": "Justifiable: Homosexuality",
+    "r": -0.16858602231413855
+   },
+   "F119": {
+    "label": "Justifiable: Prostitution",
+    "r": 0.028090618548566437
+   },
+   "F120": {
+    "label": "Justifiable: Abortion",
+    "r": -0.2201102543648331
+   }
+  }
+ },
+ "Q178": {
+  "wvs7_label": "Justifiable: Avoiding a fare on public transport",
+  "accepted": "F115",
+  "accepted_label": "Justifiable: Avoiding a fare on public transport",
+  "candidates": {
+   "F115": {
+    "label": "Justifiable: Avoiding a fare on public transport",
+    "r": 1.0
+   },
+   "F116": {
+    "label": "Justifiable: Cheating on taxes",
+    "r": 0.8413805115980572
+   },
+   "F118": {
+    "label": "Justifiable: Homosexuality",
+    "r": 0.014422356837735488
+   },
+   "F119": {
+    "label": "Justifiable: Prostitution",
+    "r": 0.2049180065907591
+   },
+   "F120": {
+    "label": "Justifiable: Abortion",
+    "r": 0.052447845926189104
+   },
+   "F121": {
+    "label": "Justifiable: Divorce",
+    "r": 0.018108597035855236
+   },
+   "F122": {
+    "label": "Justifiable: Euthanasia",
+    "r": 0.026452283741490557
+   },
+   "F123": {
+    "label": "Justifiable: Suicide",
+    "r": 0.21362818284169866
+   },
+   "F125": {
+    "label": "Justifiable: Joyriding",
+    "r": NaN
+   },
+   "F127": {
+    "label": "Justifiable: Llying",
+    "r": NaN
+   }
+  }
+ },
+ "Q179": {
+  "wvs7_label": "Justifiable: Stealing property",
+  "accepted": "F114B",
+  "accepted_label": "Justifiable: Stealing property",
+  "candidates": {
+   "F114B": {
+    "label": "Justifiable: Stealing property",
+    "r": 0.9999999999999998
+   },
+   "F118": {
+    "label": "Justifiable: Homosexuality",
+    "r": 0.008972432657051112
+   },
+   "F119": {
+    "label": "Justifiable: Prostitution",
+    "r": 0.1982823988131926
+   },
+   "F120": {
+    "label": "Justifiable: Abortion",
+    "r": 0.11029341509838075
+   },
+   "F121": {
+    "label": "Justifiable: Divorce",
+    "r": -0.05189600153511792
+   },
+   "F122": {
+    "label": "Justifiable: Euthanasia",
+    "r": 0.061790950361727257
+   },
+   "F123": {
+    "label": "Justifiable: Suicide",
+    "r": 0.3588069300301784
+   },
+   "F125": {
+    "label": "Justifiable: Joyriding",
+    "r": NaN
+   },
+   "F127": {
+    "label": "Justifiable: Llying",
+    "r": NaN
+   },
+   "F128": {
+    "label": "Justifiable: Adultery",
+    "r": NaN
+   }
+  }
+ },
+ "Q195": {
+  "wvs7_label": "Justifiable: Death penalty",
+  "accepted": "F144_02",
+  "accepted_label": "Justifiable: Death penalty",
+  "candidates": {
+   "F144_02": {
+    "label": "Justifiable: Death penalty",
+    "r": 0.9999999999999998
+   },
+   "F006": {
+    "label": "Death is inevitable",
+    "r": NaN
+   },
+   "F118": {
+    "label": "Justifiable: Homosexuality",
+    "r": 0.08307766340683131
+   },
+   "F119": {
+    "label": "Justifiable: Prostitution",
+    "r": 0.1289180757973999
+   },
+   "F120": {
+    "label": "Justifiable: Abortion",
+    "r": 0.15724868389861313
+   },
+   "F121": {
+    "label": "Justifiable: Divorce",
+    "r": 0.21926794970888508
+   },
+   "F122": {
+    "label": "Justifiable: Euthanasia",
+    "r": 0.24043358477283827
+   },
+   "F123": {
+    "label": "Justifiable: Suicide",
+    "r": 0.12773995807764615
+   },
+   "F125": {
+    "label": "Justifiable: Joyriding",
+    "r": NaN
+   },
+   "F127": {
+    "label": "Justifiable: Llying",
+    "r": NaN
+   }
+  }
+ }
+}
