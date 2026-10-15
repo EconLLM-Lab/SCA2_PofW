@@ -117,6 +117,12 @@ def _is_complete_adapter(d: Path) -> bool:
     return all((d / f).exists() for f in REQUIRED_ADAPTER_FILES)
 
 
+def default_allow_patterns(unit: str) -> list[str]:
+    """Hub glob for one unit's adapter: adapters/<CC>/* (cohort 1) or
+    bank2/<run>/{adapters,profiles}/<unit>/* under the bank-2 switch."""
+    return [f"{C.hub_adapter_path(unit)}/*"]
+
+
 def resolve_adapter(country: str, revision: str, cache_root: Path,
                     downloader=None, validate: bool = True) -> tuple[Path, str]:
     """Return (adapter_dir, source). Cache-first within the revision dir;
@@ -131,7 +137,7 @@ def resolve_adapter(country: str, revision: str, cache_root: Path,
     """
     rev = require_revision(revision)
     dest_root = revision_cache_dir(cache_root, rev)
-    local = dest_root / "adapters" / country
+    local = dest_root / C.hub_adapter_path(country)
 
     if _is_complete_adapter(local):
         if validate:
@@ -143,7 +149,7 @@ def resolve_adapter(country: str, revision: str, cache_root: Path,
             from huggingface_hub import snapshot_download
             snapshot_download(
                 repo_id=C.HF_ADAPTER_REPO, repo_type=E.HF_ADAPTER_REPO_TYPE,
-                revision=r, allow_patterns=[f"adapters/{cc}/*"],
+                revision=r, allow_patterns=default_allow_patterns(cc),
                 local_dir=str(dest))
     try:
         downloader(country, dest_root, rev)

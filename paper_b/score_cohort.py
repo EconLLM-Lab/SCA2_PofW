@@ -79,13 +79,9 @@ def hf_adapter_names() -> set[str]:
     except Exception as e:  # noqa: BLE001
         print(f"  ! hub listing failed: {type(e).__name__}: {e}")
         return set()
-    have: dict[str, set] = collections.defaultdict(set)
-    for f in files:
-        parts = f.split("/")
-        if len(parts) >= 3 and parts[0] == "adapters":
-            have[parts[1]].add("/".join(parts[2:]))
+    present = set(files)
     return {cc for cc in C.COHORT
-            if all(x in have[cc] for x in REQUIRED_ADAPTER_FILES)}
+            if all(f"{C.hub_adapter_path(cc)}/{x}" in present for x in REQUIRED_ADAPTER_FILES)}
 
 
 def drive_adapter_names() -> set[str]:
@@ -98,14 +94,14 @@ def resolve_adapter(cc: str, force: bool = False) -> tuple[Path, str]:
     Hub first (the durable bus), Drive second. Downloads land in
     ADAPTER_CACHE_DIR, which is local scratch — never the Drive FUSE.
     """
-    local = E.ADAPTER_CACHE_DIR / "adapters" / cc
+    local = E.ADAPTER_CACHE_DIR / C.hub_adapter_path(cc)
     if _is_complete_adapter(local) and not force:
         return local, "cache"
 
     try:
         from huggingface_hub import snapshot_download
         snapshot_download(repo_id=C.HF_ADAPTER_REPO, repo_type=E.HF_ADAPTER_REPO_TYPE,
-                          allow_patterns=[f"adapters/{cc}/*"],
+                          allow_patterns=[f"{C.hub_adapter_path(cc)}/*"],
                           local_dir=str(E.ADAPTER_CACHE_DIR))
         if _is_complete_adapter(local):
             return local, "hub"
