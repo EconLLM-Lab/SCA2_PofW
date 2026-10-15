@@ -1,0 +1,120 @@
+{
+ "Q42": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q94": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q95": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q96": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q97": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q98": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q100": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q102": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q104": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q105": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q113": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q114": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q115": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q116": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q117": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q130": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q173": {
+  "ordinal": "TRUE",
+  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+ },
+ "Q91": {
+  "exclude": true,
+  "reason": "knowledge-quiz answer options, not an attitude scale"
+ },
+ "Q92": {
+  "exclude": true,
+  "reason": "knowledge-quiz answer options, not an attitude scale"
+ },
+ "Q93": {
+  "exclude": true,
+  "reason": "knowledge-quiz answer options, not an attitude scale"
+ },
+ "Q111": {
+  "exclude": true,
+  "reason": "code 3 'Other answer' breaks the ordering"
+ },
+ "Q108": {
+  "StandaloneQuestion": "How would you place your views on this scale, about the responsibility of the government versus individuals for providing for people?"
+ },
+ "Q169": {
+  "StandaloneQuestion": "Do you agree strongly, agree, disagree, or strongly disagree with the following statement? Whenever science and religion conflict, religion is always right."
+ },
+ "Q170": {
+  "StandaloneQuestion": "Do you agree strongly, agree, disagree, or strongly disagree with the following statement? The only acceptable religion is my religion."
+ },
+ "Q235": {
+  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having a strong leader who does not have to bother with parliament and elections"
+ },
+ "Q236": {
+  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having experts, not government, make decisions according to what they think is best for the country"
+ },
+ "Q237": {
+  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having the army rule"
+ },
+ "Q238": {
+  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having a democratic political system"
+ },
+ "Q239": {
+  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having a system governed by religious law in which there are no political parties or elections"
+ },
+ "Q257": {
+  "StandaloneQuestion": "How close do you feel to your country?"
+ },
+ "Q258": {
+  "StandaloneQuestion": "How close do you feel to your continent?"
+ },
+ "Q56": {
+  "exclude": true,
+  "reason": "code order better/worse/same is not monotone; recoding would be a post-hoc choice"
+ }
+}
