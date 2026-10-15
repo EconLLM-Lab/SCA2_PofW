@@ -56,6 +56,28 @@ def save_manifest(path, m: dict) -> None:
     tmp.replace(path)
 
 
+HUB_REQUIRED = ("adapter_model.safetensors", "adapter_config.json", "run_record.json")
+
+
+def _list_hub_files() -> list[str]:
+    from huggingface_hub import HfApi
+    return HfApi().list_repo_files(C.HF_ADAPTER_REPO, repo_type="dataset")
+
+
+def hub_complete_units(units, cfg=C, lister=_list_hub_files) -> set[str]:
+    """Units whose adapter is fully on the Hub (the durable bus; Drive FUSE lags and dies with the VM).
+
+    Fails loudly: a listing error must stop the run, because guessing "nothing is banked"
+    would silently retrain finished adapters.
+    """
+    try:
+        files = set(lister())
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(f"hub listing failed ({type(exc).__name__}: {exc}); refusing to retrain blind") from exc
+    return {u for u in units
+            if all(f"{cfg.hub_adapter_path(u)}/{n}" in files for n in HUB_REQUIRED)}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--wave", type=int, choices=[1, 2])
@@ -95,9 +117,17 @@ def main() -> int:
 
     from train_country import train_country  # imported here so prepare-only runs need no torch
 
+    on_hub: set[str] = set()
+    if os.environ.get("SCA2_PB_PROTOCOL") == "bank2":   # cohort-1 resume behaviour is unchanged
+        on_hub = hub_complete_units(countries)
+        print(f"hub already holds {len(on_hub)} of {len(countries)} units for this bank; they will be skipped")
+
     t0 = time.time()
     for i, cc in enumerate(countries, 1):
         rec = m["countries"].get(cc, {})
+        if cc in on_hub:
+            print(f"[{i}/{len(countries)}] {cc}: complete on the Hub, skip")
+            continue
         out = C.ADAPTER_DIR / cc
         record_path = out / "run_record.json"
         if (out / "adapter_config.json").exists():
