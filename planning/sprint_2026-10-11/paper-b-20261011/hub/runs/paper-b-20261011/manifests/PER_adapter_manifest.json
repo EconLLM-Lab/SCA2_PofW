@@ -1,0 +1,24 @@
+{
+  "run_id": "paper-b-20261011",
+  "model": "PER_adapter",
+  "adapter_revision": "7550fd4cfe514470bb8d80918a43c9ae424d26b5",
+  "adapter_sha256": "57ab2945fa50b2a1784b3ed0b5bad68e9446a3a04d162b749185e961ea65b546",
+  "code_revision_sha256": "f3279d6c85524a14dc0d591c1d169553e2380d839dd28062f5214b4984f1ba12",
+  "spec_sha256": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
+  "csv_sha256": "d90695094ce188d5a9d1f800b32bbeffc18a14268a7cd5f201f971c54ec32c52",
+  "n_rows": 140,
+  "columns": [
+    "run_id",
+    "model",
+    "adapter_revision",
+    "question_id",
+    "option_index",
+    "option_code",
+    "option_logprob",
+    "option_token_count",
+    "model_prob"
+  ],
+  "sanitized": true,
+  "contains_human_data": false,
+  "persisted_at_utc": "2026-10-12T04:50:30Z"
+}

@@ -1,0 +1,761 @@
+{
+  "score_arms": [
+    "adapter",
+    "adapter_persona",
+    "armA",
+    "armB",
+    "base",
+    "base_fixed_USA",
+    "human",
+    "persona",
+    "uniform"
+  ],
+  "score_n": 3852,
+  "frozen_score_trust_rho": {
+    "adapter": 0.7999999999999999,
+    "adapter_persona": 0.6529411764705881,
+    "armA": 1.0,
+    "armB": 0.8609160647753271,
+    "base": 0.2774633715901215,
+    "base_fixed_USA": NaN,
+    "persona": -0.06764705882352941,
+    "uniform": NaN,
+    "human": 0.3911764705882353
+  },
+  "persona_rest_nunique": 1,
+  "adapter_rest_nunique": 1,
+  "persona_system_nunique": 1,
+  "adapter_system_nunique": 1,
+  "rest_equal_persona_vs_adapter": {
+    "ARG": true,
+    "BRA": true,
+    "CHN": true,
+    "DEU": true,
+    "EGY": true,
+    "GBR": true,
+    "GRC": true,
+    "IDN": true,
+    "IND": true,
+    "JPN": true,
+    "MEX": true,
+    "NGA": true,
+    "NLD": true,
+    "RUS": true,
+    "TUR": true,
+    "USA": true
+  },
+  "system_equal_persona_vs_adapter": {
+    "ARG": true,
+    "BRA": true,
+    "CHN": true,
+    "DEU": true,
+    "EGY": true,
+    "GBR": true,
+    "GRC": true,
+    "IDN": true,
+    "IND": true,
+    "JPN": true,
+    "MEX": true,
+    "NGA": true,
+    "NLD": true,
+    "RUS": true,
+    "TUR": true,
+    "USA": true
+  },
+  "q57_token_equal": {
+    "ARG": true,
+    "BRA": true,
+    "CHN": true,
+    "DEU": true,
+    "EGY": true,
+    "GBR": true,
+    "GRC": true,
+    "IDN": true,
+    "IND": true,
+    "JPN": true,
+    "MEX": true,
+    "NGA": true,
+    "NLD": true,
+    "RUS": true,
+    "TUR": true,
+    "USA": true
+  },
+  "adapter_first_sentences": {
+    "ARG": "Answer this questionnaire as an individual person.",
+    "CHN": "Answer this questionnaire as an individual person.",
+    "DEU": "Answer this questionnaire as an individual person.",
+    "GBR": "Answer this questionnaire as an individual person.",
+    "JPN": "Answer this questionnaire as an individual person.",
+    "MEX": "Answer this questionnaire as an individual person.",
+    "RUS": "Answer this questionnaire as an individual person.",
+    "USA": "Answer this questionnaire as an individual person.",
+    "BRA": "Answer this questionnaire as an individual person.",
+    "EGY": "Answer this questionnaire as an individual person.",
+    "GRC": "Answer this questionnaire as an individual person.",
+    "IDN": "Answer this questionnaire as an individual person.",
+    "IND": "Answer this questionnaire as an individual person.",
+    "NGA": "Answer this questionnaire as an individual person.",
+    "NLD": "Answer this questionnaire as an individual person.",
+    "TUR": "Answer this questionnaire as an individual person."
+  },
+  "adapter_prompt_country": {
+    "ARG": null,
+    "CHN": null,
+    "DEU": null,
+    "GBR": null,
+    "JPN": null,
+    "MEX": null,
+    "RUS": null,
+    "USA": null,
+    "BRA": null,
+    "EGY": null,
+    "GRC": null,
+    "IDN": null,
+    "IND": null,
+    "NGA": null,
+    "NLD": null,
+    "TUR": null
+  },
+  "persona_meta_ARG": [
+    {
+      "model": "persona_base",
+      "prompt_country": "ARG",
+      "eval_country": "ARG",
+      "first": "Answer this questionnaire as a typical adult living in Argentina.",
+      "rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?\n\nSelect exactly one response code from the options below.\n",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "truncated": false,
+      "softmax": {
+        "checked": 30,
+        "bad": 0,
+        "max_abs": 1.1102230246251565e-16
+      },
+      "n_rows": 351,
+      "questions": [
+        "Q101",
+        "Q103",
+        "Q106",
+        "Q107",
+        "Q109",
+        "Q12",
+        "Q13",
+        "Q14",
+        "Q174",
+        "Q176",
+        "Q177",
+        "Q178",
+        "Q179",
+        "Q195",
+        "Q260",
+        "Q261",
+        "Q262",
+        "Q275",
+        "Q288",
+        "Q43",
+        "Q50",
+        "Q57",
+        "Q58",
+        "Q59",
+        "Q60",
+        "Q61",
+        "Q62",
+        "Q63",
+        "Q64",
+        "Q69",
+        "Q70",
+        "Q71",
+        "Q73",
+        "Q81",
+        "Q99"
+      ]
+    }
+  ],
+  "adapter_meta": [
+    {
+      "country": "ARG",
+      "bank": "ksenias_base8",
+      "file": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_ARG_adapter_on_ARG.csv",
+      "model": "ARG_adapter",
+      "prompt_country": null,
+      "first": "Answer this questionnaire as an individual person.",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "truncated": false,
+      "n_rows": 343,
+      "n_questions": 35
+    },
+    {
+      "country": "BRA",
+      "bank": "co2_8",
+      "file": "data/phase2/raw/wvs/co2_8/model_option_probabilities_BRA_adapter_on_BRA.csv",
+      "model": "BRA_adapter",
+      "prompt_country": null,
+      "first": "Answer this questionnaire as an individual person.",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "truncated": false,
+      "n_rows": 347,
+      "n_questions": 35
+    }
+  ],
+  "adapter_softmax": {
+    "ARG": {
+      "checked": 30,
+      "bad": 0,
+      "max_abs": 1.1102230246251565e-16
+    },
+    "BRA": {
+      "checked": 30,
+      "bad": 0,
+      "max_abs": 1.1102230246251565e-16
+    }
+  },
+  "recomputed_trust_rho": {
+    "adapter_from_matched_option_csvs": 0.7441176470588236,
+    "persona_from_persona_base_csvs": -0.06764705882352941
+  },
+  "adapter_composite_vs_frozen": {
+    "max_abs": 0.5244236672491915,
+    "mean_abs": 0.0374463904252445,
+    "per_country": {
+      "ARG": 0.0,
+      "BRA": 0.0,
+      "CHN": 0.0,
+      "DEU": 0.0,
+      "EGY": 0.0,
+      "GBR": 0.0,
+      "GRC": 0.0,
+      "IDN": 0.0,
+      "IND": 0.0,
+      "JPN": 0.0,
+      "MEX": 0.074719,
+      "NGA": 0.0,
+      "NLD": 0.0,
+      "RUS": 0.0,
+      "TUR": 0.0,
+      "USA": 0.524424
+    }
+  },
+  "frozen_arm_vs_persona_composite": {
+    "adapter": {
+      "max_abs": 0.6221170773223488
+    },
+    "adapter_persona": {
+      "max_abs": 0.6719725065355167
+    },
+    "armA": {
+      "max_abs": 0.6287342632044761
+    },
+    "armB": {
+      "max_abs": 1.8261004018969178
+    },
+    "base": {
+      "max_abs": 0.3055929893086766
+    },
+    "base_fixed_USA": {
+      "max_abs": 0.29751588960952313
+    },
+    "persona": {
+      "max_abs": 4.440892098500626e-16
+    },
+    "uniform": {
+      "max_abs": 0.5269467528850296
+    },
+    "human": {
+      "max_abs": 0.5582301056269641
+    }
+  },
+  "item_level_adapter_vs_frozen": [
+    {
+      "c": "ARG",
+      "q": "Q57",
+      "recon": 0.06754669113962912,
+      "frozen": 0.0675466911396291,
+      "abs": 1.3877787807814457e-17
+    },
+    {
+      "c": "ARG",
+      "q": "Q58",
+      "recon": 3.7032971056250714,
+      "frozen": 3.7032971056250714,
+      "abs": 0.0
+    },
+    {
+      "c": "ARG",
+      "q": "Q59",
+      "recon": 3.0090960987702555,
+      "frozen": 3.0090960987702555,
+      "abs": 0.0
+    },
+    {
+      "c": "ARG",
+      "q": "Q60",
+      "recon": 3.1982479092443223,
+      "frozen": 3.1982479092443223,
+      "abs": 0.0
+    },
+    {
+      "c": "ARG",
+      "q": "Q61",
+      "recon": 2.853838562222551,
+      "frozen": 2.853838562222551,
+      "abs": 0.0
+    },
+    {
+      "c": "ARG",
+      "q": "Q62",
+      "recon": 2.9905822525491206,
+      "frozen": 2.99058225254912,
+      "abs": 4.440892098500626e-16
+    },
+    {
+      "c": "ARG",
+      "q": "Q63",
+      "recon": 2.9915974834368173,
+      "frozen": 2.9915974834368178,
+      "abs": 4.440892098500626e-16
+    },
+    {
+      "c": "ARG",
+      "q": "Q64",
+      "recon": 2.8492791558657795,
+      "frozen": 2.8492791558657795,
+      "abs": 0.0
+    },
+    {
+      "c": "ARG",
+      "q": "Q73",
+      "recon": 2.5491291165331007,
+      "frozen": 2.5491291165331007,
+      "abs": 0.0
+    },
+    {
+      "c": "BRA",
+      "q": "Q57",
+      "recon": 0.0010817152527255003,
+      "frozen": 0.0010817152527255,
+      "abs": 2.168404344971009e-19
+    },
+    {
+      "c": "BRA",
+      "q": "Q58",
+      "recon": 3.347195890738517,
+      "frozen": 3.3471958907385173,
+      "abs": 4.440892098500626e-16
+    },
+    {
+      "c": "BRA",
+      "q": "Q59",
+      "recon": 2.985873419908345,
+      "frozen": 2.985873419908345,
+      "abs": 0.0
+    },
+    {
+      "c": "BRA",
+      "q": "Q60",
+      "recon": 3.0293094301415526,
+      "frozen": 3.029309430141553,
+      "abs": 4.440892098500626e-16
+    },
+    {
+      "c": "BRA",
+      "q": "Q61",
+      "recon": 2.647823145306695,
+      "frozen": 2.6478231453066954,
+      "abs": 4.440892098500626e-16
+    },
+    {
+      "c": "BRA",
+      "q": "Q62",
+      "recon": 2.9839853410911084,
+      "frozen": 2.9839853410911084,
+      "abs": 0.0
+    },
+    {
+      "c": "BRA",
+      "q": "Q63",
+      "recon": 2.966209478335337,
+      "frozen": 2.9662094783353377,
+      "abs": 4.440892098500626e-16
+    },
+    {
+      "c": "BRA",
+      "q": "Q64",
+      "recon": 2.5352659332208765,
+      "frozen": 2.5352659332208765,
+      "abs": 0.0
+    },
+    {
+      "c": "BRA",
+      "q": "Q73",
+      "recon": 2.1731089276193014,
+      "frozen": 2.1731089276193014,
+      "abs": 0.0
+    },
+    {
+      "c": "USA",
+      "q": "Q57",
+      "recon": 0.9999999895325984,
+      "frozen": 0.6224593312018545,
+      "abs": 0.3775406583307439
+    },
+    {
+      "c": "USA",
+      "q": "Q58",
+      "recon": 3.9999989273150907,
+      "frozen": 3.0998661268075445,
+      "abs": 0.9001328005075462
+    },
+    {
+      "c": "USA",
+      "q": "Q59",
+      "recon": 3.3208206213474933,
+      "frozen": 2.975110561071672,
+      "abs": 0.3457100602758212
+    },
+    {
+      "c": "USA",
+      "q": "Q60",
+      "recon": 3.998299261469408,
+      "frozen": 3.0384392299003538,
+      "abs": 0.9598600315690544
+    },
+    {
+      "c": "USA",
+      "q": "Q61",
+      "recon": 3.00315963679605,
+      "frozen": 2.963523996471871,
+      "abs": 0.039635640324178656
+    },
+    {
+      "c": "USA",
+      "q": "Q62",
+      "recon": 3.5312084615590806,
+      "frozen": 2.9871197318743934,
+      "abs": 0.5440887296846872
+    },
+    {
+      "c": "USA",
+      "q": "Q63",
+      "recon": 3.348644447183319,
+      "frozen": 2.9854492409837974,
+      "abs": 0.3631952061995216
+    },
+    {
+      "c": "USA",
+      "q": "Q64",
+      "recon": 3.651291485966371,
+      "frozen": 2.795103891467748,
+      "abs": 0.856187594498623
+    },
+    {
+      "c": "USA",
+      "q": "Q73",
+      "recon": 3.0422159192041263,
+      "frozen": 2.708753635351577,
+      "abs": 0.3334622838525494
+    }
+  ],
+  "persona_item_vs_frozen_arms_ARG": {
+    "adapter": {
+      "n": 9,
+      "max_abs_ARG_trust9": 0.5881060599676009
+    },
+    "adapter_persona": {
+      "n": 9,
+      "max_abs_ARG_trust9": 0.4174525595037384
+    },
+    "armA": {
+      "n": 9,
+      "max_abs_ARG_trust9": 1.213609614966206
+    },
+    "armB": {
+      "n": 9,
+      "max_abs_ARG_trust9": 2.6102429494240798
+    },
+    "base": {
+      "n": 9,
+      "max_abs_ARG_trust9": 0.6204946826262225
+    },
+    "base_fixed_USA": {
+      "n": 9,
+      "max_abs_ARG_trust9": 0.6204946826262216
+    },
+    "persona": {
+      "n": 9,
+      "max_abs_ARG_trust9": 4.440892098500626e-16
+    },
+    "uniform": {
+      "n": 9,
+      "max_abs_ARG_trust9": 1.1102429494240798
+    },
+    "human": {
+      "n": 9,
+      "max_abs_ARG_trust9": 0.2551455277726764
+    }
+  },
+  "token_patterns": {
+    "persona_ARG": {
+      "n_pairs": 351,
+      "token_count_values": {
+        "2": 264,
+        "3": 87
+      },
+      "codes_with_tc_ne_2": [
+        {
+          "question_id": "Q261",
+          "option_code": 1917,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1921,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1923,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1924,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1925,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1926,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1927,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1928,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1929,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1930,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1931,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1932,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1933,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1934,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1935,
+          "option_token_count": 3
+        }
+      ]
+    },
+    "adapter_ARG": {
+      "n_pairs": 343,
+      "token_count_values": {
+        "2": 261,
+        "3": 82
+      },
+      "codes_with_tc_ne_2": [
+        {
+          "question_id": "Q261",
+          "option_code": 1921,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1923,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1924,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1925,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1926,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1927,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1928,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1929,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1930,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1931,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1932,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1933,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1934,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1935,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1936,
+          "option_token_count": 3
+        }
+      ]
+    },
+    "adapter_BRA": {
+      "n_pairs": 347,
+      "token_count_values": {
+        "2": 262,
+        "3": 85
+      },
+      "codes_with_tc_ne_2": [
+        {
+          "question_id": "Q261",
+          "option_code": 1917,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1923,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1925,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1926,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1927,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1928,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1929,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1930,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1931,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1932,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1933,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1934,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1935,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1936,
+          "option_token_count": 3
+        },
+        {
+          "question_id": "Q261",
+          "option_code": 1937,
+          "option_token_count": 3
+        }
+      ]
+    }
+  },
+  "all_rest_equal": true,
+  "all_system_equal": true,
+  "all_q57_token_equal": true,
+  "adapter_first_all_individual": true,
+  "persona_first_all_typical": true,
+  "normalized_user_equal_ARG": true,
+  "normalized_user_equal_adapter_ARG_vs_BRA": true,
+  "assistant_suffix_persona": "r explanation.\n\nAnswer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+  "assistant_suffix_adapter_ARG": "r explanation.\n\nAnswer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+  "assistant_suffix_equal": true,
+  "assistant_tail_persona": "<|start_header_id|>assistant<|end_header_id|>\n\n",
+  "assistant_tail_adapter": "<|start_header_id|>assistant<|end_header_id|>\n\n"
+}

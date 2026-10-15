@@ -129,6 +129,17 @@ def main() -> int:
         "elapsed_min": round((time.time() - t0) / 60, 2),
         "bank_run_id": C.BANK_RUN_ID,
     }, indent=2))
+    try:
+        import compute_ledger as _ledger
+        manifest = json.loads(C.REF_MANIFEST_FILE.read_text())
+        hw = _ledger.hardware_snapshot()
+        if hw.get("gpu"):
+            manifest["gpu_name"] = hw["gpu"]
+            C.REF_MANIFEST_FILE.write_text(json.dumps(manifest, indent=2))
+        _ledger.try_record(_ledger.ref_event_from_manifest(
+            manifest, source="compute_ref_cache.py"))
+    except Exception as exc:  # noqa: BLE001
+        print(f"compute ledger: {type(exc).__name__}: {exc}")
     print(f"done: +{n} pairs -> {C.REF_CACHE_FILE}")
     return 0
 

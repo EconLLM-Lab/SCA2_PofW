@@ -1,0 +1,14 @@
+{
+  "bound_tolerance": 0.0001,
+  "n_ceiling_or_floor_hits": 6,
+  "surfaces": [
+    "trust",
+    "patience:Q43",
+    "patience:Q50",
+    "risktaking",
+    "posrecip",
+    "negrecip",
+    "altruism"
+  ],
+  "note": "between_share_all counts singleton profiles as between variance; between_share_multi_member drops them."
+}

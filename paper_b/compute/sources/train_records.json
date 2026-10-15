@@ -1,0 +1,338 @@
+[
+  {
+    "country": "ARG",
+    "train_minutes": 18.38,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "AUS",
+    "train_minutes": 18.34,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "BGD",
+    "train_minutes": 18.35,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "BOL",
+    "train_minutes": 18.74,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "BRA",
+    "train_minutes": 18.76,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "CAN",
+    "train_minutes": 18.19,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "CHL",
+    "train_minutes": 18.76,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "CHN",
+    "train_minutes": 18.36,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "COL",
+    "train_minutes": 18.65,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "CZE",
+    "train_minutes": 18.46,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "DEU",
+    "train_minutes": 18.39,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "EGY",
+    "train_minutes": 18.69,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "GBR",
+    "train_minutes": 16.64,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "GRC",
+    "train_minutes": 17.2,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "GTM",
+    "train_minutes": 17.47,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "IDN",
+    "train_minutes": 17.51,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "IND",
+    "train_minutes": 17.56,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "IRN",
+    "train_minutes": 17.52,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "IRQ",
+    "train_minutes": 17.5,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "JOR",
+    "train_minutes": 17.65,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "JPN",
+    "train_minutes": 17.63,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "KAZ",
+    "train_minutes": 18.5,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "KEN",
+    "train_minutes": 18.5,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "KOR",
+    "train_minutes": 18.54,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "MAR",
+    "train_minutes": 18.54,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "MEX",
+    "train_minutes": 18.55,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "NGA",
+    "train_minutes": 18.54,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "NIC",
+    "train_minutes": 18.55,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "NLD",
+    "train_minutes": 18.53,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "PAK",
+    "train_minutes": 18.6,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "PER",
+    "train_minutes": 18.53,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "PHL",
+    "train_minutes": 18.43,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "ROU",
+    "train_minutes": 18.43,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "RUS",
+    "train_minutes": 18.41,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "SRB",
+    "train_minutes": 18.54,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "THA",
+    "train_minutes": 18.6,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "TUR",
+    "train_minutes": 18.56,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "UKR",
+    "train_minutes": 18.58,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "USA",
+    "train_minutes": 18.43,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "VEN",
+    "train_minutes": 18.51,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "VNM",
+    "train_minutes": 18.51,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  },
+  {
+    "country": "ZWE",
+    "train_minutes": 18.55,
+    "bank_run_id": "gps_sign_relabel_all_20260816_004545Z",
+    "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+    "n_train": 526,
+    "epochs": 1
+  }
+]

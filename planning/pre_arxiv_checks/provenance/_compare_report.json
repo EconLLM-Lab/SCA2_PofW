@@ -1,0 +1,587 @@
+{
+  "persona_summary": {
+    "countries": [
+      "CHN",
+      "JPN",
+      "GBR",
+      "USA",
+      "MEX",
+      "ARG",
+      "DEU",
+      "RUS",
+      "IND",
+      "IDN",
+      "NGA",
+      "EGY",
+      "TUR",
+      "NLD",
+      "BRA",
+      "GRC"
+    ],
+    "questions": 35,
+    "rows": 5616,
+    "seconds": 2753.2,
+    "model": "meta-llama/Llama-3.1-8B-Instruct",
+    "prompt_conditioning": true
+  },
+  "persona_files": [
+    "model_option_probabilities_persona.csv",
+    "model_option_probabilities_persona_base_on_ARG.csv",
+    "model_option_probabilities_persona_base_on_BRA.csv",
+    "model_option_probabilities_persona_base_on_CHN.csv",
+    "model_option_probabilities_persona_base_on_DEU.csv",
+    "model_option_probabilities_persona_base_on_EGY.csv",
+    "model_option_probabilities_persona_base_on_GBR.csv",
+    "model_option_probabilities_persona_base_on_GRC.csv",
+    "model_option_probabilities_persona_base_on_IDN.csv",
+    "model_option_probabilities_persona_base_on_IND.csv",
+    "model_option_probabilities_persona_base_on_JPN.csv",
+    "model_option_probabilities_persona_base_on_MEX.csv",
+    "model_option_probabilities_persona_base_on_NGA.csv",
+    "model_option_probabilities_persona_base_on_NLD.csv",
+    "model_option_probabilities_persona_base_on_RUS.csv",
+    "model_option_probabilities_persona_base_on_TUR.csv",
+    "model_option_probabilities_persona_base_on_USA.csv",
+    "summary.json"
+  ],
+  "persona_header": [
+    "model",
+    "prompt_country",
+    "question_id",
+    "question_text",
+    "response_type",
+    "gps_dimension",
+    "is_ordered",
+    "is_numeric_open",
+    "option_index",
+    "option_code",
+    "option_value",
+    "option_label",
+    "option_logprob",
+    "option_token_count",
+    "model_prob",
+    "prompt_text",
+    "formatted_prompt",
+    "complete_prompt_model_received",
+    "prompt_token_count_before_truncation",
+    "prompt_token_count_model",
+    "prompt_was_truncated",
+    "eval_country"
+  ],
+  "adapter_file_index": {
+    "n": 111,
+    "sample": [
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_NLD_adapter_on_EGY.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_EGY_adapter_on_BRA.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_EGY_adapter_on_IND.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_NGA_adapter_on_IDN.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_IDN_adapter_on_TUR.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_NGA_adapter_on_EGY.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_base_on_GRC.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_NLD_adapter_on_IDN.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_IDN_adapter_on_NGA.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_GRC_adapter_on_EGY.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_GRC_adapter_on_IDN.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_BRA_adapter_on_GRC.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_NLD_adapter_on_NLD.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_NGA_adapter_on_NLD.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_IND_adapter_on_BRA.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_IND_adapter_on_IND.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_TUR_adapter_on_GRC.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_GRC_adapter_on_NLD.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_TUR_adapter_on_BRA.csv",
+      "data/phase2/raw/wvs/co2_8/model_option_probabilities_TUR_adapter_on_IND.csv"
+    ],
+    "picked_counts": {
+      "ARG": 1,
+      "BRA": 1,
+      "CHN": 1,
+      "DEU": 1,
+      "EGY": 1,
+      "GBR": 1,
+      "GRC": 1,
+      "IDN": 1,
+      "IND": 1,
+      "JPN": 1,
+      "MEX": 3,
+      "NGA": 1,
+      "NLD": 1,
+      "RUS": 1,
+      "TUR": 1,
+      "USA": 3
+    },
+    "picked_first": {
+      "ARG": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_ARG_adapter_on_ARG.csv",
+      "BRA": "data/phase2/raw/wvs/co2_8/model_option_probabilities_BRA_adapter_on_BRA.csv",
+      "CHN": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_CHN_adapter_on_CHN.csv",
+      "DEU": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_DEU_adapter_on_DEU.csv",
+      "EGY": "data/phase2/raw/wvs/co2_8/model_option_probabilities_EGY_adapter_on_EGY.csv",
+      "GBR": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_GBR_adapter_on_GBR.csv",
+      "GRC": "data/phase2/raw/wvs/co2_8/model_option_probabilities_GRC_adapter_on_GRC.csv",
+      "IDN": "data/phase2/raw/wvs/co2_8/model_option_probabilities_IDN_adapter_on_IDN.csv",
+      "IND": "data/phase2/raw/wvs/co2_8/model_option_probabilities_IND_adapter_on_IND.csv",
+      "JPN": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_JPN_adapter_on_JPN.csv",
+      "MEX": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_MEX_adapter_on_MEX.csv",
+      "NGA": "data/phase2/raw/wvs/co2_8/model_option_probabilities_NGA_adapter_on_NGA.csv",
+      "NLD": "data/phase2/raw/wvs/co2_8/model_option_probabilities_NLD_adapter_on_NLD.csv",
+      "RUS": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_RUS_adapter_on_RUS.csv",
+      "TUR": "data/phase2/raw/wvs/co2_8/model_option_probabilities_TUR_adapter_on_TUR.csv",
+      "USA": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_USA_adapter_on_USA.csv"
+    }
+  },
+  "persona_models": [
+    "persona_base"
+  ],
+  "persona_token_summary": {
+    "examples": [
+      {
+        "question_id": "Q12",
+        "option_code": 1,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q12",
+        "option_code": 2,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q57",
+        "option_code": 1,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q57",
+        "option_code": 2,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q58",
+        "option_code": 1,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q58",
+        "option_code": 2,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q58",
+        "option_code": 3,
+        "option_token_count": 2
+      },
+      {
+        "question_id": "Q58",
+        "option_code": 4,
+        "option_token_count": 2
+      }
+    ],
+    "value_counts": {
+      "2": 792,
+      "3": 261
+    }
+  },
+  "persona_softmax": {
+    "groups_checked": 105,
+    "groups_not_unit_softmax": 0,
+    "max_abs_err": 1.1102230246251565e-16
+  },
+  "persona_truncated_any": false,
+  "persona_today_dates": [
+    "26 Jul 2024"
+  ],
+  "persona_cutting_dates": [
+    "December 2023"
+  ],
+  "persona_first_sentences": {
+    "ARG": "Answer this questionnaire as a typical adult living in Argentina.",
+    "USA": "Answer this questionnaire as a typical adult living in the United States.",
+    "BRA": "Answer this questionnaire as a typical adult living in Brazil."
+  },
+  "persona_rest_identical_across_sampled_countries": true,
+  "adapter_files_with_prompt_cols": [
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_ARG_adapter_on_ARG.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_BRA_adapter_on_BRA.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_CHN_adapter_on_CHN.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_DEU_adapter_on_DEU.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_EGY_adapter_on_EGY.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_GBR_adapter_on_GBR.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_GRC_adapter_on_GRC.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_IDN_adapter_on_IDN.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_IND_adapter_on_IND.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_JPN_adapter_on_JPN.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_MEX_adapter_on_MEX.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_NGA_adapter_on_NGA.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_NLD_adapter_on_NLD.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_RUS_adapter_on_RUS.csv",
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities_TUR_adapter_on_TUR.csv",
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_USA_adapter_on_USA.csv"
+  ],
+  "combined_headers": {
+    "DPO_eval_WVS/eval_results_wvs_wave7/model_option_probabilities.csv": [
+      "model",
+      "prompt_country",
+      "question_id",
+      "question_text",
+      "response_type",
+      "gps_dimension",
+      "is_ordered",
+      "is_numeric_open",
+      "option_index",
+      "option_code",
+      "option_value",
+      "option_label",
+      "option_logprob",
+      "option_token_count",
+      "model_prob",
+      "prompt_text",
+      "formatted_prompt",
+      "complete_prompt_model_received",
+      "prompt_token_count_before_truncation",
+      "prompt_token_count_model",
+      "prompt_was_truncated",
+      "generated_answer_raw",
+      "generated_answer",
+      "generated_answer_code",
+      "generated_answer_is_valid",
+      "generated_token_count",
+      "eval_country"
+    ],
+    "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities.csv": [
+      "model",
+      "prompt_country",
+      "question_id",
+      "question_text",
+      "response_type",
+      "gps_dimension",
+      "is_ordered",
+      "is_numeric_open",
+      "option_index",
+      "option_code",
+      "option_value",
+      "option_label",
+      "option_logprob",
+      "option_token_count",
+      "model_prob",
+      "prompt_text",
+      "formatted_prompt",
+      "complete_prompt_model_received",
+      "prompt_token_count_before_truncation",
+      "prompt_token_count_model",
+      "prompt_was_truncated",
+      "generated_answer_raw",
+      "generated_answer",
+      "generated_answer_code",
+      "generated_answer_is_valid",
+      "generated_token_count",
+      "eval_country"
+    ],
+    "data/phase2/raw/wvs/co2_8/model_option_probabilities.csv": [
+      "model",
+      "prompt_country",
+      "question_id",
+      "question_text",
+      "response_type",
+      "gps_dimension",
+      "is_ordered",
+      "is_numeric_open",
+      "option_index",
+      "option_code",
+      "option_value",
+      "option_label",
+      "option_logprob",
+      "option_token_count",
+      "model_prob",
+      "prompt_text",
+      "formatted_prompt",
+      "complete_prompt_model_received",
+      "prompt_token_count_before_truncation",
+      "prompt_token_count_model",
+      "prompt_was_truncated",
+      "generated_answer_raw",
+      "generated_answer",
+      "generated_answer_code",
+      "generated_answer_is_valid",
+      "generated_token_count",
+      "eval_country"
+    ],
+    "data/phase2/raw/wvs/usamex_canonical/model_option_probabilities.csv": [
+      "model",
+      "prompt_country",
+      "question_id",
+      "question_text",
+      "response_type",
+      "gps_dimension",
+      "is_ordered",
+      "is_numeric_open",
+      "option_index",
+      "option_code",
+      "option_value",
+      "option_label",
+      "option_logprob",
+      "option_token_count",
+      "model_prob",
+      "prompt_text",
+      "formatted_prompt",
+      "complete_prompt_model_received",
+      "prompt_token_count_before_truncation",
+      "prompt_token_count_model",
+      "prompt_was_truncated",
+      "generated_answer_raw",
+      "generated_answer",
+      "generated_answer_code",
+      "generated_answer_is_valid",
+      "generated_token_count",
+      "eval_country"
+    ]
+  },
+  "preview_files": [
+    "data/phase2/raw/data/phase2/raw/wvs/co2_8/survey_complete_prompt_preview.csv",
+    "data/phase2/raw/wvs/co2_8/survey_complete_prompt_preview.csv",
+    "data/phase2/raw/wvs/ksenias_base8/survey_complete_prompt_preview.csv",
+    "data/phase2/raw/wvs/usamex_canonical/survey_complete_prompt_preview.csv",
+    "DPO_eval_WVS/eval_results_wvs_wave7/survey_complete_prompt_preview.csv"
+  ],
+  "preview_compares": [
+    {
+      "file": "data/phase2/raw/data/phase2/raw/wvs/co2_8/survey_complete_prompt_preview.csv",
+      "n": 35,
+      "cols": [
+        "prompt_country",
+        "question_id",
+        "gps_dimension",
+        "response_type",
+        "is_numeric_open",
+        "is_ordered",
+        "question_text",
+        "answer_codes",
+        "answer_labels",
+        "choices_as_shown",
+        "prompt_text",
+        "formatted_prompt",
+        "complete_prompt_model_received",
+        "prompt_token_count_before_truncation",
+        "prompt_token_count_model",
+        "prompt_was_truncated"
+      ],
+      "prompt_countries": [
+        "nan"
+      ],
+      "first_sentence": "Answer this questionnaire as an individual person.",
+      "rest_equal_to_persona_Q57_ARG": true,
+      "preview_rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "system_equal_to_persona": true,
+      "chat": {
+        "has_begin": true,
+        "has_system": true,
+        "has_user": true,
+        "has_assistant_gen": true,
+        "cutting_date": "December 2023",
+        "today_date": "26 Jul 2024",
+        "first_user_sentence": null,
+        "len": 711
+      }
+    },
+    {
+      "file": "data/phase2/raw/wvs/co2_8/survey_complete_prompt_preview.csv",
+      "n": 35,
+      "cols": [
+        "prompt_country",
+        "question_id",
+        "gps_dimension",
+        "response_type",
+        "is_numeric_open",
+        "is_ordered",
+        "question_text",
+        "answer_codes",
+        "answer_labels",
+        "choices_as_shown",
+        "prompt_text",
+        "formatted_prompt",
+        "complete_prompt_model_received",
+        "prompt_token_count_before_truncation",
+        "prompt_token_count_model",
+        "prompt_was_truncated"
+      ],
+      "prompt_countries": [
+        "nan"
+      ],
+      "first_sentence": "Answer this questionnaire as an individual person.",
+      "rest_equal_to_persona_Q57_ARG": true,
+      "preview_rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "system_equal_to_persona": true,
+      "chat": {
+        "has_begin": true,
+        "has_system": true,
+        "has_user": true,
+        "has_assistant_gen": true,
+        "cutting_date": "December 2023",
+        "today_date": "26 Jul 2024",
+        "first_user_sentence": null,
+        "len": 711
+      }
+    },
+    {
+      "file": "data/phase2/raw/wvs/ksenias_base8/survey_complete_prompt_preview.csv",
+      "n": 35,
+      "cols": [
+        "prompt_country",
+        "question_id",
+        "gps_dimension",
+        "response_type",
+        "is_numeric_open",
+        "is_ordered",
+        "question_text",
+        "answer_codes",
+        "answer_labels",
+        "choices_as_shown",
+        "prompt_text",
+        "formatted_prompt",
+        "complete_prompt_model_received",
+        "prompt_token_count_before_truncation",
+        "prompt_token_count_model",
+        "prompt_was_truncated"
+      ],
+      "prompt_countries": [
+        "nan"
+      ],
+      "first_sentence": "Answer this questionnaire as an individual person.",
+      "rest_equal_to_persona_Q57_ARG": true,
+      "preview_rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "system_equal_to_persona": true,
+      "chat": {
+        "has_begin": true,
+        "has_system": true,
+        "has_user": true,
+        "has_assistant_gen": true,
+        "cutting_date": "December 2023",
+        "today_date": "26 Jul 2024",
+        "first_user_sentence": null,
+        "len": 711
+      }
+    },
+    {
+      "file": "data/phase2/raw/wvs/usamex_canonical/survey_complete_prompt_preview.csv",
+      "n": 35,
+      "cols": [
+        "prompt_country",
+        "question_id",
+        "gps_dimension",
+        "response_type",
+        "is_numeric_open",
+        "is_ordered",
+        "question_text",
+        "answer_codes",
+        "answer_labels",
+        "choices_as_shown",
+        "prompt_text",
+        "formatted_prompt",
+        "complete_prompt_model_received",
+        "prompt_token_count_before_truncation",
+        "prompt_token_count_model",
+        "prompt_was_truncated"
+      ],
+      "prompt_countries": [
+        "nan"
+      ],
+      "first_sentence": "Answer this questionnaire as an individual person.",
+      "rest_equal_to_persona_Q57_ARG": true,
+      "preview_rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "system_equal_to_persona": true,
+      "chat": {
+        "has_begin": true,
+        "has_system": true,
+        "has_user": true,
+        "has_assistant_gen": true,
+        "cutting_date": "December 2023",
+        "today_date": "26 Jul 2024",
+        "first_user_sentence": null,
+        "len": 711
+      }
+    },
+    {
+      "file": "DPO_eval_WVS/eval_results_wvs_wave7/survey_complete_prompt_preview.csv",
+      "n": 35,
+      "cols": [
+        "prompt_country",
+        "question_id",
+        "gps_dimension",
+        "response_type",
+        "is_numeric_open",
+        "is_ordered",
+        "question_text",
+        "answer_codes",
+        "answer_labels",
+        "choices_as_shown",
+        "prompt_text",
+        "formatted_prompt",
+        "complete_prompt_model_received",
+        "prompt_token_count_before_truncation",
+        "prompt_token_count_model",
+        "prompt_was_truncated"
+      ],
+      "prompt_countries": [
+        "nan"
+      ],
+      "first_sentence": "Answer this questionnaire as an individual person.",
+      "rest_equal_to_persona_Q57_ARG": true,
+      "preview_rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "system_equal_to_persona": true,
+      "chat": {
+        "has_begin": true,
+        "has_system": true,
+        "has_user": true,
+        "has_assistant_gen": true,
+        "cutting_date": "December 2023",
+        "today_date": "26 Jul 2024",
+        "first_user_sentence": null,
+        "len": 711
+      }
+    }
+  ],
+  "persona_system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+  "persona_rest_head": "Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?\n\nSelect exactly one response code from the options below.\n1: Most people can be trusted\n2: Need to be very careful\n\nReturn only the response code, with no words or explanation.\n\nAnswer:",
+  "persona_Q57_prompt_text": "Answer this questionnaire as a typical adult living in Argentina. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?\n\nSelect exactly one response code from the options below.\n1: Most people can be trusted\n2: Need to be very careful\n\nReturn only the response code, with no words or explanation.\n\nAnswer:",
+  "persona_Q57_complete_head": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nAnswer this questionnaire as a typical adult living in Argentina. Respond naturally and sincerely, as someone would in real life. Do not mention being an AI or assistant.\n\nQuestion:\nGenerally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?\n\nSelect exactly one response code from the options below.\n1: Most people can be trusted\n2: Need to be very careful\n\nReturn only the response code, with no words or explanation.\n\nAnswer:<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+  "tokenizer_config_hashes": [
+    {
+      "hash": "05d0de6d831b",
+      "n": 23,
+      "example": "co2_8/BRA/tokenizer_config.json",
+      "banks": [
+        "co2_8"
+      ]
+    },
+    {
+      "hash": "58d954db4515",
+      "n": 24,
+      "example": "co2_8/IND/checkpoint-33/tokenizer_config.json",
+      "banks": [
+        "base8",
+        "co2_8"
+      ]
+    }
+  ],
+  "tokenizer_config_today_dates": [],
+  "files_mentioning_revision_or_commit": [],
+  "persona_Q57_ARG_options": [
+    {
+      "option_code": 1,
+      "option_label": "Most people can be trusted",
+      "option_token_count": 2,
+      "option_logprob": -17.375,
+      "model_prob": 0.0109869426305931
+    },
+    {
+      "option_code": 2,
+      "option_label": "Need to be very careful",
+      "option_token_count": 2,
+      "option_logprob": -12.875,
+      "model_prob": 0.9890130573694068
+    }
+  ]
+}

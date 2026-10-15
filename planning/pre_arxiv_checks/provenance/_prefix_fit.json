@@ -1,0 +1,540 @@
+{
+  "persona_USA": {
+    "n_codes": 181,
+    "conflicts": [],
+    "token_count_hist": {
+      "2": 94,
+      "3": 87
+    },
+    "fits": [
+      {
+        "prefix": "''",
+        "ok": false,
+        "n_mismatch": 181,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "100",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "16",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "17",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 1
+          }
+        ]
+      },
+      {
+        "prefix": "' '",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n '",
+        "ok": false,
+        "n_mismatch": 181,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "100",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "16",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "17",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 3
+          }
+        ]
+      },
+      {
+        "prefix": "' \\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\t'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      }
+    ],
+    "non_digit_codes": []
+  },
+  "adapter_USA_canonical": {
+    "n_codes": 158,
+    "conflicts": [],
+    "token_count_hist": {
+      "2": 84,
+      "3": 74
+    },
+    "fits": [
+      {
+        "prefix": "''",
+        "ok": false,
+        "n_mismatch": 158,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "1927",
+            "obs": 3,
+            "got": 2
+          },
+          {
+            "code": "1928",
+            "obs": 3,
+            "got": 2
+          },
+          {
+            "code": "1929",
+            "obs": 3,
+            "got": 2
+          }
+        ]
+      },
+      {
+        "prefix": "' '",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n '",
+        "ok": false,
+        "n_mismatch": 158,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "1927",
+            "obs": 3,
+            "got": 4
+          },
+          {
+            "code": "1928",
+            "obs": 3,
+            "got": 4
+          },
+          {
+            "code": "1929",
+            "obs": 3,
+            "got": 4
+          }
+        ]
+      },
+      {
+        "prefix": "' \\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\t'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      }
+    ],
+    "non_digit_codes": []
+  },
+  "adapter_BRA": {
+    "n_codes": 177,
+    "conflicts": [],
+    "token_count_hist": {
+      "2": 92,
+      "3": 85
+    },
+    "fits": [
+      {
+        "prefix": "''",
+        "ok": false,
+        "n_mismatch": 177,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "100",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "16",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "17",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 1
+          }
+        ]
+      },
+      {
+        "prefix": "' '",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n '",
+        "ok": false,
+        "n_mismatch": 177,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "100",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "16",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "17",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 3
+          }
+        ]
+      },
+      {
+        "prefix": "' \\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\t'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      }
+    ],
+    "non_digit_codes": []
+  },
+  "adapter_ARG": {
+    "n_codes": 173,
+    "conflicts": [],
+    "token_count_hist": {
+      "2": 91,
+      "3": 82
+    },
+    "fits": [
+      {
+        "prefix": "''",
+        "ok": false,
+        "n_mismatch": 173,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 1
+          },
+          {
+            "code": "1921",
+            "obs": 3,
+            "got": 2
+          },
+          {
+            "code": "1923",
+            "obs": 3,
+            "got": 2
+          },
+          {
+            "code": "1924",
+            "obs": 3,
+            "got": 2
+          }
+        ]
+      },
+      {
+        "prefix": "' '",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\n '",
+        "ok": false,
+        "n_mismatch": 173,
+        "examples": [
+          {
+            "code": "0",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "1",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "10",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "18",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "19",
+            "obs": 2,
+            "got": 3
+          },
+          {
+            "code": "1921",
+            "obs": 3,
+            "got": 4
+          },
+          {
+            "code": "1923",
+            "obs": 3,
+            "got": 4
+          },
+          {
+            "code": "1924",
+            "obs": 3,
+            "got": 4
+          }
+        ]
+      },
+      {
+        "prefix": "' \\n'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      },
+      {
+        "prefix": "'\\t'",
+        "ok": true,
+        "n_mismatch": 0,
+        "examples": []
+      }
+    ],
+    "non_digit_codes": []
+  },
+  "cross_vs_persona_USA": {
+    "persona_USA": {
+      "shared": 181,
+      "mismatch": [],
+      "n_mismatch": 0
+    },
+    "adapter_USA_canonical": {
+      "shared": 158,
+      "mismatch": [],
+      "n_mismatch": 0
+    },
+    "adapter_BRA": {
+      "shared": 177,
+      "mismatch": [],
+      "n_mismatch": 0
+    },
+    "adapter_ARG": {
+      "shared": 173,
+      "mismatch": [],
+      "n_mismatch": 0
+    }
+  }
+}

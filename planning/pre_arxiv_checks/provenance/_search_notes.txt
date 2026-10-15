@@ -1,0 +1,30 @@
+DPO_eval_WVS/DPO_WVS_evaluation_selective_skip_unavailable_questions (1).ipynb :: ['COMPLETION_PREFIX']
+DPO_eval_WVS/DPO_survey_distribution_evaluation.ipynb :: ['COMPLETION_PREFIX']
+DPO_eval_WVS/GPS_vs_WVS_evaluation_analysis.ipynb :: ['COMPLETION_PREFIX']
+DPO_train_test/preprocessing_without_gpu_multi_country.ipynb :: ['commit']
+replication/evaluation.ipynb :: ['commit']
+analysis/phase2/13_unified_comparison.py:6:   - persona_base    : same base + "typical adult living in COUNTRY" (new run)
+analysis/phase2/13_unified_comparison.py:39: PERSONA_CSV = RAW / "persona_baseline" / "model_option_probabilities_persona.csv"
+analysis/phase2/13_unified_comparison.py:111:     df["model"] = "persona_base"
+analysis/phase2/13_unified_comparison.py:302:     metrics["model"] = metrics["model"].replace("persona_base", "persona")
+analysis/phase2/13_unified_comparison.py:321:     comp_opts["model"] = comp_opts["model"].replace("persona_base", "persona")
+analysis/phase2/V1_VERIFICATION_LEDGER.md:18:    `10_development_restrictions` `11_twin_gdp` `12_persona_baseline` `13_unified_comparison`.
+analysis/phase2/12_persona_baseline.py:2: """12_persona_baseline.py — country-named prompt baseline analysis.
+analysis/phase2/12_persona_baseline.py:6:   - persona_base (base + "typical adult living in COUNTRY", new Colab run)
+analysis/phase2/12_persona_baseline.py:14:   - /tmp/persona_out/model_option_probabilities_persona.csv (Colab download)
+analysis/phase2/12_persona_baseline.py:16: Run: unset PYTHONPATH && .venv/bin/python analysis/phase2/12_persona_baseline.py
+analysis/phase2/12_persona_baseline.py:29: PERSONA_CSV = pathlib.Path("/tmp/persona_out/model_option_probabilities_persona.csv")
+analysis/phase2/12_persona_baseline.py:146:     persona["model"] = "persona_base"
+analysis/phase2/12_persona_baseline.py:162:     cols = [c for c in ["base", "persona_base"] + [f"{c}_adapter" for c in ADAPTERS]
+analysis/phase2/12_persona_baseline.py:175:     pers_t = m_all[m_all["model"] == "persona_base"].groupby("eval_country")["tv_distance"].mean()
+analysis/phase2/README.md:20: | `12_persona_baseline.py` | `persona_vs_base_vs_adapter_tvd.csv`, `persona_pooled_shape.csv`, `persona_summary_by_country.csv` | Country-named prompt baseline (base + persona, 16 countries) vs adapte
+analysis/phase2/README.md:86:   `data/phase2/raw/wvs/persona_baseline/`, gitignored; scripts
+analysis/phase2/README.md:87:   `12_persona_baseline.py`, `13_unified_comparison.py`).
+analysis/phase2/18_2x2_analysis.py:7:   base_persona        existing persona_base run               -> persona files
+analysis/phase2/18_2x2_analysis.py:12:   data/phase2/raw/wvs/persona_baseline/model_option_probabilities_persona.csv (base persona)
+analysis/phase2/18_2x2_analysis.py:95:     df = pd.read_csv(RAW / "persona_baseline" / "model_option_probabilities_persona.csv")
+analysis/phase2/19_softmax_readout.py:83:     d = RAW / "persona_baseline"
+analysis/phase2/19_softmax_readout.py:85:         f = d / f"model_option_probabilities_persona_base_on_{c}.csv"
+analysis/phase2/19_softmax_readout.py:87:             fam["persona"][f"persona_base|{c}"] = f
+analysis/phase2/19_softmax_readout.py:288:                        np.where(qm.model == "persona_base", "persona", "adapter"))
+analysis/phase2/14_report_figures.py:38: PERSONA_CSV = RAW / "persona_baseline" / "model_option_probabilities_persona.csv"

@@ -1,0 +1,317 @@
+=== selective cell 6 ===
+# ----------------------------
+# Model and path configuration
+# ----------------------------
+
+BASE_MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
+
+DATA_DIR = Path("/content/drive/MyDrive/DPO/DPO/eval_new_data")
+DATA_DIR_ADAPTER = Path("/content/drive/MyDrive/DPO/DPO/")
+RESULTS_DIR = DATA_DIR / "eval_results_wvs_wave7_new"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+QUESTION_MAP_FILE = DATA_DIR / "question_map_wvs_edited.csv"
+
+DATA_COUNTRY_CODES = [
+    "CHN",
+    "JPN",
+    "GBR",
+    "USA",
+    "MEX",
+    "ARG",
+    "DEU",
+    "RUS",
+]
+
+ADAPTER_COUNTRY_CODES = [
+    "CHN",
+    "JPN",
+    "GBR",
+    "USA",
+    "MEX",
+    "ARG",
+    "DEU",
+    "RUS",
+]
+
+# Evaluation selection mode:
+#   "all"      -> evaluate every adapter on every country dataset
+#   "self"     -> evaluate each adapter only on its matching country dataset
+#   "selected" -> use EVALUATION_TARGETS below
+EVALUATION_MODE = "self"
+
+# Used only when EVALUATION_MODE == "selected".
+# Keys are adapter country codes; values are country datasets to evaluate on.
+# Adapters omitted from this dictionary, or mapped to [], are skipped entirely.
+#
+# Example:
+# EVALUATION_TARGETS = {
+#     "USA": ["USA", "MEX"],
+#     "MEX": ["USA", "MEX"],
+# }
+EVALUATION_TARGETS = {
+    "USA": ["USA", "MEX"],
+    "MEX": ["USA", "MEX"],
+}
+
+# Human-readable country names used in prompts/labels when needed.
+COUNTRY_NAMES = {
+    "CHN": "China",
+    "JPN": "Japan",
+    "GBR": "Great Britain",
+    "USA": "the United States",
+    "MEX": "Mexico",
+    "ARG": "Argentina",
+    "DEU": "Germany",
+    "RUS": "Russia",
+}
+
+# Adapter-directory naming.
+# Only USA differs: its data code is USA but its adapter folder is US.
+PATH_COUNTRY_CODES = {
+    "USA": "US",
+    "CHN": "CHN",
+    "JPN": "JPN",
+    "GBR": "GBR",
+    "MEX": "MEX",
+    "ARG": "ARG",
+    "DEU": "DEU",
+    "RUS": "RUS",
+}
+
+# Survey files for every listed country.
+# Expected naming convention:
+#   CHN_WVS_wave7.parquet
+#   JPN_WVS_wave7.parquet
+#   ...
+#   USA_WVS_wave7.parquet
+SURVEY_FILES = {
+    country: DATA_DIR / f"{country}_WVS_wave7.parquet"
+    for country in DATA_COUNTRY_CODES
+}
+
+# Adapter directories.
+DATA_DIR_ADAPTER = Path("/content/drive/MyDrive/DPO/DPO/dpo_qlora_adapters")
+
+ADAPTER_DIRS = {
+    country: DATA_DIR_ADAPTER / PATH_COUNTRY_CODES.get(country, country)
+    for country in ADAPTER_COUNTRY_CODES
+}
+
+# Set to False to ignore survey weights entirely.
+USE_SURVEY_WEIGHTS = True
+
+# Assumes all WVS country files use the same "weight" column.
+WEIGHT_COLUMNS = {
+    country: "weight"
+    for country in DATA_COUNTRY_CODES
+}
+
+# The training/evaluation prompt did not explicitly mention a country.
+# Keep False for the primary test of what the adapter itself learned.
+PROMPT_COUNTRY_CONDITIONING = False
+
+# Numerical scoring settings.
+MAX_PROMPT_TOKENS = 768
+MAX_COMPLETION_TOKENS = 16
+OPTION_SCORE_TEMPERATURE = 1.0
+LENGTH_NORMALIZE_OPTION_LOGPROBS = False
+COMPLETION_PREFIX = " "
+
+# Generate one deterministic answer per model/question in addition to scoring
+# all valid response options.
+SAVE_GENERATED_ANSWERS = True
+GENERATION_MAX_NEW_TOKENS = 32
+GENERATION_DO_SAMPLE = False
+
+# Set to a small integer for a smoke test; None evaluates all questions.
+MAX_QUESTIONS = None
+
+# Numeric-open questions are evaluated over the union of observed valid
+# integer responses in the active population files.
+INCLUDE_NUMERIC_OPEN = True
+NUMERIC_VALID_RANGES = {
+    "Q261": (1900, 2010),  # year of birth
+    "Q262": (15, 110),     # age in years
+}
+MAX_NUMERIC_SUPPORT = 150
+
+# These response codes are categories rather than ordered positions.
+NOMINAL_QUESTION_IDS = {"Q174", "Q260"}
+
+BOOTSTRAP_REPS = 2000
+RANDOM_SEED = 42
+EPS = 1e-12
+
+
+def build_evaluation_plan():
+    mode = str(EVALUATION_MODE).strip().lower()
+
+    if mode == "all":
+        plan = {
+            adapter_country: list(DATA_COUNTRY_CODES)
+            for adapter_country in ADAPTER_COUNTRY_CODES
+        }
+
+    elif mode == "self":
+        plan = {}
+
+        for adapter_country in ADAPTER_COUNTRY_CODES:
+            if adapter_country not in DATA_COUNTRY_CODES:
+                raise ValueError(
+                    f"Self-evaluation requested for {adapter_country}, "
+                    "but no matching country dataset is listed in "
+                    "DATA_COUNTRY_CODES."
+                )
+
+            plan[adapter_country] = [adapter_country]
+
+    elif mode == "selected":
+        unknown_adapters = set(EVALUATION_TARGETS).difference(
+            ADAPTER_COUNTRY_CODES
+        )
+
+        if unknown_adapters:
+            raise ValueError(
+                "EVALUATION_TARGETS contains adapters not listed in "
+                "ADAPTER_COUNTRY_CODES: "
+                f"{sorted(unknown_adapters)}"
+            )
+
+        plan = {}
+
+        for adapter_country in ADAPTER_COUNTRY_CODES:
+            targets = list(
+                EVALUATION_TARGETS.get(adapter_country, [])
+            )
+
+            # Remove duplicates while preserving order.
+            targets = list(dict.fromkeys(targets))
+
+            unknown_targets = set(targets).difference(
+                DATA_COUNTRY_CODES
+            )
+
+            if unknown_targets:
+                raise ValueError(
+                    f"{adapter_country} has unknown evaluation datasets: "
+                    f"{sorted(unknown_targets)}"
+                )
+
+            plan[adapter_country] = targets
+
+    else:
+        raise ValueError(
+            'EVALUATION_MODE must be one of: '
+            '"all", "self", or "selected".'
+        )
+
+    if not any(plan.values()):
+        raise ValueError(
+            "The evaluation plan contains no adapter/dataset evaluations."
+        )
+
+    return plan
+
+
+EVALUATION_PLAN = build_evaluation_plan()
+
+ACTIVE_ADAPTER_COUNTRIES = [
+    country
+    for country in ADAPTER_COUNTRY_CODES
+    if EVALUATION_PLAN.get(country)
+]
+
+ACTIVE_EVAL_COUNTRIES = [
+    country
+    for country in DATA_COUNTRY_CODES
+    if any(
+        country in targets
+        for targets in EVALUATION_PLAN.values()
+    )
+]
+
+
+# ----------------------------
+# Validate configuration
+# ----------------------------
+
+print("Question map:", QUESTION_MAP_FILE)
+
+print("\nSurvey files:")
+for country, survey_file in SURVEY_FILES.items():
+    print(f"  {country}: {survey_file}")
+
+print("\nAdapter dirs:")
+for country, adapter_dir in ADAPTER_DIRS.items():
+    print(f"  {country}: {adapter_dir}")
+
+print("\nResults dir:", RESULTS_DIR)
+print("Evaluation mode:", EVALUATION_MODE)
+
+print("\nEvaluation plan:")
+for adapter_country in ACTIVE_ADAPTER_COUNTRIES:
+    print(
+        f"  {adapter_country}_adapter -> "
+        f"{EVALUATION_PLAN[adapter_country]}"
+    )
+
+print("\nBase model comparison datasets:", ACTIVE_EVAL_COUNTRIES)
+
+=== selective cell 17 head ===
+# This cell loads only the tokenizer, not the language model.
+prompt_preview_tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME)
+if prompt_preview_tokenizer.pad_token is None:
+    prompt_preview_tokenizer.pad_token = prompt_preview_tokenizer.eos_token
+
+
+def build_prompt_preview_dataframe(question_specs, tokenizer):
+    rows = []
+
+    if PROMPT_COUNTRY_CONDITIONING:
+        prompt_countries = ACTIVE_EVAL_COUNTRIES
+    else:
+        prompt_countries = [None]
+
+    for prompt_country in prompt_countries:
+        if prompt_country is None:
+            # For an unconditioned prompt, show each question that is valid for
+            # at least one active evaluation dataset.
+            valid_question_ids = set().union(*[
+                VALID_QUESTIONS_BY_COUNTRY.get(country, set())
+                for country in ACTIVE_EVAL_COUNTRIES
+            ])
+        else:
+            # Country-conditioned prompts only need questions that actually
+            # have population responses for that country.
+            valid_question_ids = VALID_QUESTIONS_BY_COUNTRY.get(
+                prompt_country,
+                set(),
+            )
+
+        specs_to_preview = [
+            spec
+            for spec in question_specs
+            if spec["question_id"] in valid_question_ids
+        ]
+
+        for spec in specs_to_preview:
+            prompt_text = build_survey_user_prompt(
+                spec,
+                prompt_country=prompt_country,
+
+=== adapter_config keys ===
+{
+  "base_model_name_or_path": "meta-llama/Llama-3.1-8B-Instruct",
+  "revision": null,
+  "peft_type": "LORA"
+}
+adapter_config.json:4:   "base_model_name_or_path": "meta-llama/Llama-3.1-8B-Instruct",
+adapter_config.json:24:   "revision": null,
+runner:16: MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
+runner:17: HF_REPO = "Bonorinoa/SCA2-phase2-adapters"
+runner:71:     tok = AutoTokenizer.from_pretrained(MODEL_ID)
+runner:72:     model = AutoModelForCausalLM.from_pretrained(
+runner:73:         MODEL_ID, quantization_config=bnb, device_map="auto",
+runner:81:     print(f"loading adapter {HF_REPO} subfolder={sub}")
+runner:82:     pm = PeftModel.from_pretrained(model, HF_REPO, subfolder=sub)

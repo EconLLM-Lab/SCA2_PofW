@@ -1,0 +1,37 @@
+{
+  "inputs": {
+    "gps_z": {
+      "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/synthetic_generation/outputs/gps_sign_relabel_all/gps_z_vectors.json",
+      "sha256": "02972f0ec4a8b702fa84e73cc5760264b44a62f80900279cd00881009fe5ee0d"
+    },
+    "human_means": {
+      "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/analysis/phase2/outputs/paper_a/human_item_means_42.csv",
+      "sha256": "97b5d33c553a3eb807af018fb355e70b05d5b749466e6c681d421d3834de554e"
+    },
+    "model_probs": {
+      "path": "/Users/bonorinoa/Hermes/Projects/SCA2/sprint_2026-10-11/paper-b-20261011/model_probs.csv",
+      "sha256": "02390efff0369f7fccfd4073679204cb5b204a8084e090dbc291dac71fe304c2"
+    }
+  },
+  "input_membership": {
+    "countries": 42,
+    "battery_items": 23,
+    "profiles": 26,
+    "multi_member_profiles": 12
+  },
+  "counts": {
+    "three_column_rows": 21,
+    "sensitivity_rows": 21,
+    "ledger_rows": 966,
+    "reliability_rows": 144,
+    "base_difference_rows": 42
+  },
+  "seeds": {
+    "profile_bootstrap": 20261011,
+    "country_bootstrap": 20260905
+  },
+  "draws_baseline": 2000,
+  "figures": [
+    "three_column_fig.png"
+  ]
+}

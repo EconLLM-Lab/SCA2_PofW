@@ -1,0 +1,13 @@
+{
+  "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+  "prompt_format_version": "questionnaire_situation_v1",
+  "max_prompt_tokens": 256,
+  "max_completion_tokens": 256,
+  "train_frac": 0.8,
+  "seed": 42,
+  "n_train_prompts": 526,
+  "n_pairs_total": 1052,
+  "n_pairs_computed_this_run": 1052,
+  "elapsed_min": 7.86,
+  "bank_run_id": "gps_sign_relabel_all_20260816_004545Z"
+}

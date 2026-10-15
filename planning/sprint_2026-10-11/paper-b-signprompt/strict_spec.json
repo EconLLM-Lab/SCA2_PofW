@@ -1,0 +1,564 @@
+{
+  "spec_sha256": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
+  "battery": "strict",
+  "sanitized": false,
+  "n_questions": 23,
+  "questions": [
+    {
+      "question_id": "Q43",
+      "response_type": "single_choice_3",
+      "codes": [
+        "1",
+        "2",
+        "3"
+      ],
+      "labels": [
+        "Good thing",
+        "Don't mind",
+        "Bad thing"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "patience",
+      "question_text": "If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?"
+    },
+    {
+      "question_id": "Q50",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "Completely dissatisfied",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Completely satisfied"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "patience",
+      "question_text": "How satisfied are you with the financial situation of your household on a scale from 1 to 10?"
+    },
+    {
+      "question_id": "Q57",
+      "response_type": "single_choice_2",
+      "codes": [
+        "1",
+        "2"
+      ],
+      "labels": [
+        "Most people can be trusted",
+        "Need to be very careful"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?"
+    },
+    {
+      "question_id": "Q58",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Trust completely",
+        "Trust somewhat",
+        "Do not trust very much",
+        "Do not trust at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much do you trust your family: completely, somewhat, not very much or not at all?"
+    },
+    {
+      "question_id": "Q59",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Trust completely",
+        "Trust somewhat",
+        "Do not trust very much",
+        "Do not trust at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much do you trust your neighborhood: completely, somewhat, not very much or not at all?"
+    },
+    {
+      "question_id": "Q60",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Trust completely",
+        "Trust somewhat",
+        "Do not trust very much",
+        "Do not trust at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much do you trust people you know personally: completely, somewhat, not very much or not at all?"
+    },
+    {
+      "question_id": "Q61",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Trust completely",
+        "Trust somewhat",
+        "Do not trust very much",
+        "Do not trust at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?"
+    },
+    {
+      "question_id": "Q62",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Trust completely",
+        "Trust somewhat",
+        "Do not trust very much",
+        "Do not trust at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much do you trust people of another religion: completely, somewhat, not very much or not at all?"
+    },
+    {
+      "question_id": "Q63",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Trust completely",
+        "Trust somewhat",
+        "Do not trust very much",
+        "Do not trust at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?"
+    },
+    {
+      "question_id": "Q64",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "A great deal",
+        "Quite a lot",
+        "Not very much",
+        "None at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?"
+    },
+    {
+      "question_id": "Q73",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "A great deal",
+        "Quite a lot",
+        "Not very much",
+        "None at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "trust",
+      "question_text": "How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?"
+    },
+    {
+      "question_id": "Q81",
+      "response_type": "single_choice_4",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "A great deal",
+        "Quite a lot",
+        "Not very much",
+        "None at all"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "posrecip",
+      "question_text": "How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?"
+    },
+    {
+      "question_id": "Q99",
+      "response_type": "single_choice_3",
+      "codes": [
+        "2",
+        "1",
+        "0"
+      ],
+      "labels": [
+        "Active member",
+        "Inactive member",
+        "Don't belong"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "altruism",
+      "question_text": "Are you an active member, an inactive member, or not a member of an environmental organization?"
+    },
+    {
+      "question_id": "Q101",
+      "response_type": "single_choice_3",
+      "codes": [
+        "2",
+        "1",
+        "0"
+      ],
+      "labels": [
+        "Active member",
+        "Inactive member",
+        "Don't belong"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "altruism",
+      "question_text": "Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?"
+    },
+    {
+      "question_id": "Q103",
+      "response_type": "single_choice_3",
+      "codes": [
+        "2",
+        "1",
+        "0"
+      ],
+      "labels": [
+        "Active member",
+        "Inactive member",
+        "Don't belong"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "altruism",
+      "question_text": "Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?"
+    },
+    {
+      "question_id": "Q106",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "risktaking",
+      "question_text": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?"
+    },
+    {
+      "question_id": "Q107",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "risktaking",
+      "question_text": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?"
+    },
+    {
+      "question_id": "Q109",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "risktaking",
+      "question_text": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?"
+    },
+    {
+      "question_id": "Q176",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "Completely agree",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Completely disagree"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "negrecip",
+      "question_text": "On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?"
+    },
+    {
+      "question_id": "Q177",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "Never justifiable",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Always justifiable"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "negrecip",
+      "question_text": "Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale."
+    },
+    {
+      "question_id": "Q178",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "Never justifiable",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Always justifiable"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "risktaking",
+      "question_text": "Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale."
+    },
+    {
+      "question_id": "Q179",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "Never justifiable",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Always justifiable"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "negrecip",
+      "question_text": "Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale."
+    },
+    {
+      "question_id": "Q195",
+      "response_type": "scale_1_10",
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "labels": [
+        "Never justifiable",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Always justifiable"
+      ],
+      "is_numeric_open": false,
+      "is_ordered": true,
+      "gps_dimension": "negrecip",
+      "question_text": "Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale."
+    }
+  ]
+}

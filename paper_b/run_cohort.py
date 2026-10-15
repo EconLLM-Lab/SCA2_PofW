@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -91,8 +92,18 @@ def main() -> int:
     t0 = time.time()
     for i, cc in enumerate(countries, 1):
         rec = m["countries"].get(cc, {})
-        # resume on the filesystem fact (adapter present), not on manifest bookkeeping
-        if (C.ADAPTER_DIR / cc / "adapter_config.json").exists():
+        out = C.ADAPTER_DIR / cc
+        record_path = out / "run_record.json"
+        if (out / "adapter_config.json").exists():
+            if os.environ.get("SCA2_PB_PROTOCOL") == "bank2":
+                recorded = ""
+                if record_path.is_file():
+                    recorded = json.loads(record_path.read_text()).get("bank_run_id", "")
+                if recorded == C.BANK_RUN_ID:
+                    print(f"[{i}/{len(countries)}] {cc}: this bank already trained, skip")
+                    continue
+                print(f"[{i}/{len(countries)}] {cc}: adapter present for a different bank, refusing")
+                return 2
             print(f"[{i}/{len(countries)}] {cc}: adapter present, skip")
             continue
         print(f"[{i}/{len(countries)}] {cc}: training...")

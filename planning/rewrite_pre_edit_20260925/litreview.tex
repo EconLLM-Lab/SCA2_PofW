@@ -1,0 +1,24 @@
+\section{Related research}\label{sec:litreview}
+Language models are used both to simulate survey responses and to adapt outputs to cultural communities. These purposes overlap technically, but the information supplied to a model and the evaluation target differ. Prompted synthetic respondents can resemble human samples on selected tasks \cite{argyle2023,horton2023}; subsequent studies document sensitivity, compressed variation, and misportrayal of identity groups \cite{bisbee2024,boelaert2025,wang2025}. Prior synthetic cultural-agent work uses cultural descriptions to study behavior in experiments \cite{capra2025}. We extend this research agenda by making aggregate preference signs the explicit population-specific labeling input.
+
+Prompted simulation supplies a population description at inference and reads associations already present in the model. A structural demand or simulated-method-of-moments exercise would invert a named preference parameter from observed choice probabilities. We compile declared aggregate signs into a scoring policy. The GPS--WVS comparisons report criterion associations for that construction.
+
+Fine-tuning and cultural adaptation already occupy much of this methodological space. Table~\ref{tab:positioning} identifies close comparisons. CultureLLM uses WVS seed data and semantic augmentation for culture-specific fine-tuning \cite{li2024culture}. Cao et al.\ fit country-level survey response distributions and examine cross-survey evaluation \cite{cao2025}. SubPOP learns from subpopulation survey distributions and tests transfer to new survey settings \cite{suh2025}. These studies preclude a broad claim to first use cultural fine-tuning, aggregate survey information, or cross-survey evaluation.
+
+\begin{table}[htbp]\centering\small
+\caption{Selected methodological comparisons. The table describes inputs and targets; it is not an exhaustive priority claim.}\label{tab:positioning}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{29mm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}\toprule
+Approach & Information supplied & Fitting or evaluation target\\\midrule
+CultureLLM \cite{li2024culture} & WVS seeds and semantic augmentation & Culture-specific adaptation\\
+Cao et al.\ \cite{cao2025} & Country survey distributions & Distributional fit and cross-survey evaluation\\
+SubPOP \cite{suh2025} & Subpopulation survey responses & Distribution prediction and transfer\\
+Jung and Kim \cite{jung2026} & Korean cultural policy and synthetic triplets & DPO for cultural response coherence\\
+Krsteski et al.\ \cite{krsteski2026} & Limited human responses & Allocation to synthesis and rectification\\
+Present construction & Aggregate preference signs and a shared contrast bank & Joint adapters; country-unconditioned external scoring\\\bottomrule
+\end{tabularx}\end{table}
+
+Culturally grounded DPO is also established as an approach. Jung and Kim generate preference triplets around Korean legal and social norms and fit cultural response policies \cite{jung2026}. Our narrower distinction is the route from economic-preference signs through a shared pair bank to scoring on a separate instrument without a country name. Whether every element of this combination is unprecedented is not established by the present literature comparison.
+
+The data requirement differs from direct fitting of a new survey's response distributions: construction uses existing aggregate anchors and synthetic contrasts before human responses to the new instrument are available. That distinction does not imply that scarce human observations should always be spent on training. Krsteski et al.\ examine the roles of prompting, fine-tuning, and statistical rectification when human data are limited \cite{krsteski2026}. Our proposed pre-pilot use must therefore be compared with alternatives that allocate human measurement effort differently.
+
+The econometric interpretation follows work treating language models as conditional response distributions \cite{ludwig2026}, with DPO providing a reference-policy parameterization of Bradley--Terry comparisons \cite{rafailov2023}. The measurement interpretation requires more caution. Construct validity depends on cumulative evidence about the relation between a theoretical attribute and its measures \cite{campbellfiske1959}; cross-national applications also require attention to comparability \cite{steenkamp1998,davidov2014}. Agreement between an anchored policy and a survey may have several explanations, as may disagreement. We therefore report anchor retention and human agreement separately and treat the construction as a complement to human measurement.

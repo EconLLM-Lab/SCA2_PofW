@@ -1,0 +1,24 @@
+{
+  "run_id": "paper-b-20261011",
+  "model": "base",
+  "adapter_revision": null,
+  "adapter_sha256": "08a20b291e447c957dd242b190bd2157b260e438d7ebe278fd953e891012d983",
+  "code_revision_sha256": "f3279d6c85524a14dc0d591c1d169553e2380d839dd28062f5214b4984f1ba12",
+  "spec_sha256": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
+  "csv_sha256": "125c1d94afce524a8aa8fa46efba271f2f2c5c6a20e273374b29a069fde092c7",
+  "n_rows": 140,
+  "columns": [
+    "run_id",
+    "model",
+    "adapter_revision",
+    "question_id",
+    "option_index",
+    "option_code",
+    "option_logprob",
+    "option_token_count",
+    "model_prob"
+  ],
+  "sanitized": true,
+  "contains_human_data": false,
+  "persisted_at_utc": "2026-10-12T04:19:55Z"
+}

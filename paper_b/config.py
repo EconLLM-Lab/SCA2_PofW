@@ -66,3 +66,21 @@ LOG_DIR = DATA_ROOT / "logs"
 # Durable artifact bus: adapters are uploaded here straight from the VM via HTTPS,
 # independent of the Colab Drive FUSE (which uploads lazily and has lost data twice).
 HF_ADAPTER_REPO = "Bonorinoa/SCA2-paper-b-adapters"
+# Cohort 1 upload prefix. protocol_bank2.apply overrides this in memory only.
+HF_ADAPTER_PREFIX = "adapters"
+
+
+def hub_adapter_path(country_code: str) -> str:
+    import protocol_bank2
+    return protocol_bank2.hub_adapter_path_from_prefix(HF_ADAPTER_PREFIX, country_code)
+
+
+def _maybe_apply_bank2() -> None:
+    if os.environ.get("SCA2_PB_PROTOCOL") != "bank2":
+        return
+    import sys
+    import protocol_bank2
+    protocol_bank2.apply(sys.modules[__name__])
+
+
+_maybe_apply_bank2()

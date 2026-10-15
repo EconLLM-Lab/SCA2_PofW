@@ -1,0 +1,180 @@
+{
+  "space_mapped_repr": "'\u0120'",
+  "space_codepoint": "0x120",
+  "space_in_vocab": true,
+  "space_id": 220,
+  "probes": [
+    {
+      "s": "'1'",
+      "encoded_repr": "'1'",
+      "in_vocab": true,
+      "id": 16
+    },
+    {
+      "s": "' 1'",
+      "encoded_repr": "'\u01201'",
+      "in_vocab": false,
+      "id": null
+    },
+    {
+      "s": "'2'",
+      "encoded_repr": "'2'",
+      "in_vocab": true,
+      "id": 17
+    },
+    {
+      "s": "' 2'",
+      "encoded_repr": "'\u01202'",
+      "in_vocab": false,
+      "id": null
+    },
+    {
+      "s": "'10'",
+      "encoded_repr": "'10'",
+      "in_vocab": true,
+      "id": 605
+    },
+    {
+      "s": "' 10'",
+      "encoded_repr": "'\u012010'",
+      "in_vocab": false,
+      "id": null
+    },
+    {
+      "s": "'4'",
+      "encoded_repr": "'4'",
+      "in_vocab": true,
+      "id": 19
+    },
+    {
+      "s": "' 4'",
+      "encoded_repr": "'\u01204'",
+      "in_vocab": false,
+      "id": null
+    },
+    {
+      "s": "'Yes'",
+      "encoded_repr": "'Yes'",
+      "in_vocab": true,
+      "id": 9642
+    },
+    {
+      "s": "' Yes'",
+      "encoded_repr": "'\u0120Yes'",
+      "in_vocab": true,
+      "id": 7566
+    },
+    {
+      "s": "'\\n1'",
+      "encoded_repr": "'\u010a1'",
+      "in_vocab": false,
+      "id": null
+    },
+    {
+      "s": "'1\\n'",
+      "encoded_repr": "'1\u010a'",
+      "in_vocab": false,
+      "id": null
+    }
+  ],
+  "merge0_type": "list",
+  "n_merges": 280147,
+  "bpe": {
+    "'1'": [
+      {
+        "tok": "'1'",
+        "id": 16
+      }
+    ],
+    "' 1'": [
+      {
+        "tok": "'\u0120'",
+        "id": 220
+      },
+      {
+        "tok": "'1'",
+        "id": 16
+      }
+    ],
+    "'2'": [
+      {
+        "tok": "'2'",
+        "id": 17
+      }
+    ],
+    "' 2'": [
+      {
+        "tok": "'\u0120'",
+        "id": 220
+      },
+      {
+        "tok": "'2'",
+        "id": 17
+      }
+    ],
+    "'10'": [
+      {
+        "tok": "'10'",
+        "id": 605
+      }
+    ],
+    "' 10'": [
+      {
+        "tok": "'\u0120'",
+        "id": 220
+      },
+      {
+        "tok": "'10'",
+        "id": 605
+      }
+    ],
+    "'4'": [
+      {
+        "tok": "'4'",
+        "id": 19
+      }
+    ],
+    "' 4'": [
+      {
+        "tok": "'\u0120'",
+        "id": 220
+      },
+      {
+        "tok": "'4'",
+        "id": 19
+      }
+    ],
+    "'Yes'": [
+      {
+        "tok": "'Yes'",
+        "id": 9642
+      }
+    ],
+    "' Yes'": [
+      {
+        "tok": "'\u0120Yes'",
+        "id": 7566
+      }
+    ],
+    "'\\n1'": [
+      {
+        "tok": "'\u010a'",
+        "id": 198
+      },
+      {
+        "tok": "'1'",
+        "id": 16
+      }
+    ],
+    "'1\\n'": [
+      {
+        "tok": "'1'",
+        "id": 16
+      },
+      {
+        "tok": "'\u010a'",
+        "id": 198
+      }
+    ]
+  }
+}

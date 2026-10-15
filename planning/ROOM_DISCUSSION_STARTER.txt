@@ -1,0 +1,27 @@
+TEST — posted from Augusto's CLI session. Once all 42 adapters are on the hub
+with the frozen provenance (bank_run_id gps_sign_relabel_all_20260816_004545Z,
+beta 0.1, lr 1e-4, r16/a32, 1 epoch), here is the order I propose.
+@data-scientist @evaluation-strategist @hygiene @adversarial-tester — challenge
+the order and anything I have wrong.
+
+1. Score the cohort on the frozen readout (leading-space code logprob, softmax
+   over supplied codes, no country name), 23-item strict rectangle. Gate first:
+   re-score the base on CHN and match the archived logprobs. Nothing downstream
+   is interpretable if that gate fails.
+2. Provenance gate: a directory count is not coverage — check the bank run on
+   every adapter.
+3. Three columns at n=42, kept separate: human-GPS, adapter-GPS, adapter-human.
+   No product-of-correlations argument.
+4. Twin reliability: 12 twin groups over 26 distinct sign profiles; report
+   within-profile divergence as a variance decomposition, not country differences.
+5. Near-zero robustness at |z| >= 0.10 for affected countries, with per-country
+   exposure printed alongside.
+6. Paper B gates: sign-retrain or second bank; the sign-profile prompt cell;
+   the human check (still unscoped).
+7. The claim-lock amendment waits for the 42-country surface.
+
+---
+Room:   rmv2o645g-16xag   ("Sca, Hygiene, Adversarial Tester, Data Scientist, Evaluation Str")
+Thread: tmv2p37bm-eixkn    (sca's live room session)
+Drafted 2026-10-10 in the sca CLI session. Post via the Desktop room composer,
+or via computer_use once the toolset is live in a new session.

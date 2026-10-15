@@ -1,0 +1,22 @@
+{
+  "raw_adapter_gps_trust": 0.7999999999999999,
+  "unit_adapter_gps_trust": 0.8588235294117647,
+  "raw_ci": [
+    0.5462414583707967,
+    0.9277189718393813
+  ],
+  "unit_ci": [
+    0.6119279356230894,
+    0.9521727525090755
+  ],
+  "material": false,
+  "material_reasons": [],
+  "sign_flip": false,
+  "round2_move": false,
+  "ci_status_change": false,
+  "raw_excludes_zero": true,
+  "unit_excludes_zero": true,
+  "precedence": "retrospective",
+  "saved_check": "max |recomputed unit - saved normalized| = 3.331e-16 on 3312 cells (saved column is a check only, not the estimator)",
+  "unresolved_items": []
+}

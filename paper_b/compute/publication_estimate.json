@@ -1,0 +1,240 @@
+{
+  "schema": "sca2.compute_estimate.v1",
+  "recorded_at": "2026-10-12T06:53:19+00:00",
+  "do_not_cite_as_invoice": true,
+  "hardware": {
+    "training_vram_total_gib_printed": [
+      14.56
+    ],
+    "training_gpu_name_printed_in_wave_logs": null,
+    "scoring_gpu_printed": "Tesla T4",
+    "scoring_gpu_source": "PAPER_B_STACK_FREEZE.md, printed by the 2026-10-11 scoring launch",
+    "precision": "4-bit NF4, fp16 compute, double quantization",
+    "provider": "Google Colab Pro",
+    "plan_rate_note": "T4 is about 1 compute unit per hour on the Colab Pro plan. That rate is a planning convention. It is not an invoice."
+  },
+  "measured": {
+    "surviving_train": {
+      "n": 42,
+      "wall_minutes": 767.68,
+      "gpu_hours": 12.7947,
+      "mean_minutes": 18.2781,
+      "min_minutes": 16.64,
+      "max_minutes": 18.76,
+      "scope": "trainer.train",
+      "source": "adapter run_record.json train_minutes",
+      "bank_run_id": [
+        "gps_sign_relabel_all_20260816_004545Z"
+      ],
+      "model_name": [
+        "meta-llama/Llama-3.1-8B-Instruct"
+      ],
+      "excludes": [
+        "model_load",
+        "model_download",
+        "adapter_save",
+        "hub_upload",
+        "session_idle"
+      ]
+    },
+    "ref_cache": {
+      "wall_minutes": 7.86,
+      "n_pairs_computed_this_run": 1052,
+      "n_pairs_total": 1052,
+      "scope": "forward_passes_after_model_load",
+      "source": "shared_reference_logps_manifest.json",
+      "excludes": [
+        "model_download",
+        "model_load"
+      ]
+    },
+    "training_loop_wall": [
+      {
+        "source": "wave1.log",
+        "elapsed_minutes": 396.8,
+        "printed_train_minutes": 370.7,
+        "n_saved": 20,
+        "n_reported_done": 21,
+        "loop_overhead_minutes": 26.1,
+        "scope": "run_cohort training-loop wall clock",
+        "includes": [
+          "model_load",
+          "trainer.train",
+          "adapter_save",
+          "skipped countries in the same process"
+        ],
+        "excludes": [
+          "vm_provision",
+          "session_idle_after_the_loop",
+          "hub_upload"
+        ]
+      },
+      {
+        "source": "wave2.log",
+        "elapsed_minutes": 419.6,
+        "printed_train_minutes": 388.6,
+        "n_saved": 21,
+        "n_reported_done": 22,
+        "loop_overhead_minutes": 31.0,
+        "scope": "run_cohort training-loop wall clock",
+        "includes": [
+          "model_load",
+          "trainer.train",
+          "adapter_save",
+          "skipped countries in the same process"
+        ],
+        "excludes": [
+          "vm_provision",
+          "session_idle_after_the_loop",
+          "hub_upload"
+        ]
+      }
+    ],
+    "score_upload_span": {
+      "run_id": "paper-b-20261011",
+      "n_commits": 43,
+      "first": {
+        "created_at": "2026-10-12 04:19:56+00:00",
+        "title": "paper-b-20261011: base option probabilities"
+      },
+      "last": {
+        "created_at": "2026-10-12 05:00:38+00:00",
+        "title": "paper-b-20261011: ZWE_adapter option probabilities"
+      },
+      "span_minutes": 40.7006,
+      "median_gap_minutes": 0.9167,
+      "max_gap_minutes": 2.95,
+      "scope": "hub commit times from the first score upload to the last",
+      "includes": [
+        "China same-weights gate in the gap between the base upload and the CHN upload",
+        "per-country score and upload after CHN"
+      ],
+      "excludes": [
+        "model load before the base upload",
+        "base scoring before the base upload",
+        "session idle after the last upload"
+      ]
+    }
+  },
+  "discarded_or_incomplete": {
+    "superseded_optimizer_minutes_observed": 233.3,
+    "n_superseded_saves": 13,
+    "superseded_saves": [
+      {
+        "country": "GRC",
+        "train_minutes_printed": 16.6,
+        "hub_train_minutes": 17.2,
+        "log": "rerun9.log"
+      },
+      {
+        "country": "GTM",
+        "train_minutes_printed": 16.6,
+        "hub_train_minutes": 17.47,
+        "log": "rerun9.log"
+      },
+      {
+        "country": "IDN",
+        "train_minutes_printed": 16.6,
+        "hub_train_minutes": 17.51,
+        "log": "rerun9.log"
+      },
+      {
+        "country": "IND",
+        "train_minutes_printed": 16.6,
+        "hub_train_minutes": 17.56,
+        "log": "rerun9.log"
+      },
+      {
+        "country": "GBR",
+        "train_minutes_printed": 18.4,
+        "hub_train_minutes": 16.64,
+        "log": "wave1.log"
+      },
+      {
+        "country": "GRC",
+        "train_minutes_printed": 18.7,
+        "hub_train_minutes": 17.2,
+        "log": "wave1.log"
+      },
+      {
+        "country": "GTM",
+        "train_minutes_printed": 18.4,
+        "hub_train_minutes": 17.47,
+        "log": "wave1.log"
+      },
+      {
+        "country": "IDN",
+        "train_minutes_printed": 18.8,
+        "hub_train_minutes": 17.51,
+        "log": "wave1.log"
+      },
+      {
+        "country": "IND",
+        "train_minutes_printed": 18.4,
+        "hub_train_minutes": 17.56,
+        "log": "wave1.log"
+      },
+      {
+        "country": "IRN",
+        "train_minutes_printed": 18.5,
+        "hub_train_minutes": 17.52,
+        "log": "wave1.log"
+      },
+      {
+        "country": "IRQ",
+        "train_minutes_printed": 18.5,
+        "hub_train_minutes": 17.5,
+        "log": "wave1.log"
+      },
+      {
+        "country": "JOR",
+        "train_minutes_printed": 18.4,
+        "hub_train_minutes": 17.65,
+        "log": "wave1.log"
+      },
+      {
+        "country": "JPN",
+        "train_minutes_printed": 18.8,
+        "hub_train_minutes": 17.63,
+        "log": "wave1.log"
+      }
+    ],
+    "incomplete_starts": [
+      {
+        "log": "rerun9.log",
+        "country": "IRN"
+      }
+    ],
+    "incomplete_duration": "not assigned",
+    "note": "Superseded lines are saved-adapter prints that do not match the surviving run_record within the 1-decimal print tolerance. This is a lower bound from the harvested logs. A later retrain whose only surviving clock is the run_record is already in the surviving total."
+  },
+  "unknown": [
+    "Billed Colab units. colab usage reports a remaining balance, not consumption.",
+    "Session idle, model downloads, and VM reclamations.",
+    "Base scoring and model load before the first score upload.",
+    "Duration of any training header that has no saved-adapter line.",
+    "Pilot load and upload overhead beyond trainer.train."
+  ],
+  "balance_snapshot": {
+    "observed_at": "2026-10-12T06:53:19+00:00",
+    "command": "colab usage",
+    "compute_units_remaining": 273.63,
+    "usage_rate_per_hour": 0.0,
+    "active_assignments": 0,
+    "not_consumption": true,
+    "note": "Remaining balance. This is not units consumed by Paper B."
+  },
+  "replication_demand": {
+    "clean_rerun_keeps": [
+      "ref_cache forward-pass clock",
+      "surviving trainer.train clock, once per adapter",
+      "one score pass on a warm T4 after the base file, plus the China gate"
+    ],
+    "clean_rerun_drops": [
+      "superseded retrains",
+      "truncated attempts"
+    ],
+    "do_not_sum_clocks": true,
+    "why": "The optimizer clock, the reference-cache clock, the training-loop wall clock, and the score-upload span cover different work. Adding them would mix those scopes and still omit idle time."
+  }
+}

@@ -100,14 +100,30 @@ def train_country(country_code: str) -> Path:
     for ck in _glob.glob(str(out_dir / "checkpoint-*")):
         _shutil.rmtree(ck, ignore_errors=True)
 
-    (out_dir / "run_record.json").write_text(json.dumps({
+    try:
+        import compute_ledger as _ledger
+        hw = _ledger.hardware_snapshot()
+    except Exception:  # noqa: BLE001 — provenance only
+        hw = {}
+    record = {
         "country": country_code, "adapter_dir": str(out_dir),
         "train_file": str(data_file), "n_train": len(ds),
         "model_name": C.MODEL_NAME, "beta": C.DPO_BETA, "lr": C.LEARNING_RATE,
         "epochs": C.NUM_TRAIN_EPOCHS, "lora": {"r": C.LORA_R, "alpha": C.LORA_ALPHA},
         "max_length": C.MAX_LENGTH, "grad_accum": C.GRADIENT_ACCUMULATION_STEPS,
-        "train_minutes": round(mins, 2), "bank_run_id": C.BANK_RUN_ID,
-    }, indent=2))
+        "train_minutes": round(mins, 2), "train_wall_scope": "trainer.train",
+        "bank_run_id": C.BANK_RUN_ID,
+    }
+    if hw.get("gpu"):
+        record["gpu_name"] = hw["gpu"]
+    if hw.get("vram_total_gib") is not None:
+        record["vram_total_gib"] = hw["vram_total_gib"]
+    (out_dir / "run_record.json").write_text(json.dumps(record, indent=2))
+    try:
+        import compute_ledger as _ledger
+        _ledger.try_record(_ledger.train_event_from_record(record, source="train_country.py"))
+    except Exception as exc:  # noqa: BLE001
+        print(f"compute ledger: {type(exc).__name__}: {exc}")
 
     # durable artifact bus: push the pruned adapter straight to the HF Hub over HTTPS.
     # Wrapped so a hub hiccup never fails a completed training run.
@@ -115,10 +131,11 @@ def train_country(country_code: str) -> Path:
         from huggingface_hub import HfApi
         HfApi().upload_folder(
             repo_id=C.HF_ADAPTER_REPO, repo_type="dataset",
-            folder_path=str(out_dir), path_in_repo=f"adapters/{country_code}",
+            folder_path=str(out_dir),
+            path_in_repo=C.hub_adapter_path(country_code),
             commit_message=f"{country_code} adapter (paper_b frozen protocol)",
         )
-        print(f"HF upload ok -> {C.HF_ADAPTER_REPO}/adapters/{country_code}")
+        print(f"HF upload ok -> {C.HF_ADAPTER_REPO}/{C.hub_adapter_path(country_code)}")
     except Exception as e:  # noqa: BLE001
         print(f"HF upload FAILED for {country_code}: {type(e).__name__}: {e}")
     print(f"saved adapter -> {out_dir} in {mins:.1f} min")

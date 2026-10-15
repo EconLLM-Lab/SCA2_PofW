@@ -1,0 +1,7 @@
+surface,country,composite,bound,floor,ceiling,profile_id
+posrecip,AUS,3.9999869884049155,ceiling,1.0,4.0,1_1_1_1_1_1
+posrecip,CAN,3.999994983259893,ceiling,1.0,4.0,1_1_1_1_1_1
+posrecip,USA,3.9999948241974406,ceiling,1.0,4.0,1_1_1_1_1_1
+altruism,AUS,1.9999998682289906,ceiling,0.0,2.0,1_1_1_1_1_1
+altruism,CAN,1.9999999132093231,ceiling,0.0,2.0,1_1_1_1_1_1
+altruism,USA,1.999999915238264,ceiling,0.0,2.0,1_1_1_1_1_1

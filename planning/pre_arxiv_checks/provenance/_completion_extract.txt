@@ -1,0 +1,2029 @@
+
+######## DPO_eval_WVS/DPO_survey_distribution_evaluation.ipynb ########
+
+--- config cell 5 ---
+# ----------------------------
+# Model and path configuration
+# ----------------------------
+
+BASE_MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
+
+DATA_DIR = Path("/content/drive/MyDrive/DPO/eval_new_data")
+DATA_DIR_ADAPTER=Path("/content/drive/MyDrive/DPO/")
+RESULTS_DIR = DATA_DIR / "eval_results_wvs_wave7"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+QUESTION_MAP_FILE = DATA_DIR / "question_map_wvs_edited.csv"
+
+DATA_COUNTRY_CODES = ["USA", "MEX"]
+ADAPTER_COUNTRY_CODES = ["USA", "MEX"]
+
+COUNTRY_NAMES = {
+    "USA": "the United States",
+    "MEX": "Mexico",
+}
+
+# Adapter-directory naming is kept consistent with the earlier notebooks:
+# USA data uses the USA code, while the adapter path uses US.
+PATH_COUNTRY_CODES = {
+    "USA": "US",
+    "MEX": "MEX",
+}
+
+SURVEY_FILES = {
+    "USA": DATA_DIR / "USA_WVS_wave7.parquet",
+    "MEX": DATA_DIR / "MEX_WVS_wave7.parquet",
+}
+
+ADAPTER_DIRS = {
+    country: DATA_DIR_ADAPTER / f"dpo_qlora_adapter_llama3_3594_{PATH_COUNTRY_CODES.get(country, country)}_3"
+    for country in ADAPTER_COUNTRY_CODES
+}
+
+# Both attached parquet files contain a column named "weight".
+# Set a value to None to use unweighted response frequencies for that country.
+USE_SURVEY_WEIGHTS = True
+WEIGHT_COLUMNS = {
+    "USA": "weight",
+    "MEX": "weight",
+}
+
+# The previous training/evaluation prompt did not explicitly mention a country.
+# Keep False for the primary test of what the adapter itself has learned.
+PROMPT_COUNTRY_CONDITIONING = False
+
+# Numerical scoring settings.
+MAX_PROMPT_TOKENS = 768
+MAX_COMPLETION_TOKENS = 16
+OPTION_SCORE_TEMPERATURE = 1.0
+LENGTH_NORMALIZE_OPTION_LOGPROBS = False
+COMPLETION_PREFIX = " "
+
+# Generate one deterministic answer per model/question in addition to scoring
+# all valid response options.
+SAVE_GENERATED_ANSWERS = True
+GENERATION_MAX_NEW_TOKENS = 32
+GENERATION_DO_SAMPLE = False
+
+# Set to a small integer for a smoke test; None evaluates all questions.
+MAX_QUESTIONS = None
+
+# The numeric-open questions are evaluated over the union of observed valid
+# integer responses in the two population files.
+INCLUDE_NUMERIC_OPEN = True
+NUMERIC_VALID_RANGES = {
+    "Q261": (1900, 2010),  # year of birth
+    "Q262": (15, 110),    # age in years
+}
+MAX_NUMERIC_SUPPORT = 150
+
+# These response codes are categories rather than ordered positions.
+# All other mapped questions are treated as ordered for moment/Wasserstein analytics.
+NOMINAL_QUESTION_IDS = {"Q174", "Q260"}
+
+BOOTSTRAP_REPS = 2000
+RANDOM_SEED = 42
+EPS = 1e-12
+
+print("Question map:", QUESTION_MAP_FILE)
+print("Survey files:", SURVEY_FILES)
+print("Adapter dirs:", ADAPTER_DIRS)
+print("Results dir:", RESULTS_DIR)
+
+--- cell 13 len=10051 ---
+def build_survey_user_prompt(spec, prompt_country=None):
+    if prompt_country is None:
+        persona = "Answer this questionnaire as an individual person."
+    else:
+        persona = f"Answer this questionnaire as a typical adult living in {COUNTRY_NAMES[prompt_country]}."
+
+    if spec["is_numeric_open"]:
+        response_instruction = (
+            "Give one whole-number response. Return only the number, with no words or explanation."
+        )
+    else:
+        option_lines = "\n".join(
+            f"{code}: {label}"
+            for code, label in zip(spec["codes"], spec["labels"])
+        )
+        response_instruction = (
+            "Select exactly one response code from the options below.\n"
+            f"{option_lines}\n\n"
+            "Return only the response code, with no words or explanation."
+        )
+
+    return (
+        f"{persona} Respond naturally and sincerely, as someone would in real life. "
+        "Do not mention being an AI or assistant.\n\n"
+        f"Question:\n{spec['question_text']}\n\n"
+        f"{response_instruction}\n\n"
+        "Answer:"
+    )
+
+
+def format_prompt_text(tokenizer, prompt_text):
+    return tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt_text}],
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+
+
+def prepare_prompt_for_model(
+    tokenizer,
+    prompt_text,
+    max_prompt_tokens=MAX_PROMPT_TOKENS,
+):
+    """Return the full chat prompt and the exact prompt-token sequence used."""
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+    full_prompt_ids = tokenizer(
+        formatted_prompt,
+        add_special_tokens=False,
+    ).input_ids
+
+    prompt_was_truncated = len(full_prompt_ids) > max_prompt_tokens
+    model_prompt_ids = (
+        full_prompt_ids[-max_prompt_tokens:]
+        if prompt_was_truncated
+        else full_prompt_ids
+    )
+
+    model_prompt_text = tokenizer.decode(
+        model_prompt_ids,
+        skip_special_tokens=False,
+        clean_up_tokenization_spaces=False,
+    )
+
+    return {
+        "formatted_prompt": formatted_prompt,
+        "model_prompt_ids": model_prompt_ids,
+        "model_prompt_text": model_prompt_text,
+        "prompt_token_count_before_truncation": len(full_prompt_ids),
+        "prompt_token_count_model": len(model_prompt_ids),
+        "prompt_was_truncated": prompt_was_truncated,
+    }
+
+
+def get_model_device(model):
+    return next(model.parameters()).device
+
+
+@torch.no_grad()
+def sequence_logprob(
+    model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=MAX_PROMPT_TOKENS,
+    max_completion_tokens=MAX_COMPLETION_TOKENS,
+):
+    """Sum log p(completion | prompt) over completion tokens only."""
+    model.eval()
+    device = get_model_device(model)
+
+    prepared_prompt = prepare_prompt_for_model(
+        tokenizer=tokenizer,
+        prompt_text=prompt_text,
+        max_prompt_tokens=max_prompt_tokens,
+    )
+    prompt_ids = prepared_prompt["model_prompt_ids"]
+    completion_ids = tokenizer(
+        completion_text,
+        add_special_tokens=False,
+    ).input_ids
+
+    if len(completion_ids) > max_completion_tokens:
+        completion_ids = completion_ids[:max_completion_tokens]
+    if not completion_ids:
+        raise ValueError("Completion tokenized to an empty sequence")
+
+    input_ids = prompt_ids + completion_ids
+    labels = [-100] * len(prompt_ids) + completion_ids
+
+    input_ids = torch.tensor([input_ids], device=device)
+    labels = torch.tensor([labels], device=device)
+
+    logits = model(input_ids=input_ids).logits
+    shifted_logits = logits[:, :-1, :]
+    shifted_labels = labels[:, 1:]
+    log_probs = torch.log_softmax(shifted_logits, dim=-1)
+
+    mask = shifted_labels.ne(-100)
+    safe_labels = shifted_labels.masked_fill(~mask, 0)
+    token_log_probs = log_probs.gather(
+        -1,
+        safe_labels.unsqueeze(-1),
+    ).squeeze(-1)
+    completion_logprob = (token_log_probs * mask).sum()
+
+    return float(completion_logprob.detach().cpu()), int(mask.sum().item())
+
+
+@torch.no_grad()
+def generate_model_answer(
+    model,
+    tokenizer,
+    prompt_text,
+    max_prompt_tokens=MAX_PROMPT_TOKENS,
+    max_new_tokens=GENERATION_MAX_NEW_TOKENS,
+):
+    """Generate one answer with the same prompt construction used for scoring."""
+    model.eval()
+    device = get_model_device(model)
+
+    prepared_prompt = prepare_prompt_for_model(
+        tokenizer=tokenizer,
+        prompt_text=prompt_text,
+        max_prompt_tokens=max_prompt_tokens,
+    )
+    prompt_ids = prepared_prompt["model_prompt_ids"]
+
+    input_ids = torch.tensor([prompt_ids], device=device)
+    attention_mask = torch.ones_like(input_ids)
+
+    generated = model.generate(
+        input_ids=input_ids,
+        attention_mask=attention_mask,
+        max_new_tokens=max_new_tokens,
+        do_sample=GENERATION_DO_SAMPLE,
+        pad_token_id=tokenizer.pad_token_id,
+        eos_token_id=tokenizer.eos_token_id,
+        use_cache=True,
+    )
+
+    generated_ids = generated[0, input_ids.shape[1]:]
+    generated_answer_raw = tokenizer.decode(
+        generated_ids,
+        skip_special_tokens=True,
+        clean_up_tokenization_spaces=False,
+    )
+
+    return {
+        "generated_answer_raw": generated_answer_raw,
+        "generated_answer": generated_answer_raw.strip(),
+        "generated_token_count": int(generated_ids.numel()),
+    }
+
+
+def stable_softmax(values, temperature=1.0):
+    values = np.asarray(values, dtype=float) / float(temperature)
+    values = values - np.max(values)
+    exp_values = np.exp(values)
+    return exp_values / exp_values.sum()
+
+
+def score_model_questions(model, tokenizer, model_name, question_specs, prompt_country=None):
+    rows = []
+    country_label = prompt_country if prompt_country is not None else "unconditioned"
+
+    for spec in tqdm(question_specs, desc=f"Scoring {model_name} ({country_label})"):
+        prompt_text = build_survey_user_prompt(
+            spec,
+            prompt_country=prompt_country,
+        )
+        prepared_prompt = prepare_prompt_for_model(
+            tokenizer=tokenizer,
+            prompt_text=prompt_text,
+        )
+
+        if SAVE_GENERATED_ANSWERS:
+            generation = generate_model_answer(
+                model=model,
+                tokenizer=tokenizer,
+                prompt_text=prompt_text,
+            )
+            generated_answer_raw = generation["generated_answer_raw"]
+            generated_answer = generation["generated_answer"]
+            generated_token_count = generation["generated_token_count"]
+        else:
+            generated_answer_raw = None
+            generated_answer = None
+            generated_token_count = 0
+
+        generated_answer_code = (
+            generated_answer
+            if generated_answer in spec["codes"]
+            else None
+        )
+        generated_answer_is_valid = generated_answer_code is not None
+
+        option_scores = []
+        option_token_counts = []
+
+        for code in spec["codes"]:
+            completion = f"{COMPLETION_PREFIX}{code}"
+            logprob, token_count = sequence_logprob(
+                model=model,
+                tokenizer=tokenizer,
+                prompt_text=prompt_text,
+                completion_text=completion,
+            )
+            score = (
+                logprob / token_count
+                if LENGTH_NORMALIZE_OPTION_LOGPROBS
+                else logprob
+            )
+            option_scores.append(score)
+            option_token_counts.append(token_count)
+
+        probabilities = stable_softmax(
+            option_scores,
+            temperature=OPTION_SCORE_TEMPERATURE,
+        )
+
+        for option_index, (
+            code,
+            label,
+            score,
+            token_count,
+            probability,
+        ) in enumerate(zip(
+            spec["codes"],
+            spec["labels"],
+            option_scores,
+            option_token_counts,
+            probabilities,
+        )):
+            rows.append({
+                "model": model_name,
+                "prompt_country": prompt_country,
+                "question_id": spec["question_id"],
+                "question_text": spec["question_text"],
+                "response_type": spec["response_type"],
+                "gps_dimension": spec["gps_dimension"],
+                "is_ordered": spec["is_ordered"],
+                "is_numeric_open": spec["is_numeric_open"],
+                "option_index": option_index,
+                "option_code": code,
+                "option_value": float(code),
+                "option_label": label,
+                "option_logprob": score,
+                "option_token_count": token_count,
+                "model_prob": float(probability),
+                "prompt_text": prompt_text,
+                "formatted_prompt": prepared_prompt["formatted_prompt"],
+                "complete_prompt_model_received": prepared_prompt[
+                    "model_prompt_text"
+                ],
+                "prompt_token_count_before_truncation": prepared_prompt[
+                    "prompt_token_count_before_truncation"
+                ],
+                "prompt_token_count_model": prepared_prompt[
+                    "prompt_token_count_model"
+                ],
+                "prompt_was_truncated": prepared_prompt[
+                    "prompt_was_truncated"
+                ],
+                "generated_answer_raw": generated_answer_raw,
+                "generated_answer": generated_answer,
+                "generated_answer_code": generated_answer_code,
+                "generated_answer_is_valid": generated_answer_is_valid,
+                "generated_token_count": generated_token_count,
+            })
+
+    scores = pd.DataFrame(rows)
+    checks = scores.groupby(["model", "question_id"])["model_prob"].sum()
+    if prompt_country is not None:
+        checks = scores.groupby(
+            ["model", "prompt_country", "question_id"]
+        )["model_prob"].sum()
+    if checks.sub(1.0).abs().max() > 1e-8:
+        raise AssertionError("Model option probabilities do not sum to one")
+    return scores
+
+
+--- config cell 15 ---
+# This cell loads only the tokenizer, not the language model.
+prompt_preview_tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME)
+if prompt_preview_tokenizer.pad_token is None:
+    prompt_preview_tokenizer.pad_token = prompt_preview_tokenizer.eos_token
+
+
+def build_prompt_preview_dataframe(question_specs, tokenizer):
+    rows = []
+    prompt_countries = (
+        DATA_COUNTRY_CODES
+        if PROMPT_COUNTRY_CONDITIONING
+        else [None]
+    )
+
+    for prompt_country in prompt_countries:
+        for spec in question_specs:
+            prompt_text = build_survey_user_prompt(
+                spec,
+                prompt_country=prompt_country,
+            )
+            prepared_prompt = prepare_prompt_for_model(
+                tokenizer=tokenizer,
+                prompt_text=prompt_text,
+            )
+            choices = "\n".join(
+                f"{code}: {label}"
+                for code, label in zip(spec["codes"], spec["labels"])
+            )
+
+            rows.append({
+                "prompt_country": prompt_country,
+                "question_id": spec["question_id"],
+                "gps_dimension": spec["gps_dimension"],
+                "response_type": spec["response_type"],
+                "is_numeric_open": spec["is_numeric_open"],
+                "is_ordered": spec["is_ordered"],
+                "question_text": spec["question_text"],
+                "answer_codes": json.dumps(
+                    spec["codes"],
+                    ensure_ascii=False,
+                ),
+                "answer_labels": json.dumps(
+                    spec["labels"],
+                    ensure_ascii=False,
+                ),
+                "choices_as_shown": choices,
+                "prompt_text": prompt_text,
+                "formatted_prompt": prepared_prompt["formatted_prompt"],
+                "complete_prompt_model_received": prepared_prompt[
+                    "model_prompt_text"
+                ],
+                "prompt_token_count_before_truncation": prepared_prompt[
+                    "prompt_token_count_before_truncation"
+                ],
+                "prompt_token_count_model": prepared_prompt[
+                    "prompt_token_count_model"
+                ],
+                "prompt_was_truncated": prepared_prompt[
+                    "prompt_was_truncated"
+                ],
+            })
+
+    return pd.DataFrame(rows)
+
+
+prompt_preview_df = build_prompt_preview_dataframe(
+    question_specs=question_specs,
+    tokenizer=prompt_preview_tokenizer,
+)
+
+prompt_preview_df.to_csv(
+    RESULTS_DIR / "survey_complete_prompt_preview.csv",
+    index=False,
+)
+prompt_preview_df.to_json(
+    RESULTS_DIR / "survey_complete_prompt_preview.jsonl",
+    orient="records",
+    lines=True,
+    force_ascii=False,
+)
+
+print(f"Prompt rows: {len(prompt_preview_df):,}")
+print(
+    "Truncated prompts:",
+    int(prompt_preview_df["prompt_was_truncated"].sum()),
+)
+
+with pd.option_context(
+    "display.max_colwidth",
+    None,
+    "display.max_rows",
+    None,
+):
+    display(prompt_preview_df[[
+        "prompt_country",
+        "question_id",
+        "gps_dimension",
+        "response_type",
+        "answer_codes",
+        "answer_labels",
+        "choices_as_shown",
+        "complete_prompt_model_received",
+        "prompt_token_count_model",
+        "prompt_was_truncated",
+    ]])
+
+# Release tokenizer-only objects before loading a language model.
+del prompt_preview_tokenizer
+gc.collect()
+
+
+--- config cell 17 ---
+def load_base_model_and_tokenizer():
+    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True,
+    )
+
+    base_model = AutoModelForCausalLM.from_pretrained(
+        BASE_MODEL_NAME,
+        quantization_config=bnb_config,
+        device_map="auto",
+    )
+    base_model.eval()
+    return base_model, tokenizer
+
+
+def load_adapter_model(adapter_dir):
+    base_model, tokenizer = load_base_model_and_tokenizer()
+    adapter_model = PeftModel.from_pretrained(base_model, adapter_dir)
+    adapter_model.eval()
+    return adapter_model, tokenizer
+
+
+def cleanup_cuda():
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
+def score_model_for_target_countries(model, tokenizer, model_name):
+    """Score once when prompts are unconditioned; otherwise score once per target country."""
+    if not PROMPT_COUNTRY_CONDITIONING:
+        shared_scores = score_model_questions(
+            model=model,
+            tokenizer=tokenizer,
+            model_name=model_name,
+            question_specs=question_specs,
+            prompt_country=None,
+        )
+        return {country: shared_scores.copy() for country in DATA_COUNTRY_CODES}
+
+    return {
+        country: score_model_questions(
+            model=model,
+            tokenizer=tokenizer,
+            model_name=model_name,
+            question_specs=question_specs,
+            prompt_country=country,
+        )
+        for country in DATA_COUNTRY_CODES
+    }
+
+######## DPO_eval_WVS/DPO_WVS_evaluation_selective_skip_unavailable_questions (1).ipynb ########
+
+--- cell 15 len=10051 ---
+def build_survey_user_prompt(spec, prompt_country=None):
+    if prompt_country is None:
+        persona = "Answer this questionnaire as an individual person."
+    else:
+        persona = f"Answer this questionnaire as a typical adult living in {COUNTRY_NAMES[prompt_country]}."
+
+    if spec["is_numeric_open"]:
+        response_instruction = (
+            "Give one whole-number response. Return only the number, with no words or explanation."
+        )
+    else:
+        option_lines = "\n".join(
+            f"{code}: {label}"
+            for code, label in zip(spec["codes"], spec["labels"])
+        )
+        response_instruction = (
+            "Select exactly one response code from the options below.\n"
+            f"{option_lines}\n\n"
+            "Return only the response code, with no words or explanation."
+        )
+
+    return (
+        f"{persona} Respond naturally and sincerely, as someone would in real life. "
+        "Do not mention being an AI or assistant.\n\n"
+        f"Question:\n{spec['question_text']}\n\n"
+        f"{response_instruction}\n\n"
+        "Answer:"
+    )
+
+
+def format_prompt_text(tokenizer, prompt_text):
+    return tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt_text}],
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+
+
+def prepare_prompt_for_model(
+    tokenizer,
+    prompt_text,
+    max_prompt_tokens=MAX_PROMPT_TOKENS,
+):
+    """Return the full chat prompt and the exact prompt-token sequence used."""
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+    full_prompt_ids = tokenizer(
+        formatted_prompt,
+        add_special_tokens=False,
+    ).input_ids
+
+    prompt_was_truncated = len(full_prompt_ids) > max_prompt_tokens
+    model_prompt_ids = (
+        full_prompt_ids[-max_prompt_tokens:]
+        if prompt_was_truncated
+        else full_prompt_ids
+    )
+
+    model_prompt_text = tokenizer.decode(
+        model_prompt_ids,
+        skip_special_tokens=False,
+        clean_up_tokenization_spaces=False,
+    )
+
+    return {
+        "formatted_prompt": formatted_prompt,
+        "model_prompt_ids": model_prompt_ids,
+        "model_prompt_text": model_prompt_text,
+        "prompt_token_count_before_truncation": len(full_prompt_ids),
+        "prompt_token_count_model": len(model_prompt_ids),
+        "prompt_was_truncated": prompt_was_truncated,
+    }
+
+
+def get_model_device(model):
+    return next(model.parameters()).device
+
+
+@torch.no_grad()
+def sequence_logprob(
+    model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=MAX_PROMPT_TOKENS,
+    max_completion_tokens=MAX_COMPLETION_TOKENS,
+):
+    """Sum log p(completion | prompt) over completion tokens only."""
+    model.eval()
+    device = get_model_device(model)
+
+    prepared_prompt = prepare_prompt_for_model(
+        tokenizer=tokenizer,
+        prompt_text=prompt_text,
+        max_prompt_tokens=max_prompt_tokens,
+    )
+    prompt_ids = prepared_prompt["model_prompt_ids"]
+    completion_ids = tokenizer(
+        completion_text,
+        add_special_tokens=False,
+    ).input_ids
+
+    if len(completion_ids) > max_completion_tokens:
+        completion_ids = completion_ids[:max_completion_tokens]
+    if not completion_ids:
+        raise ValueError("Completion tokenized to an empty sequence")
+
+    input_ids = prompt_ids + completion_ids
+    labels = [-100] * len(prompt_ids) + completion_ids
+
+    input_ids = torch.tensor([input_ids], device=device)
+    labels = torch.tensor([labels], device=device)
+
+    logits = model(input_ids=input_ids).logits
+    shifted_logits = logits[:, :-1, :]
+    shifted_labels = labels[:, 1:]
+    log_probs = torch.log_softmax(shifted_logits, dim=-1)
+
+    mask = shifted_labels.ne(-100)
+    safe_labels = shifted_labels.masked_fill(~mask, 0)
+    token_log_probs = log_probs.gather(
+        -1,
+        safe_labels.unsqueeze(-1),
+    ).squeeze(-1)
+    completion_logprob = (token_log_probs * mask).sum()
+
+    return float(completion_logprob.detach().cpu()), int(mask.sum().item())
+
+
+@torch.no_grad()
+def generate_model_answer(
+    model,
+    tokenizer,
+    prompt_text,
+    max_prompt_tokens=MAX_PROMPT_TOKENS,
+    max_new_tokens=GENERATION_MAX_NEW_TOKENS,
+):
+    """Generate one answer with the same prompt construction used for scoring."""
+    model.eval()
+    device = get_model_device(model)
+
+    prepared_prompt = prepare_prompt_for_model(
+        tokenizer=tokenizer,
+        prompt_text=prompt_text,
+        max_prompt_tokens=max_prompt_tokens,
+    )
+    prompt_ids = prepared_prompt["model_prompt_ids"]
+
+    input_ids = torch.tensor([prompt_ids], device=device)
+    attention_mask = torch.ones_like(input_ids)
+
+    generated = model.generate(
+        input_ids=input_ids,
+        attention_mask=attention_mask,
+        max_new_tokens=max_new_tokens,
+        do_sample=GENERATION_DO_SAMPLE,
+        pad_token_id=tokenizer.pad_token_id,
+        eos_token_id=tokenizer.eos_token_id,
+        use_cache=True,
+    )
+
+    generated_ids = generated[0, input_ids.shape[1]:]
+    generated_answer_raw = tokenizer.decode(
+        generated_ids,
+        skip_special_tokens=True,
+        clean_up_tokenization_spaces=False,
+    )
+
+    return {
+        "generated_answer_raw": generated_answer_raw,
+        "generated_answer": generated_answer_raw.strip(),
+        "generated_token_count": int(generated_ids.numel()),
+    }
+
+
+def stable_softmax(values, temperature=1.0):
+    values = np.asarray(values, dtype=float) / float(temperature)
+    values = values - np.max(values)
+    exp_values = np.exp(values)
+    return exp_values / exp_values.sum()
+
+
+def score_model_questions(model, tokenizer, model_name, question_specs, prompt_country=None):
+    rows = []
+    country_label = prompt_country if prompt_country is not None else "unconditioned"
+
+    for spec in tqdm(question_specs, desc=f"Scoring {model_name} ({country_label})"):
+        prompt_text = build_survey_user_prompt(
+            spec,
+            prompt_country=prompt_country,
+        )
+        prepared_prompt = prepare_prompt_for_model(
+            tokenizer=tokenizer,
+            prompt_text=prompt_text,
+        )
+
+        if SAVE_GENERATED_ANSWERS:
+            generation = generate_model_answer(
+                model=model,
+                tokenizer=tokenizer,
+                prompt_text=prompt_text,
+            )
+            generated_answer_raw = generation["generated_answer_raw"]
+            generated_answer = generation["generated_answer"]
+            generated_token_count = generation["generated_token_count"]
+        else:
+            generated_answer_raw = None
+            generated_answer = None
+            generated_token_count = 0
+
+        generated_answer_code = (
+            generated_answer
+            if generated_answer in spec["codes"]
+            else None
+        )
+        generated_answer_is_valid = generated_answer_code is not None
+
+        option_scores = []
+        option_token_counts = []
+
+        for code in spec["codes"]:
+            completion = f"{COMPLETION_PREFIX}{code}"
+            logprob, token_count = sequence_logprob(
+                model=model,
+                tokenizer=tokenizer,
+                prompt_text=prompt_text,
+                completion_text=completion,
+            )
+            score = (
+                logprob / token_count
+                if LENGTH_NORMALIZE_OPTION_LOGPROBS
+                else logprob
+            )
+            option_scores.append(score)
+            option_token_counts.append(token_count)
+
+        probabilities = stable_softmax(
+            option_scores,
+            temperature=OPTION_SCORE_TEMPERATURE,
+        )
+
+        for option_index, (
+            code,
+            label,
+            score,
+            token_count,
+            probability,
+        ) in enumerate(zip(
+            spec["codes"],
+            spec["labels"],
+            option_scores,
+            option_token_counts,
+            probabilities,
+        )):
+            rows.append({
+                "model": model_name,
+                "prompt_country": prompt_country,
+                "question_id": spec["question_id"],
+                "question_text": spec["question_text"],
+                "response_type": spec["response_type"],
+                "gps_dimension": spec["gps_dimension"],
+                "is_ordered": spec["is_ordered"],
+                "is_numeric_open": spec["is_numeric_open"],
+                "option_index": option_index,
+                "option_code": code,
+                "option_value": float(code),
+                "option_label": label,
+                "option_logprob": score,
+                "option_token_count": token_count,
+                "model_prob": float(probability),
+                "prompt_text": prompt_text,
+                "formatted_prompt": prepared_prompt["formatted_prompt"],
+                "complete_prompt_model_received": prepared_prompt[
+                    "model_prompt_text"
+                ],
+                "prompt_token_count_before_truncation": prepared_prompt[
+                    "prompt_token_count_before_truncation"
+                ],
+                "prompt_token_count_model": prepared_prompt[
+                    "prompt_token_count_model"
+                ],
+                "prompt_was_truncated": prepared_prompt[
+                    "prompt_was_truncated"
+                ],
+                "generated_answer_raw": generated_answer_raw,
+                "generated_answer": generated_answer,
+                "generated_answer_code": generated_answer_code,
+                "generated_answer_is_valid": generated_answer_is_valid,
+                "generated_token_count": generated_token_count,
+            })
+
+    scores = pd.DataFrame(rows)
+    checks = scores.groupby(["model", "question_id"])["model_prob"].sum()
+    if prompt_country is not None:
+        checks = scores.groupby(
+            ["model", "prompt_country", "question_id"]
+        )["model_prob"].sum()
+    if checks.sub(1.0).abs().max() > 1e-8:
+        raise AssertionError("Model option probabilities do not sum to one")
+    return scores
+
+
+--- config cell 19 ---
+def load_base_model_and_tokenizer():
+    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True,
+    )
+
+    base_model = AutoModelForCausalLM.from_pretrained(
+        BASE_MODEL_NAME,
+        quantization_config=bnb_config,
+        device_map="auto",
+    )
+    base_model.eval()
+    return base_model, tokenizer
+
+
+def load_adapter_model(adapter_dir):
+    base_model, tokenizer = load_base_model_and_tokenizer()
+    adapter_model = PeftModel.from_pretrained(base_model, adapter_dir)
+    adapter_model.eval()
+    return adapter_model, tokenizer
+
+
+def cleanup_cuda():
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
+def score_model_for_target_countries(
+    model,
+    tokenizer,
+    model_name,
+    target_countries=None,
+):
+    """Score only country/question pairs with valid population responses.
+
+    When prompts are not country-conditioned, each required question is scored
+    only once and then copied to the requested datasets for which that question
+    has a valid empirical population distribution. When prompts are conditioned,
+    each country is scored separately, again using only its valid questions.
+    """
+    if target_countries is None:
+        target_countries = ACTIVE_EVAL_COUNTRIES
+
+    target_countries = list(dict.fromkeys(target_countries))
+    if not target_countries:
+        return {}
+
+    specs_by_country = {
+        country: [
+            spec
+            for spec in question_specs
+            if spec["question_id"]
+            in VALID_QUESTIONS_BY_COUNTRY.get(country, set())
+        ]
+        for country in target_countries
+    }
+
+    # Drop countries with no valid questions instead of trying to score an
+    # empty dataframe. This is unlikely for a full WVS file but makes the
+    # notebook robust to sparse or partially harmonized datasets.
+    valid_target_countries = [
+        country
+        for country in target_countries
+        if specs_by_country[country]
+    ]
+    skipped_target_countries = [
+        country
+        for country in target_countries
+        if not specs_by_country[country]
+    ]
+    for country in skipped_target_countries:
+        print(
+            f"Skipping model evaluation on {country}: "
+            "no questions have valid population responses."
+        )
+
+    if not valid_target_countries:
+        return {}
+
+    if not PROMPT_COUNTRY_CONDITIONING:
+        required_question_ids = set().union(*[
+            VALID_QUESTIONS_BY_COUNTRY.get(country, set())
+            for country in valid_target_countries
+        ])
+        shared_specs = [
+            spec
+            for spec in question_specs
+            if spec["question_id"] in required_question_ids
+        ]
+
+        shared_scores = score_model_questions(
+            model=model,
+            tokenizer=tokenizer,
+            model_name=model_name,
+            question_specs=shared_specs,
+            prompt_country=None,
+        )
+
+        scores_by_country = {}
+        for country in valid_target_countries:
+            valid_question_ids = VALID_QUESTIONS_BY_COUNTRY[country]
+            country_scores = shared_scores.loc[
+                shared_scores["question_id"].isin(valid_question_ids)
+            ].copy()
+            scores_by_country[country] = country_scores
+
+        return scores_by_country
+
+    scores_by_country = {}
+    for country in valid_target_countries:
+        scores_by_country[country] = score_model_questions(
+            model=model,
+            tokenizer=tokenizer,
+            model_name=model_name,
+            question_specs=specs_by_country[country],
+            prompt_country=country,
+        )
+
+    return scores_by_country
+
+######## DPO_train_test/CO2_run/CO2_evaluation_cross_evaluation_selective_cached_ref.ipynb ########
+
+--- cell 8 len=10574 ---
+def get_model_device(model):
+    """
+    Returns the device where the model is located.
+    Works for regular models and PEFT/QLoRA models.
+    """
+    return next(model.parameters()).device
+
+
+@torch.no_grad()
+def sequence_logprob(
+    model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=512,
+    max_completion_tokens=256,
+):
+    """
+    Computes log p(completion | prompt) for a single prompt-completion pair.
+
+    Important:
+    This should use the same prompt formatting as DPO training.
+    The log probability is summed over completion tokens only.
+    """
+
+    model.eval()
+    device = get_model_device(model)
+
+    # Use the same chat-template format used during DPO training.
+
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+
+    prompt_ids = tokenizer(
+        formatted_prompt,
+        add_special_tokens=False,
+    ).input_ids
+
+    completion_ids = tokenizer(
+        completion_text,
+        add_special_tokens=False,
+    ).input_ids
+
+    # Truncate if needed.
+    if len(prompt_ids) > max_prompt_tokens:
+        prompt_ids = prompt_ids[-max_prompt_tokens:]
+
+    if len(completion_ids) > max_completion_tokens:
+        completion_ids = completion_ids[:max_completion_tokens]
+
+    input_ids = prompt_ids + completion_ids
+
+    # Mask prompt tokens so only completion tokens count in the loss/logprob.
+    labels = [-100] * len(prompt_ids) + completion_ids
+
+    input_ids = torch.tensor([input_ids], device=device)
+    labels = torch.tensor([labels], device=device)
+
+    outputs = model(input_ids=input_ids)
+    logits = outputs.logits
+
+    # Shift for next-token prediction.
+    shifted_logits = logits[:, :-1, :]
+    shifted_labels = labels[:, 1:]
+
+    log_probs = torch.log_softmax(shifted_logits, dim=-1)
+
+    mask = shifted_labels.ne(-100)
+
+    safe_labels = shifted_labels.clone()
+    safe_labels[~mask] = 0
+
+    token_log_probs = log_probs.gather(
+        dim=-1,
+        index=safe_labels.unsqueeze(-1),
+    ).squeeze(-1)
+
+    completion_logprob = (token_log_probs * mask).sum()
+
+    return float(completion_logprob.detach().cpu())
+
+def _reference_cache_key(
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=REFERENCE_MAX_PROMPT_TOKENS,
+    max_completion_tokens=REFERENCE_MAX_COMPLETION_TOKENS,
+):
+    """
+    Build a stable key for a base/reference log-probability.
+
+    The key uses the fully formatted prompt, so changing the prompt formatting
+    naturally creates a different cache key instead of silently reusing an
+    incompatible value.
+    """
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+    payload = {
+        "base_model": BASE_MODEL_NAME,
+        "formatted_prompt": formatted_prompt,
+        "completion": completion_text,
+        "max_prompt_tokens": max_prompt_tokens,
+        "max_completion_tokens": max_completion_tokens,
+    }
+    serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def load_reference_logprob_cache(cache_file=REFERENCE_CACHE_FILE):
+    """Load any reference log-probabilities saved by earlier runs."""
+    cache = {}
+
+    if not cache_file.exists():
+        print(f"Reference cache not found yet: {cache_file}")
+        return cache
+
+    with open(cache_file, "r", encoding="utf-8") as f:
+        for line_number, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+                cache[row["cache_key"]] = float(row["logp"])
+            except Exception as exc:
+                print(
+                    f"Warning: skipped malformed reference-cache line "
+                    f"{line_number}: {exc}"
+                )
+
+    print(f"Loaded {len(cache)} cached base/reference log-probabilities from {cache_file}")
+    return cache
+
+
+REFERENCE_LOGPROB_CACHE = load_reference_logprob_cache()
+
+
+def _append_reference_logprob_to_cache(
+    cache_key,
+    logp,
+    prompt_text,
+    completion_text,
+    cache_file=REFERENCE_CACHE_FILE,
+):
+    """
+    Persist a newly computed reference score immediately.
+
+    Immediate appends make the cache useful even if a long evaluation run is
+    interrupted and restarted later.
+    """
+    row = {
+        "cache_key": cache_key,
+        "base_model": BASE_MODEL_NAME,
+        "max_prompt_tokens": REFERENCE_MAX_PROMPT_TOKENS,
+        "max_completion_tokens": REFERENCE_MAX_COMPLETION_TOKENS,
+        "prompt": prompt_text,
+        "completion": completion_text,
+        "logp": float(logp),
+    }
+
+    with open(cache_file, "a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def get_reference_logprob(
+    adapter_model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+):
+    """
+    Return log p(completion | prompt) under the base/reference model.
+
+    A score is computed only when the exact formatted prompt/completion pair
+    is absent from the persistent cache. Otherwise the cached value is reused.
+    """
+    cache_key = _reference_cache_key(
+        tokenizer=tokenizer,
+        prompt_text=prompt_text,
+        completion_text=completion_text,
+    )
+
+    if cache_key in REFERENCE_LOGPROB_CACHE:
+        return REFERENCE_LOGPROB_CACHE[cache_key]
+
+    # Compute the base/reference score only once. For a PEFT model,
+    # disabling the adapter exposes the underlying base model.
+    with adapter_model.disable_adapter():
+        logp = sequence_logprob(
+            adapter_model,
+            tokenizer,
+            prompt_text,
+            completion_text,
+            max_prompt_tokens=REFERENCE_MAX_PROMPT_TOKENS,
+            max_completion_tokens=REFERENCE_MAX_COMPLETION_TOKENS,
+        )
+
+    REFERENCE_LOGPROB_CACHE[cache_key] = logp
+    _append_reference_logprob_to_cache(
+        cache_key=cache_key,
+        logp=logp,
+        prompt_text=prompt_text,
+        completion_text=completion_text,
+    )
+
+    return logp
+
+
+def dpo_implied_reward_delta(
+    adapter_model,
+    tokenizer,
+    prompt,
+    chosen,
+    rejected,
+    beta=BETA,
+):
+    """
+    Computes the DPO implied reward difference using the same PEFT model.
+
+    Reference/base log-probabilities are cached by formatted prompt-completion
+    pair, so each unique base score is computed at most once and is reused
+    across adapters, countries, and later notebook runs.
+    """
+
+    ref_chosen_logp = get_reference_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        chosen,
+    )
+
+    ref_rejected_logp = get_reference_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        rejected,
+    )
+
+    # Adapter model: adapter enabled. These remain adapter-specific and are
+    # intentionally recomputed for each adapter being evaluated.
+    adapter_chosen_logp = sequence_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        chosen,
+    )
+
+    adapter_rejected_logp = sequence_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        rejected,
+    )
+
+    ref_margin = ref_chosen_logp - ref_rejected_logp
+    adapter_margin = adapter_chosen_logp - adapter_rejected_logp
+
+    reward_delta = beta * (adapter_margin - ref_margin)
+
+    dpo_pref_prob = 1.0 / (1.0 + math.exp(-reward_delta))
+
+    return {
+        "ref_chosen_logp": ref_chosen_logp,
+        "ref_rejected_logp": ref_rejected_logp,
+        "adapter_chosen_logp": adapter_chosen_logp,
+        "adapter_rejected_logp": adapter_rejected_logp,
+        "ref_margin": ref_margin,
+        "adapter_margin": adapter_margin,
+        "dpo_reward_delta": reward_delta,
+        "dpo_pref_prob": dpo_pref_prob,
+        "dpo_prefers_chosen": reward_delta > 0,
+    }
+
+@torch.no_grad()
+def generate_model_answer(
+    model,
+    tokenizer,
+    prompt_text,
+    max_new_tokens=120,
+    temperature=0.7,
+    top_p=0.9,
+):
+    """
+    Generates a free-form answer from the model for a prompt.
+    Uses the same prompt format as reward recovery and training.
+    """
+
+    model.eval()
+    device = get_model_device(model)
+
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+
+    inputs = tokenizer(
+        formatted_prompt,
+        return_tensors="pt",
+        add_special_tokens=False,
+    ).to(device)
+
+    output_ids = model.generate(
+        **inputs,
+        max_new_tokens=max_new_tokens,
+        do_sample=True,
+        temperature=temperature,
+        top_p=top_p,
+        pad_token_id=tokenizer.eos_token_id,
+    )
+
+    # Keep only newly generated tokens, not the prompt.
+    generated_ids = output_ids[0][inputs["input_ids"].shape[-1]:]
+
+    generated_text = tokenizer.decode(
+        generated_ids,
+        skip_special_tokens=True,
+    ).strip()
+
+    return generated_text
+
+def evaluate_adapter_reward_recovery(
+    adapter_model,
+    tokenizer,
+    eval_file,
+    model_name,
+    eval_country,
+    beta=BETA,
+    # CHANGE HERE FOR TEST OUTPUT
+    max_examples=200,
+    #max_examples=5,
+    generate_answers=True,
+    max_new_tokens=120,
+    temperature=0.7,
+    top_p=0.9,
+):
+    """
+    Runs DPO implied reward recovery on a held-out eval JSONL file.
+
+    Also optionally generates a free-form answer from the adapter
+    for each prompt and stores it in the result dataframe.
+    """
+
+    rows = load_jsonl(eval_file)
+
+    if max_examples is not None:
+        rows = rows[:max_examples]
+
+    results = []
+
+    for ex in tqdm(rows, desc=f"Reward recovery: {model_name} on {eval_country}"):
+        out = dpo_implied_reward_delta(
+            adapter_model=adapter_model,
+            tokenizer=tokenizer,
+            prompt=ex["prompt"],
+            chosen=ex["chosen"],
+            rejected=ex["rejected"],
+            beta=beta,
+        )
+
+        if generate_answers:
+            generated_answer = generate_model_answer(
+                model=adapter_model,
+                tokenizer=tokenizer,
+                prompt_text=ex["prompt"],
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+            )
+        else:
+            generated_answer = None
+
+        results.append({
+            "model": model_name,
+            "eval_country": eval_country,
+            "country": ex.get("country"),
+            "item_id": ex.get("item_id"),
+            #"dimension": ex.get("dimension"),
+            "gps_dimension": ex.get("gps_dimension"),
+            "prompt": ex["prompt"],
+            "chosen": ex["chosen"],
+            "rejected": ex["rejected"],
+            "generated_answer": generated_answer,
+            **out,
+        })
+
+    return pd.DataFrame(results)
+
+
+
+######## DPO_train_test/Base_run/DPO_evaluation_cross_evaluation_selective_cached_ref.ipynb ########
+
+--- cell 7 len=10574 ---
+def get_model_device(model):
+    """
+    Returns the device where the model is located.
+    Works for regular models and PEFT/QLoRA models.
+    """
+    return next(model.parameters()).device
+
+
+@torch.no_grad()
+def sequence_logprob(
+    model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=512,
+    max_completion_tokens=256,
+):
+    """
+    Computes log p(completion | prompt) for a single prompt-completion pair.
+
+    Important:
+    This should use the same prompt formatting as DPO training.
+    The log probability is summed over completion tokens only.
+    """
+
+    model.eval()
+    device = get_model_device(model)
+
+    # Use the same chat-template format used during DPO training.
+
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+
+    prompt_ids = tokenizer(
+        formatted_prompt,
+        add_special_tokens=False,
+    ).input_ids
+
+    completion_ids = tokenizer(
+        completion_text,
+        add_special_tokens=False,
+    ).input_ids
+
+    # Truncate if needed.
+    if len(prompt_ids) > max_prompt_tokens:
+        prompt_ids = prompt_ids[-max_prompt_tokens:]
+
+    if len(completion_ids) > max_completion_tokens:
+        completion_ids = completion_ids[:max_completion_tokens]
+
+    input_ids = prompt_ids + completion_ids
+
+    # Mask prompt tokens so only completion tokens count in the loss/logprob.
+    labels = [-100] * len(prompt_ids) + completion_ids
+
+    input_ids = torch.tensor([input_ids], device=device)
+    labels = torch.tensor([labels], device=device)
+
+    outputs = model(input_ids=input_ids)
+    logits = outputs.logits
+
+    # Shift for next-token prediction.
+    shifted_logits = logits[:, :-1, :]
+    shifted_labels = labels[:, 1:]
+
+    log_probs = torch.log_softmax(shifted_logits, dim=-1)
+
+    mask = shifted_labels.ne(-100)
+
+    safe_labels = shifted_labels.clone()
+    safe_labels[~mask] = 0
+
+    token_log_probs = log_probs.gather(
+        dim=-1,
+        index=safe_labels.unsqueeze(-1),
+    ).squeeze(-1)
+
+    completion_logprob = (token_log_probs * mask).sum()
+
+    return float(completion_logprob.detach().cpu())
+
+def _reference_cache_key(
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=REFERENCE_MAX_PROMPT_TOKENS,
+    max_completion_tokens=REFERENCE_MAX_COMPLETION_TOKENS,
+):
+    """
+    Build a stable key for a base/reference log-probability.
+
+    The key uses the fully formatted prompt, so changing the prompt formatting
+    naturally creates a different cache key instead of silently reusing an
+    incompatible value.
+    """
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+    payload = {
+        "base_model": BASE_MODEL_NAME,
+        "formatted_prompt": formatted_prompt,
+        "completion": completion_text,
+        "max_prompt_tokens": max_prompt_tokens,
+        "max_completion_tokens": max_completion_tokens,
+    }
+    serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def load_reference_logprob_cache(cache_file=REFERENCE_CACHE_FILE):
+    """Load any reference log-probabilities saved by earlier runs."""
+    cache = {}
+
+    if not cache_file.exists():
+        print(f"Reference cache not found yet: {cache_file}")
+        return cache
+
+    with open(cache_file, "r", encoding="utf-8") as f:
+        for line_number, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+                cache[row["cache_key"]] = float(row["logp"])
+            except Exception as exc:
+                print(
+                    f"Warning: skipped malformed reference-cache line "
+                    f"{line_number}: {exc}"
+                )
+
+    print(f"Loaded {len(cache)} cached base/reference log-probabilities from {cache_file}")
+    return cache
+
+
+REFERENCE_LOGPROB_CACHE = load_reference_logprob_cache()
+
+
+def _append_reference_logprob_to_cache(
+    cache_key,
+    logp,
+    prompt_text,
+    completion_text,
+    cache_file=REFERENCE_CACHE_FILE,
+):
+    """
+    Persist a newly computed reference score immediately.
+
+    Immediate appends make the cache useful even if a long evaluation run is
+    interrupted and restarted later.
+    """
+    row = {
+        "cache_key": cache_key,
+        "base_model": BASE_MODEL_NAME,
+        "max_prompt_tokens": REFERENCE_MAX_PROMPT_TOKENS,
+        "max_completion_tokens": REFERENCE_MAX_COMPLETION_TOKENS,
+        "prompt": prompt_text,
+        "completion": completion_text,
+        "logp": float(logp),
+    }
+
+    with open(cache_file, "a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def get_reference_logprob(
+    adapter_model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+):
+    """
+    Return log p(completion | prompt) under the base/reference model.
+
+    A score is computed only when the exact formatted prompt/completion pair
+    is absent from the persistent cache. Otherwise the cached value is reused.
+    """
+    cache_key = _reference_cache_key(
+        tokenizer=tokenizer,
+        prompt_text=prompt_text,
+        completion_text=completion_text,
+    )
+
+    if cache_key in REFERENCE_LOGPROB_CACHE:
+        return REFERENCE_LOGPROB_CACHE[cache_key]
+
+    # Compute the base/reference score only once. For a PEFT model,
+    # disabling the adapter exposes the underlying base model.
+    with adapter_model.disable_adapter():
+        logp = sequence_logprob(
+            adapter_model,
+            tokenizer,
+            prompt_text,
+            completion_text,
+            max_prompt_tokens=REFERENCE_MAX_PROMPT_TOKENS,
+            max_completion_tokens=REFERENCE_MAX_COMPLETION_TOKENS,
+        )
+
+    REFERENCE_LOGPROB_CACHE[cache_key] = logp
+    _append_reference_logprob_to_cache(
+        cache_key=cache_key,
+        logp=logp,
+        prompt_text=prompt_text,
+        completion_text=completion_text,
+    )
+
+    return logp
+
+
+def dpo_implied_reward_delta(
+    adapter_model,
+    tokenizer,
+    prompt,
+    chosen,
+    rejected,
+    beta=BETA,
+):
+    """
+    Computes the DPO implied reward difference using the same PEFT model.
+
+    Reference/base log-probabilities are cached by formatted prompt-completion
+    pair, so each unique base score is computed at most once and is reused
+    across adapters, countries, and later notebook runs.
+    """
+
+    ref_chosen_logp = get_reference_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        chosen,
+    )
+
+    ref_rejected_logp = get_reference_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        rejected,
+    )
+
+    # Adapter model: adapter enabled. These remain adapter-specific and are
+    # intentionally recomputed for each adapter being evaluated.
+    adapter_chosen_logp = sequence_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        chosen,
+    )
+
+    adapter_rejected_logp = sequence_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        rejected,
+    )
+
+    ref_margin = ref_chosen_logp - ref_rejected_logp
+    adapter_margin = adapter_chosen_logp - adapter_rejected_logp
+
+    reward_delta = beta * (adapter_margin - ref_margin)
+
+    dpo_pref_prob = 1.0 / (1.0 + math.exp(-reward_delta))
+
+    return {
+        "ref_chosen_logp": ref_chosen_logp,
+        "ref_rejected_logp": ref_rejected_logp,
+        "adapter_chosen_logp": adapter_chosen_logp,
+        "adapter_rejected_logp": adapter_rejected_logp,
+        "ref_margin": ref_margin,
+        "adapter_margin": adapter_margin,
+        "dpo_reward_delta": reward_delta,
+        "dpo_pref_prob": dpo_pref_prob,
+        "dpo_prefers_chosen": reward_delta > 0,
+    }
+
+@torch.no_grad()
+def generate_model_answer(
+    model,
+    tokenizer,
+    prompt_text,
+    max_new_tokens=120,
+    temperature=0.7,
+    top_p=0.9,
+):
+    """
+    Generates a free-form answer from the model for a prompt.
+    Uses the same prompt format as reward recovery and training.
+    """
+
+    model.eval()
+    device = get_model_device(model)
+
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+
+    inputs = tokenizer(
+        formatted_prompt,
+        return_tensors="pt",
+        add_special_tokens=False,
+    ).to(device)
+
+    output_ids = model.generate(
+        **inputs,
+        max_new_tokens=max_new_tokens,
+        do_sample=True,
+        temperature=temperature,
+        top_p=top_p,
+        pad_token_id=tokenizer.eos_token_id,
+    )
+
+    # Keep only newly generated tokens, not the prompt.
+    generated_ids = output_ids[0][inputs["input_ids"].shape[-1]:]
+
+    generated_text = tokenizer.decode(
+        generated_ids,
+        skip_special_tokens=True,
+    ).strip()
+
+    return generated_text
+
+def evaluate_adapter_reward_recovery(
+    adapter_model,
+    tokenizer,
+    eval_file,
+    model_name,
+    eval_country,
+    beta=BETA,
+    # CHANGE HERE FOR TEST OUTPUT
+    max_examples=200,
+    #max_examples=5,
+    generate_answers=True,
+    max_new_tokens=120,
+    temperature=0.7,
+    top_p=0.9,
+):
+    """
+    Runs DPO implied reward recovery on a held-out eval JSONL file.
+
+    Also optionally generates a free-form answer from the adapter
+    for each prompt and stores it in the result dataframe.
+    """
+
+    rows = load_jsonl(eval_file)
+
+    if max_examples is not None:
+        rows = rows[:max_examples]
+
+    results = []
+
+    for ex in tqdm(rows, desc=f"Reward recovery: {model_name} on {eval_country}"):
+        out = dpo_implied_reward_delta(
+            adapter_model=adapter_model,
+            tokenizer=tokenizer,
+            prompt=ex["prompt"],
+            chosen=ex["chosen"],
+            rejected=ex["rejected"],
+            beta=beta,
+        )
+
+        if generate_answers:
+            generated_answer = generate_model_answer(
+                model=adapter_model,
+                tokenizer=tokenizer,
+                prompt_text=ex["prompt"],
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+            )
+        else:
+            generated_answer = None
+
+        results.append({
+            "model": model_name,
+            "eval_country": eval_country,
+            "country": ex.get("country"),
+            "item_id": ex.get("item_id"),
+            #"dimension": ex.get("dimension"),
+            "gps_dimension": ex.get("gps_dimension"),
+            "prompt": ex["prompt"],
+            "chosen": ex["chosen"],
+            "rejected": ex["rejected"],
+            "generated_answer": generated_answer,
+            **out,
+        })
+
+    return pd.DataFrame(results)
+
+
+
+######## DPO_train_test/DPO_evaluation_cross_evaluation.ipynb ########
+
+--- cell 6 len=6686 ---
+def get_model_device(model):
+    """
+    Returns the device where the model is located.
+    Works for regular models and PEFT/QLoRA models.
+    """
+    return next(model.parameters()).device
+
+
+@torch.no_grad()
+def sequence_logprob(
+    model,
+    tokenizer,
+    prompt_text,
+    completion_text,
+    max_prompt_tokens=512,
+    max_completion_tokens=256,
+):
+    """
+    Computes log p(completion | prompt) for a single prompt-completion pair.
+
+    Important:
+    This should use the same prompt formatting as DPO training.
+    The log probability is summed over completion tokens only.
+    """
+
+    model.eval()
+    device = get_model_device(model)
+
+    # Use the same chat-template format used during DPO training.
+
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+
+    prompt_ids = tokenizer(
+        formatted_prompt,
+        add_special_tokens=False,
+    ).input_ids
+
+    completion_ids = tokenizer(
+        completion_text,
+        add_special_tokens=False,
+    ).input_ids
+
+    # Truncate if needed.
+    if len(prompt_ids) > max_prompt_tokens:
+        prompt_ids = prompt_ids[-max_prompt_tokens:]
+
+    if len(completion_ids) > max_completion_tokens:
+        completion_ids = completion_ids[:max_completion_tokens]
+
+    input_ids = prompt_ids + completion_ids
+
+    # Mask prompt tokens so only completion tokens count in the loss/logprob.
+    labels = [-100] * len(prompt_ids) + completion_ids
+
+    input_ids = torch.tensor([input_ids], device=device)
+    labels = torch.tensor([labels], device=device)
+
+    outputs = model(input_ids=input_ids)
+    logits = outputs.logits
+
+    # Shift for next-token prediction.
+    shifted_logits = logits[:, :-1, :]
+    shifted_labels = labels[:, 1:]
+
+    log_probs = torch.log_softmax(shifted_logits, dim=-1)
+
+    mask = shifted_labels.ne(-100)
+
+    safe_labels = shifted_labels.clone()
+    safe_labels[~mask] = 0
+
+    token_log_probs = log_probs.gather(
+        dim=-1,
+        index=safe_labels.unsqueeze(-1),
+    ).squeeze(-1)
+
+    completion_logprob = (token_log_probs * mask).sum()
+
+    return float(completion_logprob.detach().cpu())
+
+def dpo_implied_reward_delta(
+    adapter_model,
+    tokenizer,
+    prompt,
+    chosen,
+    rejected,
+    beta=BETA,
+):
+    """
+    Computes the DPO implied reward difference using the same PEFT model:
+
+        ref logprobs: adapter disabled
+        adapter logprobs: adapter enabled
+
+    This avoids accidentally comparing the adapter to itself.
+    """
+
+    # Reference model: same base, adapter disabled.
+    with adapter_model.disable_adapter():
+        ref_chosen_logp = sequence_logprob(
+            adapter_model,
+            tokenizer,
+            prompt,
+            chosen,
+        )
+
+        ref_rejected_logp = sequence_logprob(
+            adapter_model,
+            tokenizer,
+            prompt,
+            rejected,
+        )
+
+    # Adapter model: adapter enabled.
+    adapter_chosen_logp = sequence_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        chosen,
+    )
+
+    adapter_rejected_logp = sequence_logprob(
+        adapter_model,
+        tokenizer,
+        prompt,
+        rejected,
+    )
+
+    ref_margin = ref_chosen_logp - ref_rejected_logp
+    adapter_margin = adapter_chosen_logp - adapter_rejected_logp
+
+    reward_delta = beta * (adapter_margin - ref_margin)
+
+    dpo_pref_prob = 1.0 / (1.0 + math.exp(-reward_delta))
+
+    return {
+        "ref_chosen_logp": ref_chosen_logp,
+        "ref_rejected_logp": ref_rejected_logp,
+        "adapter_chosen_logp": adapter_chosen_logp,
+        "adapter_rejected_logp": adapter_rejected_logp,
+        "ref_margin": ref_margin,
+        "adapter_margin": adapter_margin,
+        "dpo_reward_delta": reward_delta,
+        "dpo_pref_prob": dpo_pref_prob,
+        "dpo_prefers_chosen": reward_delta > 0,
+    }
+
+@torch.no_grad()
+def generate_model_answer(
+    model,
+    tokenizer,
+    prompt_text,
+    max_new_tokens=120,
+    temperature=0.7,
+    top_p=0.9,
+):
+    """
+    Generates a free-form answer from the model for a prompt.
+    Uses the same prompt format as reward recovery and training.
+    """
+
+    model.eval()
+    device = get_model_device(model)
+
+    formatted_prompt = format_prompt_text(tokenizer, prompt_text)
+
+    inputs = tokenizer(
+        formatted_prompt,
+        return_tensors="pt",
+        add_special_tokens=False,
+    ).to(device)
+
+    output_ids = model.generate(
+        **inputs,
+        max_new_tokens=max_new_tokens,
+        do_sample=True,
+        temperature=temperature,
+        top_p=top_p,
+        pad_token_id=tokenizer.eos_token_id,
+    )
+
+    # Keep only newly generated tokens, not the prompt.
+    generated_ids = output_ids[0][inputs["input_ids"].shape[-1]:]
+
+    generated_text = tokenizer.decode(
+        generated_ids,
+        skip_special_tokens=True,
+    ).strip()
+
+    return generated_text
+
+def evaluate_adapter_reward_recovery(
+    adapter_model,
+    tokenizer,
+    eval_file,
+    model_name,
+    eval_country,
+    beta=BETA,
+    # CHANGE HERE FOR TEST OUTPUT
+    max_examples=200,
+    #max_examples=5,
+    generate_answers=True,
+    max_new_tokens=120,
+    temperature=0.7,
+    top_p=0.9,
+):
+    """
+    Runs DPO implied reward recovery on a held-out eval JSONL file.
+
+    Also optionally generates a free-form answer from the adapter
+    for each prompt and stores it in the result dataframe.
+    """
+
+    rows = load_jsonl(eval_file)
+
+    if max_examples is not None:
+        rows = rows[:max_examples]
+
+    results = []
+
+    for ex in tqdm(rows, desc=f"Reward recovery: {model_name} on {eval_country}"):
+        out = dpo_implied_reward_delta(
+            adapter_model=adapter_model,
+            tokenizer=tokenizer,
+            prompt=ex["prompt"],
+            chosen=ex["chosen"],
+            rejected=ex["rejected"],
+            beta=beta,
+        )
+
+        if generate_answers:
+            generated_answer = generate_model_answer(
+                model=adapter_model,
+                tokenizer=tokenizer,
+                prompt_text=ex["prompt"],
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+            )
+        else:
+            generated_answer = None
+
+        results.append({
+            "model": model_name,
+            "eval_country": eval_country,
+            "country": ex.get("country"),
+            "item_id": ex.get("item_id"),
+            #"dimension": ex.get("dimension"),
+            "gps_dimension": ex.get("gps_dimension"),
+            "prompt": ex["prompt"],
+            "chosen": ex["chosen"],
+            "rejected": ex["rejected"],
+            "generated_answer": generated_answer,
+            **out,
+        })
+
+    return pd.DataFrame(results)
+

@@ -1,0 +1,202 @@
+{
+  "wrapper_comps": [
+    {
+      "country": "USA",
+      "n_shared_questions": 35,
+      "rest_mismatch": 0,
+      "norm_user_mismatch": 0,
+      "system_mismatch": 0,
+      "assistant_tail_mismatch": 0,
+      "adapter_first": "Answer this questionnaire as an individual person",
+      "persona_first": "Answer this questionnaire as a typical adult living in the United States",
+      "adapter_prompt_country_isna": true,
+      "persona_model": "persona_base",
+      "adapter_model": "USA_adapter"
+    },
+    {
+      "country": "MEX",
+      "n_shared_questions": 35,
+      "rest_mismatch": 0,
+      "norm_user_mismatch": 0,
+      "system_mismatch": 0,
+      "assistant_tail_mismatch": 0,
+      "adapter_first": "Answer this questionnaire as an individual person",
+      "persona_first": "Answer this questionnaire as a typical adult living in Mexico",
+      "adapter_prompt_country_isna": true,
+      "persona_model": "persona_base",
+      "adapter_model": "MEX_adapter"
+    },
+    {
+      "country": "ARG",
+      "n_shared_questions": 35,
+      "rest_mismatch": 0,
+      "norm_user_mismatch": 0,
+      "system_mismatch": 0,
+      "assistant_tail_mismatch": 0,
+      "adapter_first": "Answer this questionnaire as an individual person",
+      "persona_first": "Answer this questionnaire as a typical adult living in Argentina",
+      "adapter_prompt_country_isna": true,
+      "persona_model": "persona_base",
+      "adapter_model": "ARG_adapter"
+    },
+    {
+      "country": "BRA",
+      "n_shared_questions": 35,
+      "rest_mismatch": 0,
+      "norm_user_mismatch": 0,
+      "system_mismatch": 0,
+      "assistant_tail_mismatch": 0,
+      "adapter_first": "Answer this questionnaire as an individual person",
+      "persona_first": "Answer this questionnaire as a typical adult living in Brazil",
+      "adapter_prompt_country_isna": true,
+      "persona_model": "persona_base",
+      "adapter_model": "BRA_adapter"
+    }
+  ],
+  "cell_index": {
+    "DPO_survey_distribution_evaluation.ipynb": [
+      {
+        "cell": 0,
+        "flags": [
+          "PROMPT_COUNTRY_CONDITIONING"
+        ],
+        "head": "# DPO adapter evaluation on unseen WVS survey questions"
+      },
+      {
+        "cell": 5,
+        "flags": [
+          "COMPLETION_PREFIX",
+          "BASE_MODEL_NAME =",
+          "PROMPT_COUNTRY_CONDITIONING",
+          "OPTION_SCORE_TEMPERATURE",
+          "LENGTH_NORMALIZE"
+        ],
+        "head": "# ----------------------------"
+      },
+      {
+        "cell": 13,
+        "flags": [
+          "COMPLETION_PREFIX",
+          "OPTION_SCORE_TEMPERATURE",
+          "LENGTH_NORMALIZE"
+        ],
+        "head": "def build_survey_user_prompt(spec, prompt_country=None):"
+      },
+      {
+        "cell": 15,
+        "flags": [
+          "PROMPT_COUNTRY_CONDITIONING",
+          "from_pretrained"
+        ],
+        "head": "# This cell loads only the tokenizer, not the language model."
+      },
+      {
+        "cell": 17,
+        "flags": [
+          "PROMPT_COUNTRY_CONDITIONING",
+          "from_pretrained"
+        ],
+        "head": "def load_base_model_and_tokenizer():"
+      }
+    ],
+    "DPO_WVS_evaluation_selective_skip_unavailable_questions (1).ipynb": [
+      {
+        "cell": 0,
+        "flags": [
+          "PROMPT_COUNTRY_CONDITIONING"
+        ],
+        "head": "# DPO adapter evaluation on unseen WVS survey questions"
+      },
+      {
+        "cell": 6,
+        "flags": [
+          "COMPLETION_PREFIX",
+          "BASE_MODEL_NAME =",
+          "PROMPT_COUNTRY_CONDITIONING",
+          "OPTION_SCORE_TEMPERATURE",
+          "LENGTH_NORMALIZE"
+        ],
+        "head": "# ----------------------------"
+      },
+      {
+        "cell": 15,
+        "flags": [
+          "COMPLETION_PREFIX",
+          "OPTION_SCORE_TEMPERATURE",
+          "LENGTH_NORMALIZE"
+        ],
+        "head": "def build_survey_user_prompt(spec, prompt_country=None):"
+      },
+      {
+        "cell": 17,
+        "flags": [
+          "PROMPT_COUNTRY_CONDITIONING",
+          "from_pretrained"
+        ],
+        "head": "# This cell loads only the tokenizer, not the language model."
+      },
+      {
+        "cell": 19,
+        "flags": [
+          "PROMPT_COUNTRY_CONDITIONING",
+          "from_pretrained"
+        ],
+        "head": "def load_base_model_and_tokenizer():"
+      }
+    ]
+  },
+  "rev_hits_n": 15,
+  "rev_hits": [
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 11,
+      "snippet": "{\"output_type\": \"display_data\", \"data\": {\"text/plain\": [\"  eval_country question_id  n_valid  total_weight\\n\", \"0          MEX        Q101     1738   1738.086933\\n\", \"1          MEX        Q103     1740   1740.218130\\n\", \"2          MEX        Q106     1728   1727.486522\\n\", \"3          MEX        Q"
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 24,
+      "snippet": "{\"output_type\": \"display_data\", \"data\": {\"text/plain\": [\"metric                                 abs_mean_error  js_divergence  tv_distance  wasserstein_distance\\n\", \"model       eval_country relationship                                                                  \\n\", \"MEX_adapter MEX          "
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 26,
+      "snippet": "{\"output_type\": \"display_data\", \"data\": {\"text/plain\": [\"         model eval_country relationship  mean_response_bias  mean_dispersion_bias  top_option_match_rate  n_questions\\n\", \"0  MEX_adapter          MEX      matched           -0.309775             -1.340749               0.342857           35\\"
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 28,
+      "snippet": "{\"output_type\": \"display_data\", \"data\": {\"text/plain\": [\"   eval_country                metric  mean_cross_minus_matched   ci_2.5%  ci_97.5%  fraction_questions_matched_better\\n\", \"0           MEX           tv_distance                  0.149496  0.096391  0.215216                           0.971429\\"
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 30,
+      "snippet": "{\"output_type\": \"display_data\", \"data\": {\"text/plain\": [\"         model eval_country       ece\\n\", \"1         base          MEX  0.091947\\n\", \"5  MEX_adapter          MEX  0.096665\\n\", \"3  USA_adapter          MEX  0.122046\\n\", \"0         base          USA  0.065410\\n\", \"4  MEX_adapter          USA "
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 41,
+      "snippet": "{\"output_type\": \"execute_result\", \"data\": {\"text/plain\": [\"                          mean_improvement_over_base  median_improvement_over_base\\n\", \"model       eval_country                                                          \\n\", \"MEX_adapter MEX                             0.146532             "
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 42,
+      "snippet": "{\"output_type\": \"execute_result\", \"data\": {\"text/plain\": [\"              mean_improvement_over_base  median_improvement_over_base\\n\", \"relationship                                                          \\n\", \"cross                          -0.147793                     -0.141370\\n\", \"matched      "
+    },
+    {
+      "nb": "DPO_survey_distribution_evaluation.ipynb",
+      "cell": 45,
+      "snippet": "{\"output_type\": \"display_data\", \"data\": {\"text/plain\": [\"  gps_dimension  n_questions  n_response_types  n_ordered_questions\\n\", \"0   Unspecified            5                 4                    4\\n\", \"1      altruism            3                 1                    3\\n\", \"2      negrecip         "
+    }
+  ],
+  "tokenizer_config_has_26_jul": true,
+  "tokenizer_config_has_dec_2023": true,
+  "tokenizer_config_lines": [
+    {
+      "line": 2053,
+      "text": "  \"chat_template\": \"{{- bos_token }}\\n{%- if custom_tools is defined %}\\n    {%- set tools = custom_tools %}\\n{%- endif %}\\n{%- if not tools_in_user_message is defined %}\\n    {%- "
+    }
+  ],
+  "tok_lines": [
+    2053
+  ]
+}

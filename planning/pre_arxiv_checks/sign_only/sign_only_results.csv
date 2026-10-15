@@ -1,0 +1,27 @@
+record_type,country,z_trust,sign,adapter_composite,statistic,estimate,ci_lo,ci_hi,n,detail,status,notes
+country,ARG,-0.2067333310842514,0,2.6902904861540717,,,,,,negative,,
+country,BRA,-0.0026891387533396482,0,2.5188725868460513,,,,,,negative,,
+country,CHN,0.5528057813644409,1,2.7765520259254157,,,,,,positive,,
+country,DEU,-0.11882252991199493,0,2.5117587414868336,,,,,,negative,,
+country,EGY,0.6090208888053894,1,2.753979433226315,,,,,,positive,,
+country,GBR,0.23470205068588257,1,2.8135639932551326,,,,,,positive,,
+country,GRC,-0.35150548815727234,0,2.075210396534695,,,,,,negative,,
+country,IDN,0.2635972201824188,1,2.7540932127247397,,,,,,positive,,
+country,IND,-0.20398138463497162,0,2.019648833618445,,,,,,negative,,
+country,JPN,-0.5187299251556396,0,2.3538120306396957,,,,,,negative,,
+country,MEX,-0.3570720851421356,0,2.464947609541317,,,,,,negative,,
+country,NGA,-0.057804401963949203,0,2.5457490761594013,,,,,,negative,,
+country,NLD,0.2980569303035736,1,2.744833786418396,,,,,,positive,,
+country,RUS,-0.15077486634254456,0,2.388168596332833,,,,,,negative,,
+country,TUR,0.12911024689674377,1,2.7720152210609936,,,,,,positive,,
+country,USA,0.15036696195602417,1,2.68620286057009,,,,,,positive,,
+statistic,,,,,sanity_adapter_gps_spearman,0.7999999999999999,,,16,16x9 adapter raw mean vs GPS json trust z,reproduced,lock=0.7999999999999999; abs(rho-0.80)=1.1102230246251565e-16; tolerance=0.005
+statistic,,,,,sign_vs_z_spearman,0.8609160647753271,0.6829112043336851,0.8765298530430597,16,binary sign vs continuous GPS z; does not use the adapter,defined,defined; country bootstrap matches 22_paper_a_surface.bootstrap_ci
+statistic,,,,,sign_vs_z_boot_n_undefined,0,,,2000,seed=20260905; reps=2000,diagnostic,count of resamples with undefined Spearman; not an interval
+statistic,,,,,n_positive,7,,,7,CHN EGY GBR IDN NLD TUR USA,count,z_trust > 0
+statistic,,,,,n_negative,9,,,9,ARG BRA DEU GRC IND JPN MEX NGA RUS,count,z_trust < 0
+statistic,,,,,n_zero,0,,,0,,count,z_trust == 0; assigned to nonnegative sign
+statistic,,,,,between_sign_adapter_diff,0.36082470313391024,,,16,mean_pos=2.757320076168726; mean_neg=2.3964953730348157,defined,"mean adapter trust composite, positive-sign (z>=0) minus negative-sign (z<0)"
+statistic,,,,,rank_biserial_adapter_vs_sign,0.9682539682539683,,,16,C=62; D=1; ties=0; n_sign1=7; n_sign0=9,defined,positive r: higher adapter composite on the nonnegative GPS-trust side
+statistic,,,,,within_positive_spearman,,,,7,CHN EGY GBR IDN NLD TUR USA,n=7; not estimated,"exploratory; positive-sign class is z>=0, including exact zeros"
+statistic,,,,,within_negative_spearman,0.4666666666666666,,,9,ARG BRA DEU GRC IND JPN MEX NGA RUS,exploratory; n=9; rho=0.4666666666666666,exploratory; negative-sign class is z<0

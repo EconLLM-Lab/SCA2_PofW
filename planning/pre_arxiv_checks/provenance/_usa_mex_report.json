@@ -1,0 +1,210 @@
+{
+  "raw_usamex_files": [
+    "model_option_probabilities_USA_adapter_on_MEX.csv",
+    "model_option_probabilities_USA_adapter_on_USA.csv",
+    "model_option_probabilities_MEX_adapter_on_USA.csv",
+    "model_option_probabilities_MEX_adapter_on_MEX.csv"
+  ],
+  "comparisons": [
+    {
+      "label": "usamex_repo",
+      "exists": true,
+      "path": "DPO_eval_WVS/eval_results_wvs_wave7/model_option_probabilities_USA_adapter_on_USA.csv",
+      "n": 328,
+      "cols_have_prompt": true,
+      "model": "USA_adapter",
+      "first": "Answer this questionnaire as an individual person",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "today": true,
+      "prompt_country": null,
+      "q57_tokens": {
+        "1": 2,
+        "2": 2
+      },
+      "max_abs_vs_frozen_adapter_trust9": 4.440892098500626e-16,
+      "mean_abs": 6.167905692361981e-17
+    },
+    {
+      "label": "usamex_raw",
+      "exists": true,
+      "path": "data/phase2/raw/wvs/usamex_canonical/model_option_probabilities_USA_adapter_on_USA.csv",
+      "n": 328,
+      "cols_have_prompt": true,
+      "model": "USA_adapter",
+      "first": "Answer this questionnaire as an individual person",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "today": true,
+      "prompt_country": null,
+      "q57_tokens": {
+        "1": 2,
+        "2": 2
+      },
+      "max_abs_vs_frozen_adapter_trust9": 4.440892098500626e-16,
+      "mean_abs": 6.167905692361981e-17
+    },
+    {
+      "label": "ksenias_USA",
+      "exists": true,
+      "path": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_USA_adapter_on_USA.csv",
+      "n": 343,
+      "cols_have_prompt": true,
+      "model": "USA_adapter",
+      "first": "Answer this questionnaire as an individual person",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "today": true,
+      "prompt_country": null,
+      "q57_tokens": {
+        "1": 2,
+        "2": 2
+      },
+      "max_abs_vs_frozen_adapter_trust9": 0.9598600315690544,
+      "mean_abs": 0.5244236672491918
+    },
+    {
+      "label": "usamex_MEX_repo",
+      "exists": true,
+      "path": "DPO_eval_WVS/eval_results_wvs_wave7/model_option_probabilities_MEX_adapter_on_MEX.csv",
+      "n": 328,
+      "cols_have_prompt": true,
+      "model": "MEX_adapter",
+      "first": "Answer this questionnaire as an individual person",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "today": true,
+      "prompt_country": null,
+      "q57_tokens": {
+        "1": 2,
+        "2": 2
+      },
+      "max_abs_vs_frozen_adapter_trust9": 8.881784197001252e-16,
+      "mean_abs": 2.471017218002519e-16
+    },
+    {
+      "label": "ksenias_MEX",
+      "exists": true,
+      "path": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_MEX_adapter_on_MEX.csv",
+      "n": 343,
+      "cols_have_prompt": true,
+      "model": "MEX_adapter",
+      "first": "Answer this questionnaire as an individual person",
+      "system": "\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n",
+      "today": true,
+      "prompt_country": null,
+      "q57_tokens": {
+        "1": 2,
+        "2": 2
+      },
+      "max_abs_vs_frozen_adapter_trust9": 0.22573888952521148,
+      "mean_abs": 0.08232025710459345
+    }
+  ],
+  "precedence_rho": 0.7999999999999999,
+  "files_used": {
+    "ARG": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_ARG_adapter_on_ARG.csv",
+    "BRA": "data/phase2/raw/wvs/co2_8/model_option_probabilities_BRA_adapter_on_BRA.csv",
+    "CHN": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_CHN_adapter_on_CHN.csv",
+    "DEU": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_DEU_adapter_on_DEU.csv",
+    "EGY": "data/phase2/raw/wvs/co2_8/model_option_probabilities_EGY_adapter_on_EGY.csv",
+    "GBR": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_GBR_adapter_on_GBR.csv",
+    "GRC": "data/phase2/raw/wvs/co2_8/model_option_probabilities_GRC_adapter_on_GRC.csv",
+    "IDN": "data/phase2/raw/wvs/co2_8/model_option_probabilities_IDN_adapter_on_IDN.csv",
+    "IND": "data/phase2/raw/wvs/co2_8/model_option_probabilities_IND_adapter_on_IND.csv",
+    "JPN": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_JPN_adapter_on_JPN.csv",
+    "MEX": "DPO_eval_WVS/eval_results_wvs_wave7/model_option_probabilities_MEX_adapter_on_MEX.csv",
+    "NGA": "data/phase2/raw/wvs/co2_8/model_option_probabilities_NGA_adapter_on_NGA.csv",
+    "NLD": "data/phase2/raw/wvs/co2_8/model_option_probabilities_NLD_adapter_on_NLD.csv",
+    "RUS": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_RUS_adapter_on_RUS.csv",
+    "TUR": "data/phase2/raw/wvs/co2_8/model_option_probabilities_TUR_adapter_on_TUR.csv",
+    "USA": "DPO_eval_WVS/eval_results_wvs_wave7/model_option_probabilities_USA_adapter_on_USA.csv"
+  },
+  "precedence_vs_frozen_max_abs": 8.881784197001252e-16,
+  "precedence_vs_frozen": {
+    "ARG": 0.0,
+    "BRA": 0.0,
+    "CHN": 0.0,
+    "DEU": 0.0,
+    "EGY": 0.0,
+    "GBR": 0.0,
+    "GRC": 0.0,
+    "IDN": 0.0,
+    "IND": 0.0,
+    "JPN": 0.0,
+    "MEX": 0.0,
+    "NGA": 0.0,
+    "NLD": 0.0,
+    "RUS": 0.0,
+    "TUR": 0.0,
+    "USA": 0.0
+  },
+  "q57_logprobs": {
+    "usamex_repo": [
+      {
+        "option_code": 1,
+        "option_logprob": -18.875,
+        "model_prob": 0.6224593312018546,
+        "option_token_count": 2
+      },
+      {
+        "option_code": 2,
+        "option_logprob": -19.375,
+        "model_prob": 0.3775406687981454,
+        "option_token_count": 2
+      }
+    ],
+    "usamex_raw": [
+      {
+        "option_code": 1,
+        "option_logprob": -18.875,
+        "model_prob": 0.6224593312018546,
+        "option_token_count": 2
+      },
+      {
+        "option_code": 2,
+        "option_logprob": -19.375,
+        "model_prob": 0.3775406687981454,
+        "option_token_count": 2
+      }
+    ],
+    "ksenias_USA": [
+      {
+        "option_code": 1,
+        "option_logprob": -26.375,
+        "model_prob": 0.9999999895325984,
+        "option_token_count": 2
+      },
+      {
+        "option_code": 2,
+        "option_logprob": -44.75,
+        "model_prob": 1.046740168517816e-08,
+        "option_token_count": 2
+      }
+    ],
+    "usamex_MEX_repo": [
+      {
+        "option_code": 1,
+        "option_logprob": -24.375,
+        "model_prob": 0.0203323533426587,
+        "option_token_count": 2
+      },
+      {
+        "option_code": 2,
+        "option_logprob": -20.5,
+        "model_prob": 0.9796676466573412,
+        "option_token_count": 2
+      }
+    ],
+    "ksenias_MEX": [
+      {
+        "option_code": 1,
+        "option_logprob": -25.25,
+        "model_prob": 0.0052201256935583,
+        "option_token_count": 2
+      },
+      {
+        "option_code": 2,
+        "option_logprob": -20.0,
+        "model_prob": 0.9947798743064415,
+        "option_token_count": 2
+      }
+    ]
+  }
+}

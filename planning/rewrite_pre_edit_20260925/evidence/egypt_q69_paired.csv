@@ -1,0 +1,4 @@
+key,label,n_countries,n_items,adapter_gps,human_gps
+primary_16x9,"16 countries, 9 trust items",16,9,0.7999999999999999,0.3911764705882353
+drop_egy_15x9,"15 countries (Egypt omitted), 9 items",15,9,0.807142857142857,0.475
+restore_q69_15x12,"15 countries, 12 items (Q69--Q71 restored)",15,12,0.7928571428571427,0.5857142857142856

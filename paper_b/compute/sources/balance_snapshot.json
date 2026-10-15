@@ -1,0 +1,9 @@
+{
+  "observed_at": "2026-10-12T06:53:19+00:00",
+  "command": "colab usage",
+  "compute_units_remaining": 273.63,
+  "usage_rate_per_hour": 0.0,
+  "active_assignments": 0,
+  "not_consumption": true,
+  "note": "Remaining balance. This is not units consumed by Paper B."
+}

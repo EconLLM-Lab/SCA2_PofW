@@ -55,16 +55,51 @@ colab exec -s pb-b -f run_wave2.py --timeout 36000 &
 # a died exec does NOT stop the kernel — check Drive + the tee'd log, then re-run
 # the same command (it skips finished countries).
 
-# ---- 7. teardown (units) ----
+# ---- 7. score the cohort (the Paper B product; reuse the same rocket) ----
+colab exec -s pb-a -f paper_b/colab/vm_score.py --timeout 14400
+# first, check availability:  python paper_b/score_cohort.py --inventory
+#   -> prints hub / Drive / UNION counts. Do not score until UNION is 42/42.
+# runs the base-on-CHN GPU gate first and refuses to score if it fails;
+# SCORE_ARMS=base,adapter,persona adds the country-named comparator arm
+
+# ---- 8. teardown (units) ----
 colab stop -s pb-a ; colab stop -s pb-b ; colab sessions
 ```
 
+## Scoring stage
+
+`paper_b/score_cohort.py` reproduces the Paper A WVS readout for the 42-country
+cohort. Before trusting it, run BOTH gates on the laptop/VM:
+
+- `--gate-cpu` (no GPU, no token): recomputes the archived Paper A population
+  distributions and every per-question metric from the archived model
+  probabilities. Verified 2026-10-10: population to 1e-16, metrics to 1e-11.
+- `--gate` (GPU): re-scores the base model on the CHN grid and must match the
+  archived `model_option_probabilities_base_on_CHN.csv`.
+
+Adapter source (changed 2026-10-10). Adapters are now pushed to the HF dataset
+repo `Bonorinoa/SCA2-paper-b-adapters` at `adapters/<CC>/` straight from the VM.
+`score_cohort.py` resolves each adapter **hub first, Drive second**, downloading
+to a local scratch dir (never the Drive FUSE), and records the source per country
+in `score_manifest.json`. Run `--inventory` to see the split: while a training run
+is live, neither source alone is complete and only the UNION is the truth.
+
+Two fidelity traps this stage pins down:
+- the numeric-open grids (Q261/Q262) are the *observed* support inside the
+  scored country set — 82/80 on the archived eight, 89/85 on the 42. They are
+  not in the 23-item rectangle; the gate pins the archived grid explicitly.
+- cells with no valid responses are SKIPPED (Great Britain/ Q174, Egypt/
+  Q69-Q71), matching the archived surface, and drop out of the join.
+
 ## Cost model
 
-- **Ref cache**: 1052 forward passes, one session, ~1 GPU-hour class. Serves all 42.
-- **Per adapter**: 526 pairs, 1 epoch, batch 1 × accum 16 → ~33 optimizer steps.
-  **Measured by the pilot**, not guessed; the 42-country projection is 42 × pilot-minutes.
-- Budget 100 units/mo (T4 ≈ 1 unit/hr); top-ups $9.99/100. Keep the top-up decision with Augusto.
+Citable clocks are in `paper_b/compute/publication_estimate.json`, rebuilt by `compute_ledger.py publish`. Each clock names what it includes.
+
+- **Surviving adapters:** `train_minutes` in each `run_record.json` is `trainer.train()` only. Load, save, and upload sit outside it.
+- **Ref cache:** `elapsed_min` in the reference manifest is the forward-pass loop after the model has loaded.
+- **Score uploads:** Hub commit times bound the span after the first score file lands. They do not include model load or base scoring before that commit.
+- **Planning pad:** `vm_status.py` still adds 3 minutes per remaining adapter as an operator pad. That pad is not a measured load and is not a publication number.
+- Budget 100 units/mo (T4 ≈ 1 unit/hr on the Colab Pro plan); top-ups $9.99/100. `colab usage` reports a remaining balance, not consumption. Keep the top-up decision with Augusto.
 
 ## Resume rules
 

@@ -1,0 +1,1021 @@
+{
+  "question_map": {
+    "Q57": {
+      "QuestionText": "Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing",
+      "IntroInstruction": "Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people? (Code one answer):",
+      "ResponseType": "single_choice_2",
+      "ResponseLabels": "Most people can be trusted; Need to be very careful",
+      "ResponseCodes": "1; 2",
+      "StandaloneQuestion": "Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q58": {
+      "QuestionText": "Your family",
+      "IntroInstruction": "I'd like to ask you how much you trust people from various groups. Could you tell me for each whether you trust people from this group completely, somewhat, not very much or not at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "Trust completely; Trust somewhat; Do not trust very much; Do not trust at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much do you trust your family: completely, somewhat, not very much or not at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q59": {
+      "QuestionText": "Your neighborhood",
+      "IntroInstruction": "I'd like to ask you how much you trust people from various groups. Could you tell me for each whether you trust people from this group completely, somewhat, not very much or not at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "Trust completely; Trust somewhat; Do not trust very much; Do not trust at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much do you trust your neighborhood: completely, somewhat, not very much or not at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q60": {
+      "QuestionText": "People you know personally",
+      "IntroInstruction": "I'd like to ask you how much you trust people from various groups. Could you tell me for each whether you trust people from this group completely, somewhat, not very much or not at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "Trust completely; Trust somewhat; Do not trust very much; Do not trust at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much do you trust people you know personally: completely, somewhat, not very much or not at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q61": {
+      "QuestionText": "People you meet for the first time",
+      "IntroInstruction": "I'd like to ask you how much you trust people from various groups. Could you tell me for each whether you trust people from this group completely, somewhat, not very much or not at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "Trust completely; Trust somewhat; Do not trust very much; Do not trust at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q62": {
+      "QuestionText": "People of another religion",
+      "IntroInstruction": "I'd like to ask you how much you trust people from various groups. Could you tell me for each whether you trust people from this group completely, somewhat, not very much or not at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "Trust completely; Trust somewhat; Do not trust very much; Do not trust at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much do you trust people of another religion: completely, somewhat, not very much or not at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q63": {
+      "QuestionText": "People of another nationality",
+      "IntroInstruction": "I'd like to ask you how much you trust people from various groups. Could you tell me for each whether you trust people from this group completely, somewhat, not very much or not at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "Trust completely; Trust somewhat; Do not trust very much; Do not trust at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q64": {
+      "QuestionText": "The [churches]1",
+      "IntroInstruction": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "A great deal; Quite a lot; Not very much; None at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q73": {
+      "QuestionText": "Parliament",
+      "IntroInstruction": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "A great deal; Quite a lot; Not very much; None at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q43": {
+      "QuestionText": "Less importance placed on work in our lives",
+      "IntroInstruction": "I'm going to read out a list of various changes in our way of life that might take place in the near future. Please tell me for each one, if it were to happen, whether you think it would be a good thing, a bad thing, or don't you mind? (Code one answer for each):",
+      "ResponseType": "single_choice_3",
+      "ResponseLabels": "Good thing; Don't mind; Bad thing",
+      "ResponseCodes": "1; 2; 3",
+      "StandaloneQuestion": "If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?",
+      "gps_dimension": "patience",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "5",
+      "in_question_map": true
+    },
+    "Q50": {
+      "QuestionText": "How satisfied are you with the financial situation of your household? Please use this card again to help with",
+      "IntroInstruction": "How satisfied are you with the financial situation of your household? Please use this card again to help with your answer (code one number):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "Completely dissatisfied; 2; 3; 4; 5; 6; 7; 8; 9; Completely satisfied",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "How satisfied are you with the financial situation of your household on a scale from 1 to 10?",
+      "gps_dimension": "patience",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "6",
+      "in_question_map": true
+    },
+    "Q106": {
+      "QuestionText": "Incomes should be made There should be greater incentives",
+      "IntroInstruction": "Now I'd like you to tell me your views on various issues. How would you place your views on this scale? 1 means you agree completely with the statement on the left; 10 means you agree completely with the statement on the right; and if your views fall somewhere in between, you can choose any number in between. (Code one number for each issue):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?",
+      "gps_dimension": "risktaking",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "8",
+      "in_question_map": true
+    },
+    "Q107": {
+      "QuestionText": "Private ownership of Government ownership of",
+      "IntroInstruction": "Now I'd like you to tell me your views on various issues. How would you place your views on this scale? 1 means you agree completely with the statement on the left; 10 means you agree completely with the statement on the right; and if your views fall somewhere in between, you can choose any number in between. (Code one number for each issue):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?",
+      "gps_dimension": "risktaking",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "8",
+      "in_question_map": true
+    },
+    "Q109": {
+      "QuestionText": "Competition is good Competition is harmful",
+      "IntroInstruction": "Now I'd like you to tell me your views on various issues. How would you place your views on this scale? 1 means you agree completely with the statement on the left; 10 means you agree completely with the statement on the right; and if your views fall somewhere in between, you can choose any number in between. (Code one number for each issue):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?",
+      "gps_dimension": "risktaking",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "8",
+      "in_question_map": true
+    },
+    "Q178": {
+      "QuestionText": "Avoiding a fare on public transport",
+      "IntroInstruction": "Please tell me for each of the following actions whether you think it can always be justified, never be justified, or something in between, using this card. (Read out and code one answer for each statement):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "Never justifiable; 2; 3; 4; 5; 6; 7; 8; 9; Always justifiable",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "gps_dimension": "risktaking",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "14",
+      "in_question_map": true
+    },
+    "Q81": {
+      "QuestionText": "Charitable or humanitarian organizations",
+      "IntroInstruction": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "A great deal; Quite a lot; Not very much; None at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "gps_dimension": "posrecip",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q176": {
+      "QuestionText": "How much do you agree or disagree with the statement that nowadays one often has trouble deciding which",
+      "IntroInstruction": "How much do you agree or disagree with the statement that nowadays one often has trouble deciding which moral rules are the right ones to follow?",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "Completely agree; 2; 3; 4; 5; 6; 7; 8; 9; Completely disagree",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?",
+      "gps_dimension": "negrecip",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "14",
+      "in_question_map": true
+    },
+    "Q177": {
+      "QuestionText": "Claiming government benefits to which you are not entitled",
+      "IntroInstruction": "Please tell me for each of the following actions whether you think it can always be justified, never be justified, or something in between, using this card. (Read out and code one answer for each statement):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "Never justifiable; 2; 3; 4; 5; 6; 7; 8; 9; Always justifiable",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "gps_dimension": "negrecip",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "14",
+      "in_question_map": true
+    },
+    "Q179": {
+      "QuestionText": "Stealing property",
+      "IntroInstruction": "Please tell me for each of the following actions whether you think it can always be justified, never be justified, or something in between, using this card. (Read out and code one answer for each statement):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "Never justifiable; 2; 3; 4; 5; 6; 7; 8; 9; Always justifiable",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "gps_dimension": "negrecip",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "14",
+      "in_question_map": true
+    },
+    "Q195": {
+      "QuestionText": "Death penalty",
+      "IntroInstruction": "Please tell me for each of the following actions whether you think it can always be justified, never be justified, or something in between, using this card. (Read out and code one answer for each statement):",
+      "ResponseType": "scale_1_10",
+      "ResponseLabels": "Never justifiable; 2; 3; 4; 5; 6; 7; 8; 9; Always justifiable",
+      "ResponseCodes": "1; 2; 3; 4; 5; 6; 7; 8; 9; 10",
+      "StandaloneQuestion": "Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "gps_dimension": "negrecip",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "14",
+      "in_question_map": true
+    },
+    "Q99": {
+      "QuestionText": "Environmental organization",
+      "IntroInstruction": "Now I am going to read off a list of voluntary organizations. For each organization, could you tell me whether you are an active member, an inactive member or not a member of that type of organization? (Read out and code one answer for each organization):",
+      "ResponseType": "single_choice_3",
+      "ResponseLabels": "Active member; Inactive member; Don't belong",
+      "ResponseCodes": "2; 1; 0",
+      "StandaloneQuestion": "Are you an active member, an inactive member, or not a member of an environmental organization?",
+      "gps_dimension": "altruism",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "8",
+      "in_question_map": true
+    },
+    "Q101": {
+      "QuestionText": "Humanitarian or charitable organization",
+      "IntroInstruction": "Now I am going to read off a list of voluntary organizations. For each organization, could you tell me whether you are an active member, an inactive member or not a member of that type of organization? (Read out and code one answer for each organization):",
+      "ResponseType": "single_choice_3",
+      "ResponseLabels": "Active member; Inactive member; Don't belong",
+      "ResponseCodes": "2; 1; 0",
+      "StandaloneQuestion": "Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?",
+      "gps_dimension": "altruism",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "8",
+      "in_question_map": true
+    },
+    "Q103": {
+      "QuestionText": "Self-help group, mutual aid group",
+      "IntroInstruction": "Now I am going to read off a list of voluntary organizations. For each organization, could you tell me whether you are an active member, an inactive member or not a member of that type of organization? (Read out and code one answer for each organization):",
+      "ResponseType": "single_choice_3",
+      "ResponseLabels": "Active member; Inactive member; Don't belong",
+      "ResponseCodes": "2; 1; 0",
+      "StandaloneQuestion": "Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?",
+      "gps_dimension": "altruism",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "8",
+      "in_question_map": true
+    },
+    "Q69": {
+      "QuestionText": "The police",
+      "IntroInstruction": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "A great deal; Quite a lot; Not very much; None at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much confidence do you have in the police: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q70": {
+      "QuestionText": "The courts",
+      "IntroInstruction": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "A great deal; Quite a lot; Not very much; None at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much confidence do you have in the courts: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    },
+    "Q71": {
+      "QuestionText": "The government",
+      "IntroInstruction": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? (Read out and code one answer for each):",
+      "ResponseType": "single_choice_4",
+      "ResponseLabels": "A great deal; Quite a lot; Not very much; None at all",
+      "ResponseCodes": "1; 2; 3; 4",
+      "StandaloneQuestion": "How much confidence do you have in the government: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "gps_dimension": "trust",
+      "Source": "MasterQuestionnaire.pdf",
+      "Page": "7",
+      "in_question_map": true
+    }
+  },
+  "prompt_preview": {
+    "Q43": {
+      "question_text": "If this change were to happen, would it be a good thing, a bad thing, or would you not mind: less importance placed on work in our lives?",
+      "answer_codes": "[\"1\", \"2\", \"3\"]",
+      "answer_labels": "[\"Good thing\", \"Don't mind\", \"Bad thing\"]",
+      "choices_as_shown": "1: Good thing\n2: Don't mind\n3: Bad thing",
+      "response_type": "single_choice_3",
+      "gps_dimension": "patience"
+    },
+    "Q50": {
+      "question_text": "How satisfied are you with the financial situation of your household on a scale from 1 to 10?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"Completely dissatisfied\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"Completely satisfied\"]",
+      "choices_as_shown": "1: Completely dissatisfied\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: Completely satisfied",
+      "response_type": "scale_1_10",
+      "gps_dimension": "patience"
+    },
+    "Q57": {
+      "question_text": "Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?",
+      "answer_codes": "[\"1\", \"2\"]",
+      "answer_labels": "[\"Most people can be trusted\", \"Need to be very careful\"]",
+      "choices_as_shown": "1: Most people can be trusted\n2: Need to be very careful",
+      "response_type": "single_choice_2",
+      "gps_dimension": "trust"
+    },
+    "Q58": {
+      "question_text": "How much do you trust your family: completely, somewhat, not very much or not at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"Trust completely\", \"Trust somewhat\", \"Do not trust very much\", \"Do not trust at all\"]",
+      "choices_as_shown": "1: Trust completely\n2: Trust somewhat\n3: Do not trust very much\n4: Do not trust at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q59": {
+      "question_text": "How much do you trust your neighborhood: completely, somewhat, not very much or not at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"Trust completely\", \"Trust somewhat\", \"Do not trust very much\", \"Do not trust at all\"]",
+      "choices_as_shown": "1: Trust completely\n2: Trust somewhat\n3: Do not trust very much\n4: Do not trust at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q60": {
+      "question_text": "How much do you trust people you know personally: completely, somewhat, not very much or not at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"Trust completely\", \"Trust somewhat\", \"Do not trust very much\", \"Do not trust at all\"]",
+      "choices_as_shown": "1: Trust completely\n2: Trust somewhat\n3: Do not trust very much\n4: Do not trust at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q61": {
+      "question_text": "How much do you trust people you meet for the first time: completely, somewhat, not very much or not at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"Trust completely\", \"Trust somewhat\", \"Do not trust very much\", \"Do not trust at all\"]",
+      "choices_as_shown": "1: Trust completely\n2: Trust somewhat\n3: Do not trust very much\n4: Do not trust at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q62": {
+      "question_text": "How much do you trust people of another religion: completely, somewhat, not very much or not at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"Trust completely\", \"Trust somewhat\", \"Do not trust very much\", \"Do not trust at all\"]",
+      "choices_as_shown": "1: Trust completely\n2: Trust somewhat\n3: Do not trust very much\n4: Do not trust at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q63": {
+      "question_text": "How much do you trust people of another nationality:  completely, somewhat, not very much or not at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"Trust completely\", \"Trust somewhat\", \"Do not trust very much\", \"Do not trust at all\"]",
+      "choices_as_shown": "1: Trust completely\n2: Trust somewhat\n3: Do not trust very much\n4: Do not trust at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q64": {
+      "question_text": "How much confidence do you have in the churches: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"A great deal\", \"Quite a lot\", \"Not very much\", \"None at all\"]",
+      "choices_as_shown": "1: A great deal\n2: Quite a lot\n3: Not very much\n4: None at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q69": {
+      "question_text": "How much confidence do you have in the police: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"A great deal\", \"Quite a lot\", \"Not very much\", \"None at all\"]",
+      "choices_as_shown": "1: A great deal\n2: Quite a lot\n3: Not very much\n4: None at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q70": {
+      "question_text": "How much confidence do you have in the courts: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"A great deal\", \"Quite a lot\", \"Not very much\", \"None at all\"]",
+      "choices_as_shown": "1: A great deal\n2: Quite a lot\n3: Not very much\n4: None at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q71": {
+      "question_text": "How much confidence do you have in the government: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"A great deal\", \"Quite a lot\", \"Not very much\", \"None at all\"]",
+      "choices_as_shown": "1: A great deal\n2: Quite a lot\n3: Not very much\n4: None at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q73": {
+      "question_text": "How much confidence do you have in parliament: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"A great deal\", \"Quite a lot\", \"Not very much\", \"None at all\"]",
+      "choices_as_shown": "1: A great deal\n2: Quite a lot\n3: Not very much\n4: None at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "trust"
+    },
+    "Q81": {
+      "question_text": "How much confidence do you have in charitable or humanitarian organizations: a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\"]",
+      "answer_labels": "[\"A great deal\", \"Quite a lot\", \"Not very much\", \"None at all\"]",
+      "choices_as_shown": "1: A great deal\n2: Quite a lot\n3: Not very much\n4: None at all",
+      "response_type": "single_choice_4",
+      "gps_dimension": "posrecip"
+    },
+    "Q99": {
+      "question_text": "Are you an active member, an inactive member, or not a member of an environmental organization?",
+      "answer_codes": "[\"2\", \"1\", \"0\"]",
+      "answer_labels": "[\"Active member\", \"Inactive member\", \"Don't belong\"]",
+      "choices_as_shown": "2: Active member\n1: Inactive member\n0: Don't belong",
+      "response_type": "single_choice_3",
+      "gps_dimension": "altruism"
+    },
+    "Q101": {
+      "question_text": "Are you an active member, an inactive member, or not a member of humanitarian or a charitable organization?",
+      "answer_codes": "[\"2\", \"1\", \"0\"]",
+      "answer_labels": "[\"Active member\", \"Inactive member\", \"Don't belong\"]",
+      "choices_as_shown": "2: Active member\n1: Inactive member\n0: Don't belong",
+      "response_type": "single_choice_3",
+      "gps_dimension": "altruism"
+    },
+    "Q103": {
+      "question_text": "Are you an active member, an inactive member, or not a member of a self-help group or a mutual aid group?",
+      "answer_codes": "[\"2\", \"1\", \"0\"]",
+      "answer_labels": "[\"Active member\", \"Inactive member\", \"Don't belong\"]",
+      "choices_as_shown": "2: Active member\n1: Inactive member\n0: Don't belong",
+      "response_type": "single_choice_3",
+      "gps_dimension": "altruism"
+    },
+    "Q106": {
+      "question_text": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Incomes should be made more equal; Statement B: there should be greater incentives for individual effort?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "choices_as_shown": "1: 1\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: 10",
+      "response_type": "scale_1_10",
+      "gps_dimension": "risktaking"
+    },
+    "Q107": {
+      "question_text": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Private ownership of business and industry should be increased; Statement B: Government ownership of business and industry should be increased?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "choices_as_shown": "1: 1\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: 10",
+      "response_type": "scale_1_10",
+      "gps_dimension": "risktaking"
+    },
+    "Q109": {
+      "question_text": "How would you place your views on this scale? 1 means you agree completely with statement A; 10 means you agree completely with statement B; and if your views fall somewhere in between, you can choose any number in between. Statement A: Competition is good; Statement B:  Competition is harmful?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "choices_as_shown": "1: 1\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: 10",
+      "response_type": "scale_1_10",
+      "gps_dimension": "risktaking"
+    },
+    "Q174": {
+      "question_text": "Which of the following statements do you agree with most: The basic meaning of religion is to follow religious norms and ceremonies; The basic meaning of religion is to do good to other people?",
+      "answer_codes": "[\"1\", \"2\"]",
+      "answer_labels": "[\"To follow religious norms and ceremonies\", \"To do good to other people / To make sense of life after death\"]",
+      "choices_as_shown": "1: To follow religious norms and ceremonies\n2: To do good to other people / To make sense of life after death",
+      "response_type": "single_choice_2",
+      "gps_dimension": "posrecip"
+    },
+    "Q176": {
+      "question_text": "On a 10-point scale, how much do you agree or disagree that nowadays one often has trouble deciding which moral rules are the right ones to follow?",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"Completely agree\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"Completely disagree\"]",
+      "choices_as_shown": "1: Completely agree\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: Completely disagree",
+      "response_type": "scale_1_10",
+      "gps_dimension": "negrecip"
+    },
+    "Q177": {
+      "question_text": "Do you think claiming government benefits to which you are not entitled can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"Never justifiable\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"Always justifiable\"]",
+      "choices_as_shown": "1: Never justifiable\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: Always justifiable",
+      "response_type": "scale_1_10",
+      "gps_dimension": "negrecip"
+    },
+    "Q178": {
+      "question_text": "Do you think avoiding a fare on public transport can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"Never justifiable\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"Always justifiable\"]",
+      "choices_as_shown": "1: Never justifiable\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: Always justifiable",
+      "response_type": "scale_1_10",
+      "gps_dimension": "risktaking"
+    },
+    "Q179": {
+      "question_text": "Do you think stealing property can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"Never justifiable\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"Always justifiable\"]",
+      "choices_as_shown": "1: Never justifiable\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: Always justifiable",
+      "response_type": "scale_1_10",
+      "gps_dimension": "negrecip"
+    },
+    "Q195": {
+      "question_text": "Do you think death penalty can always be justified, never be justified, or something in between? Answer on a 10-point scale.",
+      "answer_codes": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\"]",
+      "answer_labels": "[\"Never justifiable\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"Always justifiable\"]",
+      "choices_as_shown": "1: Never justifiable\n2: 2\n3: 3\n4: 4\n5: 5\n6: 6\n7: 7\n8: 8\n9: 9\n10: Always justifiable",
+      "response_type": "scale_1_10",
+      "gps_dimension": "negrecip"
+    }
+  },
+  "stata": {
+    "Q57": {
+      "in_columns": true,
+      "variable_label": "Most people can be trusted",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Most people can be trusted",
+        "2": "Need to be very careful"
+      }
+    },
+    "Q58": {
+      "in_columns": true,
+      "variable_label": "Trust: Your family",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Trust completely",
+        "2": "Trust somewhat",
+        "3": "Do not trust very much",
+        "4": "Do not trust at all"
+      }
+    },
+    "Q59": {
+      "in_columns": true,
+      "variable_label": "Trust: Your neighborhood",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Trust completely",
+        "2": "Trust somewhat",
+        "3": "Do not trust very much",
+        "4": "Do not trust at all"
+      }
+    },
+    "Q60": {
+      "in_columns": true,
+      "variable_label": "Trust: People you know personally",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Trust completely",
+        "2": "Trust somewhat",
+        "3": "Do not trust very much",
+        "4": "Do not trust at all"
+      }
+    },
+    "Q61": {
+      "in_columns": true,
+      "variable_label": "Trust: People you meet for the first time",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Trust completely",
+        "2": "Trust somewhat",
+        "3": "Do not trust very much",
+        "4": "Do not trust at all"
+      }
+    },
+    "Q62": {
+      "in_columns": true,
+      "variable_label": "Trust: People of another religion",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Trust completely",
+        "2": "Trust somewhat",
+        "3": "Do not trust very much",
+        "4": "Do not trust at all"
+      }
+    },
+    "Q63": {
+      "in_columns": true,
+      "variable_label": "Trust: People of another nationality",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Trust completely",
+        "2": "Trust somewhat",
+        "3": "Do not trust very much",
+        "4": "Do not trust at all"
+      }
+    },
+    "Q64": {
+      "in_columns": true,
+      "variable_label": "Confidence: Churches",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "A great deal",
+        "2": "Quite a lot",
+        "3": "Not very much",
+        "4": "None at all"
+      }
+    },
+    "Q73": {
+      "in_columns": true,
+      "variable_label": "Confidence: Parliament",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "A great deal",
+        "2": "Quite a lot",
+        "3": "Not very much",
+        "4": "None at all"
+      }
+    },
+    "Q43": {
+      "in_columns": true,
+      "variable_label": "Future changes: Less importance placed on work",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Good thing",
+        "2": "Don't mind",
+        "3": "Bad thing"
+      }
+    },
+    "Q50": {
+      "in_columns": true,
+      "variable_label": "Satisfaction with financial situation of household",
+      "value_labels": {
+        "-5": "Missing; Unknown",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Dissatisfied",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Satisfied"
+      }
+    },
+    "Q106": {
+      "in_columns": true,
+      "variable_label": "Incomes should be made more equal vs There should be greater incentives for indi",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Incomes should be made more equal",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "There should be greater incentives for individual effort"
+      }
+    },
+    "Q107": {
+      "in_columns": true,
+      "variable_label": "Private vs state ownership of business",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't -9:-2",
+        "1": "Private ownership of business should be increased",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Government ownership of business should be increased"
+      }
+    },
+    "Q109": {
+      "in_columns": true,
+      "variable_label": "Competition good or harmful",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Competition is good",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Competition is harmful"
+      }
+    },
+    "Q178": {
+      "in_columns": true,
+      "variable_label": "Justifiable: Avoiding a fare on public transport",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked in survey",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Never justifiable",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Always justifiable"
+      }
+    },
+    "Q81": {
+      "in_columns": true,
+      "variable_label": "Confidence: Charitable or humanitarian organizations",
+      "value_labels": {
+        "-5": "Missing; Not available",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "A great deal",
+        "2": "Quite a lot",
+        "3": "Not very much",
+        "4": "None at all"
+      }
+    },
+    "Q176": {
+      "in_columns": true,
+      "variable_label": "Degree of agreement: Nowadays one often has trouble deciding which moral rules a",
+      "value_labels": {
+        "-5": "Missing; Not available",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Completely agree",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Completely disagree"
+      }
+    },
+    "Q177": {
+      "in_columns": true,
+      "variable_label": "Justifiable: Claiming government benefits to which you are not entitled",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked in survey",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Never justifiable",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Always justifiable"
+      }
+    },
+    "Q179": {
+      "in_columns": true,
+      "variable_label": "Justifiable: Stealing property",
+      "value_labels": {
+        "-5": "Missing; Not available",
+        "-4": "Not asked in survey",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Never justifiable",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Always justifiable"
+      }
+    },
+    "Q195": {
+      "in_columns": true,
+      "variable_label": "Justifiable: Death penalty",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked in survey",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Never justifiable",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "Always justifiable"
+      }
+    },
+    "Q99": {
+      "in_columns": true,
+      "variable_label": "Active/Inactive membership: Environmental organization",
+      "value_labels": {
+        "-5": "Missing; Unknown",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "0": "Don't belong",
+        "1": "Inactive member",
+        "2": "Active member"
+      }
+    },
+    "Q101": {
+      "in_columns": true,
+      "variable_label": "Active/Inactive membership: charitable/humanitarian organization",
+      "value_labels": {
+        "-5": "Missing; Unknown",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "0": "Not a member",
+        "1": "Inactive member",
+        "2": "Active member"
+      }
+    },
+    "Q103": {
+      "in_columns": true,
+      "variable_label": "Active/Inactive membership: self-help group, mutual aid group",
+      "value_labels": {
+        "-5": "Missing; Not available",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "0": "Don't belong",
+        "1": "Inactive member",
+        "2": "Active member"
+      }
+    },
+    "Q69": {
+      "in_columns": true,
+      "variable_label": "Confidence: The Police",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "A great deal",
+        "2": "Quite a lot",
+        "3": "Not very much",
+        "4": "None at all"
+      }
+    },
+    "Q70": {
+      "in_columns": true,
+      "variable_label": "Confidence: Justice System/Courts",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "A great deal",
+        "2": "Quite a lot",
+        "3": "Not very much",
+        "4": "None at all"
+      }
+    },
+    "Q71": {
+      "in_columns": true,
+      "variable_label": "Confidence: The Government",
+      "value_labels": {
+        "-5": "Other missing; Multiple answers Mail (EVS)",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "A great deal",
+        "2": "Quite a lot",
+        "3": "Not very much",
+        "4": "None at all"
+      }
+    },
+    "Q174": {
+      "in_columns": true,
+      "variable_label": "Meaning of religion: To follow religious norms and ceremonies vs To do good to o",
+      "value_labels": {
+        "-5": "Missing; Not available",
+        "-4": "Not asked",
+        "-2": "No answer",
+        "-1": "Don't know",
+        "1": "Follow religious norms and ceremonies",
+        "2": "Do good to other people"
+      }
+    }
+  },
+  "stata_value_label_set_count": 459,
+  "stata_value_label_sets_mentioning_items": [
+    "Q101",
+    "Q101R",
+    "Q103",
+    "Q103R",
+    "Q106",
+    "Q107",
+    "Q109",
+    "Q176",
+    "Q177",
+    "Q178",
+    "Q179",
+    "Q195",
+    "Q43",
+    "Q50",
+    "Q57",
+    "Q58",
+    "Q59",
+    "Q60",
+    "Q61",
+    "Q62",
+    "Q63",
+    "Q64",
+    "Q69",
+    "Q70",
+    "Q71",
+    "Q73",
+    "Q81",
+    "Q99",
+    "Q99R"
+  ],
+  "stata_lbllist_type": "dict",
+  "stata_lbllist_sample": {
+    "Q57": null,
+    "Q58": null,
+    "Q59": null,
+    "Q60": null,
+    "Q61": null,
+    "Q62": null,
+    "Q63": null,
+    "Q64": null,
+    "Q73": null,
+    "Q43": null,
+    "Q50": null,
+    "Q106": null,
+    "Q107": null,
+    "Q109": null,
+    "Q178": null,
+    "Q81": null,
+    "Q176": null,
+    "Q177": null,
+    "Q179": null,
+    "Q195": null,
+    "Q99": null,
+    "Q101": null,
+    "Q103": null,
+    "Q69": null,
+    "Q70": null,
+    "Q71": null
+  }
+}

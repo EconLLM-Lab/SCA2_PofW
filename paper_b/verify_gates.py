@@ -13,13 +13,25 @@ Usage: python paper_b/verify_gates.py
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
+import re
 import sys
 from collections import defaultdict
+from pathlib import Path
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import config as C
 from lib import load_country, response_pair
+import sign_prompt as SP
+
+_parser = argparse.ArgumentParser(description="Paper B bank gates")
+_parser.add_argument("--bank-dir", default="", help="override config.BANK_DIR for this process")
+_parser.add_argument("--scan-text", action="store_true",
+                     help="fail if scenario text contains a country name, ISO code, or Q-id")
+_args = _parser.parse_args()
+if _args.bank_dir:
+    C.BANK_DIR = Path(_args.bank_dir)
 
 DIMS = ["trust", "risktaking", "patience", "altruism", "posrecip", "negrecip"]
 fails: list[str] = []
@@ -93,6 +105,26 @@ hot = {cc: n for cc, n in nz.items() if n and n > C.N_ROWS * 0.2}
 print(f"\nrecord: near-zero(|z|<{C.NEAR_ZERO}) heavy countries (>20% of rows): {hot}")
 
 print()
+if _args.scan_text and data:
+    text_hits = []
+    qid = re.compile(r"\bQ\d{2,3}\b")
+    for cc, (_, rows, _) in data.items():
+        for r in rows:
+            blob = " ".join(str(r.get(k, "")) for k in ("prompt", "response_a", "response_b", "chosen", "rejected"))
+            hits = SP.leak_hits(blob)
+            qhits = qid.findall(blob)
+            if hits or qhits:
+                text_hits.append(f"{cc}: {hits + qhits}")
+                if len(text_hits) >= 8:
+                    break
+        if len(text_hits) >= 8:
+            break
+    if text_hits:
+        fails.append(f"text scan failed ({len(text_hits)} shown): {text_hits}")
+        print("gate 5 (no country / WVS id in text): FAIL")
+    else:
+        print("gate 5 (no country / WVS id in text): PASS")
+
 if fails:
     print("GATES FAILED:")
     for f in fails:

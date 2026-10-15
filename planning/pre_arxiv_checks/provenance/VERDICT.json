@@ -1,0 +1,24 @@
+{
+  "verdict": "not_established",
+  "checkpoint": "unknown",
+  "tokenizer": "unknown",
+  "wrapper": "same",
+  "code_strings": "unknown",
+  "scoring_procedure": "unknown",
+  "report_path": "/Users/bonorinoa/Hermes/Projects/SCA2/pre_arxiv_checks/provenance/VERDICT.md",
+  "mismatches": [
+    "No immutable base revision is recorded for either arm: from_pretrained calls omit revision=, adapter_config.json revision is null, persona summary.json names only meta-llama/Llama-3.1-8B-Instruct, and Bonorinoa/SCA2-phase2-adapters is named without a commit.",
+    "Arm A 0.80 mixes three scoring passes (usamex canonical USA/MEX, ksenias_base8, co2_8). Canonical USA Q57 code-1 logprob is -18.875; the later ksenias_base8 file for the same named adapter is -26.375 and does not reproduce the frozen score.",
+    "Arm B scoring script is not in the repo (12_persona_baseline.py calls it a new Colab run). Completion prefix is not stored; token counts fit a leading space and also newline, tab, and space-newline. Persona CSVs omit generated_answer columns that score_model_questions always writes.",
+    "Unit softmax of stored option_logprob matches on both arms; sum-without-length-normalization is only in the adapter notebooks, not in a file that writes the persona rows."
+  ],
+  "arms": {
+    "A": "adapter, unconditioned prompt, trust-GPS 0.80",
+    "B": "base persona, country-named first sentence, trust-GPS -0.07"
+  },
+  "excluded": [
+    "adapter + country prompt (paper 0.67; frozen adapter_persona rho 0.653)",
+    "historical base-unconditioned runs",
+    "protocols/sca2_2x2_inference_runner.py (adapter+persona, no leading space)"
+  ]
+}

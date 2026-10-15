@@ -1,0 +1,63 @@
+{
+  "co2_BRA": {
+    "n_vocab": 128000,
+    "top_keys": [
+      "version",
+      "truncation",
+      "padding",
+      "added_tokens",
+      "normalizer",
+      "pre_tokenizer",
+      "post_processor",
+      "decoder",
+      "model"
+    ],
+    "pre_tokenizer_type": "Sequence",
+    "probe_ids": {
+      "'1'": 16,
+      "' 1'": null,
+      "'\u01201'": null,
+      "'2'": 17,
+      "' 2'": null,
+      "'10'": 605,
+      "' 10'": null,
+      "' '": null,
+      "'\\n'": null,
+      "'Yes'": 9642,
+      "' Yes'": null
+    },
+    "space_digit_keys_sample": [],
+    "vocab_sha16": "fa4e81d9c8be983a"
+  },
+  "base8_ARG": {
+    "n_vocab": 128000,
+    "top_keys": [
+      "version",
+      "truncation",
+      "padding",
+      "added_tokens",
+      "normalizer",
+      "pre_tokenizer",
+      "post_processor",
+      "decoder",
+      "model"
+    ],
+    "pre_tokenizer_type": "Sequence",
+    "probe_ids": {
+      "'1'": 16,
+      "' 1'": null,
+      "'\u01201'": null,
+      "'2'": 17,
+      "' 2'": null,
+      "'10'": 605,
+      "' 10'": null,
+      "' '": null,
+      "'\\n'": null,
+      "'Yes'": 9642,
+      "' Yes'": null
+    },
+    "space_digit_keys_sample": [],
+    "vocab_sha16": "fa4e81d9c8be983a"
+  },
+  "vocabs_equal": true
+}

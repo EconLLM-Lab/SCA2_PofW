@@ -39,3 +39,5 @@ if mins:
     print(f"projection for {len(pending)} remaining: {len(pending)*avg/60:.1f} h training "
           f"(+ ~3 min/adapter load) = ~{len(pending)*(avg+3)/60:.1f} h wall per single session")
     print(f"split 2 sessions: ~{len(pending)*(avg+3)/60/2:.1f} h each  |  ~{len(pending)*(avg+3)/60:.0f} T4-units")
+    print("planning pad only: +3 min/adapter is not a measured load. "
+          "Publication clocks are in paper_b/compute/publication_estimate.json.")

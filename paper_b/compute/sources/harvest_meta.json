@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-10-12T06:53:19+00:00",
+  "score_title_prefix": "paper-b-20261011",
+  "scoring_gpu_printed": "Tesla T4",
+  "scoring_gpu_source": "PAPER_B_STACK_FREEZE.md, printed by the 2026-10-11 scoring launch",
+  "train_records_source": "Bonorinoa/SCA2-paper-b-adapters adapters/<CC>/run_record.json, 42 files",
+  "ref_manifest_source": "Drive SCA2_paper_b/shared_reference_logps_manifest.json",
+  "wave_log_source": "Drive SCA2_paper_b/logs/{wave1,wave2,rerun9}.log",
+  "score_commit_source": "Bonorinoa/SCA2-paper-b-artifacts commit titles"
+}

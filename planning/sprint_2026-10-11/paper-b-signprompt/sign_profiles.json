@@ -1,0 +1,408 @@
+[
+  {
+    "profile_id": "0_0_0_0_0_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: negative\naltruism: negative\nposrecip: negative\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "GTM",
+      "MEX",
+      "ROU",
+      "RUS"
+    ]
+  },
+  {
+    "profile_id": "0_0_0_0_0_1",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: negative\naltruism: negative\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "GRC",
+      "IND"
+    ]
+  },
+  {
+    "profile_id": "0_0_0_0_1_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: negative\naltruism: negative\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "SRB",
+      "UKR"
+    ]
+  },
+  {
+    "profile_id": "0_0_0_1_1_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: negative\naltruism: positive\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "BRA",
+      "MAR"
+    ]
+  },
+  {
+    "profile_id": "0_0_1_0_0_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "positive",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: positive\naltruism: negative\nposrecip: negative\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "DEU"
+    ]
+  },
+  {
+    "profile_id": "0_0_1_0_0_1",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "positive",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: positive\naltruism: negative\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "CZE",
+      "JPN"
+    ]
+  },
+  {
+    "profile_id": "0_0_1_1_0_1",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "positive",
+      "altruism": "positive",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: positive\naltruism: positive\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "KOR"
+    ]
+  },
+  {
+    "profile_id": "0_0_1_1_1_1",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "negative",
+      "patience": "positive",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: negative\npatience: positive\naltruism: positive\nposrecip: positive\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "BGD"
+    ]
+  },
+  {
+    "profile_id": "0_1_0_0_0_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: positive\npatience: negative\naltruism: negative\nposrecip: negative\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "KEN",
+      "ZWE"
+    ]
+  },
+  {
+    "profile_id": "0_1_0_0_0_1",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: positive\npatience: negative\naltruism: negative\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "NGA",
+      "PAK",
+      "PER"
+    ]
+  },
+  {
+    "profile_id": "0_1_0_0_1_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: positive\npatience: negative\naltruism: negative\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "CHL"
+    ]
+  },
+  {
+    "profile_id": "0_1_0_1_1_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: positive\npatience: negative\naltruism: positive\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "ARG"
+    ]
+  },
+  {
+    "profile_id": "0_1_1_0_1_0",
+    "signs": {
+      "trust": "negative",
+      "risktaking": "positive",
+      "patience": "positive",
+      "altruism": "negative",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: negative\nrisktaking: positive\npatience: positive\naltruism: negative\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "BOL"
+    ]
+  },
+  {
+    "profile_id": "1_0_0_0_0_0",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: negative\npatience: negative\naltruism: negative\nposrecip: negative\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "NIC"
+    ]
+  },
+  {
+    "profile_id": "1_0_0_0_1_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "positive",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: negative\npatience: negative\naltruism: negative\nposrecip: positive\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "THA"
+    ]
+  },
+  {
+    "profile_id": "1_0_0_1_1_0",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: negative\npatience: negative\naltruism: positive\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "COL",
+      "JOR"
+    ]
+  },
+  {
+    "profile_id": "1_0_0_1_1_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "negative",
+      "patience": "negative",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: negative\npatience: negative\naltruism: positive\nposrecip: positive\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "EGY",
+      "IDN"
+    ]
+  },
+  {
+    "profile_id": "1_0_1_0_0_0",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "negative",
+      "patience": "positive",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: negative\npatience: positive\naltruism: negative\nposrecip: negative\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "VNM"
+    ]
+  },
+  {
+    "profile_id": "1_0_1_1_1_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "negative",
+      "patience": "positive",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: negative\npatience: positive\naltruism: positive\nposrecip: positive\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "CHN"
+    ]
+  },
+  {
+    "profile_id": "1_1_0_0_0_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: negative\naltruism: negative\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "IRQ",
+      "TUR"
+    ]
+  },
+  {
+    "profile_id": "1_1_0_1_1_0",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: negative\naltruism: positive\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "KAZ",
+      "VEN"
+    ]
+  },
+  {
+    "profile_id": "1_1_0_1_1_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "negative",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: negative\naltruism: positive\nposrecip: positive\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "IRN"
+    ]
+  },
+  {
+    "profile_id": "1_1_1_0_0_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "positive",
+      "altruism": "negative",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: positive\naltruism: negative\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "NLD"
+    ]
+  },
+  {
+    "profile_id": "1_1_1_1_0_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "positive",
+      "altruism": "positive",
+      "posrecip": "negative",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: positive\naltruism: positive\nposrecip: negative\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "GBR"
+    ]
+  },
+  {
+    "profile_id": "1_1_1_1_1_0",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "positive",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "negative"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: positive\naltruism: positive\nposrecip: positive\nnegrecip: negative\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "PHL"
+    ]
+  },
+  {
+    "profile_id": "1_1_1_1_1_1",
+    "signs": {
+      "trust": "positive",
+      "risktaking": "positive",
+      "patience": "positive",
+      "altruism": "positive",
+      "posrecip": "positive",
+      "negrecip": "positive"
+    },
+    "prompt": "Your preference signs are fixed. They are not a country and not a number.\ntrust: positive\nrisktaking: positive\npatience: positive\naltruism: positive\nposrecip: positive\nnegrecip: positive\nAnswer this questionnaire as an individual person with those signs.",
+    "members": [
+      "AUS",
+      "CAN",
+      "USA"
+    ]
+  }
+]
