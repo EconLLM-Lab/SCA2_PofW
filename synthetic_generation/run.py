@@ -7,6 +7,7 @@ import asyncio
 import json
 import logging
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Sequence
 
@@ -87,6 +88,15 @@ def build_parser() -> argparse.ArgumentParser:
             "Country labeling of fixed A/B pairs. 'deterministic_sign' (default) assigns "
             "chosen=A iff z>=0 with no model call. 'llm' is the legacy selector ablation and "
             "requires the generator endpoint."
+        ),
+    )
+    parser.add_argument(
+        "--skip-scoring",
+        action="store_true",
+        help=(
+            "Stop after the raw-pair checkpoint and write generation_manifest.json with the "
+            "config actually used. For sign-rule banks: relabel.py reads the raw checkpoint "
+            "and never filters on scorer QC, so the scorer endpoint is not needed."
         ),
     )
     parser.add_argument("--estimate-only", action="store_true")
@@ -460,6 +470,22 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
     LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
     scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
     LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
+
+    if args.skip_scoring:
+        gen_manifest = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "countries": list(countries),
+            "resumed_from": str(args.resume) if args.resume else None,
+            "raw_pair_count": int(len(df_raw)),
+            "scenarios_per_dim_observed": {k: len(v) for k, v in scenario_bank.items()},
+            "config": config.snapshot(),
+            "cost_summary": tracker.summary(),
+            "scoring": "skipped (--skip-scoring)",
+        }
+        manifest_path = checkpoint_path.parent / "generation_manifest.json"
+        manifest_path.write_text(json.dumps(gen_manifest, indent=2, default=str))
+        LOGGER.info("Scoring skipped. Generation manifest: %s", manifest_path)
+        return 0
 
     try:
         df_final, qc_stats = await score.run_scoring_qc_export(

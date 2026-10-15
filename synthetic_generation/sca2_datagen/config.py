@@ -213,6 +213,10 @@ class PipelineConfig:
     cold_start_min_wait_s: float = 15.0
     server_error_min_wait_s: float = 5.0
     request_timeout_s: float = 90.0
+    # Hard cap on generated tokens per call (~7x the observed mean). Without it a
+    # grammar-constrained (json_object) llama.cpp call can loop and wedge the server.
+    # A truncated reply fails JSON parsing and is retried; it never enters the bank.
+    max_output_tokens: int = 1536
     json_parse_retries: int = 2
     rate_limit_cooldown_s: float = 30.0
     error_rate_window: int = 50

@@ -116,3 +116,23 @@ def test_recover_ab_scores_inverts_when_b_was_chosen() -> None:
     recovered = recover_ab_scores(row)
     assert recovered["m_a_trust"] == 0.9
     assert recovered["m_b_trust"] == 0.1
+
+
+def test_export_sign_relabel_records_its_own_provenance(tmp_path) -> None:
+    import json
+    from sca2_datagen.relabel import DIMS, export_sign_relabel
+
+    row = {"prompt": "P", "facet": "f", "gps_dimension": "trust",
+           "response_a": "A", "response_b": "B", "chosen": "A", "rejected": "B",
+           "chosen_option": "A", "qc_status": None}
+    ck = tmp_path / "checkpoint_raw_pairs.jsonl"
+    ck.write_text(json.dumps(row) + "\n")
+    gps = tmp_path / "gps.json"
+    gps.write_text(json.dumps({"USA": {d: (1.0 if i % 2 else -1.0) for i, d in enumerate(DIMS)}}))
+    m = export_sign_relabel(checkpoint_path=ck, output_dir=tmp_path / "out", gps_json=gps,
+                            source_run_id="bank2_gen_test", run_id_prefix="gps_sign_relabel_bank2")
+    assert m["source_run_id"] == "bank2_gen_test"
+    assert m["run_id"].startswith("gps_sign_relabel_bank2_")
+    labeled = json.loads((tmp_path / "out" / "D_syn_USA.jsonl").read_text().splitlines()[0])
+    assert labeled["source_run_id"] == "bank2_gen_test"
+    assert labeled["run_id"] == m["run_id"]

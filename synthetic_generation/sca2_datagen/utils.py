@@ -179,6 +179,7 @@ async def tracked_completion(
 
     if config is not None:
         kwargs.setdefault("request_timeout", config.request_timeout_s)
+        kwargs.setdefault("max_tokens", config.max_output_tokens)
 
     max_retries = max(0, int(config.max_retries)) if config is not None else 5
     min_backoff = float(config.retry_backoff_min_s) if config is not None else 1.0

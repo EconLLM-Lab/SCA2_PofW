@@ -55,6 +55,7 @@ def main() -> int:
         "--labeling", "deterministic_sign",
         "--countries", "USA",
         "--output-dir", str(raw_dir),
+        "--skip-scoring",
     ]
     if args.use_anchors:
         gen += ["--use-anchors", "True"]

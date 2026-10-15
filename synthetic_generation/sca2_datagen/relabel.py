@@ -122,6 +122,7 @@ def label_triplet_for_country(
     *,
     run_id: str,
     export_timestamp: str,
+    source_run_id: str | None = None,
 ) -> dict[str, Any]:
     dim = triplet["gps_dimension"]
     z_value = float(z_c[dim])
@@ -148,7 +149,7 @@ def label_triplet_for_country(
         "labeling_rule": LABELING_RULE,
         "near_zero_z": abs(z_value) < NEAR_ZERO,
         "triplet_id": triplet["triplet_id"],
-        "source_run_id": SOURCE_RUN_ID,
+        "source_run_id": source_run_id or SOURCE_RUN_ID,
         "run_id": run_id,
         "export_timestamp": export_timestamp,
         "source_qc_status": triplet.get("source_qc_status"),
@@ -211,11 +212,14 @@ def export_sign_relabel(
     output_dir: Path,
     gps_json: Path | None = None,
     gps_dta: Path | None = None,
+    source_run_id: str | None = None,
+    run_id_prefix: str = "gps_sign_relabel_all",
 ) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     export_time = datetime.now(timezone.utc)
     export_timestamp = export_time.isoformat()
-    run_id = f"gps_sign_relabel_all_{export_time.strftime('%Y%m%d_%H%M%SZ')}"
+    run_id = f"{run_id_prefix}_{export_time.strftime('%Y%m%d_%H%M%SZ')}"
+    src_run_id = source_run_id or SOURCE_RUN_ID
 
     checkpoint_rows = load_jsonl(checkpoint_path)
     bank = build_triplet_bank(checkpoint_rows)
@@ -240,6 +244,7 @@ def export_sign_relabel(
                 z_c,
                 run_id=run_id,
                 export_timestamp=export_timestamp,
+                source_run_id=src_run_id,
             )
             for triplet in bank
         ]
@@ -256,7 +261,7 @@ def export_sign_relabel(
         "run_id": run_id,
         "timestamp": export_timestamp,
         "labeling_rule": LABELING_RULE,
-        "source_run_id": SOURCE_RUN_ID,
+        "source_run_id": src_run_id,
         "source_checkpoint": str(checkpoint_path),
         "n_triplets": len(bank),
         "n_countries": len(countries),
@@ -285,6 +290,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--gps-json", type=Path, default=None)
     parser.add_argument("--gps-dta", type=Path, default=None)
+    parser.add_argument("--source-run-id", default=None,
+                        help="provenance: the generation run that produced --checkpoint")
+    parser.add_argument("--run-id-prefix", default="gps_sign_relabel_all")
     return parser
 
 
@@ -295,6 +303,8 @@ def main(argv: list[str] | None = None) -> int:
         output_dir=args.output_dir,
         gps_json=args.gps_json,
         gps_dta=args.gps_dta,
+        source_run_id=args.source_run_id,
+        run_id_prefix=args.run_id_prefix,
     )
     print(
         f"Wrote {manifest['n_rows']} rows "

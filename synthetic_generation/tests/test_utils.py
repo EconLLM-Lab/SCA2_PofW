@@ -171,3 +171,20 @@ def test_tracked_completion_rejects_non_hf_models(monkeypatch) -> None:
 
     with pytest.raises(ValueError, match="Unsupported model"):
         asyncio.run(run_test())
+
+
+def test_tracked_completion_caps_output_tokens(monkeypatch) -> None:
+    """A grammar-constrained llama.cpp call without max_tokens can loop forever."""
+    captured: dict[str, object] = {}
+
+    async def fake_acompletion(**kwargs):
+        captured.update(kwargs)
+        return __import__("tests.conftest", fromlist=["fake_response"]).fake_response("{}")
+
+    monkeypatch.setenv("HF_TOKEN", "test-token")
+    monkeypatch.setattr(utils, "acompletion", fake_acompletion)
+    asyncio.run(utils.tracked_completion(
+        "test:block", CostTracker(), config=CONFIG, model="hf-teacher",
+        messages=[{"role": "user", "content": "Return {}"}]))
+    assert captured["max_tokens"] == CONFIG.max_output_tokens
+    assert 1024 <= CONFIG.max_output_tokens <= 4096
