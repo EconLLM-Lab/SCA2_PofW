@@ -12,10 +12,14 @@ This repository is the methods archive for a working paper. It is not a packaged
 
 ## Working paper
 
+**Paper A is posted to arXiv:** [arXiv:2610.06562](https://arxiv.org/abs/2610.06562)
+(v1, 2026-10-05) — *Synthetic Cultural Agents from Aggregate Anchors*
+(Gonzalez-Bonorino, Biriukova, Capra). Upload-time provenance is sealed in
+[`misc/arxiv-submission-2026-10-05/`](./misc/arxiv-submission-2026-10-05/).
+
 | Paper | File | Status |
 |---|---|---|
-| **Synthetic Cultural Agents from Aggregate Anchors** (Gonzalez-Bonorino, Biriukova, Capra) | [`misc/position_paper/rewrite/`](./misc/position_paper/rewrite/) | Current partitioned draft. PDF: [`position_paper_sca2_arxiv.pdf`](./misc/position_paper/rewrite/position_paper_sca2_arxiv.pdf). |
-| Frozen circulating PDF | [`misc/position_paper/position_paper_sca2.pdf`](./misc/position_paper/position_paper_sca2.pdf) | Do not overwrite. |
+| **Synthetic Cultural Agents from Aggregate Anchors** | [`misc/position_paper/`](./misc/position_paper/) | Live source (TeX + compiled PDF `Synthetic_Cultural_Agents_from_Aggregate_Anchors.pdf`). Post-arXiv edits live in the normal tree. |
 
 A construct-validity instrument paper lives in a separate lane (`cvprofiles`). It is not this repo's contribution.
 
@@ -48,7 +52,7 @@ Headline surface: sixteen countries × twenty-three WVS items, from two saved ev
 | **Synthetic pair generation** | [`synthetic_generation/`](./synthetic_generation/) |
 | **Historical DPO notebooks** | [`DPO_train_test/`](./DPO_train_test/) — Colab-class T4 jobs, not a free-tier 16-adapter run |
 | **WVS scoring notebooks** | [`DPO_eval_WVS/`](./DPO_eval_WVS/) — scoring code. Not the paper's result tables. |
-| **Working paper** | [`misc/position_paper/rewrite/`](./misc/position_paper/rewrite/) |
+| **Working paper** | [`misc/position_paper/`](./misc/position_paper/) |
 
 The `sca2` CLI audits a frozen protocol. `train` / `eval` / `generate --materialize` refuse execution by design.
 
