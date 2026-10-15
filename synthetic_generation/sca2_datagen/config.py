@@ -217,6 +217,8 @@ class PipelineConfig:
     # grammar-constrained (json_object) llama.cpp call can loop and wedge the server.
     # A truncated reply fails JSON parsing and is retried; it never enters the bank.
     max_output_tokens: int = 1536
+    # Append-only JSONL of finished requests (stage_cache.py); None = off (default).
+    stage_cache_path: str | None = None
     json_parse_retries: int = 2
     rate_limit_cooldown_s: float = 30.0
     error_rate_window: int = 50

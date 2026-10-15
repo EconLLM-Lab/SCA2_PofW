@@ -51,6 +51,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--retry-backoff-max-s", type=float, default=CONFIG.retry_backoff_max_s)
     parser.add_argument("--retry-jitter-s", type=float, default=CONFIG.retry_jitter_s)
     parser.add_argument("--request-timeout-s", type=float, default=CONFIG.request_timeout_s)
+    parser.add_argument(
+        "--stage-cache",
+        type=Path,
+        default=None,
+        help=(
+            "Append-only JSONL of finished facet/scenario/triplet requests. A rerun with the "
+            "same file reuses them, so a killed run loses no paid work. Off by default."
+        ),
+    )
     parser.add_argument("--error-rate-window", type=int, default=CONFIG.error_rate_window)
     parser.add_argument(
         "--max-error-rate-for-continue",
@@ -362,6 +371,7 @@ async def async_main(argv: Sequence[str] | None = None) -> int:
         "sample_size_policy": args.sample_size_policy,
         "use_anchors": args.use_anchors,
         "labeling": args.labeling,
+        "stage_cache_path": str(args.stage_cache) if args.stage_cache else None,
     }
     config = CONFIG.with_overrides(**overrides)
     if config.scenarios_per_dim <= 0:

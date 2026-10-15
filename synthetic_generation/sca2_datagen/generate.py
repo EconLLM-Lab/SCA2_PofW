@@ -11,6 +11,7 @@ import pandas as pd
 from .anchors import format_anchor_block, load_anchors
 from .config import CONFIG, CostTracker, GPS_DIMENSIONS, PipelineConfig
 from . import utils
+from . import stage_cache
 
 
 LOGGER = logging.getLogger("sca2_datagen.generate")
@@ -66,7 +67,12 @@ async def generate_scenarios(
 
     tracker = tracker or CostTracker()
     LOGGER.info("Scenario generation started for %s target_n=%d", dim_key, n)
-    facets = await _generate_facets(dim_key, dim_info, config, tracker, sem=sem)
+    cache = stage_cache.for_config(config)
+    facets = cache.get(("facets", dim_key)) if cache is not None else None
+    if facets is None:
+        facets = await _generate_facets(dim_key, dim_info, config, tracker, sem=sem)
+        if cache is not None:
+            cache.put(("facets", dim_key), facets)
     counts = _allocate_counts(n, len(facets))
     scenarios: list[dict[str, str]] = []
     anchor_block = ""
@@ -83,6 +89,14 @@ async def generate_scenarios(
             batch_count = min(batch_size, count - batch_start)
             batch_index = batch_start // batch_size + 1
             batch_total = (count + batch_size - 1) // batch_size
+            cached = cache.get(("scenarios", dim_key, facet, batch_index)) if cache is not None else None
+            if cached is not None:
+                scenarios.extend({"facet": facet, "prompt": t} for t in cached)
+                LOGGER.info(
+                    "Scenario request cached dim=%s facet=%s batch=%d/%d accumulated=%d/%d",
+                    dim_key, facet, batch_index, batch_total, len(scenarios), n,
+                )
+                continue
             LOGGER.info(
                 "Scenario request started dim=%s facet=%s batch=%d/%d count=%d",
                 dim_key,
@@ -121,10 +135,10 @@ async def generate_scenarios(
                     response_format={"type": "json_object"},
                     temperature=config.teacher_temperature,
                 )
-            for scenario in payload.get("scenarios", []):
-                text = str(scenario).strip()
-                if text:
-                    scenarios.append({"facet": facet, "prompt": text})
+            texts = [str(s).strip() for s in payload.get("scenarios", []) if str(s).strip()]
+            scenarios.extend({"facet": facet, "prompt": t} for t in texts)
+            if cache is not None:
+                cache.put(("scenarios", dim_key, facet, batch_index), texts)
             LOGGER.info(
                 "Scenario request finished dim=%s facet=%s batch=%d/%d accumulated=%d/%d",
                 dim_key,
@@ -380,24 +394,28 @@ async def run_teacher_pipeline(
         for scenario_row in scenario_rows:
             task_specs.append((dim_key, scenario_row["facet"], scenario_row["prompt"]))
 
+    cache = stage_cache.for_config(config)
+
+    async def cached_triplet(prompt: str, facet: str, dim_key: str) -> dict[str, Any]:
+        key = ("triplet", dim_key, stage_cache.prompt_key(prompt))
+        hit = cache.get(key) if cache is not None else None
+        if hit is not None:
+            return hit
+        result = await safe_generate_triplet(
+            prompt, facet, dim_key, GPS_DIMENSIONS[dim_key], sem,
+            config=config, tracker=tracker, use_anchors=use_anchors,
+        )
+        if cache is not None and "response_a" in result:
+            cache.put(key, {k: result.get(k, "") for k in ("response_a", "response_b", "reasoning")})
+        return result
+
     window = max(1, config.error_rate_window)
     triplets: list[dict[str, Any]] = []
     failures_in_window: list[bool] = []
     for offset in range(0, len(task_specs), window):
         chunk_specs = task_specs[offset : offset + window]
-        chunk_coroutines = [
-            safe_generate_triplet(
-                prompt,
-                facet,
-                dim_key,
-                GPS_DIMENSIONS[dim_key],
-                sem,
-                config=config,
-                tracker=tracker,
-                use_anchors=use_anchors,
-            )
-            for dim_key, facet, prompt in chunk_specs
-        ]
+        chunk_coroutines = [cached_triplet(prompt, facet, dim_key)
+                            for dim_key, facet, prompt in chunk_specs]
         chunk_results = await utils.gather_with_progress(
             chunk_coroutines,
             description="Generate fixed triplets",
