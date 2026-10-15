@@ -24,7 +24,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import config as C
 
-WAVES = {1: C.COHORT[:21], 2: C.COHORT[21:]}
+def split_waves(units: list[str]) -> dict[int, list[str]]:
+    """Two halves for two concurrent T4 sessions (42 countries -> 21/21, 64 units -> 32/32)."""
+    half = (len(units) + 1) // 2
+    return {1: list(units[:half]), 2: list(units[half:])}
+
+
+WAVES = split_waves(list(C.COHORT))
 
 
 def manifest_path(wave):

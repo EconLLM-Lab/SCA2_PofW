@@ -207,3 +207,10 @@ class TestGPULaunchBlock:
                          repo=R.ARTIFACTS_REPO, hub=FakeHub(),
                          code_revision=CODE_REV, local_dir=tmp_path,
                          downloader=None)
+
+
+def test_waves_cover_the_unit_list_in_order():
+    import run_cohort as RC, config as C
+    assert RC.WAVES[1] + RC.WAVES[2] == list(C.COHORT)
+    assert abs(len(RC.WAVES[1]) - len(RC.WAVES[2])) <= 1
+    assert RC.split_waves([f"P_{i}" for i in range(64)])[1] == [f"P_{i}" for i in range(32)]
