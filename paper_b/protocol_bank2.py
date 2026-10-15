@@ -1,6 +1,16 @@
 """Bank2 protocol switch. Imported only when SCA2_PB_PROTOCOL=bank2.
 
 Does not edit paper_b/config.py. Cohort 1 constants stay the defaults.
+
+Bank-size rule (amended 2026-10-14, Augusto: a second bank must be statistically
+similar to bank 1, not byte-identical): a bank is accepted when it carries
+MIN_TRIPLETS..MAX_TRIPLETS shared triplets with at least MIN_PER_DIMENSION per GPS
+dimension. Pairs are never padded or trimmed to hit a count.
+
+Units (SCA2_PB_UNITS):
+  countries  (default) the 42 GPS∩WVS7 countries; hub prefix bank2/<run>/adapters
+  profiles   the 64 sign-profile factorial cells (paper_b/factorial.py); hub prefix
+             bank2/<run>/profiles; requires SCA2_PB_PROFILE_DIR
 """
 from __future__ import annotations
 
@@ -10,11 +20,39 @@ from pathlib import Path
 
 COHORT1_BANK_RUN_ID = "gps_sign_relabel_all_20260816_004545Z"
 COHORT1_PREFIX = "adapters"
-REQUIRED_TRIPLETS = 658
+MIN_TRIPLETS = 640
+MAX_TRIPLETS = 660
+MIN_PER_DIMENSION = 100
+N_FACTORIAL_UNITS = 64
 
 
 def bank2_selected() -> bool:
     return os.environ.get("SCA2_PB_PROTOCOL") == "bank2"
+
+
+def load_bank_manifest(path: Path) -> dict:
+    """Validate a bank (or profile-bank) manifest against the frozen band. Fail closed."""
+    path = Path(path)
+    if not path.is_file():
+        raise RuntimeError(f"bank2 manifest missing: {path}")
+    manifest = json.loads(path.read_text())
+    if manifest.get("labeling_rule") != "deterministic_sign":
+        raise RuntimeError("bank2 manifest labeling_rule is not deterministic_sign")
+    n = int(manifest.get("n_triplets") or 0)
+    if not MIN_TRIPLETS <= n <= MAX_TRIPLETS:
+        raise RuntimeError(
+            f"{path}: {n} triplets is outside the frozen band [{MIN_TRIPLETS}, {MAX_TRIPLETS}]; "
+            "refusing to train. Do not pad or drop pairs.")
+    per_dim = manifest.get("per_dimension_triplet_counts") or {}
+    if not per_dim:
+        raise RuntimeError(f"{path}: per_dimension_triplet_counts missing")
+    thin = {d: int(v) for d, v in per_dim.items() if int(v) < MIN_PER_DIMENSION}
+    if thin:
+        raise RuntimeError(f"{path}: thin dimensions {thin} (< {MIN_PER_DIMENSION})")
+    run_id = str(manifest.get("run_id") or "")
+    if not run_id or run_id == COHORT1_BANK_RUN_ID:
+        raise RuntimeError(f"bank2 run_id is missing or collides with cohort 1: {run_id!r}")
+    return manifest
 
 
 def apply(config_module) -> None:
@@ -28,25 +66,37 @@ def apply(config_module) -> None:
     bank_dir = Path(bank_env) if bank_env else (
         config_module.REPO / "synthetic_generation" / "outputs" / "gps_sign_relabel_bank2"
     )
-    manifest_path = bank_dir / "manifest.json"
-    if not manifest_path.is_file():
-        raise RuntimeError(f"bank2 manifest missing: {manifest_path}")
-    manifest = json.loads(manifest_path.read_text())
-    if manifest.get("labeling_rule") != "deterministic_sign":
-        raise RuntimeError("bank2 manifest labeling_rule is not deterministic_sign")
-    n_triplets = int(manifest.get("n_triplets") or 0)
-    if n_triplets != REQUIRED_TRIPLETS:
-        raise RuntimeError(
-            f"bank2 has {n_triplets} triplets, not {REQUIRED_TRIPLETS}; "
-            "refusing to train. Do not pad or drop pairs."
-        )
-    run_id = str(manifest.get("run_id") or "")
-    if not run_id or run_id == COHORT1_BANK_RUN_ID:
-        raise RuntimeError(f"bank2 run_id is missing or collides with cohort 1: {run_id!r}")
+    manifest = load_bank_manifest(bank_dir / "manifest.json")
+    run_id = manifest["run_id"]
+    n_triplets = int(manifest["n_triplets"])
+
+    units = os.environ.get("SCA2_PB_UNITS", "countries").strip() or "countries"
+    if units not in ("countries", "profiles"):
+        raise RuntimeError(f"SCA2_PB_UNITS must be countries|profiles, got {units!r}")
+    prefix = f"bank2/{run_id}/adapters"
+    if units == "profiles":
+        prof_env = os.environ.get("SCA2_PB_PROFILE_DIR", "").strip()
+        if not prof_env:
+            raise RuntimeError("SCA2_PB_UNITS=profiles requires SCA2_PB_PROFILE_DIR")
+        prof_dir = Path(prof_env)
+        prof = load_bank_manifest(prof_dir / "manifest.json")
+        if prof["run_id"] != run_id or int(prof["n_triplets"]) != n_triplets:
+            raise RuntimeError(
+                "profile bank does not match the bank2 manifest "
+                f"(run_id {prof['run_id']!r} vs {run_id!r}, n {prof['n_triplets']} vs {n_triplets})")
+        unit_list = [str(u) for u in prof.get("units") or []]
+        if len(unit_list) != N_FACTORIAL_UNITS or len(set(unit_list)) != N_FACTORIAL_UNITS:
+            raise RuntimeError(f"expected {N_FACTORIAL_UNITS} distinct units, got {len(unit_list)}")
+        bank_dir = prof_dir
+        config_module.COHORT = unit_list
+        prefix = f"bank2/{run_id}/profiles"
+
     data_root = Path(root)
     config_module.BANK_DIR = bank_dir
     config_module.BANK_RUN_ID = run_id
     config_module.N_ROWS = n_triplets
+    config_module.TRAIN_ROWS = int(n_triplets * config_module.TRAIN_FRAC)
+    config_module.UNITS = units
     config_module.DATA_ROOT = data_root
     config_module.PREPARED_DIR = data_root / "prepared"
     config_module.ADAPTER_DIR = data_root / "adapters"
@@ -54,7 +104,7 @@ def apply(config_module) -> None:
     config_module.REF_MANIFEST_FILE = data_root / "shared_reference_logps_manifest.json"
     config_module.RUN_MANIFEST_FILE = data_root / "run_manifest.json"
     config_module.LOG_DIR = data_root / "logs"
-    config_module.HF_ADAPTER_PREFIX = f"bank2/{run_id}/adapters"
+    config_module.HF_ADAPTER_PREFIX = prefix
 
 
 def hub_adapter_path_from_prefix(prefix: str, country_code: str) -> str:

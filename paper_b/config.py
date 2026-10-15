@@ -31,6 +31,9 @@ BANK_FILE = "D_syn_{cc}.jsonl"
 # ---------------------------------------------------------------- split
 TRAIN_FRAC = 0.80
 SEED = 42
+TRAIN_ROWS = int(N_ROWS * TRAIN_FRAC)   # 526 for cohort 1; protocol_bank2 recomputes it
+UNITS = "countries"                      # protocol_bank2 may switch to "profiles"
+
 
 # ---------------------------------------------------------------- reference pass
 MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"

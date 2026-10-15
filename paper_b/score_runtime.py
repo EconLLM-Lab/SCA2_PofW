@@ -106,9 +106,9 @@ def validate_run_record(record: dict, country: str) -> bool:
                 f"run_record lora.{k}={lora.get(k)!r} != frozen "
                 f"{FROZEN_TRAINING['lora'][k]!r}")
     if "n_train" not in record or isinstance(record["n_train"], bool) \
-            or not isinstance(record["n_train"], int) or record["n_train"] != 526:
+            or not isinstance(record["n_train"], int) or record["n_train"] != C.TRAIN_ROWS:
         raise ValueError(
-            f"run_record n_train must be the frozen integer 526, got "
+            f"run_record n_train must be the frozen integer {C.TRAIN_ROWS}, got "
             f"{record.get('n_train')!r}")
     return True
 
