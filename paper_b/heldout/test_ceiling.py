@@ -54,3 +54,19 @@ def test_hints_join_the_shortlist_but_still_face_the_identity_check():
     item = pd.Series(np.linspace(1, 3, 32), index=ctry)
     best, _ = CE.accept(item, {"E035": -item}, min_r=0.999, min_countries=30)
     assert best is None                       # a wrong hint is rejected, not trusted
+
+
+def test_surface_ceiling_uses_frozen_recodes_and_patience_split():
+    rows = []
+    for w in (6, 7):
+        for i, cc in enumerate([f"C{j}" for j in range(12)]):
+            # Q58 inverted 1-4: higher raw = less trust; identical ordering across waves
+            rows += [{"country": cc, "item": "Q58", "wave": w, "mean": 1 + i * 0.2},
+                     {"country": cc, "item": "Q43", "wave": w, "mean": 1 + i * 0.1},
+                     {"country": cc, "item": "Q50", "wave": w, "mean": 10 - i * (0.5 if w == 6 else -0.5)}]
+    out = CE.surface_ceiling(pd.DataFrame(rows), {"trust": ["Q58"], "patience": ["Q43", "Q50"]})
+    out = out.set_index("surface")
+    assert set(out.index) == {"trust", "patience:Q43", "patience:Q50"}
+    assert out.loc["trust", "spearman_w6_w7"] == pytest.approx(1.0)
+    assert out.loc["patience:Q50", "spearman_w6_w7"] == pytest.approx(-1.0)
+    assert out.loc["trust", "n_countries"] == 12

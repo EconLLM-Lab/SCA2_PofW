@@ -92,6 +92,38 @@ def accept(item: pd.Series, candidates: dict[str, pd.Series], *, min_r: float = 
     return (max(ok, key=ok.get) if ok else None), table
 
 
+def surface_items(item_lists: dict[str, list[str]]) -> dict[str, list[str]]:
+    """Surface -> items, with patience kept as two surfaces (frozen decision)."""
+    out = {}
+    for dim, qs in item_lists.items():
+        if dim == "patience":
+            out.update({f"patience:{q}": [q] for q in qs})
+        else:
+            out[dim] = list(qs)
+    return out
+
+
+def surface_ceiling(recoded_means: pd.DataFrame, item_lists: dict[str, list[str]],
+                    min_countries: int = 8) -> pd.DataFrame:
+    """recoded_means: country, item, wave, mean (already recoded). Complete-case composites
+    per wave (mean of item means, as analyze_surface.human_composites), then Spearman
+    wave 6 vs wave 7 over countries complete in both waves."""
+    rows = []
+    for surface, qs in surface_items(item_lists).items():
+        comp = {}
+        for w in (6, 7):
+            g = recoded_means[(recoded_means.wave == w) & recoded_means.item.isin(qs)]
+            full = g.groupby("country").item.nunique() == len(qs)
+            g = g[g.country.isin(full[full].index)]
+            comp[w] = g.groupby("country")["mean"].mean()
+        both = pd.concat([comp[6].rename("w6"), comp[7].rename("w7")], axis=1).dropna()
+        ok = len(both) >= min_countries
+        rows.append({"surface": surface, "items": ";".join(qs), "n_countries": int(len(both)),
+                     "spearman_w6_w7": float(both.w6.corr(both.w7, method="spearman")) if ok else float("nan"),
+                     "pearson_w6_w7": float(both.w6.corr(both.w7)) if ok else float("nan")})
+    return pd.DataFrame(rows)
+
+
 def guard_items(items: list[str], *, strict_ids: set[str], freeze_path: Path = FREEZE) -> list[str]:
     if any(q not in strict_ids for q in items):
         FR.require_freeze(freeze_path)
@@ -132,11 +164,46 @@ def run(items: list[str], cohort: list[str], out_dir: Path, k: int = 10) -> dict
             if len(both) > 3 else float("nan"),
             "pearson_w6_w7": float(both.w6.corr(both.w7)) if len(both) > 3 else float("nan"),
         })
+    # surface-level ceiling, with the frozen recodes (analyze_surface.recode_value)
+    import analyze_surface as AS
+    long = []
+    for q, v in crosswalk.items():
+        if not v["accepted"]:
+            continue
+        col = v["accepted"]
+        d = ts[(ts[col] >= 0) & ts.country.isin(cohort) & ts.wave.isin([6, 7])]
+        rec = d[col].map(lambda x, q=q: AS.recode_value(float(x), q))
+        w = d["S017"].astype(float)
+        num = (rec * w).groupby([d.country, d.wave]).sum()
+        den = w.groupby([d.country, d.wave]).sum()
+        for (cc, wv), m in (num / den).items():
+            long.append({"country": cc, "item": q, "wave": int(wv), "mean": float(m)})
+    long_df = pd.DataFrame(long)
+    lists = {k: [q for q in v if q in items] for k, v in AS.STRICT_ITEMS.items()}
+    surf = surface_ceiling(long_df, lists)
+    # A surface with items not fielded in wave 6 gets a reduced, explicitly labeled twin.
+    in_w6 = set(long_df[long_df.wave == 6].item)
+    reduced = {f"{k}[{','.join(q for q in v if q in in_w6)}]": [q for q in v if q in in_w6]
+               for k, v in lists.items() if k != "patience" and 0 < sum(q in in_w6 for q in v) < len(v)}
+    if reduced:
+        red = surface_ceiling(long_df, reduced).assign(note="reduced: items fielded in wave 6 only")
+        surf = pd.concat([surf.assign(note=""), red], ignore_index=True)
+    # sanity: TS wave-7 recoded means vs the committed Paper-A item means
+    committed = pd.read_csv(AS.DEFAULT_HUMAN_MEANS)
+    chk = long_df[long_df.wave == 7].merge(committed, on=["country", "item"],
+                                           suffixes=("_ts", "_paperA"))
+    sanity = {"pairs": int(len(chk)),
+              "pearson": float(chk.mean_ts.corr(chk.mean_paperA)) if len(chk) > 2 else float("nan"),
+              "max_abs_diff": float((chk.mean_ts - chk.mean_paperA).abs().max()) if len(chk) else float("nan")}
     out_dir.mkdir(parents=True, exist_ok=True)
+    surf.to_csv(out_dir / "ceiling_surfaces.csv", index=False)
+    (out_dir / "ceiling_sanity.json").write_text(json.dumps(sanity, indent=1) + "\n")
     (out_dir / "ts_crosswalk.json").write_text(json.dumps(crosswalk, indent=1) + "\n")
     cdf = pd.DataFrame(ceiling_rows)
     cdf.to_csv(out_dir / "ceiling_items.csv", index=False)
-    return {"items": len(items), "matched": int(sum(v["accepted"] is not None for v in crosswalk.values())),
+    return {"sanity_vs_paperA": sanity,
+            "surfaces": surf[["surface", "n_countries", "spearman_w6_w7"]].round(3).to_dict("records"),
+            "items": len(items), "matched": int(sum(v["accepted"] is not None for v in crosswalk.values())),
             "median_spearman": float(cdf.spearman_w6_w7.median()) if len(cdf) else float("nan")}
 
 
