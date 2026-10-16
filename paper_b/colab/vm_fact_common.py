@@ -1,11 +1,12 @@
 # VM-side helper for the 2^6 factorial (bank 2, 64 sign-profile units).
-# Imported by vm_fact_refcache.py / vm_fact_wave1.py / vm_fact_wave2.py.
-# Data root is separate from cohort 1 so nothing of cohort 1 can be overwritten;
-# protocol_bank2 also refuses any Hub path outside bank2/<run>/profiles.
-import os, subprocess, sys
+# Imported by vm_fact_boot.py / vm_fact_wave1.py / vm_fact_wave2.py / vm_fact_status.py.
+# The Hub is the only durable store (no Drive, no OAuth). Data root is the VM's local disk; the
+# runner syncs logs, wave manifest and ledger to Hub state/<tag>/ after every unit.
+# protocol_bank2 refuses any Hub path outside bank2/<run>/ so cohort-1 adapters cannot be touched.
+import os, shlex, subprocess, sys
 
 REPO = "/content/SCA2_PofW"
-ROOT = "/content/drive/MyDrive/SCA2_paper_b_bank2_profiles"
+ROOT = "/content/pb_data"
 SG = REPO + "/synthetic_generation/outputs"
 ENV = dict(os.environ,
            SCA2_PB_PROTOCOL="bank2", SCA2_PB_UNITS="profiles",
@@ -17,6 +18,7 @@ ENV = dict(os.environ,
 
 
 def run(args, log_name):
+    """Blocking run for short steps (gates). Long jobs use launch_detached."""
     log = f"{ROOT}/logs/{log_name}.log"
     os.makedirs(os.path.dirname(log), exist_ok=True)
     with open(log, "a") as lg:
@@ -25,3 +27,38 @@ def run(args, log_name):
                             stdout=lg, stderr=subprocess.STDOUT).returncode
     print(log_name, "rc:", rc, "| log:", log)
     return rc
+
+
+def _alive(pid_file, rc_file):
+    if os.path.exists(rc_file) or not os.path.exists(pid_file):
+        return False
+    try:
+        os.kill(int(open(pid_file).read()), 0)
+        return True
+    except (OSError, ValueError):
+        return False
+
+
+def launch_detached(steps):
+    """steps = [(name, args, extra_env)], run one after another in a single detached shell.
+
+    The shell survives the client that started it (a closed laptop or a quit Docker costs nothing);
+    each step writes <name>.log and <name>.rc. A step that fails does not stop the next one.
+    """
+    os.makedirs(f"{ROOT}/logs", exist_ok=True)
+    first = steps[0][0]
+    pid_file, rc_file = f"{ROOT}/logs/{first}.pid", f"{ROOT}/logs/{first}.rc"
+    if _alive(pid_file, rc_file):
+        raise SystemExit(f"{first} is already running (pid {open(pid_file).read()}); not launching a second copy")
+    parts = []
+    for name, args, extra in steps:
+        log, rc = f"{ROOT}/logs/{name}.log", f"{ROOT}/logs/{name}.rc"
+        if os.path.exists(rc):
+            os.remove(rc)
+        envs = " ".join(f"{k}={shlex.quote(v)}" for k, v in (extra or {}).items())
+        parts.append(f"({envs} {shlex.quote(sys.executable)} {' '.join(map(shlex.quote, args))} >> {shlex.quote(log)} 2>&1; "
+                     f"echo $? > {shlex.quote(rc)})")
+    p = subprocess.Popen(["sh", "-c", "; ".join(parts)], cwd=REPO, env=ENV, start_new_session=True,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    open(pid_file, "w").write(str(p.pid))
+    print(f"launched detached: {[s[0] for s in steps]} | pid {p.pid} | logs {ROOT}/logs/")
