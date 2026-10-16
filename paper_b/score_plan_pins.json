@@ -1,0 +1,11 @@
+{
+  "adapter_revision": "902f262e92bea5450f69335aa3977f28319ff3a1",
+  "spec_sha256": {
+    "strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
+    "heldout_v1": "4d799b029102d7e77c5741a81b0f05872c4cb803931e51a5d01cbc8da9c50cd5",
+    "heldout_reverse": "0503c58b00ff16c30460e0bf4f5bf26b3b0f844ed20e01dde6eb787d69ce26f2",
+    "heldout_para_a": "02245bb8694aa01780556f3ff2e5ef338359ed02b279958af9b560bd77f67454",
+    "heldout_para_b": "77e401a578ce9efd1dadf08437fb07903bcf16c23bcdb402f8699833af09b82d",
+    "signprompt_heldout_v1": "4d799b029102d7e77c5741a81b0f05872c4cb803931e51a5d01cbc8da9c50cd5"
+  }
+}
