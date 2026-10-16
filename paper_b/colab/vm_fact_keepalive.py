@@ -6,7 +6,8 @@ import glob, os, subprocess, time
 ROOT = "/content/pb_data"
 t0 = time.time()
 while True:
-    pids = sorted(glob.glob(f"{ROOT}/logs/*.pid"))
+    # a chained step (the replicate) has a log and an rc but no pid file, so track every launched step by its log
+    pids = sorted(p for p in glob.glob(f"{ROOT}/logs/fact_*.log") if not p.endswith("fact_gates.log"))
     pending = [os.path.basename(p)[:-4] for p in pids if not os.path.exists(p[:-4] + ".rc")]
     ads = sum(len([x for x in os.listdir(d) if os.path.exists(f"{d}/{x}/adapter_config.json")]) for d in glob.glob(f"{ROOT}/adapters*") if os.path.isdir(d))
     gpu = subprocess.run(["nvidia-smi", "--query-gpu=utilization.gpu", "--format=csv,noheader"], capture_output=True, text=True).stdout.strip()
