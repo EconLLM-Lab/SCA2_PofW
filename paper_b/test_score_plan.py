@@ -65,7 +65,13 @@ def test_built_specs_match_the_pinned_hashes():
     for name in SPL.CONDITIONS:
         spec = SPL.build_spec(name)
         assert SPL.spec_hash(spec) == pins["spec_sha256"][name], name
-    assert pins["spec_sha256"]["heldout_v1"].startswith("4d799b029102d7e7")     # equals the preregistration
+    # Amendment 1 (PREREGISTRATION.md section 11) repaired 12 item texts, which changed every held-out spec
+    # hash. The pin must equal what the preregistration amendment records, so read it from there rather than
+    # hard-coding a value that a later amendment would silently invalidate.
+    prereg = (Path(__file__).resolve().parent / "heldout" / "PREREGISTRATION.md").read_text()
+    line = next(l for l in prereg.splitlines() if l.strip().startswith("heldout_v1 spec_sha256"))
+    assert pins["spec_sha256"]["heldout_v1"] == line.split()[-1]
+    assert not pins["spec_sha256"]["heldout_v1"].startswith("4d799b029102d7e7")   # the superseded pre-amendment spec
 
 
 def test_heldout_specs_cover_the_223_pool_items_and_none_of_the_strict_items():
