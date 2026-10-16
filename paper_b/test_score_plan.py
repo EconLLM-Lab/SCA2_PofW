@@ -120,3 +120,34 @@ def test_check_marker_refuses_a_marker_that_does_not_cover_the_half(bad):
 def test_marker_from_the_other_half_is_refused():
     with pytest.raises(RuntimeError, match="not in half"):
         SPL.check_marker(_marker(unit=SPL.gate_unit("B")), "A")
+
+
+# ---- amendment safety: the run id survives a spec change, so the resume must check the spec
+def _manifest_reader(sha):
+    return lambda run_id, model: {"run_id": run_id, "model": model, "spec_sha256": sha}
+
+
+def test_a_unit_scored_under_a_superseded_spec_is_not_done():
+    a = SPL.units_for_half("A")
+    files = _files(RUN, a)                                  # CSV and manifest exist for the whole half
+    old = SPL.todo_units(RUN, "A", files, spec_sha="new-spec", read_manifest=_manifest_reader("old-spec"))
+    assert len(old["units"]) == 32 and old["base"] is True   # every unit must be re-scored
+    new = SPL.todo_units(RUN, "A", files, spec_sha="new-spec", read_manifest=_manifest_reader("new-spec"))
+    assert new == {"units": [], "base": False}
+
+
+def test_a_manifest_without_a_spec_hash_does_not_count_as_done():
+    a = SPL.units_for_half("A")
+    files = _files(RUN, a)
+    todo = SPL.todo_units(RUN, "A", files, spec_sha="new-spec", read_manifest=lambda r, m: {})
+    assert len(todo["units"]) == 32
+
+
+def test_spec_sha_requires_a_manifest_reader():
+    with pytest.raises(ValueError, match="manifest reader"):
+        SPL.todo_units(RUN, "A", [], spec_sha="new-spec")
+
+
+def test_name_only_resume_still_works_when_no_spec_is_given():
+    a = SPL.units_for_half("A")
+    assert SPL.todo_units(RUN, "A", _files(RUN, a)) == {"units": [], "base": False}

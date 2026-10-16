@@ -35,6 +35,14 @@ def listing():
     return api.list_repo_files(SPL.ARTIFACTS_REPO, repo_type="dataset")        # an error aborts: never guess "nothing done"
 
 
+def read_manifest(run_id, model):
+    """One unit's manifest. A read failure aborts the run rather than reading as 'done'."""
+    from huggingface_hub import hf_hub_download
+    p = hf_hub_download(SPL.ARTIFACTS_REPO, f"runs/{run_id}/manifests/{model}_manifest.json",
+                        repo_type="dataset")
+    return json.loads(open(p).read())
+
+
 units = SPL.units_for_half(half)
 print(f"[{cond}/{half}] run_id {c['run_id']} | spec {got[:12]} | adapter revision {SPL.ADAPTER_REVISION[:12]}")
 if c["kind"] == "signprompt":
@@ -45,17 +53,17 @@ if c["kind"] == "signprompt":
     rc = subprocess.run([sys.executable, "paper_b/score_sign_profiles.py", "--profiles", f"{ROOT}/signprompt/sign_profiles.json",
                          "--spec", str(spec_path), "--out-dir", f"{ROOT}/signprompt/out", "--only", *units,
                          "--hub-run", c["run_id"]], cwd=REPO, env=env).returncode
-    done = {f.split("/")[-1][:-len("_option_probabilities.csv")] for f in listing()
-            if f.startswith(f"runs/{c['run_id']}/synthetic/")}
+    from score_sign_profiles import done_profiles
+    done = done_profiles(listing(), c["run_id"], got, read_manifest)   # spec-aware: an amended pool re-scores
     missing = [u for u in units if u not in done]
 else:
-    todo = SPL.todo_units(c["run_id"], half, listing())
+    todo = SPL.todo_units(c["run_id"], half, listing(), spec_sha=got, read_manifest=read_manifest)
     print(f"[{cond}/{half}] to score: {len(todo['units'])} units, base={todo['base']}")
     rc = 0
     args = SPL.score_cohort_args(c["run_id"], str(spec_path), marker, todo)
     if args:
         rc = subprocess.run([sys.executable, "paper_b/score_cohort.py", *args], cwd=REPO, env=env).returncode
-    left = SPL.todo_units(c["run_id"], half, listing())
+    left = SPL.todo_units(c["run_id"], half, listing(), spec_sha=got, read_manifest=read_manifest)
     missing = left["units"] + (["base"] if left["base"] else [])
 print(f"[{cond}/{half}] score rc={rc} | missing on the Hub: {len(missing)} {missing[:4]}")
 sys.exit(0 if (rc == 0 and not missing) else 4)

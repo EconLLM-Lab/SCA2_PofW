@@ -63,3 +63,20 @@ def test_profile_manifest_records_stack_spec_and_hash():
                              spec_sha256="b" * 64, code_revision="c" * 40)
     assert m["stack_versions"]["python"] and "bitsandbytes" in m["stack_versions"]
     assert m["spec_sha256"] == "b" * 64 and m["n_rows"] == 1087 and m["contains_human_data"] is False
+
+
+def test_done_profiles_is_spec_aware():
+    files = [f"runs/r1/synthetic/P_0_0_0_0_0_0_option_probabilities.csv",
+             f"runs/r1/manifests/P_0_0_0_0_0_0_manifest.json"]
+    read_old = lambda run_id, pid: {"spec_sha256": "old-spec"}
+    read_new = lambda run_id, pid: {"spec_sha256": "new-spec"}
+    assert SSP.done_profiles(files, "r1", "new-spec", read_old) == set()
+    assert SSP.done_profiles(files, "r1", "new-spec", read_new) == {"P_0_0_0_0_0_0"}
+    assert SSP.done_profiles(files, "r1") == {"P_0_0_0_0_0_0"}          # name-only still available
+
+
+def test_done_profiles_refuses_a_spec_without_a_reader():
+    files = [f"runs/r1/synthetic/P_0_0_0_0_0_0_option_probabilities.csv",
+             f"runs/r1/manifests/P_0_0_0_0_0_0_manifest.json"]
+    with pytest.raises(ValueError, match="manifest reader"):
+        SSP.done_profiles(files, "r1", "new-spec")

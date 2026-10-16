@@ -80,17 +80,40 @@ def prepare(out_dir: Path, gps_path: Path, units: str = "cohort26") -> Path:
     return path
 
 
-def done_profiles(files, run_id: str) -> set[str]:
-    """A profile is done only with its CSV AND its manifest; a bare CSV is not trusted."""
+def done_profiles(files, run_id: str, spec_sha: str | None = None, read_manifest=None) -> set[str]:
+    """A profile is done only with its CSV and its manifest, and (when a spec hash is given) only if the
+    manifest records that spec, because the run id survives an item-wording amendment."""
+    if spec_sha is not None and read_manifest is None:      # fail fast: a missing reader is a programming error
+        raise ValueError("spec_sha was given, so a manifest reader is required")
     fs = set(files)
     pre, suf = f"runs/{run_id}/synthetic/", "_option_probabilities.csv"
     csv_ids = {f[len(pre):-len(suf)] for f in fs if f.startswith(pre) and f.endswith(suf)}
-    return {p for p in csv_ids if f"runs/{run_id}/manifests/{p}_manifest.json" in fs}
+    out = set()
+    for p in csv_ids:
+        if f"runs/{run_id}/manifests/{p}_manifest.json" not in fs:
+            continue
+        if spec_sha is not None:
+            if read_manifest is None:
+                raise ValueError("spec_sha was given, so a manifest reader is required")
+            if (read_manifest(run_id, p) or {}).get("spec_sha256") != spec_sha:
+                continue
+        out.add(p)
+    return out
 
 
-def hub_done(repo: str, run_id: str) -> set[str]:
+def hub_done(repo: str, run_id: str, spec_sha: str | None = None, read_manifest=None) -> set[str]:
     from huggingface_hub import HfApi
-    return done_profiles(HfApi().list_repo_files(repo, repo_type="dataset"), run_id)   # a listing error aborts
+    return done_profiles(HfApi().list_repo_files(repo, repo_type="dataset"), run_id,   # a listing error aborts
+                         spec_sha, read_manifest)
+
+
+def hub_manifest(run_id: str, profile_id: str) -> dict:
+    """Read one profile's manifest from the Hub. A read failure must abort, never read as 'done'."""
+    import json as _json
+    from huggingface_hub import hf_hub_download
+    p = hf_hub_download("Bonorinoa/SCA2-paper-b-artifacts",
+                        f"runs/{run_id}/manifests/{profile_id}_manifest.json", repo_type="dataset")
+    return _json.loads(Path(p).read_text())
 
 
 def profile_manifest(*, run_id: str, profile_id: str, csv_sha256: str, n_rows: int, spec_sha256: str,
@@ -123,7 +146,8 @@ def score(profile_path: Path, spec_path: Path, out_dir: Path,
     profiles = json.loads(profile_path.read_text())
     spec = json.loads(spec_path.read_text())
     questions = spec["questions"]
-    done = hub_done(hub_repo, hub_run) if hub_run else set()
+    done = (hub_done(hub_repo, hub_run, spec.get("spec_sha256", ""), hub_manifest)
+            if hub_run else set())
     todo = [p for p in profiles if p["profile_id"] not in done]
     print(f"{len(profiles)} profiles requested; {len(done & {p['profile_id'] for p in profiles})} already on the Hub; {len(todo)} to score")
     if not todo:

@@ -63,16 +63,35 @@ def scores_base(half: str) -> bool:
     return half == "A"
 
 
-def _present(run_id: str, files, model: str) -> bool:
+def _present(run_id: str, files, model: str, spec_sha: str | None = None, read_manifest=None) -> bool:
+    """A scored model counts as done only with its CSV and its manifest, and — when a spec hash is given —
+    only if the manifest records that same spec.
+
+    The spec check is not decoration: `heldout_v1` and the other pool conditions keep their run id across an
+    amendment, so a name-only resume would silently keep scores produced from the superseded item wording.
+    """
     fs = set(files)
-    return (f"runs/{run_id}/synthetic/{model}_option_probabilities.csv" in fs
-            and f"runs/{run_id}/manifests/{model}_manifest.json" in fs)
+    csv_name = f"runs/{run_id}/synthetic/{model}_option_probabilities.csv"
+    man_name = f"runs/{run_id}/manifests/{model}_manifest.json"
+    if csv_name not in fs or man_name not in fs:
+        return False
+    if spec_sha is None:
+        return True
+    if read_manifest is None:
+        raise ValueError("spec_sha was given, so a manifest reader is required")
+    recorded = (read_manifest(run_id, model) or {}).get("spec_sha256")
+    return bool(recorded) and recorded == spec_sha
 
 
-def todo_units(run_id: str, half: str, hub_files) -> dict:
-    """Units of this half still missing a verified CSV + manifest on the Hub."""
-    todo = [u for u in units_for_half(half) if not _present(run_id, hub_files, f"{u}_adapter")]
-    return {"units": todo, "base": bool(scores_base(half) and not _present(run_id, hub_files, "base"))}
+def todo_units(run_id: str, half: str, hub_files, spec_sha: str | None = None,
+               read_manifest=None) -> dict:
+    """Units of this half still missing a verified CSV + manifest for THIS spec."""
+    if spec_sha is not None and read_manifest is None:      # fail fast: a missing reader is a programming error
+        raise ValueError("spec_sha was given, so a manifest reader is required")
+    todo = [u for u in units_for_half(half)
+            if not _present(run_id, hub_files, f"{u}_adapter", spec_sha, read_manifest)]
+    return {"units": todo,
+            "base": bool(scores_base(half) and not _present(run_id, hub_files, "base", spec_sha, read_manifest))}
 
 
 def score_cohort_args(run_id: str, spec_path: str, marker: str, todo: dict) -> list[str]:
