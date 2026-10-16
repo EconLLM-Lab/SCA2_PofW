@@ -1,0 +1,20 @@
+{
+  "_note": "Pinned digests of the bank-2 inputs every Colab VM must see. Verified byte-identical to what the 2026-10-15 session-1 VMs used. A VM that downloads a different file refuses to train.",
+  "relabel_run_id": "gps_sign_relabel_bank2_20261015_062543Z",
+  "generation_run_id": "bank2_20261014_20261015T062513Z",
+  "adapters_repo": "Bonorinoa/SCA2-paper-b-adapters",
+  "artifacts_repo": "Bonorinoa/SCA2-paper-b-artifacts",
+  "bundle": {
+    "hub_path": "banks/bank2_gps_sign_relabel_bank2_20261015_062543Z/bank2_bundle.tgz",
+    "sha256": "cccf7b05dd576044b8a6a9443d50c8bab5f5c673f2cb90f0073be82d0bbde7ea"
+  },
+  "refcache": {
+    "hub_path": "bank2/gps_sign_relabel_bank2_20261015_062543Z/state/refcache/shared_reference_logps.jsonl",
+    "sha256": "beb06ba8cc996cf85a36efa7c6a32a05f7bc10fdaf4247930bcbdb466de1c4a5",
+    "rows": 1052
+  },
+  "refcache_manifest": {
+    "hub_path": "bank2/gps_sign_relabel_bank2_20261015_062543Z/state/refcache/shared_reference_logps_manifest.json",
+    "sha256": "9b6975925227e2274ad0219375bf397e8d52aeca0ce8cf6c9737339e334ea93a"
+  }
+}
