@@ -73,3 +73,9 @@ def test_gate_uploads_its_report_and_hashes_the_spec_and_setup_pins_bitsandbytes
     gate = (colab / "vm_gate_factorial.py").read_text()
     assert "gate_report.json" in gate and "spec_sha256(strict)" in gate          # verifier F5, F10
     assert "bitsandbytes==0.50.2" in (colab / "vm_setup.py").read_text()          # verifier F6; the frozen version
+
+
+def test_gate_report_names_the_unit_it_gated():
+    from pathlib import Path
+    gate = (Path(__file__).resolve().parent / "colab" / "vm_gate_factorial.py").read_text()
+    assert '"unit": GATE_UNIT' in gate           # a reader must not have to infer which cell was gated

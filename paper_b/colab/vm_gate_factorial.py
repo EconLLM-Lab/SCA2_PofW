@@ -67,7 +67,7 @@ def main() -> int:
     strict = build_scoring_spec(question_map, numeric_support={}, battery="strict")
     switch_specs = [q for q in strict["questions"] if q["question_id"] in {"Q57", "Q58"}]
     report = {
-        "revision": REVISION, "run_id": RUN_ID,
+        "revision": REVISION, "run_id": RUN_ID, "unit": GATE_UNIT,
         "archive_questions": len(archive_specs),
         "strict_questions": strict["n_questions"],
         "generated_answers": False,
