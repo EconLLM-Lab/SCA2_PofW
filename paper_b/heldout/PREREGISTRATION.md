@@ -215,3 +215,48 @@ Frozen inputs at the tag (SHA-256):
 Approvals: the 12 face-valid review calls (9 abstentions, 3 direction flips) were
 approved by Augusto Gonzalez-Bonorino on 2026-10-14; D5 (secondary rule is a
 reliability check) and D4 (timestamp vehicle) decided by him the same day.
+
+## 11. Amendment 1 (2026-10-16): standalone wording repaired before the freeze
+
+What happened. The first held-out scoring pass completed on the pool as registered at tag
+`prereg-heldout-2026-10-14` (runs `bank2-heldout-v1-20261016`, 65 files; `bank2-strict-v1-20261016`, 65
+files). Reading the item text afterwards found 12 items whose standalone wording cannot be
+answered as written: a sentence cut off mid-clause (Q46, Q175, Q253, Q199), a
+question left with a stripped country placeholder (Q121, Q254), a grid row truncated to a bare pronoun or
+article (Q82, Q255, Q256), and three second-choice follow-ups that refer to a question that does not exist
+in a standalone prompt (Q153, Q155, Q157). The same defect classes appear among the ten wording repairs
+already recorded in section 2 (for example Q257 and Q258, whose grid rows were truncated in exactly the same
+way); the pool rule and the override mechanism are unchanged.
+
+Full disclosure. The first probe pass was computed and read BEFORE the repairs were chosen, and two of the
+repaired items (Q153, Q157) fall in that pass's top 25% by |t|. Nothing is frozen: `FREEZE.json` does not
+exist and no held-out human value has been read. The first pass output is retained at
+`/Users/bonorinoa/.hermes/profiles/sca/cache/scratch/probe_v1/selection.csv` and is superseded.
+
+What changed. 12 items (Q46, Q82, Q121, Q153, Q155, Q157, Q175, Q199, Q253, Q254, Q255, Q256), each repaired from the item's own read-out options or from
+its variable label, with the reason recorded per item in `overrides.json`. Pool size is unchanged at 223.
+Section 2's rule, the probe (section 3), the criterion (section 4) and the blinding guard (section 5) are
+unchanged.
+
+Amended hashes
+  pool_skeleton.csv                 19241f6f103c51d64e295045162bb370920223b7ffad7c5f3c8991f5c101bd44
+  overrides.json                    0f5cd2bbd88ef6eaca9cca9ded24e8a5e056276be055b21c1d92b941dd7d3849
+  heldout_v1 spec_sha256            46447de63f7cc161c016bdc38a3a7c9e8d351be308c44cf1ccd28d9091d13b38
+  heldout_reverse spec_sha256       d30bc4aa67d15430e52e09fdd2f8dd621a4b6aeee1559b6e26abf61a22d87e6c
+  heldout_para_a spec_sha256        cbd63283b4d99f6b41a6119148821a56093acb2296845f0662c4185c2f115f47
+  heldout_para_b spec_sha256        0680dffbf3d5c67bdf040a93d8454fc3de1ec08e04afdd8fd49360a6d8b30934
+  signprompt (uses heldout_v1)      46447de63f7cc161c016bdc38a3a7c9e8d351be308c44cf1ccd28d9091d13b38
+
+Superseded. Section 10's `pool_skeleton.csv` hash `c78faa75…` is the pre-amendment file (CRLF working copy;
+its LF git blob is `b221d12a…`, the discrepancy the verifier raised as F7). Section 10's `heldout_v1 spec
+4d799b029102d7e7…` is the pre-amendment spec.
+
+Consequences.
+  The held-out battery is re-scored for all 64 adapters under the amended spec as a single run id, so one
+  instrument covers every item. The sign-prompt arm and the three readout variants are re-scored under the
+  amended spec too. The strict battery (23 frozen items) is untouched, because its question map is not the
+  held-out pool; its 65 files stand.
+  Open item, to be decided before the human join: the face-valid rule assignments and the System One (Jev)
+  comparator assignments for these 12 items were made on the pre-amendment wording, since both
+  comparator files cover all 223 items. Either they are re-derived on the amended wording, or the
+  pre-amendment wording is disclosed for those items.

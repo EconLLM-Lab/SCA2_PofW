@@ -1,120 +1,178 @@
 {
- "Q42": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q94": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q95": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q96": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q97": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q98": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q100": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q102": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q104": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q105": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q113": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q114": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q115": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q116": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q117": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q130": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q173": {
-  "ordinal": "TRUE",
-  "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
- },
- "Q91": {
-  "exclude": true,
-  "reason": "knowledge-quiz answer options, not an attitude scale"
- },
- "Q92": {
-  "exclude": true,
-  "reason": "knowledge-quiz answer options, not an attitude scale"
- },
- "Q93": {
-  "exclude": true,
-  "reason": "knowledge-quiz answer options, not an attitude scale"
- },
- "Q111": {
-  "exclude": true,
-  "reason": "code 3 'Other answer' breaks the ordering"
- },
- "Q108": {
-  "StandaloneQuestion": "How would you place your views on this scale, about the responsibility of the government versus individuals for providing for people?"
- },
- "Q169": {
-  "StandaloneQuestion": "Do you agree strongly, agree, disagree, or strongly disagree with the following statement? Whenever science and religion conflict, religion is always right."
- },
- "Q170": {
-  "StandaloneQuestion": "Do you agree strongly, agree, disagree, or strongly disagree with the following statement? The only acceptable religion is my religion."
- },
- "Q235": {
-  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having a strong leader who does not have to bother with parliament and elections"
- },
- "Q236": {
-  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having experts, not government, make decisions according to what they think is best for the country"
- },
- "Q237": {
-  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having the army rule"
- },
- "Q238": {
-  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having a democratic political system"
- },
- "Q239": {
-  "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? — Having a system governed by religious law in which there are no political parties or elections"
- },
- "Q257": {
-  "StandaloneQuestion": "How close do you feel to your country?"
- },
- "Q258": {
-  "StandaloneQuestion": "How close do you feel to your continent?"
- },
- "Q56": {
-  "exclude": true,
-  "reason": "code order better/worse/same is not monotone; recoding would be a post-hoc choice"
- }
+  "Q100": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q102": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q104": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q105": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q108": {
+    "StandaloneQuestion": "How would you place your views on this scale, about the responsibility of the government versus individuals for providing for people?",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q111": {
+    "exclude": true,
+    "reason": "code 3 'Other answer' breaks the ordering"
+  },
+  "Q113": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q114": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q115": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q116": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q117": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q121": {
+    "StandaloneQuestion": "Now we would like to know your opinion about the people from other countries who come to live in this country - the immigrants. How would you evaluate the impact of these people on the development of this country?",
+    "reason": "[your country] placeholder restored as 'this country' so no country is named (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q130": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q153": {
+    "StandaloneQuestion": "Which of these should be the next most important for this country? A high level of economic growth, making sure this country has strong defense forces, seeing that people have more say about how things are done at their jobs and in their communities, or trying to make our cities and countryside more beautiful.",
+    "reason": "second-choice follow-up ('And which would be the next most important?') is not a standalone question; rewritten to name the four aims it refers to (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q155": {
+    "StandaloneQuestion": "Which of these should be the next most important for this country? Maintaining order in the nation, giving people more say in important government decisions, fighting rising prices, or protecting freedom of speech.",
+    "reason": "second-choice follow-up; rewritten to name the four aims it refers to (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q157": {
+    "StandaloneQuestion": "Which of these should be the next most important for this country? A stable economy, progress toward a less impersonal and more humane society, progress toward a society in which ideas count more than money, or the fight against crime.",
+    "reason": "second-choice follow-up; rewritten to name the four aims it refers to (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q169": {
+    "StandaloneQuestion": "Do you agree strongly, agree, disagree, or strongly disagree with the following statement? Whenever science and religion conflict, religion is always right.",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q170": {
+    "StandaloneQuestion": "Do you agree strongly, agree, disagree, or strongly disagree with the following statement? The only acceptable religion is my religion.",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q173": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q175": {
+    "StandaloneQuestion": "With which of the following statements do you agree most? The basic meaning of religion is:",
+    "reason": "text layer stopped at 'religion is'; the two statements are the item's own options (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q199": {
+    "StandaloneQuestion": "How interested would you say you are in politics? Are you: very interested, somewhat interested, not very interested, or not at all interested?",
+    "reason": "text layer stopped at 'Are you'; completed from the item's own read-out options (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q235": {
+    "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? \u2014 Having a strong leader who does not have to bother with parliament and elections",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q236": {
+    "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? \u2014 Having experts, not government, make decisions according to what they think is best for the country",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q237": {
+    "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? \u2014 Having the army rule",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q238": {
+    "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? \u2014 Having a democratic political system",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q239": {
+    "StandaloneQuestion": "I'm going to describe various types of political systems and ask what you think about each as a way of governing this country. For each one, would you say it is a very good, fairly good, fairly bad or very bad way of governing this country? \u2014 Having a system governed by religious law in which there are no political parties or elections",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q253": {
+    "StandaloneQuestion": "How much respect is there for individual human rights nowadays in this country? Do you feel there is: a great deal of respect, fairly much respect, not much respect, or no respect at all?",
+    "reason": "text layer stopped at 'Do you feel there is'; completed from the item's own read-out options (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q254": {
+    "StandaloneQuestion": "How proud are you to be a citizen of this country?",
+    "reason": "[country's nationality] placeholder replaced by a generic phrase so no country is named (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q255": {
+    "StandaloneQuestion": "People have different views about themselves and how they relate to the world. Using this card, would you tell me how close do you feel to\u2026? \u2014 Your village, town or city",
+    "reason": "grid row truncated to 'Your'; restored from the variable label (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q256": {
+    "StandaloneQuestion": "People have different views about themselves and how they relate to the world. Using this card, would you tell me how close do you feel to\u2026? \u2014 Your district or region",
+    "reason": "grid row truncated to 'Your'; restored from the variable label (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q257": {
+    "StandaloneQuestion": "How close do you feel to your country?",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q258": {
+    "StandaloneQuestion": "How close do you feel to your continent?",
+    "reason": "standalone text repaired from the item's own wording (text review 2026-10-14, pre-scoring)"
+  },
+  "Q42": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q46": {
+    "StandaloneQuestion": "Taking all things together, would you say you are: very happy, rather happy, not very happy, or not at all happy?",
+    "reason": "text layer stopped at 'would you say you are'; completed from the item's own read-out options (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q56": {
+    "exclude": true,
+    "reason": "code order better/worse/same is not monotone; recoding would be a post-hoc choice"
+  },
+  "Q82": {
+    "StandaloneQuestion": "I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all? \u2014 A major regional organization",
+    "reason": "grid row was the country-specific organization name, truncated to 'The'; row restored from the variable label, no organization named (text review 2026-10-16, after the first held-out scoring pass, before FREEZE)"
+  },
+  "Q91": {
+    "exclude": true,
+    "reason": "knowledge-quiz answer options, not an attitude scale"
+  },
+  "Q92": {
+    "exclude": true,
+    "reason": "knowledge-quiz answer options, not an attitude scale"
+  },
+  "Q93": {
+    "exclude": true,
+    "reason": "knowledge-quiz answer options, not an attitude scale"
+  },
+  "Q94": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q95": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q96": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q97": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  },
+  "Q98": {
+    "ordinal": "TRUE",
+    "reason": "codes order a single quantity (text review 2026-10-14, pre-scoring)"
+  }
 }
