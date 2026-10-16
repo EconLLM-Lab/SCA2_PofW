@@ -37,10 +37,42 @@ def combined_prompt(sign_text: str, spec: dict) -> str:
     return text
 
 
-def prepare(out_dir: Path, gps_path: Path) -> Path:
-    rows = cohort_profiles(gps_path)
-    if len(rows) != 26:
-        raise SystemExit(f"expected 26 sign profiles, got {len(rows)}")
+def all_profile_rows() -> list[dict]:
+    """One sign prompt per cell of the 2^6 factorial, ids equal to the adapter units."""
+    import factorial as F
+    rows = []
+    for unit in F.all_units():
+        signs = {d: ("positive" if bit else "negative")
+                 for d, bit in zip(F.DIMS, F.bits_of_unit(unit))}
+        prompt = SP.sign_prompt(signs)
+        hits = SP.leak_hits(prompt)
+        if hits:
+            raise SystemExit(f"sign prompt leaked {hits}")
+        rows.append({"profile_id": unit, "signs": signs, "prompt": prompt, "members": []})
+    return rows
+
+
+def select_profiles(rows: list[dict], only: list[str]) -> list[dict]:
+    unknown = sorted(set(only) - {r["profile_id"] for r in rows})
+    if unknown:
+        raise SystemExit(f"unknown profile ids: {unknown[:3]}")
+    keep = set(only)
+    return [r for r in rows if r["profile_id"] in keep]
+
+
+def rows_per_profile(spec: dict) -> int:
+    return sum(len(q["codes"]) for q in spec["questions"])
+
+
+def prepare(out_dir: Path, gps_path: Path, units: str = "cohort26") -> Path:
+    if units == "all64":
+        rows = all_profile_rows()
+        if len(rows) != 64:
+            raise SystemExit(f"expected 64 sign profiles, got {len(rows)}")
+    else:
+        rows = cohort_profiles(gps_path)
+        if len(rows) != 26:
+            raise SystemExit(f"expected 26 sign profiles, got {len(rows)}")
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "sign_profiles.json"
     path.write_text(json.dumps(rows, indent=2) + "\n")
@@ -48,15 +80,41 @@ def prepare(out_dir: Path, gps_path: Path) -> Path:
     return path
 
 
-def score(profile_path: Path, spec_path: Path, out_dir: Path) -> int:
+def hub_done(repo: str, run_id: str) -> set[str]:
+    from huggingface_hub import HfApi
+    pre, suf = f"runs/{run_id}/synthetic/", "_option_probabilities.csv"
+    files = HfApi().list_repo_files(repo, repo_type="dataset")     # a listing error aborts the run
+    return {f[len(pre):-len(suf)] for f in files if f.startswith(pre) and f.endswith(suf)}
+
+
+def upload_profile(repo: str, run_id: str, dest: Path, pid: str) -> None:
+    import hub_io
+    from huggingface_hub import HfApi
+    api = HfApi()
+    hub_io._retry(lambda: api.upload_file(
+        path_or_fileobj=str(dest), path_in_repo=f"runs/{run_id}/synthetic/{pid}_option_probabilities.csv",
+        repo_id=repo, repo_type="dataset", commit_message=f"{run_id}: {pid} sign-prompt option probabilities"),
+        f"upload {pid}")
+
+
+def score(profile_path: Path, spec_path: Path, out_dir: Path,
+          hub_repo: str = "", hub_run: str = "") -> int:
     profiles = json.loads(profile_path.read_text())
     spec = json.loads(spec_path.read_text())
     questions = spec["questions"]
+    done = hub_done(hub_repo, hub_run) if hub_run else set()
+    todo = [p for p in profiles if p["profile_id"] not in done]
+    print(f"{len(profiles)} profiles requested; {len(done & {p['profile_id'] for p in profiles})} already on the Hub; {len(todo)} to score")
+    if not todo:
+        return 0
     model, tok = S.load_base_model_and_tokenizer()
     out_dir.mkdir(parents=True, exist_ok=True)
     for i, row in enumerate(profiles, 1):
         dest = out_dir / f"{row['profile_id']}_option_probabilities.csv"
-        if dest.exists() and dest.stat().st_size > 0:
+        if row["profile_id"] in done:
+            print(f"[{i}/{len(profiles)}] {row['profile_id']} on the Hub, skip")
+            continue
+        if dest.exists() and dest.stat().st_size > 0 and not hub_run:
             print(f"[{i}/{len(profiles)}] {row['profile_id']} already scored, skip")
             continue
         print(f"[{i}/{len(profiles)}] {row['profile_id']} members={','.join(row['members'])}")
@@ -87,8 +145,13 @@ def score(profile_path: Path, spec_path: Path, out_dir: Path) -> int:
         sums = frame.groupby("question_id")["model_prob"].sum()
         if ((sums - 1).abs() > 1e-4).any():
             raise SystemExit(f"{row['profile_id']}: probabilities do not sum to one")
+        if len(frame) != rows_per_profile(spec):
+            raise SystemExit(f"{row['profile_id']}: {len(frame)} rows, spec expects {rows_per_profile(spec)}")
         frame.to_csv(dest, index=False)
         print(f"  wrote {dest.name} rows={len(frame)}")
+        if hub_run:
+            upload_profile(hub_repo, hub_run, dest, row["profile_id"])
+            print(f"  uploaded {row['profile_id']} -> runs/{hub_run}/synthetic/")
     return 0
 
 
@@ -99,14 +162,24 @@ def main() -> int:
     ap.add_argument("--profiles", default="")
     ap.add_argument("--spec", default="")
     ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--units", choices=["cohort26", "all64"], default="cohort26")
+    ap.add_argument("--only", nargs="*", default=[], help="score only these profile ids")
+    ap.add_argument("--hub-repo", default="Bonorinoa/SCA2-paper-b-artifacts")
+    ap.add_argument("--hub-run", default="", help="run id: upload each profile and resume from the Hub listing")
     a = ap.parse_args()
     out = Path(a.out_dir)
     if a.prepare_only:
-        prepare(out, Path(a.gps))
+        prepare(out, Path(a.gps), a.units)
         return 0
     if not a.profiles or not a.spec:
         raise SystemExit("scoring requires --profiles and --spec")
-    return score(Path(a.profiles), Path(a.spec), out)
+    if a.only:
+        sel = select_profiles(json.loads(Path(a.profiles).read_text()), a.only)
+        sub = out / "selected_profiles.json"
+        out.mkdir(parents=True, exist_ok=True)
+        sub.write_text(json.dumps(sel, indent=2) + "\n")
+        a.profiles = str(sub)
+    return score(Path(a.profiles), Path(a.spec), out, a.hub_repo, a.hub_run)
 
 
 if __name__ == "__main__":
