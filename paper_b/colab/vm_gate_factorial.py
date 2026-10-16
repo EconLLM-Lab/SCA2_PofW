@@ -89,20 +89,25 @@ def main() -> int:
     got = S.score_model_questions(base, tok, "base", archive_specs, prompt_country=None)
     ok, base_report = R.compare_gate_scores(
         got, ref, {"questions": archive_specs}, BASE_TOL_LOGPROB, BASE_TOL_PROB)
-    report["base_gate"] = base_report
-    if not ok:
-        merged = got.merge(
-            ref[["question_id", "option_index", "option_code", "option_logprob", "model_prob"]],
-            on=["question_id", "option_index", "option_code"], suffixes=("_got", "_ref"))
-        merged["dlogprob"] = (merged["option_logprob_got"] - merged["option_logprob_ref"]).abs()
-        worst = merged.nlargest(5, "dlogprob")[
-            ["question_id", "option_code", "option_logprob_got", "option_logprob_ref", "dlogprob"]]
-        report["worst_rows"] = worst.to_dict("records")
-        report["gate_pass"] = False
-        report["elapsed_min"] = round((time.time() - t0) / 60, 2)
-        save(report)
-        print("BASE GATE FAILED — adapter will not be scored")
-        return 1
+    # PAPER_B_STACK_FREEZE.md (2026-10-11): the August archive is not a bit-level target for Paper B, and an
+    # archive log-probability mismatch is REPORTED, not a stop condition. The binding checks are the
+    # same-weights adapter path and the switch-back below, which stay fatal. The tolerance is not widened:
+    # the gap is recorded in full next to the package versions so a later reader can judge the stack.
+    base_report["pass_vs_archive"] = bool(ok)
+    base_report.pop("pass", None)
+    report["base_archive_check"] = {**base_report, **R.archive_gap_summary(got, ref, BASE_TOL_LOGPROB),
+                                    "policy": "report-only per PAPER_B_STACK_FREEZE.md"}
+    report["stack_versions"] = R.package_versions()
+    try:
+        import subprocess
+        report["gpu_driver"] = subprocess.run(
+            ["nvidia-smi", "--query-gpu=driver_version,name", "--format=csv,noheader"],
+            capture_output=True, text=True).stdout.strip()
+    except OSError:
+        report["gpu_driver"] = "unavailable"
+    print("base vs archive (report-only):", json.dumps(
+        {k: report["base_archive_check"][k] for k in ("n_compared", "n_over_tol", "max_dlogprob", "questions_over_tol")}))
+    print("stack:", json.dumps(report["stack_versions"]))
 
     adapter_dir, source = R.resolve_adapter(GATE_UNIT, REVISION, E.ADAPTER_CACHE_DIR)
     report["adapter_source"] = source
@@ -153,6 +158,9 @@ def main() -> int:
         "gate_pass": True, "unit": GATE_UNIT, "adapter_revision": REVISION,
         "adapter_sha256": report["adapter_sha256"],
         "base_max_dlogprob": base_report["max_dlogprob"],
+        "base_archive_pass": bool(ok),
+        "base_archive_questions_over_tol": report["base_archive_check"]["questions_over_tol"],
+        "stack_versions": report["stack_versions"], "gpu_driver": report["gpu_driver"],
         "adapter_max_dlogprob": adapter_report["max_dlogprob"],
         "switchback_max_dlogprob": switch_report["max_dlogprob"],
     }, indent=2))

@@ -436,6 +436,41 @@ def compare_gate_scores(got: pd.DataFrame, ref: pd.DataFrame, spec: dict,
     return report["pass"], report
 
 
+STACK_PACKAGES = ("torch", "transformers", "peft", "bitsandbytes", "accelerate", "trl", "huggingface_hub",
+                  "safetensors", "numpy", "pandas")
+
+
+def package_versions(names: tuple[str, ...] = STACK_PACKAGES) -> dict[str, str]:
+    """Installed versions from package metadata. Never imports a package: importing before the pin
+    takes effect leaves the wrong version in sys.modules (see PAPER_B_STACK_FREEZE.md)."""
+    import platform
+    from importlib import metadata
+    out = {"python": platform.python_version()}
+    for name in names:
+        try:
+            out[name] = metadata.version(name)
+        except metadata.PackageNotFoundError:
+            out[name] = "not installed"
+    return out
+
+
+def archive_gap_summary(got: pd.DataFrame, ref: pd.DataFrame, tol_logprob: float) -> dict:
+    """Where and how large the gap to an archived score file is. Report-only: it never decides a gate."""
+    got_k, ref_k = _gate_key_frame(got, "got"), _gate_key_frame(ref, "ref")
+    if set(map(tuple, got_k[GATE_KEYS].itertuples(index=False, name=None))) != \
+            set(map(tuple, ref_k[GATE_KEYS].itertuples(index=False, name=None))):
+        raise ValueError("one-to-one archive comparison failed: the two frames cover different option keys")
+    m = got_k.merge(ref_k, on=GATE_KEYS, suffixes=("_got", "_ref"), validate="one_to_one")
+    d = (m["option_logprob_got"] - m["option_logprob_ref"]).abs()
+    over = d > tol_logprob
+    per_q = d.groupby(m["question_id"]).max()
+    return {"n_compared": int(len(m)), "n_over_tol": int(over.sum()),
+            "share_over_tol": float(over.mean()), "max_dlogprob": float(d.max()),
+            "median_dlogprob": float(d.median()), "tol_logprob": tol_logprob,
+            "questions_over_tol": sorted(per_q.index[per_q > tol_logprob].tolist()),
+            "max_dlogprob_by_question_over_tol": {q: float(per_q[q]) for q in sorted(per_q.index[per_q > tol_logprob])}}
+
+
 def run_adapter_path_gate(prod_scores: pd.DataFrame, ref_scores: pd.DataFrame,
                           switchback_scores: pd.DataFrame | None, spec: dict,
                           tol_logprob: float, tol_prob: float,
@@ -581,6 +616,7 @@ def persist_unit_scores(scores: pd.DataFrame, model_name: str, run_id: str,
         "adapter_revision": adapter_revision or None,
         "adapter_sha256": adapter_sha256,
         "code_revision_sha256": code_revision,
+        "stack_versions": package_versions(),
         "spec_sha256": spec_sha or None,
         "csv_sha256": csv_sha,
         "n_rows": int(len(remote)),
