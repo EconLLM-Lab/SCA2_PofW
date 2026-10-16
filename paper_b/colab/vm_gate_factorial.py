@@ -1,10 +1,11 @@
 """One-unit Paper B gate for the bank-2 profile adapters. No respondent files, no Drive.
 
 Same checks as vm_gate.py (cohort 1), with GATE_UNIT in place of CHN:
-1. Reproduce the archived base-on-CHN option logprobs (proves this VM runs the frozen readout).
+1. Compare base to the archived base-on-CHN option logprobs (report-only; formatted prompts must match).
 2. Score GATE_UNIT through a fresh loader and the production switch path, using the same weights.
 3. Score two base questions before the adapter and after disabling it.
-4. Upload the strict-battery scores of GATE_UNIT only if every comparison passes.
+4. Upload the strict-battery scores of GATE_UNIT only if the adapter-path and switch-back checks pass.
+(The archive comparison is report-only per PAPER_B_STACK_FREEZE.md; the full report is uploaded either way.)
 The marker records the unit, adapter revision and SHA-256; scoring refuses to start without it.
 """
 from __future__ import annotations
@@ -39,6 +40,14 @@ ADAPTER_TOL_PROB = 1e-4
 
 def save(report: dict) -> None:
     REPORT.write_text(json.dumps(report, indent=2))
+    try:                                   # the full report, including the adapter gaps, must outlive the VM
+        import hub_io
+        from huggingface_hub import HfApi
+        hub_io._retry(lambda: HfApi().upload_file(
+            path_or_fileobj=str(REPORT), path_in_repo=f"runs/{RUN_ID}/gate_report.json", repo_id=R.ARTIFACTS_REPO,
+            repo_type="dataset", commit_message=f"{RUN_ID}: gate report"), "upload gate report")
+    except Exception as exc:  # noqa: BLE001 - best effort; the marker and local report still exist
+        print(f"gate report upload failed: {type(exc).__name__}: {exc}")
     print(json.dumps({k: report[k] for k in report if k != "questions"}, indent=2))
 
 
@@ -54,7 +63,7 @@ def main() -> int:
     question_map = L.load_question_map()
     grid = S._archived_numeric_grid()
     archive_specs = L.build_question_specs(question_map, {}, numeric_support=grid)
-    from build_scoring_spec import build_scoring_spec
+    from build_scoring_spec import build_scoring_spec, spec_sha256
     strict = build_scoring_spec(question_map, numeric_support={}, battery="strict")
     switch_specs = [q for q in strict["questions"] if q["question_id"] in {"Q57", "Q58"}]
     report = {
@@ -172,7 +181,7 @@ def main() -> int:
         scores=prod_scores, model_name=f"{GATE_UNIT}_adapter", run_id=RUN_ID,
         repo=R.ARTIFACTS_REPO, hub=store, adapter_sha256=report["adapter_sha256"],
         code_revision=R.code_revision(REPO), local_dir=OUT / "local_scores",
-        spec_sha=strict.get("spec_sha256", ""), adapter_revision=REVISION,
+        spec_sha=spec_sha256(strict), adapter_revision=REVISION,
     )
     report["persisted"] = persisted
     save(report)

@@ -46,6 +46,8 @@ def require_freeze(freeze_path: Path) -> dict:
     payload = json.loads(fp.read_text())
     for key in ("selection", "pool"):
         path = payload.get(f"{key}_path")
-        if path and Path(path).is_file() and _sha(Path(path)) != payload[f"{key}_sha256"]:
+        if not path or not Path(path).is_file():
+            raise RuntimeError(f"BLOCKED: the frozen {key} file is missing ({path}); the guard fails closed")
+        if _sha(Path(path)) != payload[f"{key}_sha256"]:
             raise RuntimeError(f"BLOCKED: {path} changed after the freeze")
     return payload

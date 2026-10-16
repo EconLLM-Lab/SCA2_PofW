@@ -44,6 +44,21 @@ def units_for_half(half: str) -> list[str]:
     return units[:32] if half == "A" else units[32:]
 
 
+def gate_unit(half: str) -> str:
+    """The unit this half's VM gates: always one the half itself will score."""
+    return units_for_half(half)[-1]
+
+
+def check_marker(marker: dict, half: str) -> None:
+    """Refuse a gate marker that does not cover this half or this adapter revision."""
+    if not marker.get("gate_pass"):
+        raise RuntimeError("gate marker says gate_pass=false")
+    if marker.get("unit") not in units_for_half(half):
+        raise RuntimeError(f"gate marker unit {marker.get('unit')!r} is not in half {half}")
+    if marker.get("adapter_revision") != ADAPTER_REVISION:
+        raise RuntimeError(f"gate marker adapter revision {marker.get('adapter_revision')!r} is not the pinned {ADAPTER_REVISION}")
+
+
 def scores_base(half: str) -> bool:
     return half == "A"
 

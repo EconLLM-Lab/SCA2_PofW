@@ -16,7 +16,7 @@ print("repo at:", subprocess.check_output(["git", "-C", REPO, "log", "-1", "--on
 
 STACK = ["transformers==4.46.3", "datasets==2.21.0", "accelerate==0.34.0",
          "trl==0.14.0", "peft==0.14.0", "huggingface_hub==0.36.2",
-         "bitsandbytes>=0.46.1", "safetensors>=0.4.3"]
+         "bitsandbytes==0.50.2", "safetensors>=0.4.3"]
 subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "-U", *STACK])
 
 import torch, transformers, trl, peft  # noqa: E402

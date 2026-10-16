@@ -14,7 +14,7 @@ Statistic
 Inference
   permutation null over items: draw |S| items uniformly from the whole pool and give
   them the selected items' (dimension, sign) pairs in random order; one-sided
-  p = (1 + #{A_null >= A}) / (1 + draws)
+  p = #{A_null >= A} / draws   (as registered)
   country bootstrap: resample countries with replacement; percentile 95% interval
 """
 from __future__ import annotations
@@ -123,7 +123,7 @@ def screen(selection: pd.DataFrame, human: pd.DataFrame, gps: pd.DataFrame, *,
         idx = rng.choice(len(pool), size=len(sel), replace=False)
         perm = rng.permutation(len(sel))
         null[b] = _A(hm, gps, countries, idx, [dims[i] for i in perm], signs[perm])
-    p = (1 + int((null >= A).sum())) / (1 + draws)
+    p = int((null >= A).sum()) / draws          # the registered statistic (PREREGISTRATION.md section 4)
 
     ci = [float("nan"), float("nan")]
     if boot:

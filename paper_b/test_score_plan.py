@@ -85,3 +85,32 @@ def test_score_cohort_args_cover_base_only_units_only_and_both():
     assert only_base[only_base.index("--arms") + 1] == "base" and "--countries" not in only_base
     assert SPL.score_cohort_args("r", "s.json", "m.json", {"units": [], "base": False}) == []
     assert both[both.index("--adapter-revision") + 1] == SPL.ADAPTER_REVISION
+
+
+# ---- verifier F1: the gate unit belongs to the half, and the marker is checked against the half
+def test_gate_unit_is_in_its_own_half():
+    for half in "AB":
+        assert SPL.gate_unit(half) in SPL.units_for_half(half)
+    assert SPL.gate_unit("A") != SPL.gate_unit("B")
+
+
+def _marker(**kw):
+    m = {"gate_pass": True, "unit": SPL.gate_unit("A"), "adapter_revision": SPL.ADAPTER_REVISION}
+    m.update(kw)
+    return m
+
+
+def test_check_marker_accepts_a_matching_marker():
+    SPL.check_marker(_marker(), "A")
+
+
+@pytest.mark.parametrize("bad", [{"gate_pass": False}, {"unit": "P_1_1_1_1_1_1"}, {"unit": None},
+                                 {"adapter_revision": "0" * 40}, {"adapter_revision": ""}])
+def test_check_marker_refuses_a_marker_that_does_not_cover_the_half(bad):
+    with pytest.raises(RuntimeError):
+        SPL.check_marker(_marker(**bad), "A")
+
+
+def test_marker_from_the_other_half_is_refused():
+    with pytest.raises(RuntimeError, match="not in half"):
+        SPL.check_marker(_marker(unit=SPL.gate_unit("B")), "A")

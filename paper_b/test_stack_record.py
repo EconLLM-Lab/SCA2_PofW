@@ -65,3 +65,11 @@ def test_bank2_gate_keeps_adapter_checks_fatal_and_archive_check_report_only():
     assert "ADAPTER GATE FAILED" in src                        # the binding check still stops it
     assert 'report["gate_pass"] = bool(adapter_ok and switch_ok)' in src
     assert "formatted prompt differs from the archive; model was not loaded" in src   # prompt identity stays fatal
+
+
+def test_gate_uploads_its_report_and_hashes_the_spec_and_setup_pins_bitsandbytes():
+    from pathlib import Path
+    colab = Path(__file__).resolve().parent / "colab"
+    gate = (colab / "vm_gate_factorial.py").read_text()
+    assert "gate_report.json" in gate and "spec_sha256(strict)" in gate          # verifier F5, F10
+    assert "bitsandbytes==0.50.2" in (colab / "vm_setup.py").read_text()          # verifier F6; the frozen version

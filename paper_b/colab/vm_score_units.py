@@ -19,6 +19,11 @@ got = SPL.spec_hash(spec)
 if got != pins["spec_sha256"][cond]:
     print(f"REFUSING: spec {cond} hash {got[:12]} != pinned {pins['spec_sha256'][cond][:12]}; no model loaded")
     sys.exit(2)
+try:
+    SPL.check_marker(json.loads(open(f"{ROOT}/adapter_gate.json").read()), half)
+except (OSError, ValueError, RuntimeError) as exc:
+    print(f"REFUSING [{cond}/{half}]: {exc}; no model loaded")
+    sys.exit(2)
 os.makedirs(f"{ROOT}/specs", exist_ok=True)
 spec_path = write_spec(spec, f"{ROOT}/specs/{cond}.json")
 env = dict(ENV, SCA2_PB_ADAPTER_REVISION=SPL.ADAPTER_REVISION)

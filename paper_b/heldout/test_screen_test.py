@@ -83,3 +83,11 @@ def test_abstained_rows_are_refused():
         ST.compare(s, bad, hum, gps, boot=5)
     with pytest.raises(ValueError, match="abstained"):
         ST.item_agreement(bad, hum, gps)
+
+
+def test_p_is_the_registered_share_of_null_draws_at_or_above_A():
+    """Preregistration section 4: p = share of null A >= observed A, over `draws` draws (verifier F3)."""
+    sel, hum, gps = _world(signal=3.0)
+    res = ST.screen(sel, hum, gps, draws=500, seed=1, boot=0)
+    assert res["p_perm"] == 0.0                                  # no null draw reaches a very strong A
+    assert (res["p_perm"] * 500) == int(res["p_perm"] * 500)     # a multiple of 1/draws, no +1 correction

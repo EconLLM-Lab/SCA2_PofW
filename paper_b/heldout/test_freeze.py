@@ -57,3 +57,14 @@ def test_human_read_allowed_after_freeze(tmp_path):
     FR.freeze(selection_path=sel, pool_path=pool, freeze_path=f, code_revision="x", run_ids={})
     assert FR.require_freeze(f)["selected_items"] == 1
     assert json.loads(f.read_text())["frozen_at"]
+
+
+@pytest.mark.parametrize("which", ["selection", "pool"])
+def test_human_read_refused_if_a_frozen_file_is_deleted(tmp_path, which):
+    """The guard fails closed: a missing recorded selection or pool file blocks the read (verifier F4)."""
+    sel, pool = _files(tmp_path)
+    f = tmp_path / "FREEZE.json"
+    FR.freeze(selection_path=sel, pool_path=pool, freeze_path=f, code_revision="x", run_ids={})
+    (sel if which == "selection" else pool).unlink()
+    with pytest.raises(RuntimeError, match="missing"):
+        FR.require_freeze(f)

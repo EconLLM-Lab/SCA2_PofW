@@ -45,3 +45,21 @@ def test_only_filter_keeps_order_and_rejects_unknown():
 def test_expected_rows_per_profile_follow_the_spec():
     spec = {"questions": [{"codes": ["1", "2", "3"]}, {"codes": ["1", "2"]}]}
     assert SSP.rows_per_profile(spec) == 5
+
+
+# ---- verifier F2: a profile is done only with its CSV AND its manifest; manifests carry the stack
+def test_done_profiles_require_csv_and_manifest():
+    run = "r1"
+    files = [f"runs/{run}/synthetic/P_0_0_0_0_0_0_option_probabilities.csv",
+             f"runs/{run}/manifests/P_0_0_0_0_0_0_manifest.json",
+             f"runs/{run}/synthetic/P_0_0_0_0_0_1_option_probabilities.csv",          # CSV only: a bare CSV is not done
+             f"runs/other/synthetic/P_0_0_0_0_1_0_option_probabilities.csv",
+             f"runs/other/manifests/P_0_0_0_0_1_0_manifest.json"]
+    assert SSP.done_profiles(files, run) == {"P_0_0_0_0_0_0"}
+
+
+def test_profile_manifest_records_stack_spec_and_hash():
+    m = SSP.profile_manifest(run_id="r1", profile_id="P_0_0_0_0_0_0", csv_sha256="a" * 64, n_rows=1087,
+                             spec_sha256="b" * 64, code_revision="c" * 40)
+    assert m["stack_versions"]["python"] and "bitsandbytes" in m["stack_versions"]
+    assert m["spec_sha256"] == "b" * 64 and m["n_rows"] == 1087 and m["contains_human_data"] is False

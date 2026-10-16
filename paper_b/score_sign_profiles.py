@@ -80,14 +80,32 @@ def prepare(out_dir: Path, gps_path: Path, units: str = "cohort26") -> Path:
     return path
 
 
+def done_profiles(files, run_id: str) -> set[str]:
+    """A profile is done only with its CSV AND its manifest; a bare CSV is not trusted."""
+    fs = set(files)
+    pre, suf = f"runs/{run_id}/synthetic/", "_option_probabilities.csv"
+    csv_ids = {f[len(pre):-len(suf)] for f in fs if f.startswith(pre) and f.endswith(suf)}
+    return {p for p in csv_ids if f"runs/{run_id}/manifests/{p}_manifest.json" in fs}
+
+
 def hub_done(repo: str, run_id: str) -> set[str]:
     from huggingface_hub import HfApi
-    pre, suf = f"runs/{run_id}/synthetic/", "_option_probabilities.csv"
-    files = HfApi().list_repo_files(repo, repo_type="dataset")     # a listing error aborts the run
-    return {f[len(pre):-len(suf)] for f in files if f.startswith(pre) and f.endswith(suf)}
+    return done_profiles(HfApi().list_repo_files(repo, repo_type="dataset"), run_id)   # a listing error aborts
 
 
-def upload_profile(repo: str, run_id: str, dest: Path, pid: str) -> None:
+def profile_manifest(*, run_id: str, profile_id: str, csv_sha256: str, n_rows: int, spec_sha256: str,
+                     code_revision: str) -> dict:
+    import time
+    import score_runtime as R
+    return {"run_id": run_id, "model": "sign_prompt", "profile_id": profile_id, "csv_sha256": csv_sha256,
+            "n_rows": int(n_rows), "spec_sha256": spec_sha256, "code_revision_sha256": code_revision,
+            "stack_versions": R.package_versions(), "sanitized": True, "contains_human_data": False,
+            "persisted_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+
+
+def upload_profile(repo: str, run_id: str, dest: Path, pid: str, manifest: dict) -> None:
+    """CSV first, manifest last: the manifest marks the profile done, so an interrupted upload is redone."""
+    import json as _json
     import hub_io
     from huggingface_hub import HfApi
     api = HfApi()
@@ -95,6 +113,9 @@ def upload_profile(repo: str, run_id: str, dest: Path, pid: str) -> None:
         path_or_fileobj=str(dest), path_in_repo=f"runs/{run_id}/synthetic/{pid}_option_probabilities.csv",
         repo_id=repo, repo_type="dataset", commit_message=f"{run_id}: {pid} sign-prompt option probabilities"),
         f"upload {pid}")
+    hub_io._retry(lambda: api.upload_file(
+        path_or_fileobj=_json.dumps(manifest, indent=2).encode(), path_in_repo=f"runs/{run_id}/manifests/{pid}_manifest.json",
+        repo_id=repo, repo_type="dataset", commit_message=f"{run_id}: {pid} manifest"), f"upload {pid} manifest")
 
 
 def score(profile_path: Path, spec_path: Path, out_dir: Path,
@@ -150,7 +171,13 @@ def score(profile_path: Path, spec_path: Path, out_dir: Path,
         frame.to_csv(dest, index=False)
         print(f"  wrote {dest.name} rows={len(frame)}")
         if hub_run:
-            upload_profile(hub_repo, hub_run, dest, row["profile_id"])
+            import hashlib
+            import score_runtime as R
+            man = profile_manifest(run_id=hub_run, profile_id=row["profile_id"],
+                                   csv_sha256=hashlib.sha256(dest.read_bytes()).hexdigest(), n_rows=len(frame),
+                                   spec_sha256=spec.get("spec_sha256", ""),
+                                   code_revision=R.code_revision(Path(__file__).resolve().parents[1]))
+            upload_profile(hub_repo, hub_run, dest, row["profile_id"], man)
             print(f"  uploaded {row['profile_id']} -> runs/{hub_run}/synthetic/")
     return 0
 
