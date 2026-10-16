@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -126,22 +127,26 @@ def train_country(country_code: str) -> Path:
         print(f"compute ledger: {type(exc).__name__}: {exc}")
 
     # durable artifact bus: push the pruned adapter straight to the HF Hub over HTTPS.
-    # Wrapped so a hub hiccup never fails a completed training run.
+    # Retried, then raised: with Drive gone a swallowed failure would be silent loss. The local
+    # adapter stays on disk, and the resume planner re-uploads it instead of retraining.
+    upload_error = None
     try:
+        import hub_io
         from huggingface_hub import HfApi
-        HfApi().upload_folder(
-            repo_id=C.HF_ADAPTER_REPO, repo_type="dataset",
-            folder_path=str(out_dir),
-            path_in_repo=C.hub_adapter_path(country_code),
-            commit_message=f"{country_code} adapter (paper_b frozen protocol)",
-        )
+        hub_io.upload_adapter(
+            HfApi(), C.HF_ADAPTER_REPO, out_dir, C.hub_adapter_path(country_code),
+            f"{country_code} adapter (paper_b frozen protocol)",
+            allow_cohort1=os.environ.get("SCA2_PB_PROTOCOL") != "bank2")
         print(f"HF upload ok -> {C.HF_ADAPTER_REPO}/{C.hub_adapter_path(country_code)}")
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001 - re-raised below after the GPU is freed
+        upload_error = e
         print(f"HF upload FAILED for {country_code}: {type(e).__name__}: {e}")
     print(f"saved adapter -> {out_dir} in {mins:.1f} min")
 
     del trainer, model, ds
     torch.cuda.empty_cache()
+    if upload_error is not None:
+        raise upload_error
     return out_dir
 
 

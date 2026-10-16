@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 COHORT1_BANK_RUN_ID = "gps_sign_relabel_all_20260816_004545Z"
@@ -28,6 +29,21 @@ N_FACTORIAL_UNITS = 64
 
 def bank2_selected() -> bool:
     return os.environ.get("SCA2_PB_PROTOCOL") == "bank2"
+
+
+_REPLICATE_TAG = re.compile(r"^[a-z0-9]{1,16}$")
+
+
+def replicate_tag() -> str:
+    """Optional SCA2_PB_REPLICATE: retrain units to separate paths (training-noise audit).
+
+    A replicate never shares a Hub prefix or a local adapter directory with the original run, so
+    it can neither overwrite nor be mistaken for it.
+    """
+    tag = os.environ.get("SCA2_PB_REPLICATE", "").strip()
+    if tag and not _REPLICATE_TAG.match(tag):
+        raise RuntimeError(f"SCA2_PB_REPLICATE must match [a-z0-9]{{1,16}}, got {tag!r}")
+    return tag
 
 
 def load_bank_manifest(path: Path) -> dict:
@@ -92,6 +108,12 @@ def apply(config_module) -> None:
         prefix = f"bank2/{run_id}/profiles"
 
     data_root = Path(root)
+    rep = replicate_tag()
+    adapter_dir = data_root / "adapters"
+    if rep:
+        head, _, tail = prefix.rpartition("/")                 # bank2/<run>/profiles -> .../replicates/<tag>/profiles
+        prefix = f"{head}/replicates/{rep}/{tail}"
+        adapter_dir = data_root / f"adapters_replicate_{rep}"
     config_module.BANK_DIR = bank_dir
     config_module.BANK_RUN_ID = run_id
     config_module.N_ROWS = n_triplets
@@ -99,7 +121,7 @@ def apply(config_module) -> None:
     config_module.UNITS = units
     config_module.DATA_ROOT = data_root
     config_module.PREPARED_DIR = data_root / "prepared"
-    config_module.ADAPTER_DIR = data_root / "adapters"
+    config_module.ADAPTER_DIR = adapter_dir
     config_module.REF_CACHE_FILE = data_root / "shared_reference_logps.jsonl"
     config_module.REF_MANIFEST_FILE = data_root / "shared_reference_logps_manifest.json"
     config_module.RUN_MANIFEST_FILE = data_root / "run_manifest.json"

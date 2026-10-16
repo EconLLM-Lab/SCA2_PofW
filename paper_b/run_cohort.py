@@ -59,6 +59,17 @@ def save_manifest(path, m: dict) -> None:
 HUB_REQUIRED = ("adapter_model.safetensors", "adapter_config.json", "run_record.json")
 
 
+def plan_unit(bank2: bool, on_hub: bool, local_complete: bool, recorded_bank: str, bank_id: str) -> str:
+    """What to do with one unit on resume. On bank 2 the Hub is the truth, not the local disk."""
+    if bank2:
+        if on_hub:
+            return "skip_hub"
+        if local_complete:
+            return "reupload" if recorded_bank == bank_id else "refuse"
+        return "train"
+    return "skip_local" if local_complete else "train"
+
+
 def _list_hub_files() -> list[str]:
     from huggingface_hub import HfApi
     return HfApi().list_repo_files(C.HF_ADAPTER_REPO, repo_type="dataset")
@@ -78,13 +89,13 @@ def hub_complete_units(units, cfg=C, lister=_list_hub_files) -> set[str]:
             if all(f"{cfg.hub_adapter_path(u)}/{n}" in files for n in HUB_REQUIRED)}
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--wave", type=int, choices=[1, 2])
     ap.add_argument("--countries", nargs="*")
     ap.add_argument("--skip-prepare", action="store_true")
     ap.add_argument("--dry-run", action="store_true", help="prepare only, do not train")
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
 
     if a.countries:
         countries = [c.upper() for c in a.countries]
@@ -117,45 +128,73 @@ def main() -> int:
 
     from train_country import train_country  # imported here so prepare-only runs need no torch
 
+    bank2 = os.environ.get("SCA2_PB_PROTOCOL") == "bank2"   # cohort-1 behaviour is unchanged
+    api = pins = None
     on_hub: set[str] = set()
-    if os.environ.get("SCA2_PB_PROTOCOL") == "bank2":   # cohort-1 resume behaviour is unchanged
+    rep = os.environ.get("SCA2_PB_REPLICATE", "").strip()
+    tag = f"replicate_{rep}" if rep else (f"wave{a.wave}" if a.wave else "units")
+    if bank2:
+        import hub_io
+        from huggingface_hub import HfApi
+        pins = hub_io.load_pins()
+        if pins["relabel_run_id"] != C.BANK_RUN_ID:
+            print(f"bank on this machine ({C.BANK_RUN_ID}) is not the pinned bank ({pins['relabel_run_id']}); refusing")
+            return 2
+        api = HfApi()
+        hub_io.write_probe(api, pins["artifacts_repo"], C.BANK_RUN_ID, f"{tag}_{int(time.time())}")
+        print("hub write probe ok (state repo)")
         on_hub = hub_complete_units(countries)
         print(f"hub already holds {len(on_hub)} of {len(countries)} units for this bank; they will be skipped")
 
     t0 = time.time()
     for i, cc in enumerate(countries, 1):
-        rec = m["countries"].get(cc, {})
-        if cc in on_hub:
-            print(f"[{i}/{len(countries)}] {cc}: complete on the Hub, skip")
-            continue
         out = C.ADAPTER_DIR / cc
         record_path = out / "run_record.json"
-        if (out / "adapter_config.json").exists():
-            if os.environ.get("SCA2_PB_PROTOCOL") == "bank2":
-                recorded = ""
-                if record_path.is_file():
-                    recorded = json.loads(record_path.read_text()).get("bank_run_id", "")
-                if recorded == C.BANK_RUN_ID:
-                    print(f"[{i}/{len(countries)}] {cc}: this bank already trained, skip")
-                    continue
-                print(f"[{i}/{len(countries)}] {cc}: adapter present for a different bank, refusing")
-                return 2
-            print(f"[{i}/{len(countries)}] {cc}: adapter present, skip")
+        recorded = json.loads(record_path.read_text()).get("bank_run_id", "") if record_path.is_file() else ""
+        action = plan_unit(bank2, cc in on_hub, (out / "adapter_config.json").exists(), recorded, C.BANK_RUN_ID)
+        tagline = f"[{i}/{len(countries)}] {cc}"
+        if action == "skip_hub":
+            print(f"{tagline}: complete on the Hub, skip")
             continue
-        print(f"[{i}/{len(countries)}] {cc}: training...")
-        try:
-            out = train_country(cc)
-            rec = {"status": "done", "adapter_dir": str(out),
-                   "run_record": json.loads((out / "run_record.json").read_text())}
-        except Exception as e:  # noqa: BLE001 — record and continue the cohort
-            rec = {"status": "error", "error": f"{type(e).__name__}: {e}"}
-            print(f"  !! {cc}: {rec['error']}")
+        if action == "skip_local":
+            print(f"{tagline}: adapter present, skip")
+            continue
+        if action == "refuse":
+            print(f"{tagline}: adapter present for a different bank, refusing")
+            return 2
+        if action == "reupload":
+            print(f"{tagline}: finished locally but not on the Hub; re-uploading instead of retraining")
+            try:
+                hub_io.upload_adapter(api, C.HF_ADAPTER_REPO, out, C.hub_adapter_path(cc), f"{cc} adapter (re-upload)")
+                rec = {"status": "done", "adapter_dir": str(out), "run_record": json.loads(record_path.read_text())}
+            except Exception as e:  # noqa: BLE001
+                rec = {"status": "error", "error": f"{type(e).__name__}: {e}"}
+                print(f"  !! {cc}: {rec['error']}")
+        else:
+            print(f"{tagline}: training...")
+            try:
+                out = train_country(cc)
+                rec = {"status": "done", "adapter_dir": str(out),
+                       "run_record": json.loads((out / "run_record.json").read_text())}
+            except Exception as e:  # noqa: BLE001 — record and continue the cohort
+                rec = {"status": "error", "error": f"{type(e).__name__}: {e}"}
+                print(f"  !! {cc}: {rec['error']}")
         m["countries"][cc] = rec
         save_manifest(mpath, m)
+        if bank2:
+            hub_io.sync_state(api, pins["artifacts_repo"], C.DATA_ROOT, C.BANK_RUN_ID, tag)
 
     done = sum(1 for r in m["countries"].values() if r.get("status") == "done")
     print(f"\ncohort done: {done} adapters | elapsed {(time.time()-t0)/60:.1f} min")
     save_manifest(mpath, m)
+    if bank2:
+        # the exit code must tell the truth: success means every requested unit is on the Hub
+        missing = sorted(set(countries) - hub_complete_units(countries))
+        hub_io.sync_state(api, pins["artifacts_repo"], C.DATA_ROOT, C.BANK_RUN_ID, tag, strict=True)
+        if missing:
+            print(f"NOT ON THE HUB after the run: {missing}")
+            return 4
+        print(f"all {len(countries)} requested units are on the Hub")
     return 0
 
 
