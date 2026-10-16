@@ -367,8 +367,8 @@ def load_spec(spec_path: Path) -> dict:
         if spec_sha256(body) != spec["spec_sha256"]:
             raise ValueError(
                 f"spec file hash mismatch: {spec_path} was modified after export")
-    if spec.get("battery") not in ("strict", "archive"):
-        raise ValueError(f"spec battery must be strict|archive, got {spec.get('battery')!r}")
+    if spec.get("battery") not in ("strict", "archive", "heldout"):
+        raise ValueError(f"spec battery must be strict|archive|heldout, got {spec.get('battery')!r}")
     return spec
 
 

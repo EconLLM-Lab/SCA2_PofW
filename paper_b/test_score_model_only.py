@@ -182,3 +182,37 @@ class TestAdapterPathGate:
                                     switchback_scores=None, spec=spec,
                                     tol_logprob=TOL_LOGPROB, tol_prob=TOL_PROB,
                                     require_switchback=True)
+
+
+# ------------------------------------------------- the held-out battery is a loadable spec
+class TestHeldoutSpecLoads:
+    def _heldout_spec(self, variant="v1"):
+        qm = pd.DataFrame([{"Question": q, "StandaloneQuestion": f"text {q} about something real",
+                            "ResponseType": "scale_1_4", "ResponseCodes": "1; 2; 3; 4",
+                            "ResponseLabels": "", "gps_dimension": ""} for q in ("Q150", "Q151")])
+        return B.build_scoring_spec(qm, numeric_support={}, battery="heldout",
+                                    heldout_items=["Q150", "Q151"], prompt_variant=variant)
+
+    def test_load_spec_accepts_heldout_and_keeps_its_hash(self, tmp_path):
+        spec = self._heldout_spec()
+        path = tmp_path / "h.json"
+        B.write_spec(spec, path)
+        got = R.load_spec(path)
+        assert got["battery"] == "heldout" and got["n_questions"] == 2
+
+    def test_load_spec_still_rejects_unknown_batteries_and_tampering(self, tmp_path):
+        spec = self._heldout_spec()
+        path = tmp_path / "h.json"
+        B.write_spec(spec, path)
+        body = json.loads(path.read_text())
+        body["battery"] = "mystery"
+        bad = tmp_path / "bad.json"
+        bad.write_text(json.dumps(body))
+        with pytest.raises(ValueError):
+            R.load_spec(bad)
+        tampered = json.loads(path.read_text())
+        tampered["questions"][0]["question_text"] += " edited"
+        edited = tmp_path / "edited.json"
+        edited.write_text(json.dumps(tampered))
+        with pytest.raises(ValueError, match="hash mismatch"):
+            R.load_spec(edited)
