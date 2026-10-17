@@ -8,8 +8,8 @@ selection (`selection_sha256 782b7d21…`, pool `19241f6f…`, code revision `35
 
 - Selection: 223 pool items, 56 primary, item signs from the probe's `t_top`.
 - Human surface: WVS wave 7, survey-weighted country means of the **raw** code, one cell per
-  country-item pair, `W_WEIGHT`, floor of 50 valid weighted respondents. 66 countries have coverage.
-  174 item-country cells fall below the floor and enter as missing.
+  country-item pair, `W_WEIGHT`, codes < 0 missing, as section 4 registers. 66 countries have coverage.
+  174 item-country cells are items never fielded in that country and enter as missing.
 - GPS: `country_gps.dta` indexed by `isocode`, six dimensions, loaded as the phase-2 pipeline loads it.
 - Countries used: **42** (WVS-7 coverage intersected with GPS).
 
@@ -28,9 +28,9 @@ selection (`selection_sha256 782b7d21…`, pool `19241f6f…`, code revision `35
    95th percentile (0.0463) with p = 0.0097. The adapters screen held-out items better than random
    assignment, and that is the primary claim.
 2. "A above the null but below one-third of the wave-6/7 ceiling → screening signal exists but is weak" —
-   **this is the case.** The human ceiling by surface is trust 0.743, patience 0.783 and 0.716,
-   risktaking 0.608, posrecip 0.446, altruism 0.761, negrecip 0.736, mean **0.685**. One-third of the mean
-   is 0.228, and A = 0.061 is far below it: **A is 8.8 % of the human ceiling.**
+   **this is the case.** The registered ceiling (section 7) is the wave-6/7 country-mean Spearman over the
+   selected items: 34 of the 56 were fielded in wave 6, over 28 countries, mean **0.746** (median 0.767,
+   minimum 0.430). One-third of it is 0.249, and A = 0.061 is far below: **A is 8.1 % of the ceiling.**
 
 So the registered reading is: the screening signal is present and statistically distinguishable from
 chance, and it is **weak** in magnitude.
@@ -43,5 +43,16 @@ chance, and it is **weak** in magnitude.
   achievable signal: the ceiling is a per-surface correlation between two human waves over 28 countries,
   while A is a per-item sign-weighted correlation over 42 countries. The preregistration asks for the
   comparison, so it is reported, with that difference named.
-- 174 item-country cells below the 50-respondent floor enter as missing. They are not imputed.
+- 174 item-country cells are items not fielded in that country; they enter as missing, not imputed.
+
+## Corrections (2026-10-17, after the first version of this note)
+
+1. The first version compared A with the **battery-surface** ceiling (`ceiling_surfaces.csv`, mean 0.685,
+   "8.8 %"). That file was built before the freeze on the 23 battery items, which is not what section 7
+   registers. The registered ceiling over the selected items is 0.746 and the ratio is 8.1 %. The verdict
+   (branch 2, weak) is unchanged.
+2. The first version applied a 50-respondent floor per cell, which section 4 does not register. Every one
+   of the 174 affected cells had zero respondents (the item was not fielded), so the floor never applied:
+   A, p and the interval are identical with and without it. The driver now defaults to the registered rule
+   and keeps the floor only as a named sensitivity.
 - The screen was run once, against the frozen selection. No analysis choice was made after seeing it.

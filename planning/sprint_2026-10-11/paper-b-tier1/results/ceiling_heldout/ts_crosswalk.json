@@ -1,0 +1,2606 @@
+{
+ "Q5": {
+  "wvs7_label": "Important in life: Work",
+  "accepted": "A005",
+  "accepted_label": "Important in life: Work",
+  "candidates": {
+   "A005": {
+    "label": "Important in life: Work",
+    "r": 1.0
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.4882272891392696
+   },
+   "A002": {
+    "label": "Important in life: Friends",
+    "r": -0.43764024778233485
+   },
+   "A004": {
+    "label": "Important in life: Politics",
+    "r": -0.020085962718069086
+   },
+   "A006": {
+    "label": "Important in life: Religion",
+    "r": 0.7849908669069577
+   },
+   "F063": {
+    "label": "How important is God in your life",
+    "r": -0.7813975939111849
+   },
+   "C042B5": {
+    "label": "Why people work: work most important in my life",
+    "r": NaN
+   },
+   "A003": {
+    "label": "Important in life: Leisure time",
+    "r": -0.2763634051474006
+   },
+   "A030": {
+    "label": "Important child qualities: Hard work",
+    "r": -0.0299642567455618
+   },
+   "C022": {
+    "label": "Important in a job: pleasant people to work with",
+    "r": NaN
+   }
+  }
+ },
+ "Q6": {
+  "wvs7_label": "Important in life: Religion",
+  "accepted": "A006",
+  "accepted_label": "Important in life: Religion",
+  "candidates": {
+   "A006": {
+    "label": "Important in life: Religion",
+    "r": 1.0
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.577069696808275
+   },
+   "A002": {
+    "label": "Important in life: Friends",
+    "r": -0.2834938537228424
+   },
+   "A004": {
+    "label": "Important in life: Politics",
+    "r": -0.06058429624819082
+   },
+   "A005": {
+    "label": "Important in life: Work",
+    "r": 0.7849908669069576
+   },
+   "F063": {
+    "label": "How important is God in your life",
+    "r": -0.9332444281740654
+   },
+   "A003": {
+    "label": "Important in life: Leisure time",
+    "r": -0.3508485421981767
+   },
+   "C042B5": {
+    "label": "Why people work: work most important in my life",
+    "r": NaN
+   },
+   "F201": {
+    "label": "Meaning of religion: To make sense of life after death vs To make sense of life",
+    "r": 0.5695476062980709
+   },
+   "A170": {
+    "label": "Satisfaction with your life",
+    "r": 0.22115893168978237
+   }
+  }
+ },
+ "Q15": {
+  "wvs7_label": "Important child qualities: religious faith",
+  "accepted": null,
+  "accepted_label": null,
+  "candidates": {
+   "A040": {
+    "label": "Important child qualities: religious faith",
+    "r": -0.9999999999999999
+   },
+   "A029": {
+    "label": "Important child qualities: independence",
+    "r": 0.3983539527672517
+   },
+   "A034": {
+    "label": "Important child qualities: imagination",
+    "r": 0.3372296881972593
+   },
+   "A041": {
+    "label": "Important child qualities: unselfishness",
+    "r": 0.03486058748304377
+   },
+   "A042": {
+    "label": "Important child qualities: obedience",
+    "r": -0.5887911247668832
+   },
+   "A027": {
+    "label": "Important child qualities: Good manners",
+    "r": -0.3911625287170191
+   },
+   "A030": {
+    "label": "Important child qualities: Hard work",
+    "r": -0.10156615384107541
+   },
+   "A032": {
+    "label": "Important child qualities: feeling of responsibility",
+    "r": 0.24509103534392918
+   },
+   "A039": {
+    "label": "Important child qualities: determination perseverance",
+    "r": 0.43771312255494427
+   },
+   "A043B": {
+    "label": "Important child qualities: Self-expression",
+    "r": NaN
+   }
+  }
+ },
+ "Q17": {
+  "wvs7_label": "Important child qualities: obedience",
+  "accepted": null,
+  "accepted_label": null,
+  "candidates": {
+   "A042": {
+    "label": "Important child qualities: obedience",
+    "r": -1.0
+   },
+   "A029": {
+    "label": "Important child qualities: independence",
+    "r": 0.44340041795780405
+   },
+   "A034": {
+    "label": "Important child qualities: imagination",
+    "r": 0.1293598095981802
+   },
+   "A041": {
+    "label": "Important child qualities: unselfishness",
+    "r": -0.3120898675789156
+   },
+   "A027": {
+    "label": "Important child qualities: Good manners",
+    "r": -0.3031719988060419
+   },
+   "A030": {
+    "label": "Important child qualities: Hard work",
+    "r": 0.0470638907370335
+   },
+   "A032": {
+    "label": "Important child qualities: feeling of responsibility",
+    "r": 0.18896628104201013
+   },
+   "A039": {
+    "label": "Important child qualities: determination perseverance",
+    "r": 0.2137383396624833
+   },
+   "A040": {
+    "label": "Important child qualities: religious faith",
+    "r": -0.5887911247668833
+   },
+   "A043B": {
+    "label": "Important child qualities: Self-expression",
+    "r": NaN
+   }
+  }
+ },
+ "Q27": {
+  "wvs7_label": "One of main goals in life has been to make my parents proud",
+  "accepted": "D054",
+  "accepted_label": "One of main goals in life has been to make my parents proud",
+  "candidates": {
+   "D054": {
+    "label": "One of main goals in life has been to make my parents proud",
+    "r": 0.9999999999999999
+   },
+   "D080": {
+    "label": "I decide my goals in life by myself",
+    "r": NaN
+   },
+   "F010": {
+    "label": "Life has no meaning",
+    "r": NaN
+   },
+   "C042B5": {
+    "label": "Why people work: work most important in my life",
+    "r": NaN
+   },
+   "A116": {
+    "label": "Reasons voluntary work: Make a contribution to my local community",
+    "r": NaN
+   },
+   "D055": {
+    "label": "Make effort to live up to what my friends expect",
+    "r": NaN
+   },
+   "F201": {
+    "label": "Meaning of religion: To make sense of life after death vs To make sense of life",
+    "r": 0.49045004147514876
+   },
+   "E219": {
+    "label": "Science and technology make our way of life change too fast",
+    "r": NaN
+   },
+   "C042B4": {
+    "label": "Why people work: I wouldn\u00c2\u00b4t work if work interfered my life",
+    "r": NaN
+   },
+   "I002": {
+    "label": "It is not important for me to know about science in my daily life",
+    "r": -0.05961397580005824
+   }
+  }
+ },
+ "Q45": {
+  "wvs7_label": "Future changes: Greater respect for authority",
+  "accepted": "E018",
+  "accepted_label": "Future changes: Greater respect for authority",
+  "candidates": {
+   "E018": {
+    "label": "Future changes: Greater respect for authority",
+    "r": 1.0
+   },
+   "Y011A": {
+    "label": "AUTHORITY - Welzel defiance - 1: Inverse respect for authority",
+    "r": 0.9988530095873891
+   },
+   "E016": {
+    "label": "Future changes: More emphasis on technology",
+    "r": 0.25679176080217225
+   },
+   "E017": {
+    "label": "Future changes: More emphasis on individual",
+    "r": NaN
+   },
+   "E020": {
+    "label": "Future changes: A simple and more natural lifestyle",
+    "r": NaN
+   },
+   "E015": {
+    "label": "Future changes: Less importance placed on work",
+    "r": -0.13460373593001318
+   },
+   "E019": {
+    "label": "Future changes: More emphasis on family life",
+    "r": NaN
+   },
+   "E014": {
+    "label": "Future changes: Less emphasis on money and material possessions",
+    "r": NaN
+   },
+   "A025": {
+    "label": "Respect and love for parents",
+    "r": NaN
+   },
+   "E045": {
+    "label": "Major changes in life",
+    "r": NaN
+   }
+  }
+ },
+ "Q49": {
+  "wvs7_label": "Satisfaction with your life",
+  "accepted": "A170",
+  "accepted_label": "Satisfaction with your life",
+  "candidates": {
+   "A170": {
+    "label": "Satisfaction with your life",
+    "r": 1.0
+   },
+   "D002": {
+    "label": "Satisfaction with home life",
+    "r": NaN
+   },
+   "C006": {
+    "label": "Satisfaction with financial situation of household",
+    "r": 0.8559802522918837
+   },
+   "E110": {
+    "label": "Satisfaction with the way democracy develops",
+    "r": NaN
+   },
+   "E125": {
+    "label": "Satisfaction with the people in national office",
+    "r": NaN
+   },
+   "C033": {
+    "label": "Job satisfaction",
+    "r": NaN
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.18074413755497895
+   },
+   "A002": {
+    "label": "Important in life: Friends",
+    "r": 0.12902800620812885
+   },
+   "A004": {
+    "label": "Important in life: Politics",
+    "r": 0.08203482624960205
+   },
+   "A005": {
+    "label": "Important in life: Work",
+    "r": 0.10002959611672126
+   }
+  }
+ },
+ "Q51": {
+  "wvs7_label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+  "accepted": "H008_01",
+  "accepted_label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+  "candidates": {
+   "H008_01": {
+    "label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+    "r": 1.0
+   },
+   "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "r": 0.8964733801272504
+   },
+   "H008_03": {
+    "label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+    "r": 0.913235107897447
+   },
+   "H008_09": {
+    "label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+    "r": 0.8138774164312077
+   },
+   "H008_02": {
+    "label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+    "r": 0.5722666628656196
+   },
+   "H005": {
+    "label": "Respondent's family was victim of a crime during last year",
+    "r": -0.4478542268918213
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.11026568659724559
+   },
+   "D001": {
+    "label": "How much do you trust your family",
+    "r": NaN
+   },
+   "D001_B": {
+    "label": "How much you trust: Your family (B)",
+    "r": -0.33062757284502803
+   },
+   "E188": {
+    "label": "Frequency watches TV",
+    "r": NaN
+   }
+  }
+ },
+ "Q52": {
+  "wvs7_label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+  "accepted": "H008_02",
+  "accepted_label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+  "candidates": {
+   "H008_02": {
+    "label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+    "r": 1.0
+   },
+   "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "r": 0.5307643612299182
+   },
+   "H008_01": {
+    "label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+    "r": 0.5722666628656196
+   },
+   "H008_03": {
+    "label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+    "r": 0.6168966856172077
+   },
+   "H005": {
+    "label": "Respondent's family was victim of a crime during last year",
+    "r": -0.7753499726273525
+   },
+   "H008_09": {
+    "label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+    "r": 0.537031656046537
+   },
+   "A013": {
+    "label": "Ever felt very lonely or remote from other people",
+    "r": NaN
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.13218625584023314
+   },
+   "A011": {
+    "label": "Ever felt restless",
+    "r": NaN
+   },
+   "A015": {
+    "label": "Ever felt bored",
+    "r": NaN
+   }
+  }
+ },
+ "Q53": {
+  "wvs7_label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+  "accepted": "H008_03",
+  "accepted_label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+  "candidates": {
+   "H008_03": {
+    "label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+    "r": 0.9999999999999999
+   },
+   "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "r": 0.8687932435088279
+   },
+   "H008_01": {
+    "label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+    "r": 0.9132351078974471
+   },
+   "H008_09": {
+    "label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+    "r": 0.82157948255875
+   },
+   "H008_02": {
+    "label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+    "r": 0.6168966856172077
+   },
+   "H005": {
+    "label": "Respondent's family was victim of a crime during last year",
+    "r": -0.46968016921443434
+   },
+   "H002_03": {
+    "label": "Frequency in your neighborhood: Police or military interfere with people\u00e2\u0080\u0099s pri",
+    "r": 0.6404638128174817
+   },
+   "E274": {
+    "label": "Frequency ordinary people pay a bribe, give a gift or do a favor to local offici",
+    "r": -0.47968599090284136
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.1725074753650044
+   },
+   "D001": {
+    "label": "How much do you trust your family",
+    "r": NaN
+   }
+  }
+ },
+ "Q54": {
+  "wvs7_label": "Frequency you/family (last 12 month): Gone without a cash income",
+  "accepted": "H008_04",
+  "accepted_label": "Frequency you/family (last 12 month): Gone without a cash income",
+  "candidates": {
+   "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "r": 0.9999999999999999
+   },
+   "H008_01": {
+    "label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+    "r": 0.8964733801272504
+   },
+   "H008_03": {
+    "label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+    "r": 0.8687932435088279
+   },
+   "H008_09": {
+    "label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+    "r": 0.7990881662345676
+   },
+   "H008_02": {
+    "label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+    "r": 0.5307643612299183
+   },
+   "H005": {
+    "label": "Respondent's family was victim of a crime during last year",
+    "r": -0.41286267001944793
+   },
+   "E035": {
+    "label": "Income equality",
+    "r": -0.17348346350683796
+   },
+   "X047_WVS": {
+    "label": "Scale of incomes",
+    "r": 0.356718626960286
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.18409451644955463
+   },
+   "D001": {
+    "label": "How much do you trust your family",
+    "r": NaN
+   }
+  }
+ },
+ "Q55": {
+  "wvs7_label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+  "accepted": "H008_09",
+  "accepted_label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+  "candidates": {
+   "H008_09": {
+    "label": "In the last 12 month, how often have you or your family: Gone without a safe she",
+    "r": 1.0
+   },
+   "H008_03": {
+    "label": "Frequency you/family (last 12 month): Gone without needed medicine or treatment",
+    "r": 0.82157948255875
+   },
+   "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "r": 0.7990881662345675
+   },
+   "H008_01": {
+    "label": "Frequency you/family (last 12 month): Gone without enough food to eat",
+    "r": 0.8138774164312078
+   },
+   "H008_02": {
+    "label": "Frequency you/family (last 12 month): Felt unsafe from crime in your own home",
+    "r": 0.537031656046537
+   },
+   "H005": {
+    "label": "Respondent's family was victim of a crime during last year",
+    "r": -0.4183635438602019
+   },
+   "E265_10": {
+    "label": "How often in country\u00c2\u00b4s elections: Women have equal opportunities to run the off",
+    "r": -0.37513094485556947
+   },
+   "F189": {
+    "label": "When you were growing up, did your father or mother have more influence in the a",
+    "r": NaN
+   },
+   "F028B": {
+    "label": "How often to you pray",
+    "r": 0.5097291997256592
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": -0.0128211896570555
+   }
+  }
+ },
+ "Q79": {
+  "wvs7_label": "Confidence: The Environmental Protection Movement",
+  "accepted": "E069_14",
+  "accepted_label": "Confidence: The Environmental Protection Movement",
+  "candidates": {
+   "E069_14": {
+    "label": "Confidence: The Environmental Protection Movement",
+    "r": 1.0
+   },
+   "E069_15": {
+    "label": "Confidence: The Women\u00c2\u00b4s Movement",
+    "r": 0.944316785792958
+   },
+   "E104": {
+    "label": "Approval: Ecology movement or nature protection",
+    "r": NaN
+   },
+   "E069_01": {
+    "label": "Confidence: Churches",
+    "r": 0.20098578485819668
+   },
+   "E069_04": {
+    "label": "Confidence: The Press",
+    "r": 0.6137595225113134
+   },
+   "E069_06": {
+    "label": "Confidence: The Police",
+    "r": 0.38614944726386946
+   },
+   "E069_07": {
+    "label": "Confidence: Parliament",
+    "r": 0.6842859986610876
+   },
+   "E069_10": {
+    "label": "Confidence: Television",
+    "r": 0.5838108250062631
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": 0.6736353860507948
+   },
+   "E069_19": {
+    "label": "Confidence: NATO",
+    "r": 0.6588547379139552
+   }
+  }
+ },
+ "Q95": {
+  "wvs7_label": "Active/Inactive membership: Sport or recreational organization, football/basebal",
+  "accepted": "A099",
+  "accepted_label": "Active/Inactive membership of sport or recreation",
+  "candidates": {
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 1.0
+   },
+   "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "r": 0.6020849616109077
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.7687080905964925
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.7760441280363989
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.7030768064634509
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 0.7116547928897057
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 0.26300041211651204
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.7474359881729618
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.5234593624611046
+   },
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 0.8912016963230757
+   }
+  }
+ },
+ "Q96": {
+  "wvs7_label": "Active/Inactive membership: Art, music or educational organization",
+  "accepted": "A100",
+  "accepted_label": "Active/Inactive membership of art, music, educational",
+  "candidates": {
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 1.0
+   },
+   "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "r": 0.6582907623055682
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.8785586580025386
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.8842818028113153
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.8365930410018584
+   },
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 0.8912016963230757
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 0.7978829783712238
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 0.3053340850189453
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.8096990697175591
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.7039667823081684
+   }
+  }
+ },
+ "Q97": {
+  "wvs7_label": "Active/Inactive membership: labor union",
+  "accepted": "A101",
+  "accepted_label": "Active/Inactive membership of labour unions",
+  "candidates": {
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.9999999999999998
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.7026758013833568
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.7757467028773172
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.7681968340905394
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.8126754773237459
+   },
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 0.7474359881729618
+   },
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 0.8096990697175591
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 0.6344234145054001
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 0.25626208544321466
+   },
+   "A106D": {
+    "label": "Active/Inactive membership: Women\u00e2\u0080\u0099s group",
+    "r": 0.7055937114446376
+   }
+  }
+ },
+ "Q102": {
+  "wvs7_label": "Active/Inactive membership: consumer organization",
+  "accepted": "A106B",
+  "accepted_label": "Active/Inactive membership: Consumer organization",
+  "candidates": {
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 1.0
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.9156344893505067
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.7424683025664905
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 0.6559611843278665
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 0.3062384821977623
+   },
+   "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "r": 0.5918193013751414
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.812675477323746
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.7586214334648068
+   },
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 0.7030768064634508
+   },
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 0.8365930410018584
+   }
+  }
+ },
+ "Q105": {
+  "wvs7_label": "Active/Inactive membership: other organization",
+  "accepted": "A106",
+  "accepted_label": "Active/Inactive membership of any other organization",
+  "candidates": {
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": 1.0
+   },
+   "A103": {
+    "label": "Active/Inactive membership of environmental organization",
+    "r": 0.3106899305923876
+   },
+   "A104": {
+    "label": "Active/Inactive membership of professional organization",
+    "r": 0.31634055845798476
+   },
+   "A106B": {
+    "label": "Active/Inactive membership: Consumer organization",
+    "r": 0.3062384821977623
+   },
+   "A105": {
+    "label": "Active/Inactive membership of charitable/humanitarian organization",
+    "r": 0.26580905326749144
+   },
+   "A098": {
+    "label": "Active/Inactive membership of church or religious organization",
+    "r": 0.16553356939157032
+   },
+   "A101": {
+    "label": "Active/Inactive membership of labour unions",
+    "r": 0.2562620854432146
+   },
+   "A102": {
+    "label": "Active/Inactive membership of political party",
+    "r": 0.2511160681317272
+   },
+   "A099": {
+    "label": "Active/Inactive membership of sport or recreation",
+    "r": 0.26300041211651204
+   },
+   "A100": {
+    "label": "Active/Inactive membership of art, music, educational",
+    "r": 0.3053340850189453
+   }
+  }
+ },
+ "Q118": {
+  "wvs7_label": "Frequency ordinary people pay a bribe, give a gift or do a favor to local offici",
+  "accepted": "E274",
+  "accepted_label": "Frequency ordinary people pay a bribe, give a gift or do a favor to local offici",
+  "candidates": {
+   "E274": {
+    "label": "Frequency ordinary people pay a bribe, give a gift or do a favor to local offici",
+    "r": 1.0
+   },
+   "E268": {
+    "label": "Scale corruption in [my country] - pay a bribe, give a gift, do a favor to other",
+    "r": 0.5100726869375164
+   },
+   "C042B2": {
+    "label": "Why people work: I do the best I can regardless of pay",
+    "r": NaN
+   },
+   "H002_03": {
+    "label": "Frequency in your neighborhood: Police or military interfere with people\u00e2\u0080\u0099s pri",
+    "r": -0.5449284180720019
+   },
+   "E271": {
+    "label": "Groups of people involved in corruption: Local authorities",
+    "r": 0.5428273677744475
+   },
+   "A168": {
+    "label": "Do you think most people try to take advantage of you",
+    "r": NaN
+   },
+   "F037": {
+    "label": "Churches give answers: people\u00c2\u00b4s spiritual needs",
+    "r": NaN
+   },
+   "A013": {
+    "label": "Ever felt very lonely or remote from other people",
+    "r": NaN
+   },
+   "A060": {
+    "label": "Spend time with people at your church, mosque or synagogue",
+    "r": NaN
+   },
+   "A168A": {
+    "label": "Do you think most people try to take advantage of you (10 point scale)",
+    "r": NaN
+   }
+  }
+ },
+ "Q120": {
+  "wvs7_label": "Risk to be held accountable for giving or receiving a bribe",
+  "accepted": "E276",
+  "accepted_label": "Risk in this country to be held accountable for giving or receiving a bribe, gif",
+  "candidates": {
+   "E276": {
+    "label": "Risk in this country to be held accountable for giving or receiving a bribe, gif",
+    "r": 1.0
+   },
+   "E274": {
+    "label": "Frequency ordinary people pay a bribe, give a gift or do a favor to local offici",
+    "r": 0.19742939683471455
+   },
+   "E032": {
+    "label": "Freedom or equality",
+    "r": NaN
+   },
+   "A124_20": {
+    "label": "Neighbours: Indians or Lebanese",
+    "r": NaN
+   },
+   "A124_21": {
+    "label": "Neighbours: Chinese or Philippino Chinese",
+    "r": NaN
+   },
+   "E039": {
+    "label": "Competition good or harmful",
+    "r": 0.12606231881674637
+   },
+   "F117": {
+    "label": "Justifiable: Someone accepting a bribe",
+    "r": -0.01795350261811838
+   },
+   "A074": {
+    "label": "Member: Belong to sports or recreation",
+    "r": 0.04275371343012512
+   },
+   "A080_01": {
+    "label": "Member: Humanitarian or charitable organization",
+    "r": 0.19592045148997955
+   },
+   "E069_40": {
+    "label": "Confidence: Charitable or humanitarian organizations",
+    "r": -0.11121712402717236
+   }
+  }
+ },
+ "Q122": {
+  "wvs7_label": "Immigration in your country: Fills useful jobs in the workforce",
+  "accepted": "G053",
+  "accepted_label": "Effects of immigrants on the development of [your country]: Fill useful jobs in",
+  "candidates": {
+   "G053": {
+    "label": "Effects of immigrants on the development of [your country]: Fill useful jobs in",
+    "r": 1.0
+   },
+   "C024": {
+    "label": "Important in a job: a useful job for society",
+    "r": NaN
+   },
+   "C033": {
+    "label": "Job satisfaction",
+    "r": NaN
+   },
+   "G005": {
+    "label": "Citizen of [country]",
+    "r": NaN
+   },
+   "S024": {
+    "label": "Country - wave",
+    "r": -0.05608015304839747
+   },
+   "S025": {
+    "label": "Country - year",
+    "r": -0.05608003154635766
+   },
+   "X036": {
+    "label": "Profession/job",
+    "r": NaN
+   },
+   "C014": {
+    "label": "Important in a job: a respected job",
+    "r": NaN
+   },
+   "C019": {
+    "label": "Important in a job: a responsible job",
+    "r": NaN
+   },
+   "E012": {
+    "label": "Willingness to fight for country",
+    "r": -0.18617467992561207
+   }
+  }
+ },
+ "Q124": {
+  "wvs7_label": "Immigration in your country: Increases the crime rate",
+  "accepted": "G055",
+  "accepted_label": "Effects of immigrants on the development of [your country]: Increase the crime r",
+  "candidates": {
+   "G055": {
+    "label": "Effects of immigrants on the development of [your country]: Increase the crime r",
+    "r": 1.0
+   },
+   "E111": {
+    "label": "Rate political system for governing country",
+    "r": NaN
+   },
+   "E141": {
+    "label": "Country cannot solve crime problems by itself",
+    "r": NaN
+   },
+   "G059": {
+    "label": "Effects of immigrants on the development of [your country]: Increase unemploymen",
+    "r": 0.7495901891977922
+   },
+   "G057": {
+    "label": "Effects of immigrants on the development of [your country]: Increase the risks o",
+    "r": 0.8930112236115256
+   },
+   "G005": {
+    "label": "Citizen of [country]",
+    "r": NaN
+   },
+   "S024": {
+    "label": "Country - wave",
+    "r": -0.1635524073097958
+   },
+   "S025": {
+    "label": "Country - year",
+    "r": -0.1635524902811023
+   },
+   "E129C": {
+    "label": "Be willing to pay higher taxes in order to increase country\u00c2\u00b4s foreign aid",
+    "r": NaN
+   },
+   "E012": {
+    "label": "Willingness to fight for country",
+    "r": 0.05513119128811127
+   }
+  }
+ },
+ "Q125": {
+  "wvs7_label": "Immigration in your country: Gives asylum to political refugees",
+  "accepted": "G056",
+  "accepted_label": "Effects of immigrants on the development of [your country]: Give asylum to polit",
+  "candidates": {
+   "G056": {
+    "label": "Effects of immigrants on the development of [your country]: Give asylum to polit",
+    "r": 0.9999999999999998
+   },
+   "E111": {
+    "label": "Rate political system for governing country",
+    "r": NaN
+   },
+   "E214": {
+    "label": "Western democracy is the best political system for country",
+    "r": NaN
+   },
+   "E291": {
+    "label": "How much would you say the political system in your country allows people like y",
+    "r": 0.35202053270417094
+   },
+   "G005": {
+    "label": "Citizen of [country]",
+    "r": NaN
+   },
+   "S024": {
+    "label": "Country - wave",
+    "r": -0.019071843465368776
+   },
+   "S025": {
+    "label": "Country - year",
+    "r": -0.019071838690397424
+   },
+   "E268": {
+    "label": "Scale corruption in [my country] - pay a bribe, give a gift, do a favor to other",
+    "r": 0.1349493799265797
+   },
+   "A124_18": {
+    "label": "Neighbours: Political Extremists",
+    "r": NaN
+   },
+   "E012": {
+    "label": "Willingness to fight for country",
+    "r": -0.23184201757207804
+   }
+  }
+ },
+ "Q128": {
+  "wvs7_label": "Immigration in your country: Increases unemployment",
+  "accepted": "G059",
+  "accepted_label": "Effects of immigrants on the development of [your country]: Increase unemploymen",
+  "candidates": {
+   "G059": {
+    "label": "Effects of immigrants on the development of [your country]: Increase unemploymen",
+    "r": 0.9999999999999998
+   },
+   "G005": {
+    "label": "Citizen of [country]",
+    "r": NaN
+   },
+   "G055": {
+    "label": "Effects of immigrants on the development of [your country]: Increase the crime r",
+    "r": 0.7495901891977922
+   },
+   "G057": {
+    "label": "Effects of immigrants on the development of [your country]: Increase the risks o",
+    "r": 0.7830690115088514
+   },
+   "S024": {
+    "label": "Country - wave",
+    "r": -0.20790225247487684
+   },
+   "S025": {
+    "label": "Country - year",
+    "r": -0.20790234571941288
+   },
+   "E012": {
+    "label": "Willingness to fight for country",
+    "r": 0.34327694432802014
+   },
+   "E129C": {
+    "label": "Be willing to pay higher taxes in order to increase country\u00c2\u00b4s foreign aid",
+    "r": NaN
+   },
+   "E236": {
+    "label": "Democraticness in own country",
+    "r": -0.4071528707782974
+   },
+   "G018": {
+    "label": "When came to country",
+    "r": NaN
+   }
+  }
+ },
+ "Q130": {
+  "wvs7_label": "Immigration policy preference",
+  "accepted": "E143",
+  "accepted_label": "Immigrant policy",
+  "candidates": {
+   "E143": {
+    "label": "Immigrant policy",
+    "r": 0.9999999999999999
+   },
+   "E256": {
+    "label": "General party preference",
+    "r": NaN
+   },
+   "F049": {
+    "label": "Churches speak out on: government policy",
+    "r": NaN
+   }
+  }
+ },
+ "Q135": {
+  "wvs7_label": "Frequency in your neighborhood: Racist behavior",
+  "accepted": "H002_04",
+  "accepted_label": "Frequency in your neighborhood: Racist behavior",
+  "candidates": {
+   "H002_04": {
+    "label": "Frequency in your neighborhood: Racist behavior",
+    "r": 1.0
+   },
+   "H002_01": {
+    "label": "Frequency in your neighborhood: Robberies",
+    "r": 0.6617251507696806
+   },
+   "H002_02": {
+    "label": "Frequency in your neighborhood: Alcohol consumed in the streets",
+    "r": 0.4378240457130807
+   },
+   "H002_05": {
+    "label": "Frequency in your neighborhood: Drug sale in streets",
+    "r": 0.5878222198395584
+   },
+   "G007_18": {
+    "label": "Trust: Your neighborhood",
+    "r": NaN
+   },
+   "H001": {
+    "label": "Secure in neighborhood",
+    "r": -0.39742351127006026
+   },
+   "E188": {
+    "label": "Frequency watches TV",
+    "r": NaN
+   },
+   "G007_18_B": {
+    "label": "Trust: Your neighborhood (B)",
+    "r": -0.0784601317664433
+   },
+   "H002_03": {
+    "label": "Frequency in your neighborhood: Police or military interfere with people\u00e2\u0080\u0099s pri",
+    "r": 0.659472146500487
+   },
+   "H008_04": {
+    "label": "Frequency you/family (last 12 month): Gone without a cash income",
+    "r": 0.18232820936031566
+   }
+  }
+ },
+ "Q136": {
+  "wvs7_label": "Frequency in your neighborhood: Drug sale in streets",
+  "accepted": "H002_05",
+  "accepted_label": "Frequency in your neighborhood: Drug sale in streets",
+  "candidates": {
+   "H002_05": {
+    "label": "Frequency in your neighborhood: Drug sale in streets",
+    "r": 1.0
+   },
+   "H002_02": {
+    "label": "Frequency in your neighborhood: Alcohol consumed in the streets",
+    "r": 0.6210738463162132
+   },
+   "H002_01": {
+    "label": "Frequency in your neighborhood: Robberies",
+    "r": 0.803312212415667
+   },
+   "H002_04": {
+    "label": "Frequency in your neighborhood: Racist behavior",
+    "r": 0.5878222198395584
+   },
+   "H008_05": {
+    "label": "How frequently do the following things occur in your neighborhood: Street violen",
+    "r": 0.7462444520695958
+   },
+   "G007_18": {
+    "label": "Trust: Your neighborhood",
+    "r": NaN
+   },
+   "H001": {
+    "label": "Secure in neighborhood",
+    "r": -0.3558381467930006
+   },
+   "H002_03": {
+    "label": "Frequency in your neighborhood: Police or military interfere with people\u00e2\u0080\u0099s pri",
+    "r": 0.7405325216139554
+   },
+   "A124_08": {
+    "label": "Neighbours: Drug addicts",
+    "r": 0.1952813740515104
+   },
+   "E188": {
+    "label": "Frequency watches TV",
+    "r": NaN
+   }
+  }
+ },
+ "Q138": {
+  "wvs7_label": "Frequency in your neighborhood: Sexual harassment",
+  "accepted": "H008_06",
+  "accepted_label": "How frequently do the following things occur in your neighborhood: Sexual harass",
+  "candidates": {
+   "H002_01": {
+    "label": "Frequency in your neighborhood: Robberies",
+    "r": 0.6907974062789558
+   },
+   "H002_04": {
+    "label": "Frequency in your neighborhood: Racist behavior",
+    "r": 0.7267950547317857
+   },
+   "H002_02": {
+    "label": "Frequency in your neighborhood: Alcohol consumed in the streets",
+    "r": 0.49966283325780547
+   },
+   "H002_05": {
+    "label": "Frequency in your neighborhood: Drug sale in streets",
+    "r": 0.718569693753219
+   },
+   "G007_18": {
+    "label": "Trust: Your neighborhood",
+    "r": NaN
+   },
+   "H001": {
+    "label": "Secure in neighborhood",
+    "r": -0.3527988383924518
+   },
+   "H008_06": {
+    "label": "How frequently do the following things occur in your neighborhood: Sexual harass",
+    "r": 1.0
+   },
+   "D024": {
+    "label": "Enjoy sexual freedom",
+    "r": NaN
+   },
+   "E188": {
+    "label": "Frequency watches TV",
+    "r": NaN
+   },
+   "G007_18_B": {
+    "label": "Trust: Your neighborhood (B)",
+    "r": -0.2559872039800166
+   }
+  }
+ },
+ "Q141": {
+  "wvs7_label": "Things done for reasons of security: Carried a knife, gun or other weapon",
+  "accepted": null,
+  "accepted_label": null,
+  "candidates": {
+   "H003_03": {
+    "label": "Things done for reasons of security: Carried a knife, gun or other weapon",
+    "r": -1.0
+   },
+   "H003_01": {
+    "label": "Things done for reasons of security: Didn\u00e2\u0080\u0099t carry much money",
+    "r": -0.16676948270273842
+   },
+   "H003_02": {
+    "label": "Things done for reasons of security: Preferred not to go out at night",
+    "r": -0.21622203002435178
+   },
+   "E222B": {
+    "label": "Political action recently done: Other",
+    "r": NaN
+   },
+   "A057": {
+    "label": "Spend time with parents or other relatives",
+    "r": NaN
+   },
+   "A013": {
+    "label": "Ever felt very lonely or remote from other people",
+    "r": NaN
+   },
+   "A117": {
+    "label": "Reasons voluntary work: Bring about social or political change",
+    "r": NaN
+   },
+   "E052": {
+    "label": "Personal characteristics: I own many things others envy me for",
+    "r": NaN
+   },
+   "E032": {
+    "label": "Freedom or equality",
+    "r": NaN
+   },
+   "E222": {
+    "label": "Political action: Other",
+    "r": NaN
+   }
+  }
+ },
+ "Q150": {
+  "wvs7_label": "Freedom and security - Which more important",
+  "accepted": "H008_08",
+  "accepted_label": "Freedom and securiy - Which more important",
+  "candidates": {
+   "H008_07": {
+    "label": "Freedom and Equality - Which more important",
+    "r": 0.7054064980703554
+   },
+   "H008_08": {
+    "label": "Freedom and securiy - Which more important",
+    "r": 1.0
+   },
+   "C013": {
+    "label": "Important in a job: good job security",
+    "r": NaN
+   },
+   "E059": {
+    "label": "Allow more freedom for individuals",
+    "r": NaN
+   },
+   "F188": {
+    "label": "Which is more important as a basis for marriage: parents\u00c2\u00b4 approval or love",
+    "r": NaN
+   },
+   "D060": {
+    "label": "University is more important for a boy than for a girl",
+    "r": -0.4013609966515415
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": -0.23240854352423654
+   },
+   "A002": {
+    "label": "Important in life: Friends",
+    "r": 0.39193272083616093
+   },
+   "A004": {
+    "label": "Important in life: Politics",
+    "r": 0.020623510236312235
+   },
+   "A005": {
+    "label": "Important in life: Work",
+    "r": -0.49084061627374187
+   }
+  }
+ },
+ "Q151": {
+  "wvs7_label": "Willingness to fight for country",
+  "accepted": null,
+  "accepted_label": null,
+  "candidates": {
+   "E012": {
+    "label": "Willingness to fight for country",
+    "r": -1.0
+   },
+   "G005": {
+    "label": "Citizen of [country]",
+    "r": NaN
+   },
+   "S024": {
+    "label": "Country - wave",
+    "r": -0.08820420105075598
+   },
+   "S025": {
+    "label": "Country - year",
+    "r": -0.08820416019542564
+   },
+   "E236": {
+    "label": "Democraticness in own country",
+    "r": 0.04011078265141711
+   },
+   "E245": {
+    "label": "MDG: Fight HIV",
+    "r": NaN
+   },
+   "G018": {
+    "label": "When came to country",
+    "r": NaN
+   },
+   "X025CSWVS": {
+    "label": "Education (country specific)",
+    "r": -0.11147666058123294
+   },
+   "E001": {
+    "label": "Aims of country: first choice",
+    "r": 0.2741536077977074
+   },
+   "E002": {
+    "label": "Aims of country: second choice",
+    "r": 0.1423367866994818
+   }
+  }
+ },
+ "Q160": {
+  "wvs7_label": "We depend too much on science and not enough on faith",
+  "accepted": "E220",
+  "accepted_label": "We depend too much on science and not enough on faith",
+  "candidates": {
+   "E220": {
+    "label": "We depend too much on science and not enough on faith",
+    "r": 1.0
+   },
+   "C012": {
+    "label": "Important in a job: not too much pressure",
+    "r": NaN
+   },
+   "E219": {
+    "label": "Science and technology make our way of life change too fast",
+    "r": NaN
+   },
+   "I002": {
+    "label": "It is not important for me to know about science in my daily life",
+    "r": 0.44828722022355055
+   },
+   "F116": {
+    "label": "Justifiable: Cheating on taxes",
+    "r": 0.11300859810265723
+   },
+   "A016": {
+    "label": "Ever felt on top of the world",
+    "r": NaN
+   },
+   "A040": {
+    "label": "Important child qualities: religious faith",
+    "r": 0.15234669981592794
+   },
+   "A048": {
+    "label": "Abortion when woman not married",
+    "r": NaN
+   },
+   "E061": {
+    "label": "Political reform is moving too rapidly",
+    "r": NaN
+   },
+   "F040": {
+    "label": "Churches speak out on: disarmament",
+    "r": NaN
+   }
+  }
+ },
+ "Q161": {
+  "wvs7_label": "One of the bad effects of science is that it breaks down people\u00e2\u0080\u0099s ideas of rig",
+  "accepted": "I001",
+  "accepted_label": "One of the bad effects of science is that it breaks down people\u00e2\u0080\u0099s ideas of rig",
+  "candidates": {
+   "I001": {
+    "label": "One of the bad effects of science is that it breaks down people\u00e2\u0080\u0099s ideas of rig",
+    "r": 0.9999999999999999
+   },
+   "C021": {
+    "label": "Important in a job: a job that meets one\u00c2\u00b4s abilities",
+    "r": NaN
+   },
+   "F110": {
+    "label": "Laws: people\u00e2\u0080\u0099s wishes",
+    "r": NaN
+   },
+   "A200": {
+    "label": "Social position: People in their 20s",
+    "r": NaN
+   },
+   "A201": {
+    "label": "Social position: People in their 40s",
+    "r": NaN
+   },
+   "A202": {
+    "label": "Social position: People in their 70s",
+    "r": NaN
+   },
+   "E233A": {
+    "label": "Democracy: The state makes people's incomes equal",
+    "r": 0.2833571955415388
+   },
+   "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "r": -0.4790953214098732
+   },
+   "F037": {
+    "label": "Churches give answers: people\u00c2\u00b4s spiritual needs",
+    "r": NaN
+   },
+   "A193": {
+    "label": "Schwartz: It is important to this person to help the people nearby",
+    "r": NaN
+   }
+  }
+ },
+ "Q162": {
+  "wvs7_label": "It is not important for me to know about science in my daily life",
+  "accepted": "I002",
+  "accepted_label": "It is not important for me to know about science in my daily life",
+  "candidates": {
+   "I002": {
+    "label": "It is not important for me to know about science in my daily life",
+    "r": 1.0
+   },
+   "C042B5": {
+    "label": "Why people work: work most important in my life",
+    "r": NaN
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.16362138610539426
+   },
+   "A002": {
+    "label": "Important in life: Friends",
+    "r": 0.20628214539200115
+   },
+   "A004": {
+    "label": "Important in life: Politics",
+    "r": 0.2835505753464959
+   },
+   "A005": {
+    "label": "Important in life: Work",
+    "r": -0.06652058721004993
+   },
+   "A006": {
+    "label": "Important in life: Religion",
+    "r": -0.05743055135638238
+   },
+   "F063": {
+    "label": "How important is God in your life",
+    "r": 0.18187949679518772
+   },
+   "F194": {
+    "label": "How important: daily prayer",
+    "r": NaN
+   },
+   "A003": {
+    "label": "Important in life: Leisure time",
+    "r": -0.014770808574425746
+   }
+  }
+ },
+ "Q163": {
+  "wvs7_label": "The world is better off, or worse off, because of science and technology",
+  "accepted": "E234",
+  "accepted_label": "The world is better off, or worse off, because of science and technology",
+  "candidates": {
+   "E234": {
+    "label": "The world is better off, or worse off, because of science and technology",
+    "r": 1.0
+   },
+   "E218": {
+    "label": "Because of science and technology, there will be more opportunities for the next",
+    "r": 0.5385886723837949
+   },
+   "B021": {
+    "label": "Environmental problems in the world: Global warming or the greenhouse effect.",
+    "r": NaN
+   },
+   "B022": {
+    "label": "Environmental problems in the world: Loss of plant or animal species or biodiver",
+    "r": NaN
+   },
+   "E219": {
+    "label": "Science and technology make our way of life change too fast",
+    "r": NaN
+   },
+   "E217": {
+    "label": "Science and technology are making our lives healthier, easier, and more comforta",
+    "r": 0.6188794627452557
+   },
+   "E032": {
+    "label": "Freedom or equality",
+    "r": NaN
+   },
+   "E069_63": {
+    "label": "Confidence: The World Bank",
+    "r": -0.4052144247905392
+   },
+   "G063": {
+    "label": "How close you feel: World",
+    "r": 0.08628845899253741
+   },
+   "A124_20": {
+    "label": "Neighbours: Indians or Lebanese",
+    "r": NaN
+   }
+  }
+ },
+ "Q166": {
+  "wvs7_label": "Believe in: life after death",
+  "accepted": null,
+  "accepted_label": null,
+  "candidates": {
+   "F051": {
+    "label": "Believe in: life after death",
+    "r": -1.0
+   },
+   "F201": {
+    "label": "Meaning of religion: To make sense of life after death vs To make sense of life",
+    "r": 0.6148146649888097
+   },
+   "F007": {
+    "label": "Death has meaning if you believe in God",
+    "r": NaN
+   },
+   "F006": {
+    "label": "Death is inevitable",
+    "r": NaN
+   },
+   "F050": {
+    "label": "Believe in: God",
+    "r": -0.7697013310593407
+   },
+   "F053": {
+    "label": "Believe in: hell",
+    "r": -0.9252577807302845
+   },
+   "F054": {
+    "label": "Believe in: heaven",
+    "r": -0.9508496556774564
+   },
+   "F055": {
+    "label": "Believe in: Sin",
+    "r": NaN
+   },
+   "F059": {
+    "label": "Believe in: devil",
+    "r": NaN
+   },
+   "A001": {
+    "label": "Important in life: Family",
+    "r": 0.5491612115579191
+   }
+  }
+ },
+ "Q168": {
+  "wvs7_label": "Believe in: heaven",
+  "accepted": null,
+  "accepted_label": null,
+  "candidates": {
+   "F054": {
+    "label": "Believe in: heaven",
+    "r": -1.0
+   },
+   "F050": {
+    "label": "Believe in: God",
+    "r": -0.827392127571977
+   },
+   "F053": {
+    "label": "Believe in: hell",
+    "r": -0.9390972004880626
+   },
+   "F055": {
+    "label": "Believe in: Sin",
+    "r": NaN
+   },
+   "F059": {
+    "label": "Believe in: devil",
+    "r": NaN
+   },
+   "F057": {
+    "label": "Believe in: re-incarnation",
+    "r": NaN
+   },
+   "F060": {
+    "label": "Believe in: resurrection of the dead",
+    "r": NaN
+   },
+   "F051": {
+    "label": "Believe in: life after death",
+    "r": -0.9508496556774565
+   },
+   "F052": {
+    "label": "Believe in: people have a soul",
+    "r": NaN
+   },
+   "F007": {
+    "label": "Death has meaning if you believe in God",
+    "r": NaN
+   }
+  }
+ },
+ "Q170": {
+  "wvs7_label": "The only acceptable religion  is my religion",
+  "accepted": "F203",
+  "accepted_label": "The only acceptable religion is my religion",
+  "candidates": {
+   "F203": {
+    "label": "The only acceptable religion is my religion",
+    "r": 1.0
+   },
+   "A006": {
+    "label": "Important in life: Religion",
+    "r": 0.807063007962493
+   },
+   "F109": {
+    "label": "Government protects religion",
+    "r": NaN
+   },
+   "F111": {
+    "label": "Only laws of the Shari\u00c2\u00b4a",
+    "r": NaN
+   },
+   "F186": {
+    "label": "Religion is a cause of terrorism",
+    "r": NaN
+   },
+   "A124_12": {
+    "label": "Neighbours: People of a different religion",
+    "r": -0.622124931780025
+   },
+   "A124_13": {
+    "label": "Neighbours: People of the same religion",
+    "r": NaN
+   },
+   "A203": {
+    "label": "Is a 30-year old boss acceptable",
+    "r": NaN
+   },
+   "A207": {
+    "label": "Is a 70-year old boss acceptable",
+    "r": NaN
+   },
+   "F175": {
+    "label": "Religions limit democratic processes",
+    "r": NaN
+   }
+  }
+ },
+ "Q194": {
+  "wvs7_label": "Justifiable: Political violence",
+  "accepted": "E290",
+  "accepted_label": "Justifiable: Political violence",
+  "candidates": {
+   "E290": {
+    "label": "Justifiable: Political violence",
+    "r": 1.0
+   },
+   "F136": {
+    "label": "Justifiable: Political assassination",
+    "r": NaN
+   },
+   "F114D": {
+    "label": "Justifiable: Violence against other people",
+    "r": 0.9633135502704053
+   },
+   "E198": {
+    "label": "Using violence for political goals not justified",
+    "r": NaN
+   },
+   "F118": {
+    "label": "Justifiable: Homosexuality",
+    "r": 0.09944014290365685
+   },
+   "F119": {
+    "label": "Justifiable: Prostitution",
+    "r": 0.28440759042658226
+   },
+   "F120": {
+    "label": "Justifiable: Abortion",
+    "r": 0.14336754277687358
+   },
+   "F121": {
+    "label": "Justifiable: Divorce",
+    "r": 0.01387574365740108
+   },
+   "F122": {
+    "label": "Justifiable: Euthanasia",
+    "r": 0.16168966711755584
+   },
+   "F123": {
+    "label": "Justifiable: Suicide",
+    "r": 0.4179051471184128
+   }
+  }
+ },
+ "Q197": {
+  "wvs7_label": "Government has the right: Monitor all e-mails and any other information exchange",
+  "accepted": "H010",
+  "accepted_label": "Government has the right: Monitor all e-mails and any other information exchange",
+  "candidates": {
+   "H010": {
+    "label": "Government has the right: Monitor all e-mails and any other information exchange",
+    "r": 1.0
+   },
+   "H011": {
+    "label": "Government has the right: Collect information about anyone living in [COUNTRY] w",
+    "r": 0.8110108032939474
+   },
+   "H009": {
+    "label": "Government has the right: Keep people under video surveillance in public areas",
+    "r": 0.7783638466482142
+   },
+   "A106": {
+    "label": "Active/Inactive membership of any other organization",
+    "r": -0.20984305119616248
+   },
+   "F178": {
+    "label": "The culture of US and other Western countries has many positive attributes",
+    "r": NaN
+   },
+   "H006_06": {
+    "label": "Worries: Government wire-tapping or reading my mail or email",
+    "r": NaN
+   },
+   "E284": {
+    "label": "Political actions using Internet: Encouraging other people to take any form of p",
+    "r": -0.27921815242945897
+   },
+   "E037": {
+    "label": "Government responsibility",
+    "r": -0.009503030408105273
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": 0.5428842663580115
+   },
+   "E069_60": {
+    "label": "Confidence: Mainland government",
+    "r": NaN
+   }
+  }
+ },
+ "Q198": {
+  "wvs7_label": "Government has the right: Collect information about anyone living in [COUNTRY] w",
+  "accepted": "H011",
+  "accepted_label": "Government has the right: Collect information about anyone living in [COUNTRY] w",
+  "candidates": {
+   "H011": {
+    "label": "Government has the right: Collect information about anyone living in [COUNTRY] w",
+    "r": 1.0
+   },
+   "H010": {
+    "label": "Government has the right: Monitor all e-mails and any other information exchange",
+    "r": 0.8110108032939473
+   },
+   "H009": {
+    "label": "Government has the right: Keep people under video surveillance in public areas",
+    "r": 0.6125487106622222
+   },
+   "E127": {
+    "label": "Free market economy right for country future",
+    "r": NaN
+   },
+   "E282": {
+    "label": "Political actions using Internet: Searching information about politics and polit",
+    "r": -0.28201832457060444
+   },
+   "F172": {
+    "label": "A truly Islamic country should not have a parliament with the right to pass laws",
+    "r": NaN
+   },
+   "E037": {
+    "label": "Government responsibility",
+    "r": 0.050253435690143115
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": 0.35318313934566814
+   },
+   "G005": {
+    "label": "Citizen of [country]",
+    "r": NaN
+   },
+   "S024": {
+    "label": "Country - wave",
+    "r": -0.012558382264934984
+   }
+  }
+ },
+ "Q205": {
+  "wvs7_label": "Information source: Email",
+  "accepted": "E261B",
+  "accepted_label": "Information source: Email (B)",
+  "candidates": {
+   "E261": {
+    "label": "Information source: Email",
+    "r": NaN
+   },
+   "E253": {
+    "label": "Information source: Internet, Email",
+    "r": NaN
+   },
+   "E261B": {
+    "label": "Information source: Email (B)",
+    "r": 1.0
+   },
+   "E252": {
+    "label": "Information source: Books",
+    "r": NaN
+   },
+   "E262": {
+    "label": "Information source: Internet",
+    "r": NaN
+   },
+   "E248": {
+    "label": "Information source: Daily newspaper",
+    "r": NaN
+   },
+   "E250": {
+    "label": "Information source: Printed magazines",
+    "r": NaN
+   },
+   "E258": {
+    "label": "Information source: TV news",
+    "r": NaN
+   },
+   "E259": {
+    "label": "Information source: Radio news",
+    "r": NaN
+   },
+   "E260": {
+    "label": "Information source: Mobile phone",
+    "r": NaN
+   }
+  }
+ },
+ "Q209": {
+  "wvs7_label": "Political action: Signing a petition",
+  "accepted": "E025",
+  "accepted_label": "Political action: Signing a petition",
+  "candidates": {
+   "E025": {
+    "label": "Political action: Signing a petition",
+    "r": 1.0
+   },
+   "E025B": {
+    "label": "Political action recently done: signing a petition",
+    "r": NaN
+   },
+   "E283": {
+    "label": "Political actions using Internet: Signing an electronic petition",
+    "r": 0.9028288838139824
+   },
+   "E222": {
+    "label": "Political action: Other",
+    "r": NaN
+   },
+   "E026": {
+    "label": "Political action: joining in boycotts",
+    "r": 0.7817085908880126
+   },
+   "A069": {
+    "label": "Member: Belong to local political actions",
+    "r": NaN
+   },
+   "E028": {
+    "label": "Political action: joining unofficial strikes",
+    "r": 0.7511064917650229
+   },
+   "E222B": {
+    "label": "Political action recently done: Other",
+    "r": NaN
+   },
+   "B014": {
+    "label": "Environmental action: attend meeting, signed petition",
+    "r": NaN
+   },
+   "E026B": {
+    "label": "Political action recently done: joining in boycotts",
+    "r": NaN
+   }
+  }
+ },
+ "Q212": {
+  "wvs7_label": "Political action: Joining unofficial strikes",
+  "accepted": "E028",
+  "accepted_label": "Political action: joining unofficial strikes",
+  "candidates": {
+   "E028": {
+    "label": "Political action: joining unofficial strikes",
+    "r": 0.9999999999999999
+   },
+   "E026": {
+    "label": "Political action: joining in boycotts",
+    "r": 0.6938445078033478
+   },
+   "E026B": {
+    "label": "Political action recently done: joining in boycotts",
+    "r": NaN
+   },
+   "E028B": {
+    "label": "Political acition recently done: Joining strikes",
+    "r": NaN
+   },
+   "E222": {
+    "label": "Political action: Other",
+    "r": NaN
+   },
+   "E025": {
+    "label": "Political action: Signing a petition",
+    "r": 0.7511064917650228
+   },
+   "A069": {
+    "label": "Member: Belong to local political actions",
+    "r": NaN
+   },
+   "E222B": {
+    "label": "Political action recently done: Other",
+    "r": NaN
+   },
+   "E025B": {
+    "label": "Political action recently done: signing a petition",
+    "r": NaN
+   },
+   "E027": {
+    "label": "Political action: attending lawful/peaceful demonstrations",
+    "r": 0.8612548784680966
+   }
+  }
+ },
+ "Q213": {
+  "wvs7_label": "Social activism: Donating to a group or campaign",
+  "accepted": "E286",
+  "accepted_label": "Social activism: Donating to a group or campaign",
+  "candidates": {
+   "E286": {
+    "label": "Social activism: Donating to a group or campaign",
+    "r": 0.9999999999999999
+   },
+   "E287": {
+    "label": "Social activism: Contacting a government official",
+    "r": 0.5920441192234783
+   },
+   "E289": {
+    "label": "Social activism: Encouraging others to vote",
+    "r": 0.5277425971562162
+   },
+   "A085": {
+    "label": "Voluntary work: Unpaid work political parties or groups",
+    "r": NaN
+   },
+   "A117": {
+    "label": "Reasons voluntary work: Bring about social or political change",
+    "r": NaN
+   },
+   "E288": {
+    "label": "Social activism: Encouraging others to take action about political issues",
+    "r": 0.4940465142602586
+   },
+   "A081": {
+    "label": "Voluntary work: Unpaid work social welfare service for elderly, handicapped or d",
+    "r": NaN
+   },
+   "X051": {
+    "label": "Ethnic group",
+    "r": 0.2405997900202382
+   },
+   "E032": {
+    "label": "Freedom or equality",
+    "r": NaN
+   },
+   "X045": {
+    "label": "Social class (subjective)",
+    "r": 0.3121716515291166
+   }
+  }
+ },
+ "Q215": {
+  "wvs7_label": "Social activism: Encouraging others to take action about political issues",
+  "accepted": "E288",
+  "accepted_label": "Social activism: Encouraging others to take action about political issues",
+  "candidates": {
+   "E288": {
+    "label": "Social activism: Encouraging others to take action about political issues",
+    "r": 1.0
+   },
+   "E289": {
+    "label": "Social activism: Encouraging others to vote",
+    "r": 0.7983154542077556
+   },
+   "E222": {
+    "label": "Political action: Other",
+    "r": NaN
+   },
+   "E284": {
+    "label": "Political actions using Internet: Encouraging other people to take any form of p",
+    "r": 0.8504593410703383
+   },
+   "E222B": {
+    "label": "Political action recently done: Other",
+    "r": NaN
+   },
+   "A117": {
+    "label": "Reasons voluntary work: Bring about social or political change",
+    "r": NaN
+   },
+   "E282": {
+    "label": "Political actions using Internet: Searching information about politics and polit",
+    "r": 0.758495735212903
+   },
+   "E025": {
+    "label": "Political action: Signing a petition",
+    "r": 0.7018763064774817
+   },
+   "E026": {
+    "label": "Political action: joining in boycotts",
+    "r": 0.684151717166974
+   },
+   "A069": {
+    "label": "Member: Belong to local political actions",
+    "r": NaN
+   }
+  }
+ },
+ "Q216": {
+  "wvs7_label": "Social activism: Encouraging others to vote",
+  "accepted": "E289",
+  "accepted_label": "Social activism: Encouraging others to vote",
+  "candidates": {
+   "E289": {
+    "label": "Social activism: Encouraging others to vote",
+    "r": 1.0
+   },
+   "E288": {
+    "label": "Social activism: Encouraging others to take action about political issues",
+    "r": 0.7983154542077556
+   },
+   "E287": {
+    "label": "Social activism: Contacting a government official",
+    "r": 0.7057281756445336
+   },
+   "E286": {
+    "label": "Social activism: Donating to a group or campaign",
+    "r": 0.5277425971562162
+   },
+   "E222": {
+    "label": "Political action: Other",
+    "r": NaN
+   },
+   "E284": {
+    "label": "Political actions using Internet: Encouraging other people to take any form of p",
+    "r": 0.7912658240090078
+   },
+   "X045": {
+    "label": "Social class (subjective)",
+    "r": 0.16522191629943303
+   },
+   "A079": {
+    "label": "Member: Belong to other groups",
+    "r": -0.22031662676937616
+   },
+   "A118": {
+    "label": "Reasons voluntary work: For social reasons",
+    "r": NaN
+   },
+   "E069_09": {
+    "label": "Confidence: Social Security System",
+    "r": NaN
+   }
+  }
+ },
+ "Q224": {
+  "wvs7_label": "How often in country's elections: Votes are counted fairly",
+  "accepted": "E265_01",
+  "accepted_label": "How often in country's elections: Votes are counted fairly",
+  "candidates": {
+   "E265_01": {
+    "label": "How often in country's elections: Votes are counted fairly",
+    "r": 1.0
+   },
+   "E265_04": {
+    "label": "How often in country's elections: Voters are bribed",
+    "r": -0.7050548703389421
+   },
+   "E265_06": {
+    "label": "How often in country's elections: Election officials are fair",
+    "r": 0.9560895817116074
+   },
+   "E265_02": {
+    "label": "How often in country's elections: Opposition candidates are prevented from runni",
+    "r": -0.45794721777311936
+   },
+   "E265_09": {
+    "label": "How often in country's elections: Voters are offered a genuine choice in the ele",
+    "r": 0.6304753835025586
+   },
+   "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "r": -0.6242425636871793
+   },
+   "E265_08": {
+    "label": "How often in country's elections: Voters are threatened with violence at the pol",
+    "r": -0.6303327598697066
+   },
+   "E265_05": {
+    "label": "How often in country's elections: Journalists provide fair coverage of elections",
+    "r": 0.30076549502451083
+   },
+   "E265_03": {
+    "label": "How often in country's elections: TV news favors the governing party",
+    "r": -0.3265179015199685
+   },
+   "E265_10": {
+    "label": "How often in country\u00c2\u00b4s elections: Women have equal opportunities to run the off",
+    "r": 0.48078450134510964
+   }
+  }
+ },
+ "Q227": {
+  "wvs7_label": "How often in country's elections: Voters are bribed",
+  "accepted": "E265_04",
+  "accepted_label": "How often in country's elections: Voters are bribed",
+  "candidates": {
+   "E265_04": {
+    "label": "How often in country's elections: Voters are bribed",
+    "r": 1.0
+   },
+   "E265_06": {
+    "label": "How often in country's elections: Election officials are fair",
+    "r": -0.6875885520627264
+   },
+   "E265_09": {
+    "label": "How often in country's elections: Voters are offered a genuine choice in the ele",
+    "r": -0.38247589187253617
+   },
+   "E265_01": {
+    "label": "How often in country's elections: Votes are counted fairly",
+    "r": -0.7050548703389422
+   },
+   "E265_08": {
+    "label": "How often in country's elections: Voters are threatened with violence at the pol",
+    "r": 0.7851664535566951
+   },
+   "E265_02": {
+    "label": "How often in country's elections: Opposition candidates are prevented from runni",
+    "r": 0.6117082235001882
+   },
+   "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "r": 0.9345512408817557
+   },
+   "E265_05": {
+    "label": "How often in country's elections: Journalists provide fair coverage of elections",
+    "r": -0.029701107717111756
+   },
+   "E265_03": {
+    "label": "How often in country's elections: TV news favors the governing party",
+    "r": 0.6292163154053451
+   },
+   "E265_10": {
+    "label": "How often in country\u00c2\u00b4s elections: Women have equal opportunities to run the off",
+    "r": -0.3792173649040193
+   }
+  }
+ },
+ "Q228": {
+  "wvs7_label": "How often in country's elections: Journalists provide fair coverage of elections",
+  "accepted": "E265_05",
+  "accepted_label": "How often in country's elections: Journalists provide fair coverage of elections",
+  "candidates": {
+   "E265_05": {
+    "label": "How often in country's elections: Journalists provide fair coverage of elections",
+    "r": 1.0
+   },
+   "E265_06": {
+    "label": "How often in country's elections: Election officials are fair",
+    "r": 0.3733506427230993
+   },
+   "E265_04": {
+    "label": "How often in country's elections: Voters are bribed",
+    "r": -0.029701107717111756
+   },
+   "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "r": -0.09434466669124716
+   },
+   "E265_01": {
+    "label": "How often in country's elections: Votes are counted fairly",
+    "r": 0.3007654950245109
+   },
+   "E265_03": {
+    "label": "How often in country's elections: TV news favors the governing party",
+    "r": -0.02768159389593685
+   },
+   "E265_02": {
+    "label": "How often in country's elections: Opposition candidates are prevented from runni",
+    "r": 0.012938150189931445
+   },
+   "E265_09": {
+    "label": "How often in country's elections: Voters are offered a genuine choice in the ele",
+    "r": 0.3489665097203882
+   },
+   "E265_10": {
+    "label": "How often in country\u00c2\u00b4s elections: Women have equal opportunities to run the off",
+    "r": 0.16992675804771384
+   },
+   "E265_08": {
+    "label": "How often in country's elections: Voters are threatened with violence at the pol",
+    "r": 0.10719592010735207
+   }
+  }
+ },
+ "Q229": {
+  "wvs7_label": "How often in country's elections: Election officials are fair",
+  "accepted": "E265_06",
+  "accepted_label": "How often in country's elections: Election officials are fair",
+  "candidates": {
+   "E265_06": {
+    "label": "How often in country's elections: Election officials are fair",
+    "r": 0.9999999999999999
+   },
+   "E265_04": {
+    "label": "How often in country's elections: Voters are bribed",
+    "r": -0.6875885520627263
+   },
+   "E265_01": {
+    "label": "How often in country's elections: Votes are counted fairly",
+    "r": 0.9560895817116075
+   },
+   "E265_05": {
+    "label": "How often in country's elections: Journalists provide fair coverage of elections",
+    "r": 0.3733506427230993
+   },
+   "E265_02": {
+    "label": "How often in country's elections: Opposition candidates are prevented from runni",
+    "r": -0.4529619765478751
+   },
+   "E265_09": {
+    "label": "How often in country's elections: Voters are offered a genuine choice in the ele",
+    "r": 0.630882434117341
+   },
+   "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "r": -0.6181633573435371
+   },
+   "E265_08": {
+    "label": "How often in country's elections: Voters are threatened with violence at the pol",
+    "r": -0.5869292746203967
+   },
+   "E265_03": {
+    "label": "How often in country's elections: TV news favors the governing party",
+    "r": -0.32952122757611163
+   },
+   "E265_10": {
+    "label": "How often in country\u00c2\u00b4s elections: Women have equal opportunities to run the off",
+    "r": 0.4319293751874422
+   }
+  }
+ },
+ "Q231": {
+  "wvs7_label": "How often in country's elections: Voters are threatened with  violence at the po",
+  "accepted": "E265_08",
+  "accepted_label": "How often in country's elections: Voters are threatened with violence at the pol",
+  "candidates": {
+   "E265_08": {
+    "label": "How often in country's elections: Voters are threatened with violence at the pol",
+    "r": 1.0
+   },
+   "E265_04": {
+    "label": "How often in country's elections: Voters are bribed",
+    "r": 0.7851664535566951
+   },
+   "E265_09": {
+    "label": "How often in country's elections: Voters are offered a genuine choice in the ele",
+    "r": -0.4333106419841365
+   },
+   "E265_06": {
+    "label": "How often in country's elections: Election officials are fair",
+    "r": -0.5869292746203967
+   },
+   "E265_01": {
+    "label": "How often in country's elections: Votes are counted fairly",
+    "r": -0.6303327598697067
+   },
+   "E265_02": {
+    "label": "How often in country's elections: Opposition candidates are prevented from runni",
+    "r": 0.7419317782609537
+   },
+   "E265_07": {
+    "label": "How often in country's elections: Rich people buy elections",
+    "r": 0.7265979681548433
+   },
+   "E265_05": {
+    "label": "How often in country's elections: Journalists provide fair coverage of elections",
+    "r": 0.10719592010735207
+   },
+   "E265_03": {
+    "label": "How often in country's elections: TV news favors the governing party",
+    "r": 0.5690247044021927
+   },
+   "E265_10": {
+    "label": "How often in country\u00c2\u00b4s elections: Women have equal opportunities to run the off",
+    "r": -0.3523454485739193
+   }
+  }
+ },
+ "Q236": {
+  "wvs7_label": "Political system: Having experts, not government, make decisions according to wh",
+  "accepted": "E115",
+  "accepted_label": "Political system: Having experts make decisions",
+  "candidates": {
+   "E115": {
+    "label": "Political system: Having experts make decisions",
+    "r": 1.0
+   },
+   "E117": {
+    "label": "Political system: Having a democratic political system",
+    "r": -0.12448763753444488
+   },
+   "E114": {
+    "label": "Political system: Having a strong leader",
+    "r": 0.5993237845325268
+   },
+   "E116": {
+    "label": "Political system: Having the army rule",
+    "r": 0.4725219774937622
+   },
+   "E117B": {
+    "label": "Political system: Having a system governed by religious law in which there are n",
+    "r": 0.4958249934309262
+   },
+   "E111": {
+    "label": "Rate political system for governing country",
+    "r": NaN
+   },
+   "E113": {
+    "label": "Rate political system in ten years",
+    "r": NaN
+   },
+   "E198": {
+    "label": "Using violence for political goals not justified",
+    "r": NaN
+   },
+   "E214": {
+    "label": "Western democracy is the best political system for country",
+    "r": NaN
+   },
+   "F105": {
+    "label": "Religious leaders should not influence government",
+    "r": NaN
+   }
+  }
+ },
+ "Q241": {
+  "wvs7_label": "Democracy: Governments tax the rich and subsidize the poor",
+  "accepted": "E224",
+  "accepted_label": "Democracy: Governments tax the rich and subsidize the poor.",
+  "candidates": {
+   "E224": {
+    "label": "Democracy: Governments tax the rich and subsidize the poor.",
+    "r": 1.0
+   },
+   "E228": {
+    "label": "Democracy: The army takes over when government is incompetent.",
+    "r": 0.16120505109218358
+   },
+   "F168": {
+    "label": "Democracy is a Western form of government that is not compatible with Islam",
+    "r": NaN
+   },
+   "E037": {
+    "label": "Government responsibility",
+    "r": 0.3134042872866449
+   },
+   "E069_11": {
+    "label": "Confidence: The Government",
+    "r": -0.28375810288085795
+   },
+   "E235": {
+    "label": "Importance of democracy",
+    "r": 0.1810772694784787
+   },
+   "E069_60": {
+    "label": "Confidence: Mainland government",
+    "r": NaN
+   },
+   "E230": {
+    "label": "Democracy: The economy is prospering.",
+    "r": NaN
+   },
+   "F108": {
+    "label": "Government protects freedom",
+    "r": NaN
+   },
+   "F109": {
+    "label": "Government protects religion",
+    "r": NaN
+   }
+  }
+ },
+ "Q242": {
+  "wvs7_label": "Democracy: Religious authorities interpret the laws",
+  "accepted": "E225",
+  "accepted_label": "Democracy: Religious authorities interpret the laws.",
+  "candidates": {
+   "E225": {
+    "label": "Democracy: Religious authorities interpret the laws.",
+    "r": 1.0
+   },
+   "E232": {
+    "label": "Democracy: People can change the laws in referendums.",
+    "r": NaN
+   },
+   "E235": {
+    "label": "Importance of democracy",
+    "r": -0.2486617852666643
+   },
+   "F034": {
+    "label": "Religious person",
+    "r": -0.5815045969092711
+   },
+   "D070": {
+    "label": "Traits in a woman: Woman religious",
+    "r": NaN
+   },
+   "E069_51": {
+    "label": "Confidence: Religious leaders",
+    "r": NaN
+   },
+   "E117B": {
+    "label": "Political system: Having a system governed by religious law in which there are n",
+    "r": -0.8842311832701992
+   },
+   "E230": {
+    "label": "Democracy: The economy is prospering.",
+    "r": NaN
+   },
+   "F024": {
+    "label": "Belong to religious denomination",
+    "r": NaN
+   },
+   "F111": {
+    "label": "Only laws of the Shari\u00c2\u00b4a",
+    "r": NaN
+   }
+  }
+ },
+ "Q253": {
+  "wvs7_label": "Respect for individual human rights nowadays",
+  "accepted": "E124",
+  "accepted_label": "Respect for individual human rights nowadays",
+  "candidates": {
+   "E124": {
+    "label": "Respect for individual human rights nowadays",
+    "r": 1.0
+   },
+   "A070": {
+    "label": "Member: Belong to human rights",
+    "r": NaN
+   },
+   "E107": {
+    "label": "Approval: Human rights movement",
+    "r": NaN
+   },
+   "A087": {
+    "label": "Voluntary work: Unpaid work human rights",
+    "r": NaN
+   },
+   "E139": {
+    "label": "Who should decide: human rights",
+    "r": NaN
+   },
+   "B009": {
+    "label": "Human & nature",
+    "r": NaN
+   },
+   "A025": {
+    "label": "Respect and love for parents",
+    "r": NaN
+   },
+   "A169": {
+    "label": "Good human relationships",
+    "r": NaN
+   },
+   "A071C": {
+    "label": "Member: Belong to animal rights",
+    "r": NaN
+   },
+   "A124_27": {
+    "label": "Neighbours: Right wing extremists",
+    "r": NaN
+   }
+  }
+ }
+}

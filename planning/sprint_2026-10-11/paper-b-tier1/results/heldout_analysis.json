@@ -1,0 +1,362 @@
+{
+  "frozen_at": "2026-10-17T22:39:57.692303+00:00",
+  "selection_sha256": "782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21",
+  "human_cells_not_fielded": 174,
+  "n_countries": 42,
+  "s4_primary": {
+    "A": 0.06057460871332797,
+    "n_selected": 56,
+    "n_pool": 223,
+    "n_countries": 42,
+    "p_perm": 0.0097,
+    "null_mean": 0.011939799842343543,
+    "null_q95": 0.04625800521962199,
+    "ci95": [
+      -0.0067258505657922735,
+      0.12648524013553836
+    ],
+    "draws": 10000,
+    "seed": 20261015,
+    "cells_empty": 174,
+    "cells_below_floor": 0,
+    "min_n": 1
+  },
+  "s4_descriptives": {
+    "route": "adapter_primary",
+    "n_items": 56,
+    "n_scored": 56,
+    "A": 0.06057460871332797,
+    "share_a_pos": 0.6071428571428571,
+    "per_dimension": {
+      "altruism": {
+        "A": 0.06875398141280163,
+        "n": 20,
+        "share_pos": 0.65
+      },
+      "posrecip": {
+        "A": -0.07056301611037857,
+        "n": 11,
+        "share_pos": 0.18181818181818182
+      },
+      "risktaking": {
+        "A": 0.15764688119675135,
+        "n": 13,
+        "share_pos": 0.9230769230769231
+      },
+      "trust": {
+        "A": 0.061990181778894225,
+        "n": 12,
+        "share_pos": 0.5833333333333334
+      }
+    }
+  },
+  "s7_ceiling": {
+    "selected": 56,
+    "matched_to_time_series": 50,
+    "fielded_in_wave6": 34,
+    "mean": 0.7458561301574005,
+    "median": 0.7673782156540777,
+    "min": 0.4304029304029304,
+    "countries": 28,
+    "A_over_ceiling_mean": 0.08121487008566211,
+    "one_third_of_ceiling": 0.24861871005246683,
+    "A_on_ceiling_items": 0.06311196060954162
+  },
+  "s8_secondary_rule": {
+    "A": 0.0699187912034242,
+    "n_selected": 185,
+    "p_perm": 0.0,
+    "null_q95": 0.03370605779210698
+  },
+  "s8_loco": {
+    "min": 0.050599269902864265,
+    "max": 0.07241164282013357,
+    "argmin": "RUS",
+    "argmax": "CHN",
+    "n_dropped_one_at_a_time": 42
+  },
+  "amendment2": {
+    "excluded_from_face": [
+      "Q82"
+    ],
+    "excluded_from_jev": [
+      "Q82"
+    ]
+  },
+  "s6_comparators": {
+    "face_valid": {
+      "coverage_all": {
+        "trust": 19,
+        "risktaking": 4,
+        "negrecip": 4,
+        "altruism": 2
+      },
+      "describe_imprint": {
+        "route": "face_valid",
+        "n_items": 25,
+        "n_scored": 25,
+        "A": 0.0947147763406533,
+        "share_a_pos": 0.64,
+        "per_dimension": {
+          "altruism": {
+            "A": 0.05485779110282797,
+            "n": 2,
+            "share_pos": 0.5
+          },
+          "risktaking": {
+            "A": 0.04417458193841153,
+            "n": 4,
+            "share_pos": 0.5
+          },
+          "trust": {
+            "A": 0.10955028939773843,
+            "n": 19,
+            "share_pos": 0.6842105263157895
+          }
+        }
+      },
+      "describe_all": {
+        "route": "face_valid",
+        "n_items": 29,
+        "n_scored": 29,
+        "A": 0.05523060605522958,
+        "share_a_pos": 0.5517241379310345,
+        "per_dimension": {
+          "altruism": {
+            "A": 0.05485779110282797,
+            "n": 2,
+            "share_pos": 0.5
+          },
+          "negrecip": {
+            "A": -0.1915454582286687,
+            "n": 4,
+            "share_pos": 0.0
+          },
+          "risktaking": {
+            "A": 0.04417458193841153,
+            "n": 4,
+            "share_pos": 0.5
+          },
+          "trust": {
+            "A": 0.10955028939773843,
+            "n": 19,
+            "share_pos": 0.6842105263157895
+          }
+        }
+      },
+      "D_common": {
+        "A_a": 0.09407360977292614,
+        "A_b": 0.07436654904726672,
+        "D": 0.01970706072565942,
+        "n_a": 5,
+        "n_b": 5,
+        "ci95": [
+          -0.18143849863495343,
+          0.21473070671106956
+        ],
+        "boot": 2000,
+        "seed": 20261015,
+        "label": "adapter - face_valid, items both assign"
+      },
+      "common_items": [
+        "Q79",
+        "Q141",
+        "Q150",
+        "Q194",
+        "Q213"
+      ],
+      "common_same_dim_and_sign": 1,
+      "D_own_imprint": {
+        "A_a": 0.06057460871332797,
+        "A_b": 0.0947147763406533,
+        "D": -0.03414016762732533,
+        "n_a": 56,
+        "n_b": 25,
+        "ci95": [
+          -0.24211281427302758,
+          0.16872706166406723
+        ],
+        "boot": 2000,
+        "seed": 20261015,
+        "label": "adapter primary - face_valid imprint items"
+      }
+    },
+    "jev": {
+      "coverage_all": {
+        "trust": 32,
+        "altruism": 7,
+        "risktaking": 1,
+        "negrecip": 1
+      },
+      "describe_imprint": {
+        "route": "jev",
+        "n_items": 40,
+        "n_scored": 40,
+        "A": 0.1275625572668965,
+        "share_a_pos": 0.7,
+        "per_dimension": {
+          "altruism": {
+            "A": 0.04902878905390857,
+            "n": 7,
+            "share_pos": 0.5714285714285714
+          },
+          "risktaking": {
+            "A": -0.07392120075046905,
+            "n": 1,
+            "share_pos": 0.0
+          },
+          "trust": {
+            "A": 0.15103818650153025,
+            "n": 32,
+            "share_pos": 0.75
+          }
+        }
+      },
+      "describe_all": {
+        "route": "jev",
+        "n_items": 41,
+        "n_scored": 41,
+        "A": 0.12829134052312394,
+        "share_a_pos": 0.7073170731707317,
+        "per_dimension": {
+          "altruism": {
+            "A": 0.04902878905390857,
+            "n": 7,
+            "share_pos": 0.5714285714285714
+          },
+          "negrecip": {
+            "A": 0.15744267077222268,
+            "n": 1,
+            "share_pos": 1.0
+          },
+          "risktaking": {
+            "A": -0.07392120075046905,
+            "n": 1,
+            "share_pos": 0.0
+          },
+          "trust": {
+            "A": 0.15103818650153025,
+            "n": 32,
+            "share_pos": 0.75
+          }
+        }
+      },
+      "D_common": {
+        "A_a": 0.12006050293061071,
+        "A_b": 0.12248602220241474,
+        "D": -0.0024255192718040247,
+        "n_a": 9,
+        "n_b": 9,
+        "ci95": [
+          -0.06437316693682472,
+          0.06102420665810506
+        ],
+        "boot": 2000,
+        "seed": 20261015,
+        "label": "adapter - jev, items both assign"
+      },
+      "common_items": [
+        "Q79",
+        "Q118",
+        "Q125",
+        "Q213",
+        "Q224",
+        "Q227",
+        "Q228",
+        "Q229",
+        "Q241"
+      ],
+      "common_same_dim_and_sign": 7,
+      "D_own_imprint": {
+        "A_a": 0.06057460871332797,
+        "A_b": 0.1275625572668965,
+        "D": -0.06698794855356853,
+        "n_a": 56,
+        "n_b": 40,
+        "ci95": [
+          -0.23700918899294768,
+          0.10288119597809976
+        ],
+        "boot": 2000,
+        "seed": 20261015,
+        "label": "adapter primary - jev imprint items"
+      }
+    }
+  },
+  "s8_signprompt": {
+    "screen": {
+      "A": 0.027886269552101026,
+      "n_selected": 56,
+      "p_perm": 0.5085,
+      "null_q95": 0.0638237748746518,
+      "ci95": [
+        -0.10859510229614298,
+        0.1584453830215301
+      ]
+    },
+    "describe": {
+      "route": "signprompt_primary",
+      "n_items": 56,
+      "n_scored": 56,
+      "A": 0.027886269552101026,
+      "share_a_pos": 0.48214285714285715,
+      "per_dimension": {
+        "trust": {
+          "A": 0.027886269552101026,
+          "n": 56,
+          "share_pos": 0.48214285714285715
+        }
+      }
+    },
+    "overlap_with_adapter_primary": 16,
+    "overlap_same_dim_and_sign": 6,
+    "D_own": {
+      "A_a": 0.06057460871332797,
+      "A_b": 0.027886269552101026,
+      "D": 0.032688339161226945,
+      "n_a": 56,
+      "n_b": 56,
+      "ci95": [
+        -0.0833125828920078,
+        0.14255259524880806
+      ],
+      "boot": 2000,
+      "seed": 20261015,
+      "label": "adapter primary - signprompt primary"
+    },
+    "D_common": {
+      "A_a": 0.051637641251916416,
+      "A_b": 0.0478744983880705,
+      "D": 0.0037631428638459155,
+      "n_a": 16,
+      "n_b": 16,
+      "ci95": [
+        -0.06495204948348372,
+        0.0754296387941381
+      ],
+      "boot": 2000,
+      "seed": 20261015,
+      "label": "adapter - signprompt, items both select"
+    }
+  },
+  "exploratory_magnitudes": {
+    "adapter": {
+      "median_abs_b_top": 0.4728340244115484,
+      "max_abs_b_top": 2.5078732283828766,
+      "median_abs_t_top": 17.319372140809328,
+      "median_sigma": 0.09675803647960865
+    },
+    "signprompt": {
+      "median_abs_b_top": 0.7133143844852645,
+      "max_abs_b_top": 3.211281491279164,
+      "median_abs_t_top": 70.09048440393039,
+      "median_sigma": 0.0366361000865831
+    }
+  },
+  "exploratory_wave_replication": {
+    "countries_both_waves": 28,
+    "items": 34,
+    "A_wave6": 0.043288820949758285,
+    "A_wave7": 0.04653488274177928
+  }
+}

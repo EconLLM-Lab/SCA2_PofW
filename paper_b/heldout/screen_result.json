@@ -12,14 +12,7 @@
   ],
   "draws": 10000,
   "seed": 20261015,
-  "cells_below_floor": 174,
-  "ceiling_w6_w7": {
-    "trust": 0.7427476737821566,
-    "patience:Q43": 0.782703886152162,
-    "patience:Q50": 0.7164750957854407,
-    "risktaking": 0.608058608058608,
-    "posrecip": 0.4455391351943076,
-    "altruism": 0.7608100711548987,
-    "negrecip[Q177,Q179]": 0.735632183908046
-  }
+  "cells_empty": 174,
+  "cells_below_floor": 0,
+  "min_n": 1
 }

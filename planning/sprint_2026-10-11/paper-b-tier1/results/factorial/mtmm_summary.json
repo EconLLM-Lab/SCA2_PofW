@@ -1,0 +1,17 @@
+{
+ "adapter": {
+  "hits": 2,
+  "n": 6,
+  "share": 0.3333333333333333,
+  "chance": 0.14285714285714285,
+  "p_binomial": 0.20686108679206794,
+  "per_dimension": {
+   "trust": false,
+   "risktaking": false,
+   "patience": false,
+   "altruism": true,
+   "posrecip": false,
+   "negrecip": true
+  }
+ }
+}
