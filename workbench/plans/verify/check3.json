@@ -1,0 +1,21 @@
+{
+ "heads": [
+  {
+   "l": 18,
+   "h": 8,
+   "url": "?tab=a&a=smol_inst&b=smol_inst_usa_e3&item=wvs_Q81&hscale=linear&sel=18,8,151",
+   "inspText": "Head 8 · layer 18 pinnedlearn more Attention to collapsed parts (one Σ arc each, model A): 4 parts Σ 1.00 token 151: “·” answer position (t*) ABChange Write size ‖o‖2.8542.8620.1349Push on the margin (DLA)-0.006901-0.007067−1.66e-4Attention covered by the top 161.0001.000+0Where this head looks from the answer position: its largest attention weights (weight · token number)A1.00 · #0 “<|im_start|>”0.00 · #1 “system”0.00 · #17 “ugging”0.00 · #70 “·a”0.00 · #46 “·mention”B1.00 · #0 “<|im_start|>”0.00 · #1 “system”0.00 · #17 “ugging”0.00 · #70 “·a”0.00 · #16 “·H”How far this head's weights moved, B vs A (q, k, v, o): 0.027, 0.040, 0.085, 0.094Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page.",
+   "minicap": "Prompt map. Each column is a token and each row a layer. Brightness is the size of the running state in A, on a log scale clipped at the 99th percentile (≥ 934; max 2.61e+4).",
+   "tips": []
+  },
+  {
+   "l": 17,
+   "h": 3,
+   "url": "?tab=a&a=smol_inst&b=smol_inst_usa_e3&item=wvs_Q81&hscale=linear&sel=17,3,151",
+   "inspText": "Head 3 · layer 17 pinnedlearn more Attention to collapsed parts (one Σ arc each, model A): 4 parts Σ 1.00 token 151: “·” answer position (t*) ABChange Write size ‖o‖2.4762.4980.1513Push on the margin (DLA)-0.01169-0.01236−6.64e-4Attention covered by the top 160.99990.9999+1.29e-5Where this head looks from the answer position: its largest attention weights (weight · token number)A1.00 · #0 “<|im_start|>”0.00 · #46 “·mention”0.00 · #70 “·a”0.00 · #41 “·real”0.00 · #1 “system”B1.00 · #0 “<|im_start|>”0.00 · #46 “·mention”0.00 · #70 “·a”0.00 · #41 “·real”0.00 · #67 “·humanitarian”How far this head's weights moved, B vs A (q, k, v, o): 0.081, 0.052, 0.081, 0.11Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page.",
+   "minicap": "Prompt map. Each column is a token and each row a layer. Brightness is the size of the running state in A, on a log scale clipped at the 99th percentile (≥ 934; max 2.61e+4).",
+   "tips": []
+  }
+ ],
+ "errors": []
+}

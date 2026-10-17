@@ -1,0 +1,20 @@
+rows in question_map: 35 unique: 35
+accepted 23 / 35; refused 12
+  refused Q50 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q50: completions differ in length {'1': [216, 33], '2': [216, 34],
+  refused Q106 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q106: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q107 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q107: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q109 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q109: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q176 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q176: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q177 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q177: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q178 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q178: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q179 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q179: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q195 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q195: completions differ in length {'1': [216, 33], '2': [216, 34]
+  refused Q261 wvs_item: could not convert string to float: 'numeric'
+  refused Q262 wvs_item: could not convert string to float: 'numeric'
+  refused Q288 scale_1_10 codes=('1', '2', '3', '4').. -> wvs_Q288: completions differ in length {'1': [216, 33], '2': [216, 34]
+WVS accepted T: min 115 median 143 max 253
+accepted by ResponseType -> (count, max #codes): {'multiple_response_max_5': (3, 2), 'single_choice_3': (4, 3), 'single_choice_2': (3, 2), 'single_choice_4': (12, 4), 'matrix_single_choice_9': (1, 9)}
+bank USA: 658 rows, T min 230 p50 315 p90 353 p99 385 max 459
+gps_dimension values in the CSV: ['', 'altruism', 'negrecip', 'patience', 'posrecip', 'risktaking', 'trust']
+bank gps_dimension values: ['altruism', 'negrecip', 'patience', 'posrecip', 'risktaking', 'trust']
+exit 0

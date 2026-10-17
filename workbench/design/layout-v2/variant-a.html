@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Variant A · the object, tamed — SCA2 workbench layout v2</title>
+<script type="importmap">{ "imports": {
+  "three": "../../viewer/node_modules/three/build/three.module.js",
+  "three/addons/": "../../viewer/node_modules/three/examples/jsm/" } }</script>
+<style id="base"></style>
+<style>
+body{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+#bar{display:flex;gap:8px 14px;align-items:center;flex-wrap:wrap;padding:7px 12px;border-bottom:1px solid var(--line);background:var(--card)}
+#bar .brand{font-weight:600}#bar .grp{display:flex;gap:4px;align-items:center;color:var(--muted)}
+#bar a{color:var(--muted)}
+main{display:grid;grid-template-columns:1fr 360px;min-height:0}
+#stage{position:relative;overflow:hidden}#gl{width:100%;height:100%;display:block}
+#side{overflow-y:auto;border-left:1px solid var(--line);padding:10px;background:#0f0f0f}
+.vlabel{position:absolute;top:10px;padding:3px 9px;background:#000c;border:1px solid #3a3a3a;border-radius:4px;font-weight:600;pointer-events:none}
+#divider{position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
+#search{position:relative}#search input{width:190px}
+#hits{position:absolute;top:26px;left:0;z-index:5;background:#151515;border:1px solid #444;border-radius:4px;max-height:260px;overflow:auto;min-width:260px}
+#hits div{padding:3px 8px;cursor:pointer;white-space:nowrap}#hits div:hover,#hits div.k{background:#24324d}
+#hits .seg{color:var(--muted)}
+#mini{border-top:1px solid var(--line);background:#0f0f0f;padding:6px 12px 8px;position:relative}
+#mini canvas{width:100%;display:block;cursor:pointer}
+#mini .cap{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:3px}
+#tipA{position:absolute;pointer-events:none;background:#000e;border:1px solid var(--line);border-radius:4px;padding:4px 7px;font-size:11.5px;white-space:pre}
+.big{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center}.big div{cursor:pointer}.big .r:hover{color:var(--pos)}
+</style>
+</head>
+<body>
+<header id="bar">
+  <span class="brand">SCA2 workbench</span><a href="landing.html">about</a>
+  <span class="grp">view <button data-view="single">A only</button><button data-view="side">A | B</button><button data-view="delta">A | ‖B−A‖</button></span>
+  <span class="grp">camera <button data-cam="readout">readout</button><button data-cam="overview">overview</button><button data-cam="top">top-down</button><button data-cam="front">layer stack</button></span>
+  <span class="grp" id="search">find token <input id="q" placeholder="e.g. confidence, Answer, 4" autocomplete="off" /><div id="hits" hidden></div></span>
+  <span class="grp"><button id="all">open all segments</button></span>
+  <span class="muted" id="who"></span>
+</header>
+<main>
+  <div id="stage"><canvas id="gl"></canvas><div class="vlabel" id="labA" style="left:12px"></div><div class="vlabel" id="labB"></div><div id="divider" hidden></div><div id="tipA" hidden></div></div>
+  <aside id="side"><div id="ro"></div><div id="insp"></div><div id="bigd"></div></aside>
+</main>
+<div id="mini"><div class="cap"><span>prompt map · each column a token, each row a layer state: ‖h<sup>l</sup><sub>t</sub>‖ (<code>resid_norm</code>, A; log colour clipped at p99) — <span id="minimode"></span></span><span>click a segment to open or collapse it · bracket = tokens in view <button class="lm" data-learn="segments">learn more</button></span></div><canvas id="mc" height="96"></canvas></div>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Line2 } from "three/addons/lines/Line2.js";
+import { LineGeometry } from "three/addons/lines/LineGeometry.js";
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
+import * as K from "./common.js";
+document.getElementById("base").textContent = K.BASE_CSS;
+const $ = (id) => document.getElementById(id);
+const Q = K.params(), U = Q.p;
+const D = await K.loadBundle(Q);
+K.wireLearn(D);
+const L = D.A.m.model.n_layers, H = D.A.m.model.n_heads, T = D.A.m.tokens.length, ro = D.A.m.readout.position;
+const segs = K.segments(D.A);
+if (U.get("open") === "all") segs.forEach((s) => (s.open = true));
+let view = U.get("view") || "side";
+$("who").textContent = `A ${D.A.m.model.label} · B ${D.B.m.model.label} · ${D.A.m.item.item_id} · ${T} tokens`;
+
+const SX = 1, SZ = 1.7, CELL = 0.9, GAP = 2.4;
+const COL = Object.fromEntries(Object.entries(K.C).map(([k, v]) => [k, new THREE.Color(v)]));
+// Shared scales (same rule as the viewer): one per quantity, across A and B; Δ has its own.
+const S = { head: K.makeScale([D.A.t.head_norm, D.B.t.head_norm], 3), mlp: K.makeScale([D.A.t.mlp_norm, D.B.t.mlp_norm], 3), resid: K.makeScale([D.A.t.resid_norm, D.B.t.resid_norm], 1.2) };
+const SD = { head: K.makeScale([D.P.t.d_head_norm], 3), mlp: K.makeScale([D.P.t.d_mlp_norm], 3), resid: K.makeScale([D.P.t.d_resid_norm], 1.2) };
+const dla = Math.max(D.A.t.head_attr.absMax(), D.B.t.head_attr.absMax(), D.A.t.mlp_attr.absMax(), D.B.t.mlp_attr.absMax());
+
+// x position per token: open tokens get a slot; a collapsed segment is a GAP (no geometry, one label).
+let X = [];
+// Adjacent collapsed segments share ONE gap and one label, so short template runs do not pile up.
+let gaps = [];
+function layoutX() { X = new Array(T).fill(null); gaps = []; let x = 0, g = null;
+  for (const s of segs) { if (s.open) { g = null; for (let t = s.a; t <= s.b; t++) X[t] = (x++) * SX; }
+    else if (g) { g.segs.push(s); g.n += s.n; } else { g = { gx: x * SX + GAP / 2 - SX / 2, segs: [s], n: s.n }; gaps.push(g); x += GAP / SX; } }
+  for (const g of gaps) g.label = g.segs.length === 1 ? g.segs[0].label : `${g.segs.length} segments`; return x * SX; }
+
+const canvas = $("gl");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setScissorTest(true);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 4000);
+const controls = new OrbitControls(camera, canvas); controls.enableDamping = true;
+const box = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
+
+function sprite(text, color, x, y, z, px, align = 0) {
+  const c = document.createElement("canvas"), g = c.getContext("2d"); const font = "500 30px ui-monospace, Menlo, monospace";
+  g.font = font; c.width = Math.ceil(g.measureText(text).width) + 12; c.height = 44;
+  const g2 = c.getContext("2d"); g2.font = font; g2.fillStyle = color; g2.textBaseline = "middle"; g2.fillText(text, 6, 22);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, sizeAttenuation: false }));
+  const vh = Math.max(400, innerHeight - 160), sh = (2 * px * (c.height / 30)) / (vh / Math.tan(THREE.MathUtils.degToRad(15)));
+  sp.scale.set((sh * c.width) / c.height, sh, 1); sp.center.set(align, 0.5); sp.position.set(x, y, z); return sp;
+}
+const lineMats = [];
+function fat(pts, color, px, dashed = false) { const g = new LineGeometry().setPositions(pts.flatMap((v) => [v.x, v.y, v.z])); const m = new LineMaterial({ color: new THREE.Color(color).getHex(), linewidth: px, dashed, dashSize: .3, gapSize: .2 }); lineMats.push(m); const l = new Line2(g, m); if (dashed) l.computeLineDistances(); return l; }
+
+/** One panel. run = values shown; delta = true draws ‖B−A‖ from the pair export. */
+function panel(run, delta) {
+  const sc = new THREE.Scene(); sc.background = new THREE.Color("#0b0b0b");
+  sc.add(new THREE.HemisphereLight(0xffffff, 0x202020, 1.6)); const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(-30, 60, -40); sc.add(sun);
+  const open = X.map((x, t) => (x == null ? -1 : t)).filter((t) => t >= 0), n = open.length;
+  const heads = new THREE.InstancedMesh(box, new THREE.MeshLambertMaterial(), L * H * n), mlp = new THREE.InstancedMesh(box, new THREE.MeshLambertMaterial(), L * n), resid = new THREE.InstancedMesh(box, new THREE.MeshLambertMaterial(), (L + 1) * n);
+  const M = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new THREE.Vector3(), s = new THREE.Vector3(), w = CELL / H;
+  const t_ = run.t, d = D.P.t, sca = delta ? SD : S; const ids = { heads: [], mlp: [], resid: [] };
+  const dcol = (v, s) => COL.neutral.clone().lerp(COL.delta, Math.min(1, K.hOf(s, v) / s.hmax));
+  const div = (v) => COL.neutral.clone().lerp(v >= 0 ? COL.pos : COL.neg, Math.sqrt(Math.min(1, Math.abs(v) / dla)));
+  let i = 0, j = 0, r = 0;
+  for (let l = 0; l < L; l++) for (const tt of open) {
+    const x0 = X[tt] - CELL / 2, z = -l * SZ;
+    for (let h = 0; h < H; h++) { const v = delta ? d.d_head_norm.get(l, h, tt) : t_.head_norm.get(l, h, tt);
+      p.set(x0 + (h + .5) * w, 0, z + .25); s.set(w * .82, Math.max(K.hOf(sca.head, v), .004), .42); heads.setMatrixAt(i, M.compose(p, q, s));
+      heads.setColorAt(i, delta ? dcol(v, sca.head) : tt === ro ? div(t_.head_attr.get(l, h)) : COL.head.clone().multiplyScalar(.62)); ids.heads.push({ kind: "head", l, h, t: tt }); i++; }
+    const vm = delta ? d.d_mlp_norm.get(l, tt) : t_.mlp_norm.get(l, tt);
+    p.set(X[tt], 0, z - .32); s.set(CELL * .92, Math.max(K.hOf(sca.mlp, vm), .004), .42); mlp.setMatrixAt(j, M.compose(p, q, s));
+    mlp.setColorAt(j, delta ? dcol(vm, sca.mlp) : tt === ro ? div(t_.mlp_attr.get(l)) : COL.mlp.clone().multiplyScalar(.42)); ids.mlp.push({ kind: "mlp", l, t: tt }); j++;
+  }
+  for (let l = 0; l <= L; l++) for (const tt of open) { const v = delta ? d.d_resid_norm.get(l, tt) : t_.resid_norm.get(l, tt);
+    p.set(X[tt], 0, -l * SZ + .78); s.set(CELL * .92, Math.max(K.hOf(sca.resid, v), .004), .16); resid.setMatrixAt(r, M.compose(p, q, s));
+    resid.setColorAt(r, delta ? dcol(v, sca.resid) : COL.resid); ids.resid.push({ kind: "resid", l, t: tt }); r++; }
+  for (const im of [heads, mlp, resid]) { im.instanceMatrix.needsUpdate = true; im.instanceColor.needsUpdate = true; im.computeBoundingSphere(); sc.add(im); }
+  // readout outline + layer labels + per-segment token strips + gap labels
+  const xr = X[ro]; sc.add(fat([[xr - .5, 1], [xr + .5, 1], [xr + .5, -(L - 1) * SZ - .6], [xr - .5, -(L - 1) * SZ - .6], [xr - .5, 1]].map(([x, z]) => new THREE.Vector3(x, .002, z)), COL.pos, 2.5));
+  for (let l = 0; l < L; l += (l % 5 === 0 ? 1 : 1)) { const c = l % 5 === 0 ? "#d4d4d4" : "#7b7b7b"; if (l % 5 === 0 || l === L - 1) { sc.add(sprite(`L${l}`, c, -1.2, .05, -l * SZ, 11, 1)); sc.add(sprite(`L${l}`, c, xr + .9, .05, -l * SZ, 11, 0)); } }
+  for (const sg of segs) {
+    if (!sg.open) continue;
+    const cnv = document.createElement("canvas"), slot = 40, hp = 300, m = sg.n; cnv.width = m * slot; cnv.height = hp; const g = cnv.getContext("2d");
+    g.font = "600 30px ui-monospace, Menlo, monospace"; g.textBaseline = "middle";
+    for (let t = sg.a; t <= sg.b; t++) { g.save(); g.translate((t - sg.a) * slot + slot / 2, 8); g.rotate(Math.PI / 2); g.fillStyle = t === ro ? "#6b9bff" : t === hl ? "#ffcf5c" : "#e6e6e6"; g.fillText(K.tokText(D.A.m.tokens[t].text).slice(0, 16), 0, 0); g.restore(); }
+    const tex = new THREE.CanvasTexture(cnv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const W = m * SX, Hh = hp / slot * SX, tilt = .75; const pl = new THREE.Mesh(new THREE.PlaneGeometry(W, Hh), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+    pl.rotation.x = -Math.PI / 2 + tilt; pl.position.set(X[sg.a] + W / 2 - SX / 2, .003 - Hh / 2 * Math.sin(tilt), 1.1 + Hh / 2 * Math.cos(tilt)); sc.add(pl);
+  }
+  for (const g of gaps) { sc.add(sprite(`⋯ ${g.label} · ${g.n} tok`, "#8a8a8a", g.gx, .05, 2.2, 10, .5));
+    sc.add(fat([new THREE.Vector3(g.gx, .002, 1.2), new THREE.Vector3(g.gx, .002, -(L - 1) * SZ - .6)], 0x2e2e2e, 1, true)); }
+  if (!delta) { // running margin polyline (h^l_{t*}·w), shared scale over A and B
+    const mx = Math.max(D.A.t.running_margin.absMax(), D.B.t.running_margin.absMax()), k = 2.2 / mx, x = xr + 4.2, y0 = 3.4;
+    sc.add(fat([new THREE.Vector3(x, y0, .78), new THREE.Vector3(x, y0, -L * SZ + .78)], 0x6a6a6a, 1.5));
+    const pts = []; for (let l = 0; l <= L; l++) pts.push(new THREE.Vector3(x, y0 + run.t.running_margin.get(l) * k, -l * SZ + .78));
+    sc.add(fat(pts, COL.pos, 3)); sc.add(sprite(`margin ${run.m.readout.margin.toFixed(3)}`, "#6b9bff", x + .4, pts[L].y + .5, pts[L].z, 14));
+  }
+  const outline = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0xffffff })); outline.matrixAutoUpdate = false; outline.visible = false; sc.add(outline);
+  const hover = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0xffcf5c })); hover.matrixAutoUpdate = false; hover.visible = false; sc.add(hover);
+  const arcs = new THREE.Group(); sc.add(arcs);
+  return { sc, run, delta, heads, mlp, resid, ids, outline, hover, arcs, label: delta ? `‖B − A‖ · B = ${D.B.m.model.label}` : run === D.A ? `A · ${D.A.m.model.label}` : `B · ${D.B.m.model.label}` };
+}
+const findId = (P, s) => { const arr = P.ids[s.kind === "head" ? "heads" : s.kind]; return arr.findIndex((x) => x.l === s.l && x.t === s.t && (s.kind !== "head" || x.h === s.h)); };
+const meshOf = (P, kind) => (kind === "head" ? P.heads : P[kind]);
+function boxOn(P, obj, s, pad) { obj.visible = false; if (!s) return; const id = findId(P, s); if (id < 0) return; const m = new THREE.Matrix4(); meshOf(P, s.kind).getMatrixAt(id, m);
+  const a = new THREE.Vector3(), qq = new THREE.Quaternion(), sc = new THREE.Vector3(); m.decompose(a, qq, sc); obj.matrix.compose(a, qq, sc.addScalar(pad)); obj.visible = true; }
+function arcsOn(P, s) { for (const c of [...P.arcs.children]) { c.geometry.dispose(); c.material.dispose(); P.arcs.remove(c); }
+  if (!s || s.kind !== "head" || P.delta) return; const r = P.run, z = -s.l * SZ + .25, xh = (t) => X[t] - CELL / 2 + (s.h + .5) * CELL / H;
+  for (const k of K.topKeys(r, s.l, s.h, s.t, 16)) { if (k.w <= .005 || X[k.key] == null) continue;
+    const yt = (t) => K.hOf(S.head, r.t.head_norm.get(s.l, s.h, t)) + .05; const a = new THREE.Vector3(xh(s.t), yt(s.t), z), b = new THREE.Vector3(xh(k.key), yt(k.key), z);
+    const mid = new THREE.Vector3((a.x + b.x) / 2, Math.max(a.y, b.y) + .6 + .12 * Math.abs(a.x - b.x), z);
+    P.arcs.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 32, .025 + .09 * k.w, 6), new THREE.MeshBasicMaterial({ color: 0xe8e8e8, transparent: true, opacity: .45 + .55 * k.w }))); } }
+
+let panels = [], width = 0, hl = -1, pinned = null;
+function dispose() { for (const P of panels) P.sc.traverse((o) => { o.geometry?.dispose?.(); const ms = o.material ? [].concat(o.material) : []; for (const m of ms) { m.map?.dispose(); m.dispose(); } }); lineMats.length = 0; renderer.renderLists.dispose(); }
+function build() {
+  dispose(); width = layoutX();
+  panels = [panel(D.A, false)]; if (view === "side") panels.push(panel(D.B, false)); if (view === "delta") panels.push(panel(D.B, true));
+  $("labA").textContent = panels[0].label; $("labB").hidden = panels.length < 2; if (panels[1]) $("labB").textContent = panels[1].label;
+  document.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
+  if (pinned) select(pinned, false); resize(); drawMini();
+}
+function resize() { const w = canvas.clientWidth, h = canvas.clientHeight, n = panels.length; renderer.setSize(w, h, false); camera.aspect = w / n / h; camera.updateProjectionMatrix();
+  for (const m of lineMats) m.resolution.set(w / n, h); $("labB").style.left = `${w / 2 + 10}px`; $("divider").hidden = n < 2; $("divider").style.left = `${w / 2 - 1}px`; }
+addEventListener("resize", () => { resize(); drawMini(); });
+
+// ---------------- camera presets + fly
+let fly = null;
+function preset(name) {
+  const xr = X[ro], depth = L * SZ, cx = width / 2, side = panels.length > 1, tn = Math.tan(THREE.MathUtils.degToRad(15));
+  const fit = 1.3 * Math.max(width / (2 * tn * camera.aspect), depth / (2 * tn)); // whole object fits the panel
+  const P = { readout: side ? [[xr - 5, 0, -.5 * depth], [4, 72, 100]] : [[xr - 12, 0, -.42 * depth], [18, 56, 70]],
+    overview: [[cx, 0, -.5 * depth], [0, fit * .55, fit * .84]],
+    top: [[cx, 0, -.5 * depth], [0, fit, .01]],
+    front: [[xr - 6, 2, -.5 * depth], [0, 6, depth * 1.6]] }[name];
+  flyTo(new THREE.Vector3(...P[0]), new THREE.Vector3(...P[0]).add(new THREE.Vector3(...P[1])));
+  document.querySelectorAll("[data-cam]").forEach((b) => b.classList.toggle("on", b.dataset.cam === name));
+}
+function flyTo(target, pos, instant = U.has("still")) { if (instant) { controls.target.copy(target); camera.position.copy(pos); controls.update(); return; } fly = { t0: performance.now(), t: controls.target.clone(), p: camera.position.clone(), T: target, P: pos }; }
+function flyToToken(t) {
+  const sg = segs.find((s) => t >= s.a && t <= s.b); if (!sg.open) { sg.open = true; build(); }
+  hl = t; build(); const x = X[t], depth = L * SZ; flyTo(new THREE.Vector3(x, 0, -.4 * depth), new THREE.Vector3(x + 6, 48, -.4 * depth + 64));
+}
+document.querySelectorAll("[data-cam]").forEach((b) => (b.onclick = () => preset(b.dataset.cam)));
+document.querySelectorAll("[data-view]").forEach((b) => (b.onclick = () => { view = b.dataset.view; build(); }));
+$("all").onclick = () => { const all = segs.every((s) => s.open); segs.forEach((s) => (s.open = all ? s.kind === "readout" || s.hasOption : true)); $("all").textContent = all ? "open all segments" : "collapse boilerplate"; build(); };
+
+// ---------------- token search
+const q = $("q"), hits = $("hits");
+function search() { const s = q.value.toLowerCase().trim(); if (s.length < 1) { hits.hidden = true; return; }
+  const res = D.A.m.tokens.map((x, t) => ({ t, x: x.text })).filter((o) => o.x.toLowerCase().trim() === s || (s.length >= 2 && o.x.toLowerCase().includes(s))).slice(0, 30);
+  hits.innerHTML = res.length ? res.map((o, i) => { const sg = segs.find((g) => o.t >= g.a && o.t <= g.b); return `<div data-t="${o.t}" class="${i === 0 ? "k" : ""}">t=${o.t} <b>${K.esc(K.tokText(o.x))}</b> <span class="seg">${K.esc(sg.label)}${sg.open ? "" : " (collapsed)"}</span></div>`; }).join("") : `<div class="seg">no token matches</div>`;
+  hits.hidden = false; }
+q.oninput = search; q.onkeydown = (e) => { if (e.key === "Enter") { const f = hits.querySelector("[data-t]"); if (f) { flyToToken(+f.dataset.t); hits.hidden = true; } } if (e.key === "Escape") hits.hidden = true; };
+hits.onclick = (e) => { const d = e.target.closest("[data-t]"); if (d) { flyToToken(+d.dataset.t); hits.hidden = true; } };
+
+// ---------------- picking, hover sync, pinned selection
+const ray = new THREE.Raycaster();
+function pick(ev) { const r = canvas.getBoundingClientRect(), n = panels.length, x = ev.clientX - r.left, i = Math.min(n - 1, Math.floor(x / r.width * n));
+  const nx = ((x - i * r.width / n) / (r.width / n)) * 2 - 1, ny = -((ev.clientY - r.top) / r.height) * 2 + 1; ray.setFromCamera(new THREE.Vector2(nx, ny), camera);
+  const P = panels[i], hit = ray.intersectObjects([P.heads, P.mlp, P.resid], false)[0]; if (!hit) return null;
+  const kind = hit.object === P.heads ? "heads" : hit.object === P.mlp ? "mlp" : "resid"; return P.ids[kind][hit.instanceId]; }
+canvas.addEventListener("pointermove", (ev) => { const s = pick(ev); for (const P of panels) boxOn(P, P.hover, s, .06);
+  const tip = $("tipA"); if (!s) { tip.hidden = true; if (!pinned) showIdle(); return; }
+  tip.hidden = false; const r = canvas.getBoundingClientRect(); tip.style.left = `${ev.clientX - r.left + 14}px`; tip.style.top = `${ev.clientY - r.top + 12}px`;
+  tip.textContent = `${s.kind} L${s.l}${s.h != null ? " h" + s.h : ""} · t=${s.t} ${K.tokText(D.A.m.tokens[s.t].text)}`;
+  if (!pinned) $("insp").innerHTML = K.inspectorHTML(D, s); });
+canvas.addEventListener("click", (ev) => { const s = pick(ev); if (s) select(s); });
+addEventListener("keydown", (e) => { if (e.key === "Escape") { pinned = null; for (const P of panels) { boxOn(P, P.outline, null); arcsOn(P, null); } showIdle(); } });
+function select(s, render = true) { pinned = s; for (const P of panels) { boxOn(P, P.outline, s, .08); arcsOn(P, s); } $("insp").innerHTML = K.inspectorHTML(D, s, { pinned: true }); }
+function showIdle() { $("insp").innerHTML = `<div class="card"><div class="card-h"><span>Inspector</span><button class="lm" data-learn="dla">what is DLA?</button></div><p class="muted" style="margin:0">Hover any block: this card shows A, B and the exact ‖B−A‖ for that slice. Click a head to pin it and draw where it looks, in both panels.</p></div>`; }
+
+// biggest changes: heads at the readout ranked by d_head_norm (pair export) — a navigation list
+function bigList() { const r = []; for (let l = 0; l < L; l++) for (let h = 0; h < H; h++) r.push({ l, h, v: D.P.t.d_head_norm.get(l, h, ro) }); r.sort((a, b) => b.v - a.v);
+  $("bigd").innerHTML = `<div class="card"><div class="card-h"><span>Largest changes at the readout</span><button class="lm" data-learn="delta">learn more</button></div><div class="big">${r.slice(0, 6).map((o) => `<div class="r" data-l="${o.l}" data-h="${o.h}">L${o.l} h${o.h}</div><div><span style="display:inline-block;height:8px;background:var(--delta);width:${(o.v / r[0].v * 100).toFixed(0)}%"></span></div><div class="num">${K.fmt(o.v, 3)}</div>`).join("")}</div><div class="foot">‖o_B − o_A‖ at t*, from <code>d_head_norm</code>. Click to fly there and pin.</div></div>`;
+  $("bigd").onclick = (e) => { const d = e.target.closest("[data-l]"); if (!d) return; const s = { kind: "head", l: +d.dataset.l, h: +d.dataset.h, t: ro }; select(s); const x = X[ro], z = -s.l * SZ; flyTo(new THREE.Vector3(x, 0, z), new THREE.Vector3(x + 9, 16, z + 22)); }; }
+
+// ---------------- minimap: real resid_norm heatmap over ALL tokens + segment bands + view bracket
+const mc = $("mc");
+let visRange = null;
+function drawMini() {
+  const w = mc.clientWidth, dpr = devicePixelRatio || 1; mc.width = w * dpr; mc.height = 96 * dpr; const g = mc.getContext("2d"); g.scale(dpr, dpr);
+  const bandH = 18, hh = 96 - bandH - 6, cw = w / T, deltaMode = view === "delta";
+  $("minimode").textContent = deltaMode ? "showing ‖h_B − h_A‖ (d_resid_norm)" : "values";
+  const src = deltaMode ? D.P.t.d_resid_norm : D.A.t.resid_norm, s = deltaMode ? K.makeScale([src]) : K.makeScale([D.A.t.resid_norm, D.B.t.resid_norm]);
+  { const v = Array.from(src.data).sort((a, b) => a - b); s.vmax = v[Math.floor(v.length * .99)]; } // colour clipped at the 99th percentile (stated in the caption)
+  for (let l = 0; l <= L; l++) for (let t = 0; t < T; t++) { const u = K.hOf(s, src.get(l, t)); g.fillStyle = deltaMode ? K.mix(K.C.neutral, K.C.delta, u) : K.mix("#121212", "#cfd8e3", u); g.fillRect(t * cw, bandH + 4 + (L - l) * hh / (L + 1), Math.ceil(cw), Math.ceil(hh / (L + 1))); }
+  g.font = "10.5px ui-monospace, Menlo, monospace"; g.textBaseline = "middle";
+  for (const sg of segs) { const x0 = sg.a * cw, x1 = (sg.b + 1) * cw; g.fillStyle = sg.kind === "readout" ? "#6b9bff" : sg.open ? "#2c3a52" : "#1d1d1d"; g.fillRect(x0 + .5, 0, x1 - x0 - 1, bandH);
+    if (!sg.open) { g.fillStyle = "#000a"; g.fillRect(x0, bandH + 4, x1 - x0, hh); }
+    g.save(); g.beginPath(); g.rect(x0 + 2, 0, x1 - x0 - 4, bandH); g.clip(); g.fillStyle = sg.open ? "#e6e6e6" : "#8a8a8a"; g.fillText(sg.kind === "readout" ? "t*" : sg.label, x0 + 4, bandH / 2); g.restore(); }
+  if (hl >= 0) { g.fillStyle = "#ffcf5c"; g.fillRect(hl * cw, bandH + 2, Math.max(2, cw), hh + 2); }
+  if (visRange) { g.strokeStyle = "#ffffffcc"; g.lineWidth = 1.5; g.strokeRect(visRange[0] * cw, bandH + 2, (visRange[1] - visRange[0] + 1) * cw, hh + 3); }
+  mc._cw = cw;
+}
+mc.onclick = (e) => { const r = mc.getBoundingClientRect(), t = Math.floor((e.clientX - r.left) / mc._cw); const sg = segs.find((s) => t >= s.a && t <= s.b); if (!sg || sg.kind === "readout") return;
+  if (e.clientY - r.top < 22) { sg.open = !sg.open; build(); } else flyToToken(t); };
+let lastVis = 0;
+function updateVis() { const v = new THREE.Vector3(), z = -.5 * L * SZ; let a = null, b = null;
+  for (let t = 0; t < T; t++) { if (X[t] == null) continue; v.set(X[t], 1, z).project(camera); if (Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1 && v.z < 1) { if (a == null) a = t; b = t; } }
+  const nr = a == null ? null : [a, b]; if (JSON.stringify(nr) !== JSON.stringify(visRange)) { visRange = nr; drawMini(); } }
+
+function frame(now) {
+  if (fly) { const k = Math.min(1, (now - fly.t0) / 700), e = 1 - Math.pow(1 - k, 3); controls.target.lerpVectors(fly.t, fly.T, e); camera.position.lerpVectors(fly.p, fly.P, e); if (k >= 1) fly = null; }
+  controls.update(); const w = canvas.clientWidth, h = canvas.clientHeight, n = panels.length;
+  panels.forEach((P, i) => { renderer.setViewport(i * w / n, 0, w / n, h); renderer.setScissor(i * w / n, 0, w / n, h); renderer.render(P.sc, camera); });
+  if (now - lastVis > 200) { lastVis = now; updateVis(); }
+  requestAnimationFrame(frame);
+}
+$("ro").innerHTML = K.readoutHTML(D); bigList(); showIdle(); build();
+// The stage size settles after the first layout: resize on every size change, and frame the camera once it has.
+let framed = false;
+new ResizeObserver(() => { resize(); drawMini(); if (!framed && canvas.clientHeight > 300) { framed = true; preset(U.get("cam") || "readout"); if (U.get("fly")) flyToToken(+U.get("fly")); } }).observe($("stage"));
+if (U.get("q")) { q.value = U.get("q"); search(); }
+const sel = U.get("sel")?.split(",").map(Number); if (sel) select({ kind: "head", l: sel[0], h: sel[1], t: sel[2] });
+if (U.get("learn")) K.openLearn(D, U.get("learn"));
+requestAnimationFrame(frame); setTimeout(() => (window.__ready = true), 300);
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+[project]
+name = "sca2-workbench"
+version = "0.1.0"
+description = "SCA2 adapter-brain workbench — slice 1: tensor conservation hooks"
+readme = "AUDIT.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "huggingface-hub>=2.2.0",
+    "numpy>=2.4.6",
+    "peft>=0.21.2",
+    "safetensors>=0.8.0",
+    "torch>=2.6",
+    "transformers>=5.20.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sca2_workbench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# src-layout, and this host can silently drop the venv's editable-install .pth
+# (macOS UF_HIDDEN + site.py skipping hidden .pth files). Pinning src/ here makes
+# the test run depend on the source tree, not on that install path. See AUDIT.md §4.
+pythonpath = ["src"]

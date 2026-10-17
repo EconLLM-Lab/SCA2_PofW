@@ -1,0 +1,80 @@
+f32-cpu      a=0.00153 s/(Gparam*tok)  b=1.62 ms/layer  c=3.4 ms  n=10  max rel err 28%  median 6%
+      135m    T=140 measured 0.073  fit 0.075
+      135m    T=306 measured 0.102  fit 0.102
+      360m    T=140 measured 0.116  fit 0.122
+      360m    T=306 measured 0.231  fit 0.202
+      1b      T=140 measured 0.253  fit 0.237
+      1b      T=306 measured 0.504  fit 0.484
+      8bv-L1  T=140 measured 0.058  fit 0.052
+      8bv-L1  T=306 measured 0.083  fit 0.107
+      8bv-L2  T=140 measured 0.123  fit 0.100
+      8bv-L2  T=306 measured 0.208  fit 0.210
+f32-mps      a=0.00088 s/(Gparam*tok)  b=0.42 ms/layer  c=12.6 ms  n=10  max rel err 14%  median 6%
+      135m    T=140 measured 0.036  fit 0.038
+      135m    T=306 measured 0.054  fit 0.054
+      360m    T=140 measured 0.070  fit 0.065
+      360m    T=306 measured 0.110  fit 0.110
+      1b      T=140 measured 0.155  fit 0.139
+      1b      T=306 measured 0.262  fit 0.280
+      8bv-L1  T=140 measured 0.041  fit 0.040
+      8bv-L1  T=306 measured 0.063  fit 0.071
+      8bv-L2  T=140 measured 0.075  fit 0.067
+      8bv-L2  T=306 measured 0.131  fit 0.130
+f64-cpu      a=0.00780 s/(Gparam*tok)  b=0.02 ms/layer  c=0.0 ms  n=5  max rel err 26%  median 12%
+      135m    T=140 measured 0.156  fit 0.147
+      135m    T=306 measured 0.336  fit 0.321
+      360m    T=140 measured 0.353  fit 0.396
+      360m    T=306 measured 0.762  fit 0.864
+      1b      T=140 measured 1.834  fit 1.349
+hf-f32-cpu   a=0.00101 s/(Gparam*tok)  b=1.39 ms/layer  c=4.5 ms  n=10  max rel err 27%  median 8%
+      135m    T=140 measured 0.059  fit 0.065
+      135m    T=306 measured 0.090  fit 0.088
+      360m    T=140 measured 0.107  fit 0.100
+      360m    T=306 measured 0.171  fit 0.160
+      1b      T=140 measured 0.250  fit 0.201
+      1b      T=306 measured 0.393  fit 0.407
+      8bv-L1  T=140 measured 0.055  fit 0.055
+      8bv-L1  T=306 measured 0.101  fit 0.113
+      8bv-L2  T=140 measured 0.119  fit 0.087
+      8bv-L2  T=306 measured 0.155  fit 0.182
+hf-f32-mps   a=0.00057 s/(Gparam*tok)  b=0.41 ms/layer  c=0.0 ms  n=10  max rel err 24%  median 7%
+      135m    T=140 measured 0.020  fit 0.023
+      135m    T=306 measured 0.036  fit 0.036
+      360m    T=140 measured 0.041  fit 0.042
+      360m    T=306 measured 0.076  fit 0.076
+      1b      T=140 measured 0.131  fit 0.105
+      1b      T=306 measured 0.239  fit 0.222
+      8bv-L1  T=140 measured 0.030  fit 0.028
+      8bv-L1  T=306 measured 0.057  fit 0.061
+      8bv-L2  T=140 measured 0.041  fit 0.046
+      8bv-L2  T=306 measured 0.080  fit 0.100
+hf-f64-cpu   a=0.00379 s/(Gparam*tok)  b=1.38 ms/layer  c=0.0 ms  n=4  max rel err 7%  median 2%
+      135m    T=140 measured 0.111  fit 0.113
+      135m    T=306 measured 0.211  fit 0.197
+      360m    T=140 measured 0.231  fit 0.236
+      360m    T=306 measured 0.455  fit 0.464
+w16c32-cpu   a=0.00179 s/(Gparam*tok)  b=1.65 ms/layer  c=0.0 ms  n=2  max rel err 0%  median 0%
+      135m    T=140 measured 0.076  fit 0.076
+      135m    T=306 measured 0.108  fit 0.108
+w16c32-mps   a=0.00101 s/(Gparam*tok)  b=0.18 ms/layer  c=20.1 ms  n=10  max rel err 29%  median 8%
+      135m    T=140 measured 0.039  fit 0.040
+      135m    T=306 measured 0.058  fit 0.058
+      360m    T=140 measured 0.076  fit 0.070
+      360m    T=306 measured 0.117  fit 0.123
+      1b      T=140 measured 0.226  fit 0.161
+      1b      T=306 measured 0.301  fit 0.325
+      8bv-L1  T=140 measured 0.051  fit 0.051
+      8bv-L1  T=306 measured 0.076  fit 0.088
+      8bv-L2  T=140 measured 0.107  fit 0.082
+      8bv-L2  T=306 measured 0.144  fit 0.156
+
+Extrapolation (ESTIMATES from the fits above; the 1B f64 fit has one point per size):
+  135m  T=136  f64-cpu=0.14s  f32-cpu=0.07s  f32-mps=0.04s  w16c32-mps=0.04s  hf-f64-cpu=0.11s  hf-f32-cpu=0.06s  hf-f32-mps=0.02s
+  135m  T=306  f64-cpu=0.32s  f32-cpu=0.10s  f32-mps=0.05s  w16c32-mps=0.06s  hf-f64-cpu=0.20s  hf-f32-cpu=0.09s  hf-f32-mps=0.04s
+  360m  T=140  f64-cpu=0.40s  f32-cpu=0.12s  f32-mps=0.06s  w16c32-mps=0.07s  hf-f64-cpu=0.24s  hf-f32-cpu=0.10s  hf-f32-mps=0.04s
+  360m  T=306  f64-cpu=0.86s  f32-cpu=0.20s  f32-mps=0.11s  w16c32-mps=0.12s  hf-f64-cpu=0.46s  hf-f32-cpu=0.16s  hf-f32-mps=0.08s
+  1b    T=140  f64-cpu=1.35s  f32-cpu=0.24s  f32-mps=0.14s  w16c32-mps=0.16s  hf-f64-cpu=0.68s  hf-f32-cpu=0.20s  hf-f32-mps=0.10s
+  1b    T=306  f64-cpu=2.95s  f32-cpu=0.48s  f32-mps=0.28s  w16c32-mps=0.32s  hf-f64-cpu=1.46s  hf-f32-cpu=0.41s  hf-f32-mps=0.22s
+  8b    T=170  f64-cpu=9.95s  f32-cpu=1.87s  f32-mps=1.06s  w16c32-mps=1.23s  hf-f64-cpu=4.88s  hf-f32-cpu=1.33s  hf-f32-mps=0.74s
+  8b    T=330  f64-cpu=19.31s  f32-cpu=3.57s  f32-mps=2.04s  w16c32-mps=2.36s  hf-f64-cpu=9.44s  hf-f32-cpu=2.54s  hf-f32-mps=1.42s
+exit 0

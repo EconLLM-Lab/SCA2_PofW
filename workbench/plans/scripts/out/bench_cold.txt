@@ -1,0 +1,13 @@
+W1017 09:12:12.721000 71337 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+threads 8 torch 2.14.1
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 2725.10it/s]
+load smol_base: 0.64 s
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights:  82%|████████▏ | 224/272 [00:00<00:00, 2212.46it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 2313.50it/s]
+load smol_inst: 0.51 s
+tokenizer: 1.87 s; both models: 1.15 s
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6674.02it/s]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 3717.82it/s]
+wvs_Q57: A pass=True B pass=True margin +1.229 -> +0.755
+warm pair export wvs_Q57: 3.24 s; peak RSS 7.14 GB
+exports dir /var/folders/x4/vhxvs_xj31z02hfv4nj85__h0000gn/T/tmpbjjnf0sg
+exit 0

@@ -1,0 +1,62 @@
+[
+ {
+  "name": "c-1700",
+  "q": "tab=c",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "b-1700",
+  "q": "tab=b",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "a-single-1700",
+  "q": "tab=a&view=single",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "a-side-1700",
+  "q": "tab=a",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "a-delta-1700",
+  "q": "tab=a&view=delta",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "c-bank-1700",
+  "q": "tab=c&item=bank_USA_00023ac74dac",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "a-bank-1700",
+  "q": "tab=a&view=single&item=bank_USA_00023ac74dac&sel=23,0,305",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "b-bank-1700",
+  "q": "tab=b&item=bank_USA_00023ac74dac",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "popup-1700",
+  "q": "tab=c&learn=dla",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "popup-checks-1700",
+  "q": "tab=c&learn=conservation",
+  "ready": true,
+  "errors": []
+ }
+]

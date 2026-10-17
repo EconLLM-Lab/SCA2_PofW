@@ -1,0 +1,23 @@
+# uv-managed virtual environment — never commit
+.venv/
+
+# python bytecode / caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# build artifacts (the wheel carries src/sca2_workbench)
+build/
+dist/
+*.egg-info/
+
+# local capture exports (float tensors of local runs; never commit)
+exports/
+
+# trained adapters (slice 3a) — local only, never commit
+models/
+
+# screenshots: keep only the curated final set (iterations stay local)
+design/layout-v2/shots/
+viewer/screens/**/*.png
+!viewer/screens/v2/final/*.png

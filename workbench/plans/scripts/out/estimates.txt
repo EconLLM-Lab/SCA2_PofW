@@ -1,0 +1,36 @@
+== sizes ==
+SmolLM2-135M  params  0.134 B | f64    1.1 GB  f32    0.5 GB  bf16    0.3 GB | LoRA r16 qkvo  1.84 M params =   7.4 MB fp32
+SmolLM2-360M  params  0.362 B | f64    2.9 GB  f32    1.4 GB  bf16    0.7 GB | LoRA r16 qkvo  3.28 M params =  13.1 MB fp32
+Llama-3.2-1B  params  1.236 B | f64    9.9 GB  f32    4.9 GB  bf16    2.5 GB | LoRA r16 qkvo  3.41 M params =  13.6 MB fp32
+Llama-3.1-8B  params  8.030 B | f64   64.2 GB  f32   32.1 GB  bf16   16.1 GB | LoRA r16 qkvo 13.63 M params =  54.5 MB fp32
+
+== export size (MB), run / pair, T = 140 and 306 (330 for 8B: +~25 template tokens, estimate) ==
+SmolLM2-135M  T=140  run    4.8 MB   pair  0.21 MB   pair-of-runs-per-item    9.7 MB
+SmolLM2-135M  T=306  run    9.5 MB   pair  0.45 MB   pair-of-runs-per-item   19.5 MB
+SmolLM2-360M  T=140  run    8.4 MB   pair  0.33 MB   pair-of-runs-per-item   17.1 MB
+SmolLM2-360M  T=306  run   16.8 MB   pair  0.71 MB   pair-of-runs-per-item   34.3 MB
+Llama-3.2-1B  T=165  run   10.9 MB   pair  0.38 MB   pair-of-runs-per-item   22.3 MB
+Llama-3.2-1B  T=331  run   19.8 MB   pair  0.75 MB   pair-of-runs-per-item   40.4 MB
+Llama-3.1-8B  T=165  run   25.0 MB   pair  0.76 MB   pair-of-runs-per-item   50.8 MB
+Llama-3.1-8B  T=331  run   42.8 MB   pair  1.50 MB   pair-of-runs-per-item   87.1 MB
+
+== Mac M4 Pro 24 GB: time per (model, prompt) in s (n_codes=2) and peak RAM in GB ==
+SmolLM2-135M  T=140  f64-cpu:  0.82s   2.7GB | f32-cpu:  0.38s   1.6GB | f32-mps:  0.16s   1.6GB | w16c32+streamed:  0.18s   0.9GB
+SmolLM2-135M  T=306  f64-cpu:  1.58s   4.1GB | f32-cpu:  0.51s   2.3GB | f32-mps:  0.24s   2.3GB | w16c32+streamed:  0.27s   1.0GB
+SmolLM2-360M  T=140  f64-cpu:  1.91s   5.6GB | f32-cpu:  0.60s   3.0GB | f32-mps:  0.28s   3.0GB | w16c32+streamed:  0.32s   1.3GB
+SmolLM2-360M  T=306  f64-cpu:  3.94s   8.6GB | f32-cpu:  0.97s   4.5GB | f32-mps:  0.49s   4.5GB | w16c32+streamed:  0.57s   1.5GB
+Llama-3.2-1B  T=165  f64-cpu:  7.00s  15.4GB | f32-cpu:  1.37s   7.9GB | f32-mps:  0.76s   7.9GB | w16c32+streamed:  0.87s   3.4GB
+Llama-3.2-1B  T=331  f64-cpu: 13.94s  20.8GB | f32-cpu:  2.59s  10.7GB | f32-mps:  1.45s  10.7GB | w16c32+streamed:  1.67s   3.8GB
+Llama-3.1-8B  T=165  f64-cpu: 42.10s  82.0GB | f32-cpu:  8.26s  41.3GB | f32-mps:  4.64s  41.3GB | w16c32+streamed:  5.34s  17.1GB
+Llama-3.1-8B  T=331  f64-cpu: 84.27s 100.4GB | f32-cpu: 16.29s  50.4GB | f32-mps:  9.21s  50.4GB | w16c32+streamed: 10.59s  17.6GB
+
+== Colab Pro roofline ESTIMATES: time per (model, prompt) in s; memory need = weights + streamed activations ==
+SmolLM2-135M  T=140  T4 16GB f32:  0.19s (fits    1GB) | L4 24GB f32:  0.16s (fits    1GB) | A100 40GB f32:  0.16s (fits    1GB) | A100 40GB f64:  0.21s (fits    2GB)
+SmolLM2-135M  T=306  T4 16GB f32:  0.24s (fits    1GB) | L4 24GB f32:  0.18s (fits    1GB) | A100 40GB f32:  0.19s (fits    1GB) | A100 40GB f64:  0.25s (fits    2GB)
+SmolLM2-360M  T=140  T4 16GB f32:  0.29s (fits    2GB) | L4 24GB f32:  0.20s (fits    2GB) | A100 40GB f32:  0.21s (fits    2GB) | A100 40GB f64:  0.29s (fits    4GB)
+SmolLM2-360M  T=306  T4 16GB f32:  0.44s (fits    2GB) | L4 24GB f32:  0.26s (fits    2GB) | A100 40GB f32:  0.27s (fits    2GB) | A100 40GB f64:  0.41s (fits    4GB)
+Llama-3.2-1B  T=165  T4 16GB f32:  0.56s (fits    6GB) | L4 24GB f32:  0.25s (fits    6GB) | A100 40GB f32:  0.28s (fits    6GB) | A100 40GB f64:  0.47s (fits   11GB)
+Llama-3.2-1B  T=331  T4 16GB f32:  1.04s (fits    6GB) | L4 24GB f32:  0.42s (fits    6GB) | A100 40GB f32:  0.48s (fits    6GB) | A100 40GB f64:  0.85s (fits   12GB)
+Llama-3.1-8B  T=165  T4 16GB f32:  3.60s (NO FIT   17GB) | L4 24GB f32:  1.38s (fits   17GB) | A100 40GB f32:  1.58s (fits   17GB) | A100 40GB f64:  2.90s (NO FIT   66GB)
+Llama-3.1-8B  T=331  T4 16GB f32:  7.06s (NO FIT   18GB) | L4 24GB f32:  2.61s (fits   18GB) | A100 40GB f32:  3.02s (fits   18GB) | A100 40GB f64:  5.63s (NO FIT   67GB)
+exit 0

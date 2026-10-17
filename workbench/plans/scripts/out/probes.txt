@@ -1,0 +1,8 @@
+[transformers] `rope_parameters`'s original_max_position_embeddings field must be less than max_position_embeddings, got 8192 and max_position_embeddings=2048
+llama3 rope REJECTED by llama_capture._rope_theta: only default RoPE is implemented; got {'rope_type': 'llama3', 'factor': 8.0, 'low_freq_factor': 1.0,
+mps available: True | recommended max working set GB: 19.07
+float64 on MPS: Cannot convert a MPS Tensor to float64 dtype as the MPS framework doesn't support float64.
+fp32 ulp at 25984: 0.001953125 | bf16 ulp: 128.0
+SmolLM2-135M config torch_dtype: bfloat16
+SmolLM2-135M-Instruct config torch_dtype: bfloat16
+exit 0

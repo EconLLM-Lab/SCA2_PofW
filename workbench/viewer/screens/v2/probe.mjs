@@ -1,0 +1,17 @@
+import puppeteer from "puppeteer-core";
+const chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const b = await puppeteer.launch({ executablePath: chrome, headless: "new", args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const p = await b.newPage(); await p.setViewport({ width: 1600, height: 950 });
+p.on("pageerror", (e) => console.log("ERR", e.message));
+await p.goto("http://127.0.0.1:5178/?tab=a", { waitUntil: "networkidle0" });
+await p.waitForFunction("window.__ready === true");
+const mem = async (tag) => { await new Promise((r) => setTimeout(r, 2500)); console.log(tag, JSON.stringify(await p.evaluate(() => ({ ...window.__renderer.info.memory, calls: window.__renderer.info.render.calls, url: location.search, canvas: !!document.querySelector("#gl")?.isConnected })))); };
+const click = (s) => p.evaluate((s) => document.querySelector(s)?.click(), s);
+await mem("start");
+await click("#all"); await mem("all-open");
+await click("#all"); await mem("all-closed");
+await click("[data-tab=c]"); await mem("tab-c");
+await click("[data-tab=a]"); await mem("tab-a-again");
+await click("[data-view=single]"); await mem("single");
+await click("[data-view=side]"); await mem("side");
+await b.close();

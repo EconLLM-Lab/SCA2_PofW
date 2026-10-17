@@ -1,0 +1,20 @@
+W1017 09:25:22.084000 94491 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Q57: Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people? | codes ('1', '2') | labels ('Most people can be trusted', 'Need to be very careful') | j+ = 1
+(1) option-order reversal, (2) country persona, (3) paraphrase  [smol_inst, one item each]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights:  87%|████████▋ | 237/272 [00:00<00:00, 2354.63it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 2409.53it/s]
+  original                             T=136 margin=+0.755 probs={'1': 0.68, '2': 0.32} conservation_pass=True
+  options reversed (j+ follows label)  T=136 margin=-0.227 probs={'1': 0.557, '2': 0.443} conservation_pass=True
+  persona: Argentina                   T=139 margin=+1.081 probs={'1': 0.747, '2': 0.253} conservation_pass=True
+  paraphrase (hand-written)            T=132 margin=+0.931 probs={'1': 0.717, '2': 0.283} conservation_pass=True
+(4) leave-one-word-out on Q57, margin shift vs original  [LC.run only]
+  23 variants in 4.9 s; largest |shift|: [('you', 0.159), ('would', 0.133), ('most', 0.127)]
+(5) per-GPS-dimension margin shift, e3 minus base, 4 held-out USA bank items per dimension [LC.run only]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6225.69it/s]
+  altruism    n=4 mean d_margin=-0.40  each=[-0.7, 0.34, -0.63, -0.63]
+  negrecip    n=4 mean d_margin=-0.27  each=[-0.4, -0.48, -0.58, 0.39]
+  patience    n=4 mean d_margin=-0.63  each=[-0.82, -0.39, -0.67, -0.65]
+  posrecip    n=4 mean d_margin=+0.16  each=[-0.46, 0.9, -0.26, 0.46]
+  risktaking  n=4 mean d_margin=+0.05  each=[0.74, -0.34, -0.78, 0.57]
+  trust       n=4 mean d_margin=+0.52  each=[0.43, 0.56, 0.53, 0.55]
+  48 passes in 24.2 s
+exit 0

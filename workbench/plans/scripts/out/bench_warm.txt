@@ -1,0 +1,9 @@
+W1017 09:11:12.661000 69985 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+threads 8 torch 2.14.1
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6761.76it/s]
+{"item": "wvs_Q57", "T": 136, "capture": 0.196, "clamped": 0.166, "hf_ref_x2": 0.231, "eq6_tf": 0.23, "export_total": 0.816}
+{"item": "wvs_Q43", "T": 144, "capture": 0.199, "clamped": 0.166, "hf_ref_x2": 0.229, "eq6_tf": 0.357, "export_total": 0.936}
+{"item": "wvs_Q81", "T": 152, "capture": 0.214, "clamped": 0.179, "hf_ref_x2": 0.258, "eq6_tf": 0.481, "export_total": 1.102}
+{"item": "bank_USA_00023ac74dac", "T": 306, "capture": 0.424, "clamped": 0.398, "hf_ref_x2": 0.454, "eq6_tf": 0.441, "export_total": 1.657}
+peak RSS 6.54 GB
+exit 0

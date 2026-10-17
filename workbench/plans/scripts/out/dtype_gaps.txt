@@ -1,0 +1,16 @@
+W1017 09:15:21.771000 77816 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 5349.38it/s]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights:   0%|          | 1/272 [00:00<00:59,  4.58it/s]Loading weights:  67%|██████▋   | 183/272 [00:00<00:00, 701.35it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 649.09it/s]
+72 rows -> /Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench/plans/scripts/out/dtype_gaps.jsonl
+variant | device | closure max | closure/max|h| max | dla_gap max | margin_err max | prob_err max | head_attr relerr max | neuron top50 min | closure ok | dla ok | s @T=306
+f64 | cpu | 1.27e-11 | 4.94e-16 | 9.71e-15 | 3.91e-14 | 5.44e-15 | 0.00e+00 | 1.00 | 8/8 | 8/8 | 0.235
+f32 | cpu | 5.27e-03 | 2.04e-07 | 4.49e-06 | 1.27e-05 | 2.77e-06 | 2.05e-05 | 1.00 | 4/8 | 8/8 | 0.101
+f32 | mps | 5.39e-03 | 2.09e-07 | 2.39e-06 | 2.17e-05 | 3.35e-06 | 2.72e-05 | 1.00 | 4/8 | 8/8 | 0.057
+bf16 | cpu | 2.33e+02 | 9.00e-03 | 8.09e-02 | 1.75e-01 | 3.17e-02 | 3.53e-01 | 0.94 | 0/8 | 0/8 | 0.859
+bf16 | mps | 2.33e+02 | 9.00e-03 | 7.05e-02 | 1.91e-01 | 3.53e-02 | 1.31e-01 | 0.94 | 0/8 | 2/8 | 0.051
+hfmixed | cpu | 1.72e-03 | 6.69e-08 | 9.03e-02 | 2.95e-01 | 3.32e-02 | 2.81e-01 | 0.98 | 4/8 | 1/8 | 0.570
+hfmixed | mps | 1.48e-03 | 5.74e-08 | 1.01e-01 | 1.70e-01 | 1.74e-02 | 3.31e-01 | 0.96 | 0/8 | 0/8 | 0.060
+w16c32 | cpu | 7.57e-03 | 2.94e-07 | 3.21e-06 | 1.61e-01 | 1.72e-02 | 2.59e-01 | 0.98 | 4/8 | 8/8 | 0.116
+w16c32 | mps | 7.66e-03 | 2.97e-07 | 2.94e-06 | 1.61e-01 | 1.72e-02 | 2.59e-01 | 0.98 | 4/8 | 8/8 | 0.061
+T values: [136, 144, 152, 306] max_h range: 25771.9..25984.0
+exit 0

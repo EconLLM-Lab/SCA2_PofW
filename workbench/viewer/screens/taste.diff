@@ -1,0 +1,305 @@
+diff -ru screens/.src-before/main.ts src/main.ts
+--- screens/.src-before/main.ts	2026-10-16 22:59:11
++++ src/main.ts	2026-10-16 23:08:30
+@@ -6,7 +6,7 @@
+ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+ import { loadIndex, loadPair, loadRun, type IndexFile, type Pair, type Run } from "./data";
+ import {
+-  COLORS, LAYOUT, TensorScene, layerStrip, makeScale, scaleLabel, tokenStrip,
++  COLORS, FOV, LAYOUT, TensorScene, layerStrip, makeScale, scaleLabel, tokenStrip,
+   type ColorMode, type HeightScale, type Scales,
+ } from "./scene";
+ 
+@@ -17,7 +17,7 @@
+ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+ renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+ renderer.setScissorTest(true);
+-const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 2000);
++const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 4000);
+ const controls = new OrbitControls(camera, canvas);
+ controls.enableDamping = true;
+ 
+@@ -160,8 +160,8 @@
+     // the panel and the last ~20 tokens show their full depth. Both were chosen from screenshots.
+     const tr = (T - 1) * LAYOUT.SX, depth = L * LAYOUT.SZ;
+     const [target, offset] = view === "side"
+-      ? [new THREE.Vector3(tr - 19, 0, -0.43 * depth), new THREE.Vector3(12, 62, 70)]
+-      : [new THREE.Vector3(tr - 22, 0, -0.3 * depth), new THREE.Vector3(43, 36, 36 + 0.3 * depth)];
++      ? [new THREE.Vector3(tr - 8, 0, -0.53 * depth), new THREE.Vector3(16, 72, 104)]
++      : [new THREE.Vector3(tr - 16, 0, -0.41 * depth), new THREE.Vector3(32, 58, 70)];
+     controls.target.copy(target);
+     camera.position.copy(target).add(offset);
+     void cx; void cz;
+@@ -208,8 +208,8 @@
+     <p>X = token t · Z = layer l · Y = magnitude. Each mark is one tensor slice.</p>
+     <p><span class="swatch" style="background:#5d6b74"></span>bar before each layer: ‖h<sup>l</sup><sub>t</sub>‖ (residual entering layer l)</p>
+     <p><span class="swatch" style="background:#8fa6cf"></span>9 slivers: ‖o<sup>l</sup><sub>h,t</sub>‖ per head (h = 0…8 left→right)</p>
+-    <p><span class="swatch" style="background:#b8b8b2"></span>block behind: ‖m<sup>l</sup><sub>t</sub>‖ MLP write</p>
+-    <p><span class="swatch" style="background:var(--pos)"></span>/<span class="swatch" style="background:var(--neg)"></span> readout column: DLA toward “${it.j_plus}” / “${it.j_minus}” (|max| ${sci(scales.dla)} shared A/B, colour ∝ √|v|)</p>
++    <p><span class="swatch" style="background:#a8a49a"></span>block behind: ‖m<sup>l</sup><sub>t</sub>‖ MLP write</p>
++    <p><span class="swatch" style="background:var(--pos)"></span>/<span class="swatch" style="background:var(--neg)"></span> readout column: DLA toward “${it.j_plus}” / “${it.j_minus}” (|max| ${sci(scales.dla)} shared A/B, colour ∝ √|v|). Off the readout column, head blue-grey and MLP sand are category colours only (dimmed in this mode).</p>
+     <p><span class="swatch" style="background:var(--q3)"></span>Quadrant-III mode: neurons with both poles &lt; −0.05, full colour at ${scales.q3} of ${a.m.model.d_ffn}</p>
+     <p><span class="swatch" style="background:var(--delta)"></span>right panel in Δ mode: ‖B − A‖ of the same slice (exact, from both passes); colour = height / max height, same mapping as the height</p>
+     <p>polyline right of the readout: margin read from h<sup>l</sup><sub>t*</sub> (frozen final RMS scale); its last point is the margin.</p>
+@@ -284,6 +284,7 @@
+   renderer.setSize(w, h, false);
+   camera.aspect = w / Math.max(1, panels.length) / h;
+   camera.updateProjectionMatrix();
++  for (const p of panels) p.ts.setResolution(w / Math.max(1, panels.length), h);
+   const lb = $("labelB");
+   lb.style.left = `${w / 2 + 10}px`;
+   const div = $("divider");
+diff -ru screens/.src-before/scene.ts src/scene.ts
+--- screens/.src-before/scene.ts	2026-10-16 22:59:11
++++ src/scene.ts	2026-10-16 23:09:42
+@@ -9,6 +9,9 @@
+ // Colour: neutral, unless the colour mode binds it to a named quantity (DLA, Quadrant-III count).
+ 
+ import * as THREE from "three";
++import { Line2 } from "three/examples/jsm/lines/Line2.js";
++import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
++import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+ import type { Pair, Run, Tensor } from "./data";
+ 
+ export type HeightScale = "log" | "linear";
+@@ -17,9 +20,18 @@
+ 
+ export const LAYOUT = { SX: 1.0, SZ: 1.7, CELL: 0.9, HMAX: 3.0, RESID_HMAX: 1.2 };
+ 
++/** Camera field of view (deg). Narrow, so the far layers are less foreshortened than the near ones. */
++export const FOV = 30;
++
++/** Presentation only: line weights in screen pixels (WebGL ignores linewidth on plain lines). */
++export const LINE_PX = { readout: 2.5, margin: 3, zero: 1.5 };
++
++/** Dim factor for heads/MLP outside the readout column in DLA mode (category colour, binds to nothing). */
++const DIM = { head: 0.62, mlp: 0.42 };
++
+ export const COLORS = {
+   head: new THREE.Color("#8fa6cf"),
+-  mlp: new THREE.Color("#b8b8b2"),
++  mlp: new THREE.Color("#a8a49a"),
+   resid: new THREE.Color("#5d6b74"),
+   neutral: new THREE.Color("#3a3a3e"),
+   pos: new THREE.Color("#6b9bff"),     // pushes toward j+  (DLA > 0)
+@@ -90,6 +102,8 @@
+   private selected: { mesh: THREE.InstancedMesh; id: number; color: THREE.Color } | null = null;
+   /** White outline around the selected instance; drawn around it, never changing its height. */
+   private readonly outline = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: 0xffffff }));
++  /** Fat-line materials; their resolution must follow the viewport size. */
++  private readonly lineMats: LineMaterial[] = [];
+ 
+   constructor(
+     readonly run: Run,                       // the run whose tokens/readout are shown
+@@ -151,7 +165,7 @@
+       const v = (this.showClamped ? this.run.t.head_attr_clamped : this.run.t.head_attr).get(l, h);
+       return diverging(v, this.scales.dla);
+     }
+-    return this.color === "dla" ? COLORS.head.clone().multiplyScalar(0.55) : COLORS.head;
++    return this.color === "dla" ? COLORS.head.clone().multiplyScalar(DIM.head) : COLORS.head;
+   }
+ 
+   private mlpColor(l: number, tt: number): THREE.Color {
+@@ -164,54 +178,63 @@
+       const f = this.run.t.q3_count.get(l, tt) / this.scales.q3;
+       return COLORS.neutral.clone().lerp(COLORS.q3, Math.min(1, f));
+     }
+-    return this.color === "dla" ? COLORS.mlp.clone().multiplyScalar(0.55) : COLORS.mlp;
++    return this.color === "dla" ? COLORS.mlp.clone().multiplyScalar(DIM.mlp) : COLORS.mlp;
+   }
+ 
++  /** A polyline drawn with a fixed pixel width (presentation only; the points are unchanged). */
++  private fatLine(pts: THREE.Vector3[], color: THREE.Color | number, px: number, dashed = false): Line2 {
++    const g = new LineGeometry().setPositions(pts.flatMap((v) => [v.x, v.y, v.z]));
++    const m = new LineMaterial({ color: new THREE.Color(color).getHex(), linewidth: px, dashed, dashSize: 0.3, gapSize: 0.2 });
++    this.lineMats.push(m);
++    const ln = new Line2(g, m);
++    if (dashed) ln.computeLineDistances();
++    return ln;
++  }
++
++  /** Viewport size in CSS px, for the fat lines. */
++  setResolution(w: number, h: number) {
++    for (const m of this.lineMats) m.resolution.set(w, h);
++  }
++
+   private addReadoutFrame() {
+     const { SX, SZ } = LAYOUT;
+     const x = this.ro * SX;
+-    const g = new THREE.BufferGeometry().setFromPoints([
++    this.group.add(this.fatLine([
+       new THREE.Vector3(x - 0.5, 0.002, 1.0), new THREE.Vector3(x + 0.5, 0.002, 1.0),
+       new THREE.Vector3(x + 0.5, 0.002, -(this.L - 1) * SZ - 0.6), new THREE.Vector3(x - 0.5, 0.002, -(this.L - 1) * SZ - 0.6),
+       new THREE.Vector3(x - 0.5, 0.002, 1.0),
+-    ]);
+-    this.group.add(new THREE.Line(g, new THREE.LineBasicMaterial({ color: COLORS.pos })));
++    ], COLORS.pos, LINE_PX.readout));
+   }
+ 
+   /** running_margin[l] = h^l_{t*} . w, drawn as a polyline beside the readout column.
+    * Its last point equals the readout margin (closure). With showClamped the clamped pass is drawn too. */
+   private addMarginRibbon() {
+     const { SX, SZ } = LAYOUT;
+-    const x = (this.T - 1) * SX + 1.6, k = 2.2 / (this.scales.margin || 1), y0 = 3.4;
++    // Placed clear of the readout outline and the layer labels (placement only; y and z bindings unchanged).
++    const x = (this.T - 1) * SX + 4.2, k = 2.2 / (this.scales.margin || 1), y0 = 3.4;
+     const line = (tensor: Tensor, color: THREE.Color, dashed: boolean) => {
+       const pts: THREE.Vector3[] = [];
+       for (let l = 0; l <= this.L; l++) pts.push(new THREE.Vector3(x, y0 + tensor.get(l) * k, -l * SZ + 0.78));
+-      const g = new THREE.BufferGeometry().setFromPoints(pts);
+-      const m = dashed
+-        ? new THREE.LineDashedMaterial({ color, dashSize: 0.3, gapSize: 0.2 })
+-        : new THREE.LineBasicMaterial({ color });
+-      const ln = new THREE.Line(g, m);
+-      if (dashed) ln.computeLineDistances();
+-      this.group.add(ln);
++      this.group.add(this.fatLine(pts, color, LINE_PX.margin, dashed));
+       for (const pt of pts) {
+-        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshBasicMaterial({ color }));
++        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), new THREE.MeshBasicMaterial({ color }));
+         dot.position.copy(pt);
+         this.group.add(dot);
+       }
+     };
+-    const zero = new THREE.BufferGeometry().setFromPoints([
+-      new THREE.Vector3(x, y0, 0.78), new THREE.Vector3(x, y0, -this.L * SZ + 0.78)]);
+-    this.group.add(new THREE.Line(zero, new THREE.LineBasicMaterial({ color: 0x555555 })));
++    this.group.add(this.fatLine([new THREE.Vector3(x, y0, 0.78), new THREE.Vector3(x, y0, -this.L * SZ + 0.78)], 0x6a6a6a, LINE_PX.zero));
+     line(this.run.t.running_margin, COLORS.pos, false);
+     if (this.showClamped) line(this.run.t.running_margin_clamped, COLORS.q3, true);
+     const zEnd = -this.L * SZ + 0.78;
+     const last = this.run.t.running_margin.get(this.L);
+-    this.group.add(textSprite(`margin ${last.toFixed(3)}`, "#6b9bff", x + 0.4, y0 + last * k + 0.5, zEnd, 3.2));
+-    this.group.add(textSprite("0", "#8a8a8a", x + 0.3, y0, 0.78, 0.5));
+-    this.group.add(textSprite("h^l·w = margin read at each layer", "#b0b0b0", x + 0.6, y0 + 3.0, 2.6, 7.0));
++    this.group.add(textSprite(`margin ${last.toFixed(3)}`, "#6b9bff", x + 0.4, y0 + last * k + 0.5, zEnd, 15));
++    this.group.add(textSprite("0", "#8a8a8a", x + 0.3, y0, 0.78, 12));
++    const cap = textSprite("h^l·w per layer", "#b0b0b0", x + 0.4, y0 + last * k + 0.5, zEnd, 11);
++    cap.center.set(0, 1.9);
++    this.group.add(cap);
+     if (this.showClamped) {
+       const lc = this.run.t.running_margin_clamped.get(this.L);
+-      this.group.add(textSprite(`clamped ${lc.toFixed(3)}`, "#d27bff", x + 0.4, y0 + lc * k - 0.5, zEnd, 3.2));
++      this.group.add(textSprite(`clamped ${lc.toFixed(3)}`, "#d27bff", x + 0.4, y0 + lc * k - 0.5, zEnd, 15));
+     }
+   }
+ 
+@@ -343,6 +366,9 @@
+   }
+ }
+ 
++/** Tilt (rad) of the token-label strip away from the floor plane, toward the camera. */
++const TOKEN_TILT = 0.75;
++
+ /** Token labels as one canvas texture lying on the floor in front of layer 0 (vertical text, one slot per token). */
+ export function tokenStrip(run: Run): THREE.Mesh {
+   const T = run.m.tokens.length, slot = 40, hpx = 300;
+@@ -350,51 +376,54 @@
+   canvas.width = T * slot; canvas.height = hpx;
+   const g = canvas.getContext("2d")!;
+   g.fillStyle = "rgba(0,0,0,0)"; g.fillRect(0, 0, canvas.width, canvas.height);
+-  g.font = "600 26px ui-monospace, Menlo, monospace"; g.textBaseline = "middle";
++  g.font = "600 32px ui-monospace, Menlo, monospace"; g.textBaseline = "middle";
+   run.m.tokens.forEach((tk, i) => {
+     const text = tk.text.replace(/\n/g, "\\n").replace(/ /g, "·").slice(0, 18) || "∅";
+     g.save(); g.translate(i * slot + slot / 2, 8); g.rotate(Math.PI / 2);
+-    g.fillStyle = i === run.m.readout.position ? "#6b9bff" : "#d4d4d4";
++    g.fillStyle = i === run.m.readout.position ? "#6b9bff" : "#e6e6e6";
+     g.fillText(text, 0, 0); g.restore();
+   });
+   const tex = new THREE.CanvasTexture(canvas);
+   tex.anisotropy = 8; tex.colorSpace = THREE.SRGBColorSpace;
+   const w = T * LAYOUT.SX, h = (hpx / slot) * LAYOUT.SX;
+   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+-  mesh.rotation.x = -Math.PI / 2;
+-  mesh.position.set(w / 2 - LAYOUT.SX / 2, 0.003, 1.1 + h / 2);
++  // Hinged at its edge in front of layer 0 and tipped toward the viewer, so the text is less foreshortened.
++  const tilt = TOKEN_TILT;
++  mesh.rotation.x = -Math.PI / 2 + tilt;
++  mesh.position.set(w / 2 - LAYOUT.SX / 2, 0.003 - (h / 2) * Math.sin(tilt), 1.1 + (h / 2) * Math.cos(tilt));
+   return mesh;
+ }
+ 
+-/** A camera-facing text label (canvas texture); width in world units. */
+-export function textSprite(text: string, color: string, x: number, y: number, z: number, width: number): THREE.Sprite {
++/** A camera-facing text label (canvas texture) of fixed on-screen size: `px` is the cap height
++ * band in CSS pixels for the current window, so far labels read as large as near ones. */
++export function textSprite(text: string, color: string, x: number, y: number, z: number, px: number, align = 0): THREE.Sprite {
+   const c = document.createElement("canvas");
+   const g0 = c.getContext("2d")!;
+-  g0.font = "30px ui-monospace, Menlo, monospace";
++  const font = "500 30px ui-monospace, Menlo, monospace";
++  g0.font = font;
+   c.width = Math.ceil(g0.measureText(text).width) + 12; c.height = 44;
+   const g = c.getContext("2d")!;
+-  g.font = "30px ui-monospace, Menlo, monospace"; g.fillStyle = color; g.textBaseline = "middle";
++  g.font = font; g.fillStyle = color; g.textBaseline = "middle";
+   g.fillText(text, 6, 22);
+   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+-  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+-  sp.scale.set(width, (width * c.height) / c.width, 1);
+-  sp.center.set(0, 0.5);
++  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, sizeAttenuation: false }));
++  // With sizeAttenuation off, screen height (px) = scale * P11 * viewportH / 2, P11 = 1 / tan(fov/2).
++  const vh = Math.max(400, (typeof window !== "undefined" ? window.innerHeight : 900) - 60);
++  const sh = (2 * px * (c.height / 30)) / (vh / Math.tan(THREE.MathUtils.degToRad(FOV) / 2));
++  sp.scale.set((sh * c.width) / c.height, sh, 1);
++  sp.center.set(align, 0.5);
+   sp.position.set(x, y, z);
+   return sp;
+ }
+ 
+-/** Layer labels on the floor, left of token 0 and right of the margin polyline. */
++/** Layer labels at floor level, left of token 0 and just right of the last token: fixed on-screen
++ * size, so L29 at the back reads as large as L0 at the front. */
+ export function layerStrip(L: number, T = 0): THREE.Group {
+   const grp = new THREE.Group();
+   for (let l = 0; l < L; l++) {
+-    const c = document.createElement("canvas"); c.width = 128; c.height = 48;
+-    const g = c.getContext("2d")!; g.font = "28px ui-monospace, Menlo, monospace"; g.fillStyle = "#a3a3a3";
+-    g.textBaseline = "middle"; g.fillText(`L${l}`, 4, 24);
+-    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+-    const m = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.9), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+-    m.rotation.x = -Math.PI / 2; m.position.set(-2.4, 0.003, -l * LAYOUT.SZ);
+-    grp.add(m);
+-    if (T) { const r = m.clone(); r.position.set((T - 1) * LAYOUT.SX + 4.4, 0.003, -l * LAYOUT.SZ); grp.add(r); }
++    const z = -l * LAYOUT.SZ, col = l % 5 === 0 ? "#d4d4d4" : "#9b9b9b";
++    grp.add(textSprite(`L${l}`, col, -0.9, 0.05, z, 12, 1));
++    if (T) grp.add(textSprite(`L${l}`, col, (T - 1) * LAYOUT.SX + 0.65, 0.05, z, 12, 0));
+   }
+   return grp;
+ }
+diff -ru screens/.src-before/style.css src/style.css
+--- screens/.src-before/style.css	2026-10-16 22:59:11
++++ src/style.css	2026-10-16 23:06:46
+@@ -6,18 +6,20 @@
+ }
+ * { box-sizing: border-box; }
+ html, body { margin: 0; height: 100%; background: var(--page); color: var(--text); font: 13px/1.45 var(--mono); }
++body { display: flex; flex-direction: column; }
+ #bar { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--card); }
+ #bar .brand { font-weight: 600; letter-spacing: .02em; margin-right: 6px; }
+ #bar label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+ #bar select { background: var(--face); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; font: inherit; max-width: 320px; }
+ #bar .chk { cursor: pointer; }
+-main { display: grid; grid-template-columns: 1fr 380px; height: calc(100% - 45px); }
++/* The bar may wrap to two rows; main takes whatever height is left, so the sidebar's last line is reachable. */
++main { display: grid; grid-template-columns: 1fr 380px; flex: 1 1 auto; min-height: 0; }
+ #stage { position: relative; overflow: hidden; }
+ #gl { width: 100%; height: 100%; display: block; }
+-.vlabel { position: absolute; top: 8px; padding: 3px 8px; background: #000a; border: 1px solid var(--line); border-radius: 4px; color: var(--text); pointer-events: none; }
+-#labelA { left: 10px; }
++.vlabel { position: absolute; top: 10px; padding: 4px 10px; background: #000c; border: 1px solid #3a3a3a; border-radius: 4px; color: var(--text); font-size: 14px; font-weight: 600; pointer-events: none; }
++#labelA { left: 12px; }
+ #tip { position: absolute; pointer-events: none; background: #000e; border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; max-width: 460px; white-space: pre-wrap; font-size: 12px; }
+-#side { overflow-y: auto; border-left: 1px solid var(--line); background: var(--card); padding: 10px 12px; }
++#side { overflow-y: auto; min-height: 0; border-left: 1px solid var(--line); background: var(--card); padding: 10px 12px 24px; }
+ #side section { margin-bottom: 16px; }
+ #side h3 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+ .muted { color: var(--muted); }
+@@ -35,4 +37,4 @@
+ #legend p { margin: 4px 0; }
+ .model-h { margin: 8px 0 2px; color: var(--text); }
+ #divider { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--line); pointer-events: none; }
+-#bar select#pair { max-width: 520px; }
++#bar select#pair { max-width: none; }

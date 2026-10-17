@@ -1,0 +1,20 @@
+[
+ {
+  "name": "landing-1440",
+  "q": "",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "a-side-1440",
+  "q": "tab=a",
+  "ready": true,
+  "errors": []
+ },
+ {
+  "name": "a-delta-1440",
+  "q": "tab=a&view=delta",
+  "ready": true,
+  "errors": []
+ }
+]

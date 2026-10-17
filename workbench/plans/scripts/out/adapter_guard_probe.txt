@@ -1,0 +1,18 @@
+W1017 09:29:25.156000 1445 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+adapter file: 240 tensors, dtypes ['torch.float32']
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6091.68it/s]
+  intact adapter (control)                       ACCEPTED by load_hf
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 5915.86it/s]
+/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench/.venv/lib/python3.12/site-packages/peft/peft_model.py:642: UserWarning: Found missing adapter keys while loading the checkpoint: ['base_model.model.model.layers.29.self_attn.q_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.q_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.k_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.k_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.v_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.v_proj.lora_B.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_A.default.weight', 'base_model.model.model.layers.29.self_attn.o_proj.lora_B.default.weight'].
+  warnings.warn(warn_message)
+  adapter file missing layer 29 (8 tensors)      ACCEPTED by load_hf
+      layer-29 q_proj differs from the intact merge by 8.90e-04 (nonzero = silently different model)
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6500.35it/s]
+  adapter_config says base=Llama-3.2-1B, loaded on 135M ACCEPTED by load_hf
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 8367.38it/s]
+  adapter_config bias='all' (file has no bias)   ACCEPTED by load_hf
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 8435.94it/s]
+  adapter file with a tensor for layer 99        REJECTED: ValueError: adapter keys not in model: ['base_model.model.model.layers.99.self_attn.q_proj.lora_A.weight']
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 7501.55it/s]
+  adapter tensor all-NaN                         REJECTED: ValueError: adapter tensor base_model.model.model.layers.0.self_attn.k_proj.lora_A.weight did not load (module != file)
+exit 0

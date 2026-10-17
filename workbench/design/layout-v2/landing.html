@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SCA2 workbench — reading a survey answer inside a language model</title>
+<style id="base"></style>
+<style>
+html,body{height:auto}body{background:#0b0b0b}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #1f1f1f;color:var(--muted)}
+nav a{color:var(--muted);text-decoration:none;margin-left:18px}nav a:hover{color:var(--text)}nav b{color:var(--text)}
+.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:44px;align-items:center;padding:56px 0 40px}
+h1{font:400 46px/1.08 var(--serif);margin:0 0 18px;letter-spacing:-.01em}
+h1 em{color:var(--pos);font-style:italic}
+.lede{font:18px/1.6 var(--serif);color:#cfcfcf;margin:0 0 22px}
+.cta a{display:inline-block;padding:8px 14px;border:1px solid #3a4a6a;border-radius:5px;color:var(--text);text-decoration:none;margin:0 8px 8px 0;background:#141b28}
+.cta a.sec{background:transparent;border-color:#333;color:var(--muted)}
+figure{margin:0}figcaption{color:var(--muted);font-size:11.5px;margin-top:8px;line-height:1.5}
+.fig{background:#101010;border:1px solid #222;border-radius:8px;padding:14px}
+.badge{display:inline-block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:8px}
+.badge.data{color:var(--ok);border:1px solid #2c5a43}.badge.ill{color:var(--delta);border:1px solid #6b5a2a}
+section.s{display:grid;grid-template-columns:200px 1fr;gap:36px;padding:44px 0;border-top:1px solid #1c1c1c}
+.sn{font:400 13px var(--mono);color:var(--muted)}.sn b{display:block;font:400 64px/1 var(--serif);color:#2c2c2c;margin-bottom:6px}
+h2{font:400 30px/1.2 var(--serif);margin:0 0 14px}
+.prose{font:16.5px/1.7 var(--serif);color:#d2d2d2;max-width:720px}.prose p{margin:0 0 14px}
+.prose code,.prose .m{font:13px var(--mono);color:#cfd8ea}
+.prose b{color:#f0f0f0;font-weight:600}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px}
+.eq{font:15px/1.6 var(--mono);background:#121212;border-left:2px solid var(--pos);padding:10px 14px;margin:14px 0;color:#e6e6e6}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+.shots img{width:100%;border:1px solid #2a2a2a;border-radius:6px;display:block}
+.shots a{color:var(--text);text-decoration:none}.shots h3{font:600 13px var(--mono);margin:8px 0 2px}.shots p{color:var(--muted);margin:0;font-size:12px}
+.lim{display:grid;grid-template-columns:1fr 1fr;gap:16px}.lim div{border:1px solid #2a2a2a;border-radius:6px;padding:12px 14px;font:14.5px/1.6 var(--serif);color:#cfcfcf}.lim b{display:block;font:600 12.5px var(--mono);color:var(--neg);margin-bottom:4px}
+footer{padding:30px 0 60px;color:#666;border-top:1px solid #1c1c1c;font-size:11.5px}
+svg text{font-family:ui-monospace,Menlo,monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><span><b>SCA2 workbench</b> · paper B companion</span><span><a href="#s1">the model</a><a href="#s2">the measures</a><a href="#s3">the views</a><a href="#s4">limits</a><a href="variant-c.html">open the workbench →</a></span></nav>
+
+<div class="hero">
+  <div>
+    <h1>Where does a language model's <em>survey answer</em> come from?</h1>
+    <p class="lede">We ask a small language model a World Values Survey question, read its answer as a probability over the response codes, and then trace that probability back through every layer, attention head and neuron that produced it. Then we fine-tune the model toward one country's answers and measure, exactly, what moved.</p>
+    <div class="cta"><a href="variant-c.html">Open the workbench</a><a class="sec" href="#s1">How it works ↓</a></div>
+  </div>
+  <figure class="fig"><span class="badge data">real data · one forward pass each</span>
+    <svg id="hero" viewBox="0 0 560 330" width="100%"></svg>
+    <figcaption id="heroCap"></figcaption></figure>
+</div>
+
+<section class="s" id="s1"><div class="sn"><b>1</b>what a transformer computes</div><div>
+  <h2>A running total, written to by many small parts</h2>
+  <div class="prose">
+    <p>A transformer turns the prompt into tokens (word pieces) and gives each token a vector of 576 numbers. That vector is the <b>residual stream</b>: a running state that every layer reads and then <i>adds</i> to. Nothing overwrites it. This model has 30 layers.</p>
+    <p>Each layer adds two kinds of writes. <b>Attention heads</b> (9 per layer) move information between tokens: each head decides which earlier words to read from and writes a summary. The <b>MLP</b> (1,536 neurons per layer) then transforms each token on its own. After the last layer, the final state at the last position is turned into a score for every possible next token.</p>
+    <p>Because everything is added, the final score can be split into the parts that wrote it. That is the property the whole workbench rests on.</p>
+  </div>
+  <div class="cols">
+    <figure class="fig"><span class="badge ill">illustration · not data</span><svg id="ill" viewBox="0 0 470 300" width="100%"></svg>
+      <figcaption>Schematic of one token's path. Three of 30 layers drawn; head count and widths are not to scale. No mark here is a measurement.</figcaption></figure>
+    <figure class="fig"><span class="badge data">real data · ‖h<sup>l</sup><sub>t</sub>‖ for every token and layer</span><canvas id="heat" style="width:100%;height:230px"></canvas>
+      <figcaption id="heatCap"></figcaption></figure>
+  </div>
+</div></section>
+
+<section class="s" id="s2"><div class="sn"><b>2</b>what the workbench measures</div><div>
+  <h2>One number, decomposed exactly</h2>
+  <div class="prose">
+    <p><b>The answer (Eq. 6).</b> At the last position the model scores every next token. We keep only the response codes and renormalise. That gives a choice probability over the answer options — the same object a survey researcher would model with a multinomial logit.</p>
+    <div class="eq">P(code j | prompt) = exp(z<sub>j</sub>) / Σ<sub>k ∈ codes</sub> exp(z<sub>k</sub>)        margin = z<sub>j₊</sub> − z<sub>j₋</sub></div>
+    <p><b>The decomposition (DLA).</b> Direct logit attribution reads each part's write straight through the final layer. With the final normalisation scale held fixed, the margin is <i>exactly</i> the sum of an embedding term, 270 head terms and 46,080 neuron terms. Think of it as an accounting identity, like splitting a gap into components: every cell adds up, and nothing is left in a residual.</p>
+    <p><b>The checks.</b> Every pass is run in float64 and must close: the residual stream must equal its parts to 1e-3, the attribution must sum to the margin to 1e-2, and our forward pass must agree with Hugging Face's reference implementation to 1e-10. If a check fails, the workbench shows it in red next to the readout.</p>
+    <p><b>Base vs fine-tune.</b> The same prompt is run through two models: A (SmolLM2-135M-Instruct) and B (A plus a small LoRA adapter trained with DPO on USA survey answers). For every slice, the pair export stores the exact length ‖B − A‖ from both passes, and the size of the weight change.</p>
+  </div>
+  <div class="cols">
+    <figure class="fig"><span class="badge data">real data · Eq. 6 probabilities</span><div id="probs"></div><figcaption id="probCap"></figcaption></figure>
+    <figure class="fig"><span class="badge data">real data · where Δ margin accumulates</span><svg id="wf" viewBox="0 0 470 250" width="100%"></svg><figcaption id="wfCap"></figcaption></figure>
+  </div>
+  <div class="fig" style="margin-top:22px"><span class="badge data">real data · conservation, both passes</span><div id="cons"></div></div>
+</div></section>
+
+<section class="s" id="s3"><div class="sn"><b>3</b>how to read the views</div><div>
+  <h2>Three ways into the same pass</h2>
+  <div class="prose"><p>All three views draw the same exported arrays. Pick by the question you have. <b>Which parts decided the answer?</b> Start with the ladder. <b>Where in the prompt and the depth did the fine-tune change things?</b> Use the matrix. <b>What does the whole computation look like?</b> Use the 3D object. Every mark names its array; hover anything to see the A, B and ‖B − A‖ values side by side.</p></div>
+  <div class="shots">
+    <a href="variant-c.html?sel=23,0"><img src="shots/variant-c-1700.png" alt="ladder view"><h3>The readout ladder</h3><p>Every head and MLP at the answer position, A | B | B − A. Each column sums to its margin. The prompt is shown as text, shaded by where the selected head looks.</p></a>
+    <a href="variant-b.html?qty=attn"><img src="shots/variant-b-1700.png" alt="matrix view"><h3>The matrix</h3><p>Layer × token heatmaps for A, B and ‖B − A‖ with one shared crosshair. Boilerplate is squeezed, not dropped. Charts of the readout column below.</p></a>
+    <a href="variant-a.html"><img src="shots/variant-a-1700.png" alt="3D view"><h3>The object</h3><p>The original 3D tensor blocks, with template text collapsed into labelled gaps, a prompt map, token search and camera presets.</p></a>
+  </div>
+</div></section>
+
+<section class="s" id="s4"><div class="sn"><b>4</b>limits</div><div>
+  <h2>What this does not show</h2>
+  <div class="lim">
+    <div><b>Direct effect only</b>DLA credits each part for what it writes straight to the answer. A head that changes what a later layer does gets no credit for that indirect path. Large DLA is not the same as “causes”; that needs ablation or patching.</div>
+    <div><b>A 135M stand-in</b>SmolLM2-135M is a small model chosen so that every pass can be run in float64 and checked. The paper's models are larger. Patterns here are a method demonstration, not findings about those models.</div>
+    <div><b>Norms hide direction</b>Block heights are lengths of vectors. Two writes of equal length can point in unrelated directions; only the readout column (DLA) says which way a write pushes the answer.</div>
+    <div><b>Stored top-16 attention</b>Attention lines and prompt shading use the 16 largest weights per row; the stored mass says how much of the row they cover. One prompt per view; nothing here averages over items.</div>
+  </div>
+</div></section>
+<footer>Every figure marked “real data” is drawn in your browser from <code>workbench/exports/</code> (contract <code>sca2-workbench/capture@1</code>): pair <span id="pairId"></span>. Figures marked “illustration” bind to nothing. See <code>design/NOT_A_BINDING.md</code>.</footer>
+</div>
+<script type="module">
+import * as K from "./common.js";
+document.getElementById("base").textContent = K.BASE_CSS;
+const $ = (id) => document.getElementById(id);
+const D = await K.loadBundle(K.params()), L = D.A.m.model.n_layers, T = D.A.m.tokens.length, it = D.A.m.item;
+const ns = "http://www.w3.org/2000/svg";
+$("pairId").textContent = `${D.A.m.model.key} | ${D.B.m.model.key} · ${it.item_id}`;
+
+// HERO: running_margin (h^l_{t*}·w) per layer for A and B — the answer forming, layer by layer
+{ const W = 560, Hh = 330, pl = 46, pr = 128, pt = 34, pb = 40; let lo = 0, hi = 0;
+  for (const r of [D.A, D.B]) for (const v of r.t.running_margin.data) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+  const X = (l) => pl + l / L * (W - pl - pr), Y = (v) => pt + (hi - v) / (hi - lo) * (Hh - pt - pb);
+  let s = `<text x="${pl}" y="16" fill="#bbb" font-size="12">margin read from each layer, logit(“${it.j_plus}”) − logit(“${it.j_minus}”)</text>`;
+  for (let l = 0; l <= L; l += 5) s += `<line x1="${X(l)}" x2="${X(l)}" y1="${pt}" y2="${Hh - pb}" stroke="#1d1d1d"/><text x="${X(l)}" y="${Hh - pb + 16}" fill="#777" font-size="10.5" text-anchor="middle">L${l}</text>`;
+  s += `<line x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#444"/><text x="${pl - 8}" y="${Y(0) + 4}" fill="#777" font-size="10.5" text-anchor="end">0</text><text x="${pl - 8}" y="${Y(hi) + 4}" fill="#777" font-size="10.5" text-anchor="end">${hi.toFixed(1)}</text>`;
+  s += `<text x="${(pl + W - pr) / 2}" y="${Hh - 6}" fill="#777" font-size="10.5" text-anchor="middle">layer (the residual state entering it; the last point is the final state)</text>`;
+  for (const [r, col, name] of [[D.A, K.C.pos, "A · Instruct"], [D.B, "#e8dcc0", "B · +USA LoRA"]]) {
+    let d = ""; for (let l = 0; l <= L; l++) d += `${l ? "L" : "M"}${X(l).toFixed(1)},${Y(r.t.running_margin.get(l)).toFixed(1)}`;
+    s += `<path d="${d}" fill="none" stroke="${col}" stroke-width="2.4"/>`;
+    for (let l = 0; l <= L; l++) s += `<circle cx="${X(l)}" cy="${Y(r.t.running_margin.get(l))}" r="2" fill="${col}"/>`;
+    const m = r.m.readout.margin; s += `<text x="${X(L) + 10}" y="${Y(m) + 4}" fill="${col}" font-size="12">${name}</text><text x="${X(L) + 10}" y="${Y(m) + 18}" fill="#999" font-size="10.5">margin ${m.toFixed(2)}</text><text x="${X(L) + 10}" y="${Y(m) + 31}" fill="#999" font-size="10.5">P(“${it.j_plus}”) ${r.m.readout.probs[it.j_plus].toFixed(2)}</text>`; }
+  $("hero").innerHTML = s;
+  $("heroCap").innerHTML = `WVS ${K.esc(it.meta.question_id)}: “How much confidence do you have in charitable or humanitarian organizations?” Each dot is h<sup>l</sup><sub>t*</sub>·w (<code>running_margin</code>): the answer you would read off the residual stream after l layers. ${story()}`; }
+function story() { // computed from the arrays, not written by hand
+  const a = D.A.t.running_margin, b = D.B.t.running_margin; let best = 0, bl = 0;
+  for (let l = 0; l < L; l++) { const d = (b.get(l + 1) - b.get(l)) - (a.get(l + 1) - a.get(l)); if (Math.abs(d) > Math.abs(best)) { best = d; bl = l; } }
+  let hv = 0, hl = 0, hh = 0; for (let l = 0; l < L; l++) for (let h = 0; h < 9; h++) { const d = D.B.t.head_attr.get(l, h) - D.A.t.head_attr.get(l, h); if (Math.abs(d) > Math.abs(hv)) { hv = d; hl = l; hh = h; } }
+  return `The largest split is in layer ${bl}: A goes ${a.get(bl).toFixed(2)} → ${a.get(bl + 1).toFixed(2)}, B goes ${b.get(bl).toFixed(2)} → ${b.get(bl + 1).toFixed(2)}. The single head whose attribution changed most is L${hl} h${hh} (${K.sgn(hv)}). B ends ${K.sgn(D.P.m.d_margin, 3)} higher.`; }
+
+// ILLUSTRATION: residual stream as a vertical bus; layers add attention + MLP writes
+{ let s = ""; const bx = 230;
+  s += `<rect x="${bx - 9}" y="20" width="18" height="250" rx="4" fill="#1a2233" stroke="#3a4a6a"/><text x="${bx}" y="292" fill="#8fa6cf" font-size="11" text-anchor="middle">residual stream h (576 numbers)</text>`;
+  s += `<text x="${bx}" y="14" fill="#bbb" font-size="11" text-anchor="middle">→ final norm → scores for “1” “2” “3” “4”</text>`;
+  [[210, "layer 0"], [130, "layer 1"], [50, "layer 29"]].forEach(([y, name], i) => {
+    s += `<text x="20" y="${y + 24}" fill="#999" font-size="11">${name}</text>`;
+    for (let h = 0; h < 9; h++) s += `<rect x="${78 + h * 13}" y="${y + 6}" width="10" height="${10 + ((h * 7 + i * 3) % 5) * 3}" fill="#3c4658" stroke="#5a6780"/>`;
+    s += `<text x="78" y="${y + 50}" fill="#8fa6cf" font-size="10">9 attention heads</text><path d="M196 ${y + 18} L${bx - 10} ${y + 18}" stroke="#8fa6cf" marker-end="url(#ar)"/>`;
+    s += `<rect x="282" y="${y + 4}" width="120" height="26" fill="#2b2a26" stroke="#6e6a5e"/><text x="342" y="${y + 21}" fill="#a8a49a" font-size="10" text-anchor="middle">MLP · 1,536 neurons</text><path d="M281 ${y + 17} L${bx + 10} ${y + 17}" stroke="#a8a49a" marker-end="url(#ar2)"/>`;
+    s += `<text x="${bx + 14}" y="${y + 44}" fill="#666" font-size="12">+</text>`; if (i === 1) s += `<text x="${bx}" y="${y - 20}" fill="#555" font-size="14" text-anchor="middle">⋮</text>`; });
+  s = `<defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="#8fa6cf"/></marker><marker id="ar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="#a8a49a"/></marker></defs>` + s;
+  s += `<text x="420" y="270" fill="#6b5a2a" font-size="10" text-anchor="end" transform="rotate(0)">ILLUSTRATION</text>`;
+  $("ill").innerHTML = s; }
+
+// REAL: resid_norm heatmap (L+1 × T), log colour, shared scale over A and B, clipped at the 99th percentile
+{ const c = $("heat"), W = c.clientWidth, Hh = 230, dpr = devicePixelRatio || 1; c.width = W * dpr; c.height = Hh * dpr; const g = c.getContext("2d"); g.scale(dpr, dpr);
+  const s = K.makeScale([D.A.t.resid_norm, D.B.t.resid_norm]); const v = Array.from(D.A.t.resid_norm.data).sort((a, b) => a - b); s.vmax = v[Math.floor(v.length * .99)];
+  const segs = K.segments(D.A), top = 16, rh = (Hh - top - 4) / (L + 1), cw = W / T;
+  for (let l = 0; l <= L; l++) for (let t = 0; t < T; t++) { g.fillStyle = K.mix("#121214", "#dfe6ee", K.hOf(s, D.A.t.resid_norm.get(l, t))); g.fillRect(t * cw, top + (L - l) * rh, Math.ceil(cw), Math.ceil(rh)); }
+  g.font = "9.5px ui-monospace, Menlo, monospace"; g.textBaseline = "middle";
+  for (const sg of segs) { g.fillStyle = sg.kind === "readout" ? "#6b9bff" : sg.open ? "#2c3a52" : "#202020"; g.fillRect(sg.a * cw + .5, 0, (sg.n) * cw - 1, top - 3); }
+  $("heatCap").innerHTML = `A, ${T} tokens left to right, layer state 0 (bottom) to 30 (top). Bands above: chat template and boilerplate (grey), question and options (blue), readout t* (bright). Most of the prompt is boilerplate, which is why the workbench collapses it by default. Colour: log scale, clipped at the 99th percentile (<code>resid_norm</code>).`; }
+
+// REAL: Eq. 6 probabilities A vs B, with the Quadrant-III clamped pass as ticks
+{ $("probs").innerHTML = it.codes.map((c, i) => `<div style="display:grid;grid-template-columns:170px 1fr;gap:10px;align-items:center;margin:9px 0"><span style="font:14px var(--serif);color:#ddd">${c} · ${K.esc(it.labels[i])}</span><div>
+    ${[[D.A, K.C.pos, "A"], [D.B, "#e8dcc0", "B"]].map(([r, col, k]) => `<div style="display:grid;grid-template-columns:14px 1fr 44px;gap:6px;align-items:center;margin:2px 0"><span class="muted">${k}</span><div class="trk" style="height:9px"><div style="width:${(r.m.readout.probs[c] * 100).toFixed(1)}%;background:${col}"></div><i style="left:${(r.m.readout.probs_clamped[c] * 100).toFixed(1)}%"></i></div><span class="num">${r.m.readout.probs[c].toFixed(3)}</span></div>`).join("")}</div></div>`).join("");
+  $("probCap").innerHTML = `<code>readout.probs</code> for each model; the purple tick is the pass with Quadrant III neurons clamped. ΔP(“${it.j_plus}”) = ${K.sgn(D.P.m.d_probs[it.j_plus])}.`; }
+
+// REAL: per-layer change in DLA, attention vs MLP (B − A of attn_attr, mlp_attr; browser difference)
+{ const W = 470, Hh = 250, pl = 40, pb = 28; const da = [], dm = []; for (let l = 0; l < L; l++) { da.push(D.B.t.attn_attr.get(l) - D.A.t.attn_attr.get(l)); dm.push(D.B.t.mlp_attr.get(l) - D.A.t.mlp_attr.get(l)); }
+  const m = Math.max(...da.map(Math.abs), ...dm.map(Math.abs)), bw = (W - pl - 10) / L, y0 = (Hh - pb) / 2 + 6, k = ((Hh - pb) / 2 - 14) / m;
+  let s = `<line x1="${pl}" x2="${W - 10}" y1="${y0}" y2="${y0}" stroke="#444"/><text x="${pl - 6}" y="${y0 - k * m + 4}" fill="#777" font-size="10" text-anchor="end">+${m.toFixed(2)}</text><text x="${pl - 6}" y="${y0 + k * m + 4}" fill="#777" font-size="10" text-anchor="end">−${m.toFixed(2)}</text>`;
+  for (let l = 0; l < L; l++) { const x = pl + l * bw; s += `<rect x="${x + 1}" y="${Math.min(y0, y0 - da[l] * k)}" width="${bw / 2 - 1}" height="${Math.abs(da[l] * k)}" fill="${K.C.head}"/><rect x="${x + bw / 2}" y="${Math.min(y0, y0 - dm[l] * k)}" width="${bw / 2 - 1}" height="${Math.abs(dm[l] * k)}" fill="${K.C.mlp}"/>`;
+    if (l % 5 === 0) s += `<text x="${x + bw / 2}" y="${Hh - 8}" fill="#777" font-size="10" text-anchor="middle">L${l}</text>`; }
+  s += `<text x="${pl}" y="12" fill="#bbb" font-size="11">B − A of DLA per layer · <tspan fill="${K.C.head}">attention</tspan> · <tspan fill="${K.C.mlp}">MLP</tspan></text>`;
+  $("wf").innerHTML = s; const sum = da.reduce((a, b) => a + b, 0) + dm.reduce((a, b) => a + b, 0) + (D.B.m.readout.embed_attr - D.A.m.readout.embed_attr);
+  $("wfCap").innerHTML = `Bars are <code>attn_attr</code> and <code>mlp_attr</code> of B minus A (browser difference). Bars + embedding change sum to ${sum.toFixed(4)}; the exported Δ margin is ${D.P.m.d_margin.toFixed(4)}. ${D.P.t.d_weight_mlp.absMax() === 0 ? "The adapter changed no MLP weight (<code>d_weight_mlp</code> is exactly 0), yet MLP terms move too: their inputs changed upstream." : ""}`; }
+
+// REAL: conservation table (live numbers)
+{ const [, body] = K.learnText(D, "conservation"); $("cons").innerHTML = body; }
+</script>
+</body>
+</html>

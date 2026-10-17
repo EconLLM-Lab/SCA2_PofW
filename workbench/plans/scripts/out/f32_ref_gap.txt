@@ -1,0 +1,9 @@
+W1017 09:31:37.288000 5097 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 5461.07it/s]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 10669.14it/s]
+item | ours32 vs f64 | stockHF32 vs f64 | ours32 vs stockHF32   (relative, last-row logits)
+wvs_Q57                  2.29e-06   2.44e-06   2.87e-06
+wvs_Q43                  2.88e-06   2.57e-06   1.73e-06
+wvs_Q81                  2.75e-06   1.89e-06   2.42e-06
+bank_USA_00023ac74dac    2.64e-06   1.90e-06   2.49e-06
+exit 0

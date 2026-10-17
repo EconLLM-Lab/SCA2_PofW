@@ -1,0 +1,67 @@
+{"model": "135m", "n_params": 134515008, "build_s": 1.5}
+{"model": "135m", "mode": "f64-cpu", "T": 140, "seconds": 0.1558, "peak_rss_gb": 2.83}
+{"model": "135m", "mode": "f64-cpu", "T": 306, "seconds": 0.3362, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "f32-cpu", "T": 140, "seconds": 0.0728, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "f32-cpu", "T": 306, "seconds": 0.1021, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "f32-mps", "T": 140, "seconds": 0.0365, "peak_rss_gb": 4.32, "mps_driver_gb": 1.18}
+{"model": "135m", "mode": "f32-mps", "T": 306, "seconds": 0.054, "peak_rss_gb": 4.32, "mps_driver_gb": 2.27}
+{"model": "135m", "mode": "w16c32-cpu", "T": 140, "seconds": 0.0762, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "w16c32-cpu", "T": 306, "seconds": 0.1077, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "w16c32-mps", "T": 140, "seconds": 0.0387, "peak_rss_gb": 4.32, "mps_driver_gb": 1.2}
+{"model": "135m", "mode": "w16c32-mps", "T": 306, "seconds": 0.058, "peak_rss_gb": 4.32, "mps_driver_gb": 1.23}
+{"model": "135m", "mode": "hf-f64-cpu", "T": 140, "seconds": 0.1107, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "hf-f64-cpu", "T": 306, "seconds": 0.2112, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "hf-f32-cpu", "T": 140, "seconds": 0.0592, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "hf-f32-cpu", "T": 306, "seconds": 0.0902, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "hf-f32-mps", "T": 140, "seconds": 0.0197, "peak_rss_gb": 4.32}
+{"model": "135m", "mode": "hf-f32-mps", "T": 306, "seconds": 0.0364, "peak_rss_gb": 4.32}
+{"model": "360m", "n_params": 361821120, "build_s": 3.6}
+{"model": "360m", "mode": "f64-cpu", "T": 140, "seconds": 0.3527, "peak_rss_gb": 6.41}
+{"model": "360m", "mode": "f64-cpu", "T": 306, "seconds": 0.7621, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "f32-cpu", "T": 140, "seconds": 0.1161, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "f32-cpu", "T": 306, "seconds": 0.2314, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "f32-mps", "T": 140, "seconds": 0.0699, "peak_rss_gb": 8.64, "mps_driver_gb": 3.15}
+{"model": "360m", "mode": "f32-mps", "T": 306, "seconds": 0.1095, "peak_rss_gb": 8.64, "mps_driver_gb": 3.73}
+{"model": "360m", "mode": "w16c32-mps", "T": 140, "seconds": 0.0764, "peak_rss_gb": 8.64, "mps_driver_gb": 2.32}
+{"model": "360m", "mode": "w16c32-mps", "T": 306, "seconds": 0.117, "peak_rss_gb": 8.64, "mps_driver_gb": 2.89}
+{"model": "360m", "mode": "hf-f64-cpu", "T": 140, "seconds": 0.2312, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "hf-f64-cpu", "T": 306, "seconds": 0.4546, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "hf-f32-cpu", "T": 140, "seconds": 0.107, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "hf-f32-cpu", "T": 306, "seconds": 0.1712, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "hf-f32-mps", "T": 140, "seconds": 0.041, "peak_rss_gb": 8.64}
+{"model": "360m", "mode": "hf-f32-mps", "T": 306, "seconds": 0.0765, "peak_rss_gb": 8.64}
+{"model": "1b", "n_params": 1235814400, "build_s": 13.7}
+{"model": "1b", "mode": "f64-cpu", "T": 140, "seconds": 1.8343, "peak_rss_gb": 14.09}
+{"model": "1b", "n_params": 1235814400, "build_s": 13.9}
+{"model": "1b", "mode": "f32-cpu", "T": 140, "seconds": 0.2526, "peak_rss_gb": 12.31}
+{"model": "1b", "mode": "f32-cpu", "T": 306, "seconds": 0.5039, "peak_rss_gb": 12.31}
+{"model": "1b", "mode": "f32-mps", "T": 140, "seconds": 0.1546, "peak_rss_gb": 15.75, "mps_driver_gb": 7.49}
+{"model": "1b", "mode": "f32-mps", "T": 306, "seconds": 0.2618, "peak_rss_gb": 15.75, "mps_driver_gb": 9.87}
+{"model": "1b", "mode": "w16c32-mps", "T": 140, "seconds": 0.2261, "peak_rss_gb": 15.75, "mps_driver_gb": 6.45}
+{"model": "1b", "mode": "w16c32-mps", "T": 306, "seconds": 0.3013, "peak_rss_gb": 15.75, "mps_driver_gb": 7.76}
+{"model": "1b", "mode": "hf-f32-cpu", "T": 140, "seconds": 0.2497, "peak_rss_gb": 15.75}
+{"model": "1b", "mode": "hf-f32-cpu", "T": 306, "seconds": 0.393, "peak_rss_gb": 15.75}
+{"model": "1b", "mode": "hf-f32-mps", "T": 140, "seconds": 0.1306, "peak_rss_gb": 15.75}
+{"model": "1b", "mode": "hf-f32-mps", "T": 306, "seconds": 0.2388, "peak_rss_gb": 15.75}
+{"model": "8bv-L1", "n_params": 480260096, "build_s": 4.8}
+{"model": "8bv-L1", "mode": "f32-cpu", "T": 140, "seconds": 0.0577, "peak_rss_gb": 8.13}
+{"model": "8bv-L1", "mode": "f32-cpu", "T": 306, "seconds": 0.0833, "peak_rss_gb": 8.62}
+{"model": "8bv-L1", "mode": "f32-mps", "T": 140, "seconds": 0.0408, "peak_rss_gb": 8.75, "mps_driver_gb": 3.23}
+{"model": "8bv-L1", "mode": "f32-mps", "T": 306, "seconds": 0.0627, "peak_rss_gb": 8.76, "mps_driver_gb": 3.23}
+{"model": "8bv-L1", "mode": "w16c32-mps", "T": 140, "seconds": 0.0514, "peak_rss_gb": 9.05, "mps_driver_gb": 2.16}
+{"model": "8bv-L1", "mode": "w16c32-mps", "T": 306, "seconds": 0.0759, "peak_rss_gb": 9.05, "mps_driver_gb": 3.23}
+{"model": "8bv-L1", "mode": "hf-f32-cpu", "T": 140, "seconds": 0.0547, "peak_rss_gb": 9.06}
+{"model": "8bv-L1", "mode": "hf-f32-cpu", "T": 306, "seconds": 0.1007, "peak_rss_gb": 9.06}
+{"model": "8bv-L1", "mode": "hf-f32-mps", "T": 140, "seconds": 0.0302, "peak_rss_gb": 9.06}
+{"model": "8bv-L1", "mode": "hf-f32-mps", "T": 306, "seconds": 0.0574, "peak_rss_gb": 9.06}
+{"model": "8bv-L2", "n_params": 698372096, "build_s": 6.5}
+{"model": "8bv-L2", "mode": "f32-cpu", "T": 140, "seconds": 0.1228, "peak_rss_gb": 11.81}
+{"model": "8bv-L2", "mode": "f32-cpu", "T": 306, "seconds": 0.2084, "peak_rss_gb": 12.29}
+{"model": "8bv-L2", "mode": "f32-mps", "T": 140, "seconds": 0.0754, "peak_rss_gb": 12.29, "mps_driver_gb": 3.23}
+{"model": "8bv-L2", "mode": "f32-mps", "T": 306, "seconds": 0.131, "peak_rss_gb": 12.29, "mps_driver_gb": 4.3}
+{"model": "8bv-L2", "mode": "w16c32-mps", "T": 140, "seconds": 0.1073, "peak_rss_gb": 12.29, "mps_driver_gb": 3.23}
+{"model": "8bv-L2", "mode": "w16c32-mps", "T": 306, "seconds": 0.1441, "peak_rss_gb": 12.29, "mps_driver_gb": 4.3}
+{"model": "8bv-L2", "mode": "hf-f32-cpu", "T": 140, "seconds": 0.1188, "peak_rss_gb": 12.29}
+{"model": "8bv-L2", "mode": "hf-f32-cpu", "T": 306, "seconds": 0.1553, "peak_rss_gb": 12.29}
+{"model": "8bv-L2", "mode": "hf-f32-mps", "T": 140, "seconds": 0.0414, "peak_rss_gb": 12.29}
+{"model": "8bv-L2", "mode": "hf-f32-mps", "T": 306, "seconds": 0.0802, "peak_rss_gb": 12.29}

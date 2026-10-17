@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Variant C · the readout ladder — SCA2 workbench layout v2</title>
+<style id="base"></style>
+<style>
+body{display:grid;grid-template-rows:auto 1fr;height:100vh}
+#bar{display:flex;gap:8px 14px;align-items:center;flex-wrap:wrap;padding:7px 12px;border-bottom:1px solid var(--line);background:var(--card)}
+#bar .brand{font-weight:600}#bar .grp{display:flex;gap:4px;align-items:center;color:var(--muted)}#bar a{color:var(--muted)}
+main{display:grid;grid-template-columns:minmax(330px,27%) 1fr 340px;min-height:0}
+#prompt{overflow-y:auto;border-right:1px solid var(--line);padding:10px 14px;background:#0e0e0e}
+#ladder{overflow:auto;padding:8px 10px;position:relative}
+#side{overflow-y:auto;border-left:1px solid var(--line);padding:10px;background:#0f0f0f}
+h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.ptext{font:13.5px/1.9 var(--serif);color:#d8d8d8;white-space:pre-wrap;word-break:break-word}
+.tk{border-radius:3px;padding:1px 0;cursor:default}.tk:hover{outline:1px solid #ffcf5c}.tk.hit{outline:1.5px solid #ffcf5c}
+.tk.ro{outline:2px solid var(--pos);padding:1px 3px}
+.nl{color:#444;font-family:var(--mono);font-size:10px}
+.pill{display:inline-block;font:11px/1.6 var(--mono);color:#9b9b9b;border:1px dashed #3a3a3a;border-radius:10px;padding:0 8px;margin:2px 2px;cursor:pointer;white-space:nowrap}
+.pill:hover{border-color:#777;color:#ddd}.pill b{color:var(--text);font-weight:500}
+#plegend{font:11px var(--mono);color:var(--muted);margin:8px 0 10px}
+svg text{font:10.5px ui-monospace,Menlo,monospace;fill:#8a8a8a}
+.cell{cursor:pointer}.cell:hover{stroke:#ffcf5c;stroke-width:1.5}
+#ptip{position:fixed;pointer-events:none;background:#000e;border:1px solid var(--line);border-radius:4px;padding:4px 7px;font-size:11.5px;white-space:pre;z-index:9}
+</style>
+</head>
+<body>
+<header id="bar">
+  <span class="brand">SCA2 workbench</span><a href="landing.html">about</a>
+  <span class="grp">pass <button data-pass="0">normal</button><button data-pass="1">Quadrant III clamped</button></span>
+  <span class="grp">shade prompt by <button data-sh="a">A</button><button data-sh="b">B</button><button data-sh="d">B − A</button></span>
+  <span class="grp">find <input id="q" placeholder="word in the prompt" autocomplete="off" style="width:150px" /></span>
+  <span class="muted" id="who"></span>
+</header>
+<main>
+  <section id="prompt"><h4><span>The prompt, as the model read it</span><button class="lm" data-learn="segments">learn more</button></h4><div id="plegend"></div><div id="ptext" class="ptext"></div></section>
+  <section id="ladder"><h4><span>Where the margin comes from · every head and MLP at the readout t*</span><button class="lm" data-learn="dla">learn more</button></h4><svg id="lad"></svg></section>
+  <aside id="side"><div id="ro"></div><div id="insp"></div></aside>
+</main>
+<div id="ptip" hidden></div>
+<script type="module">
+import * as K from "./common.js";
+document.getElementById("base").textContent = K.BASE_CSS;
+const $ = (id) => document.getElementById(id);
+const Q = K.params(), U = Q.p, D = await K.loadBundle(Q); K.wireLearn(D);
+const L = D.A.m.model.n_layers, H = D.A.m.model.n_heads, T = D.A.m.tokens.length, ro = D.A.m.readout.position, it = D.A.m.item;
+$("who").textContent = `A ${D.A.m.model.label} · B ${D.B.m.model.label} · ${it.item_id}`;
+const segs = K.segments(D.A);
+let clamp = U.get("clamp") === "1", shade = U.get("shade") || "a", hov = null, pin = null, query = "";
+const S = (r) => ({ head: clamp ? r.t.head_attr_clamped : r.t.head_attr, mlp: clamp ? r.t.mlp_attr_clamped : r.t.mlp_attr, rm: clamp ? r.t.running_margin_clamped : r.t.running_margin,
+  embed: clamp ? r.m.readout.embed_attr_clamped : r.m.readout.embed_attr, margin: clamp ? r.m.readout.margin_clamped : r.m.readout.margin });
+
+// ---------------- the ladder (SVG). Each cell = one DLA value; the B − A group is a browser difference of two run arrays.
+function ladder() {
+  const a = S(D.A), b = S(D.B), W = $("ladder").clientWidth - 24, Hh = $("ladder").clientHeight - 40;
+  const top = 46, rowH = Math.max(12, Math.min(22, (Hh - top - 90) / (L + 1))), lab = 34, gap = 22, plotW = Math.max(150, W * .2);
+  const gw = (W - lab - plotW - gap * 3) / 3, cw = gw / (H + 2.6), mw = cw * 2.2;
+  const vmax = Math.max(a.head.absMax(), b.head.absMax(), a.mlp.absMax(), b.mlp.absMax());
+  const groups = [["A", (l, h) => (h < 0 ? a.mlp.get(l) : a.head.get(l, h)), a.embed], ["B", (l, h) => (h < 0 ? b.mlp.get(l) : b.head.get(l, h)), b.embed], ["B − A", (l, h) => (h < 0 ? b.mlp.get(l) - a.mlp.get(l) : b.head.get(l, h) - a.head.get(l, h)), b.embed - a.embed]];
+  const y = (l) => top + (L - 1 - l) * rowH; let s = "";
+  groups.forEach(([name, f, emb], gi) => { const x0 = lab + gi * (gw + gap);
+    let sum = emb; for (let l = 0; l < L; l++) { sum += f(l, -1); for (let h = 0; h < H; h++) sum += f(l, h); }
+    const target = gi === 0 ? a.margin : gi === 1 ? b.margin : b.margin - a.margin;
+    s += `<text x="${x0}" y="14" style="fill:#e6e6e6;font-weight:600">${name}</text><text x="${x0}" y="28">heads 0–8 · MLP</text>`;
+    const okk = Math.abs(sum - target) < 1e-2; s += `<text x="${x0}" y="${y(-1) + 6 + rowH + 16}" style="fill:${okk ? "#6be0a0" : "#ff6b6b"}">${okk ? "✓" : "✗"} Σ cells + embed = ${sum.toFixed(3)}</text><text x="${x0}" y="${y(-1) + 6 + rowH + 30}">${gi === 2 ? "Δ margin" : "margin"} ${target.toFixed(3)}${gi === 2 ? " (B−A, browser sum)" : " (export)"}</text>`;
+    for (let l = 0; l < L; l++) { for (let h = -1; h < H; h++) { const v = f(l, h), x = h < 0 ? x0 + H * cw + cw * .4 : x0 + h * cw;
+        const on = (sel) => sel && sel.l === l && (sel.h ?? -1) === h; const st = on(pin) ? 'stroke="#fff" stroke-width="2"' : on(hov) ? 'stroke="#ffcf5c" stroke-width="1.5"' : "";
+        s += `<rect class="cell" data-l="${l}" data-h="${h}" data-g="${gi}" x="${x.toFixed(1)}" y="${(y(l) + 1).toFixed(1)}" width="${((h < 0 ? mw : cw) - 2).toFixed(1)}" height="${(rowH - 2).toFixed(1)}" rx="2" fill="${K.diverging(v, vmax)}" ${st}><title>${name} ${h < 0 ? "MLP" : "head " + h} L${l}: DLA ${K.fmt(v, 4)}</title></rect>`; } }
+    const ye = y(-1) + 6; s += `<rect class="cell" data-l="-1" data-h="-2" data-g="${gi}" x="${x0}" y="${ye}" width="${(H * cw - 2).toFixed(1)}" height="${(rowH - 2).toFixed(1)}" rx="2" fill="${K.diverging(emb, vmax)}"><title>embedding term ${K.fmt(emb, 4)}</title></rect><text x="${x0 + H * cw + cw * .4}" y="${ye + rowH * .7}">embed</text>`;
+  });
+  for (let l = 0; l < L; l++) if (l % 5 === 0 || l === L - 1) s += `<text x="0" y="${y(l) + rowH * .7}" style="fill:${l % 5 ? "#666" : "#bbb"}">L${l}</text>`;
+  // running margin h^l·w per layer, A and B (and in the current pass), as a vertical line chart; x shared
+  const px0 = lab + 3 * (gw + gap), pw = plotW - 10; let lo = 0, hi = 0; for (const r of [a.rm, b.rm]) for (const v of r.data) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+  const X = (v) => px0 + (v - lo) / (hi - lo) * pw, Y = (l) => y(l) + rowH; // state l enters layer l: drawn at the bottom edge of row l
+  s += `<text x="${px0}" y="14" style="fill:#e6e6e6;font-weight:600">margin by layer</text><text x="${px0}" y="28">h<tspan baseline-shift="super" font-size="8">l</tspan>·w · A blue, B sand</text>`;
+  s += `<line x1="${X(0)}" x2="${X(0)}" y1="${top}" y2="${y(-1)}" stroke="#444"/><text x="${X(0) - 3}" y="${y(-1) + 22}" text-anchor="middle">0</text><text x="${px0 + pw}" y="${y(-1) + 22}" text-anchor="end">${hi.toFixed(1)}</text>`;
+  for (const [r, col] of [[a.rm, K.C.pos], [b.rm, "#c9c3b4"]]) { let d = ""; for (let l = 0; l <= L; l++) d += `${l ? "L" : "M"}${X(r.get(l)).toFixed(1)},${(l === L ? top : Y(l)).toFixed(1)}`; s += `<path d="${d}" fill="none" stroke="${col}" stroke-width="2"/>`; s += `<circle cx="${X(r.get(L))}" cy="${top}" r="3.5" fill="${col}"/>`; }
+  if (hov || pin) { const l = (pin || hov).l; if (l >= 0) s += `<rect x="${lab - 2}" y="${y(l)}" width="${W - lab}" height="${rowH}" fill="none" stroke="#ffffff30"/>`; }
+  const svg = $("lad"); svg.setAttribute("width", W); svg.setAttribute("height", y(-1) + rowH + 50); svg.innerHTML = s;
+}
+$("lad").addEventListener("mousemove", (e) => { const c = e.target.closest(".cell"); const s = c ? { l: +c.dataset.l, h: +c.dataset.h } : null;
+  if (JSON.stringify(s) === JSON.stringify(hov)) return; hov = s; ladder(); if (!pin) { s ? inspect(s, false) : idle(); prompt(); } });
+$("lad").addEventListener("click", (e) => { const c = e.target.closest(".cell"); if (!c) return; pin = { l: +c.dataset.l, h: +c.dataset.h }; ladder(); inspect(pin, true); prompt(); });
+addEventListener("keydown", (e) => { if (e.key === "Escape") { pin = null; ladder(); idle(); prompt(); } });
+
+// ---------------- the prompt as text; shaded by the selected head's attention row at t* (attn_topk_*)
+function weights(run, l, h) { const w = new Map(); for (const k of K.topKeys(run, l, h, ro, 16)) w.set(k.key, k.w); return w; }
+function prompt() {
+  const sel = pin || hov, head = sel && sel.h >= 0 ? sel : null;
+  const wa = head ? weights(D.A, head.l, head.h) : null, wb = head ? weights(D.B, head.l, head.h) : null;
+  const val = (t) => (!head ? null : shade === "a" ? wa.get(t) || 0 : shade === "b" ? wb.get(t) || 0 : (wb.get(t) || 0) - (wa.get(t) || 0));
+  const bg = (v) => (v == null || v === 0 ? "transparent" : shade === "d" ? (v > 0 ? `rgba(255,207,92,${Math.min(.9, Math.sqrt(Math.abs(v)))})` : `rgba(107,155,255,${Math.min(.9, Math.sqrt(Math.abs(v)))})`) : `rgba(255,255,255,${Math.min(.85, .08 + Math.sqrt(v) * .9)})`);
+  const fg = (v) => (v != null && shade !== "d" && v > .25 ? "#111" : "");
+  $("plegend").innerHTML = head ? `shading = attention from t* of <b style="color:#ddd">L${head.l} h${head.h}</b> in ${shade === "a" ? "A" : shade === "b" ? "B" : "B − A (gold = B looks more, blue = less)"} · stored top-16 keys (<code>attn_topk_val</code>); a pill shows the sum over its tokens`
+    : `hover or click a head in the ladder to see where it looks from the readout. Cmd-F works here: this is the text.`;
+  let html = "";
+  for (const sg of segs) {
+    if (!sg.open) { let sum = 0; if (head) for (let t = sg.a; t <= sg.b; t++) sum += val(t); const st = head && Math.abs(sum) > .005 ? `style="background:${bg(sum)};color:${fg(sum) || "#ddd"}"` : "";
+      const hit = query && sg.text.toLowerCase().includes(query) ? "outline:1.5px solid #ffcf5c;" : "";
+      html += `<span class="pill" data-seg="${sg.a}" ${st.replace('style="', `style="${hit}`) || (hit ? `style="${hit}"` : "")}>‹${K.esc(sg.label)} · <b>${sg.n}</b> tok${head && Math.abs(sum) > .005 ? ` · Σ ${sum.toFixed(2)}` : ""}›</span>${sg.kind === "template" ? "" : "\n"}`; continue; }
+    for (let t = sg.a; t <= sg.b; t++) { const tx = D.A.m.tokens[t].text, v = val(t), cls = `tk${t === ro ? " ro" : ""}${query && tx.toLowerCase().includes(query) ? " hit" : ""}`;
+      const show = t === ro ? "t*" : tx === "\n" ? '<span class="nl">⏎</span>\n' : K.esc(tx);
+      html += `<span class="${cls}" data-t="${t}" style="background:${bg(v)};${fg(v) ? "color:" + fg(v) : ""}">${show}</span>`; }
+    if (sg.kind !== "readout" && sg.open && segs.indexOf(sg) > 0) html += "";
+  }
+  $("ptext").innerHTML = html;
+}
+$("ptext").addEventListener("click", (e) => { const p = e.target.closest(".pill"); if (!p) return; const sg = segs.find((s) => s.a === +p.dataset.seg); sg.open = true; prompt(); });
+$("ptext").addEventListener("mousemove", (e) => { const tk = e.target.closest(".tk"), tip = $("ptip"); if (!tk) { tip.hidden = true; return; } const t = +tk.dataset.t, sel = pin || hov;
+  let s = `t=${t} ${K.tokText(D.A.m.tokens[t].text)}`; if (sel && sel.h >= 0) { const a = weights(D.A, sel.l, sel.h).get(t) || 0, b = weights(D.B, sel.l, sel.h).get(t) || 0; s += `\nL${sel.l} h${sel.h} attention from t*:  A ${a.toFixed(3)}  B ${b.toFixed(3)}  B−A ${K.sgn(b - a)}`; }
+  s += `\n‖h‖ final state:  A ${K.fmt(D.A.t.resid_norm.get(L, t), 3)}  B ${K.fmt(D.B.t.resid_norm.get(L, t), 3)}  ‖Δ‖ ${K.fmt(D.P.t.d_resid_norm.get(L, t), 3)}`;
+  tip.textContent = s; tip.hidden = false; tip.style.left = e.clientX + 14 + "px"; tip.style.top = e.clientY + 14 + "px"; });
+$("ptext").addEventListener("mouseleave", () => ($("ptip").hidden = true));
+$("q").oninput = () => { query = $("q").value.toLowerCase().trim(); if (query.length < 2) query = ""; for (const sg of segs) if (query && sg.text.toLowerCase().includes(query) && sg.kind !== "template") sg.open = true; prompt(); const h = document.querySelector(".tk.hit"); h?.scrollIntoView({ block: "center" }); };
+
+// ---------------- side panel
+function inspect(s, pinned) {
+  if (s.l < 0) { $("insp").innerHTML = `<div class="card"><div class="card-h"><span>Embedding term</span><button class="lm" data-learn="dla">learn more</button></div><table class="cmp"><tr><th></th><th>A</th><th>B</th><th>B−A</th></tr><tr><td>DLA</td><td class="num">${K.fmt(S(D.A).embed)}</td><td class="num">${K.fmt(S(D.B).embed)}</td><td class="num d"><span class="calc">${K.sgn(S(D.B).embed - S(D.A).embed)}</span></td></tr></table></div>`; return; }
+  const sl = s.h >= 0 ? { kind: "head", l: s.l, h: s.h, t: ro } : { kind: "mlp", l: s.l, t: ro };
+  let h = K.inspectorHTML(D, sl, { pinned });
+  if (clamp) h = h.replace("</table>", `<tr title="${s.h >= 0 ? "head_attr_clamped" : "mlp_attr_clamped"}"><td>DLA, clamped pass</td><td class="num">${K.fmt(s.h >= 0 ? S(D.A).head.get(s.l, s.h) : S(D.A).mlp.get(s.l))}</td><td class="num">${K.fmt(s.h >= 0 ? S(D.B).head.get(s.l, s.h) : S(D.B).mlp.get(s.l))}</td><td></td></tr></table>`);
+  $("insp").innerHTML = h;
+}
+function idle() { $("insp").innerHTML = `<div class="card"><div class="card-h"><span>Inspector</span><button class="lm" data-learn="head">what is a head?</button></div><p class="muted" style="margin:0">Each cell of the ladder is one head (or MLP) and how hard it pushes the answer: blue toward “${K.esc(it.labels[it.codes.indexOf(it.j_plus)])}”, orange toward “${K.esc(it.labels[it.codes.indexOf(it.j_minus)])}”. Each group adds up to its margin exactly (green line above it). Hover a cell to compare A and B here and to see, on the left, which words that head reads.</p></div>`; }
+
+document.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => { clamp = b.dataset.pass === "1"; sync(); ladder(); if (pin) inspect(pin, true); }));
+document.querySelectorAll("[data-sh]").forEach((b) => (b.onclick = () => { shade = b.dataset.sh; sync(); prompt(); }));
+function sync() { document.querySelectorAll("[data-pass]").forEach((b) => b.classList.toggle("on", (b.dataset.pass === "1") === clamp)); document.querySelectorAll("[data-sh]").forEach((b) => b.classList.toggle("on", b.dataset.sh === shade)); }
+addEventListener("resize", ladder);
+$("ro").innerHTML = K.readoutHTML(D); idle(); sync(); ladder(); prompt();
+if (U.get("sel")) { const [l, h] = U.get("sel").split(",").map(Number); pin = { l, h }; ladder(); inspect(pin, true); prompt(); }
+if (U.get("q")) { $("q").value = U.get("q"); $("q").oninput(); }
+if (U.get("learn")) K.openLearn(D, U.get("learn"));
+</script>
+</body>
+</html>

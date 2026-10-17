@@ -1,0 +1,2949 @@
+{
+ "console_errors": [],
+ "tabs": {
+  "smol_inst|smol_inst_usa_e3|wvs_Q81": {
+   "C": {
+    "cell": "12,3",
+    "titles": [
+     "A · original · layer 12 · head 3 · push on the margin −0.01676",
+     "B · fine-tuned · layer 12 · head 3 · push on the margin −0.02385",
+     "B − A · layer 12 · head 3 · push on the margin −0.007094 (from the pair export (d_head_attr, d_mlp_attr))"
+    ],
+    "hovers": [
+     {
+      "at": "A · original · layer 12 · head 3 · push on the margin −0.01676",
+      "rows": [
+       [
+        "Write size ‖o‖",
+        "42.29",
+        "33.53",
+        "26.56"
+       ],
+       [
+        "Push on the margin (DLA)",
+        "-0.7006",
+        "0.1933",
+        "+0.894"
+       ],
+       [
+        "Attention covered by the top 16",
+        "0.9558",
+        "0.9131",
+        "−0.0427"
+       ]
+      ],
+      "text": "Head 0 · layer 23 pinnedlearn more Starting point: the head whose push on the margin changed most (B − A). Click anywhere to change it. token 151: “·” answer position (t*) ABChange Write size ‖o‖42.2933.5326.56Push on the margin (DLA)-0.70060.1933+0.894Attention covered by the top 160.95580.9131−0.0427Where this head looks from the answer position: its largest attention weights (weight · token num",
+      "tip": null
+     },
+     {
+      "at": "B · fine-tuned · layer 12 · head 3 · push on the margin −0.02385",
+      "rows": [
+       [
+        "Write size ‖o‖",
+        "42.29",
+        "33.53",
+        "26.56"
+       ],
+       [
+        "Push on the margin (DLA)",
+        "-0.7006",
+        "0.1933",
+        "+0.894"
+       ],
+       [
+        "Attention covered by the top 16",
+        "0.9558",
+        "0.9131",
+        "−0.0427"
+       ]
+      ],
+      "text": "Head 0 · layer 23 pinnedlearn more Starting point: the head whose push on the margin changed most (B − A). Click anywhere to change it. token 151: “·” answer position (t*) ABChange Write size ‖o‖42.2933.5326.56Push on the margin (DLA)-0.70060.1933+0.894Attention covered by the top 160.95580.9131−0.0427Where this head looks from the answer position: its largest attention weights (weight · token num",
+      "tip": null
+     },
+     {
+      "at": "B − A · layer 12 · head 3 · push on the margin −0.007094 (from the pair export (d_head_attr, d_mlp_attr))",
+      "rows": [
+       [
+        "Write size ‖o‖",
+        "42.29",
+        "33.53",
+        "26.56"
+       ],
+       [
+        "Push on the margin (DLA)",
+        "-0.7006",
+        "0.1933",
+        "+0.894"
+       ],
+       [
+        "Attention covered by the top 16",
+        "0.9558",
+        "0.9131",
+        "−0.0427"
+       ]
+      ],
+      "text": "Head 0 · layer 23 pinnedlearn more Starting point: the head whose push on the margin changed most (B − A). Click anywhere to change it. token 151: “·” answer position (t*) ABChange Write size ‖o‖42.2933.5326.56Push on the margin (DLA)-0.70060.1933+0.894Attention covered by the top 160.95580.9131−0.0427Where this head looks from the answer position: its largest attention weights (weight · token num",
+      "tip": null
+     }
+    ],
+    "pinned": {
+     "url": "?tab=c&a=smol_inst&b=smol_inst_usa_e3&item=wvs_Q81&sel=12,3",
+     "rows": [
+      [
+       "Write size ‖o‖",
+       "4.819",
+       "4.977",
+       "0.9820"
+      ],
+      [
+       "Push on the margin (DLA)",
+       "-0.01676",
+       "-0.02385",
+       "−0.00709"
+      ],
+      [
+       "Attention covered by the top 16",
+       "0.9939",
+       "0.9950",
+       "+0.00106"
+      ]
+     ],
+     "text": "Head 3 · layer 12 pinnedlearn more token 151: “·” answer position (t*) ABChange Write size ‖o‖4.8194.9770.9820Push on the margin (DLA)-0.01676-0.02385−0.00709Attention covered by the top 160.99390.9950+0.00106Where this head looks from the answer position: its largest attention weights (weight · token number)A0.61 · #0 “<|im_start|>”0.15 · #150 “⏎”0.12 · #151 “·”0.07 · #146 “⏎”0.02 · #144 “:”B0.65",
+     "tip": null
+    }
+   },
+   "B_resid": [
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "597.7",
+       "614.3",
+       "138.0"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖597.7614.3138.0Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "228.7",
+       "220.7",
+       "32.36"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖228.7220.732.36Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "114.0",
+       "118.2",
+       "11.64"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖114.0118.211.64Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "760.1",
+       "747.9",
+       "47.89"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 61: “·do” ABChange Running-state size ‖h‖760.1747.947.89Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "224.4",
+       "222.1",
+       "16.49"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 61: “·do” ABChange Running-state size ‖h‖224.4222.116.49Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "134.0",
+       "134.2",
+       "6.180"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 61: “·do” ABChange Running-state size ‖h‖134.0134.26.180Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "743.5",
+       "735.3",
+       "58.31"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 73: “·of” ABChange Running-state size ‖h‖743.5735.358.31Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "208.9",
+       "206.6",
+       "17.46"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 73: “·of” ABChange Running-state size ‖h‖208.9206.617.46Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "117.1",
+       "115.1",
+       "5.734"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 73: “·of” ABChange Running-state size ‖h‖117.1115.15.734Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "712.8",
+       "692.3",
+       "71.33"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 85: “·confidence” ABChange Running-state size ‖h‖712.8692.371.33Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "251.6",
+       "248.6",
+       "19.52"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 85: “·confidence” ABChange Running-state size ‖h‖251.6248.619.52Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "164.0",
+       "163.3",
+       "6.488"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 85: “·confidence” ABChange Running-state size ‖h‖164.0163.36.488Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "656.9",
+       "650.4",
+       "59.31"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 104: “1” ABChange Running-state size ‖h‖656.9650.459.31Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "224.8",
+       "221.4",
+       "15.94"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 104: “1” ABChange Running-state size ‖h‖224.8221.415.94Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "124.4",
+       "124.4",
+       "5.433"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 104: “1” ABChange Running-state size ‖h‖124.4124.45.433Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": null,
+     "text": "Compare A and B for one cellHover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "115.4",
+       "116.5",
+       "10.68"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖115.4116.510.68Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "115.4",
+       "116.5",
+       "10.68"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖115.4116.510.68Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "497.1",
+       "492.3",
+       "27.58"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 61: “·do” ABChange Running-state size ‖h‖497.1492.327.58Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "139.7",
+       "139.7",
+       "6.692"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 61: “·do” ABChange Running-state size ‖h‖139.7139.76.692Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "139.7",
+       "139.7",
+       "6.692"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 61: “·do” ABChange Running-state size ‖h‖139.7139.76.692Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "465.8",
+       "455.3",
+       "36.13"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 73: “·of” ABChange Running-state size ‖h‖465.8455.336.13Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "125.8",
+       "123.9",
+       "6.253"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 73: “·of” ABChange Running-state size ‖h‖125.8123.96.253Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "125.8",
+       "123.9",
+       "6.253"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 73: “·of” ABChange Running-state size ‖h‖125.8123.96.253Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "403.8",
+       "389.3",
+       "35.76"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 85: “·confidence” ABChange Running-state size ‖h‖403.8389.335.76Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "158.8",
+       "158.1",
+       "6.572"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 85: “·confidence” ABChange Running-state size ‖h‖158.8158.16.572Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "158.8",
+       "158.1",
+       "6.572"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 85: “·confidence” ABChange Running-state size ‖h‖158.8158.16.572Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "394.7",
+       "389.8",
+       "32.14"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 104: “1” ABChange Running-state size ‖h‖394.7389.832.14Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "133.7",
+       "132.8",
+       "6.245"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 104: “1” ABChange Running-state size ‖h‖133.7132.86.245Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "133.7",
+       "132.8",
+       "6.245"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 104: “1” ABChange Running-state size ‖h‖133.7132.86.245Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    }
+   ],
+   "B_mlp": [
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "169.2",
+       "178.3",
+       "60.34"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "381",
+       "379",
+       "−2.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 20: “⏎” ABChange Write size ‖m‖169.2178.360.34Quadrant III neurons (count)381379−2.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "54.03",
+       "53.78",
+       "14.18"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "369",
+       "366",
+       "−3.00"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 20: “⏎” ABChange Write size ‖m‖54.0353.7814.18Quadrant III neurons (count)369366−3.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "31.97",
+       "33.89",
+       "8.024"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "499",
+       "493",
+       "−6.00"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 20: “⏎” ABChange Write size ‖m‖31.9733.898.024Quadrant III neurons (count)499493−6.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "176.9",
+       "175.3",
+       "17.26"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "347",
+       "353",
+       "+6.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 61: “·do” ABChange Write size ‖m‖176.9175.317.26Quadrant III neurons (count)347353+6.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "59.63",
+       "59.77",
+       "7.128"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "339",
+       "335",
+       "−4.00"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 61: “·do” ABChange Write size ‖m‖59.6359.777.128Quadrant III neurons (count)339335−4.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "39.85",
+       "40.43",
+       "3.739"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "507",
+       "510",
+       "+3.00"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 61: “·do” ABChange Write size ‖m‖39.8540.433.739Quadrant III neurons (count)507510+3.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it come"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "135.9",
+       "140.7",
+       "17.85"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "285",
+       "290",
+       "+5.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 73: “·of” ABChange Write size ‖m‖135.9140.717.85Quadrant III neurons (count)285290+5.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "41.27",
+       "40.75",
+       "6.222"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "308",
+       "291",
+       "−17.0"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 73: “·of” ABChange Write size ‖m‖41.2740.756.222Quadrant III neurons (count)308291−17.0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "30.71",
+       "30.10",
+       "3.683"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "451",
+       "451",
+       "+0"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 73: “·of” ABChange Write size ‖m‖30.7130.103.683Quadrant III neurons (count)451451+0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes f"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "98.47",
+       "103.0",
+       "18.29"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "365",
+       "370",
+       "+5.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 85: “·confidence” ABChange Write size ‖m‖98.47103.018.29Quadrant III neurons (count)365370+5.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright whe"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "61.51",
+       "60.78",
+       "10.38"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "387",
+       "375",
+       "−12.0"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 85: “·confidence” ABChange Write size ‖m‖61.5160.7810.38Quadrant III neurons (count)387375−12.0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright whe"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "39.69",
+       "39.15",
+       "3.233"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "474",
+       "481",
+       "+7.00"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 85: “·confidence” ABChange Write size ‖m‖39.6939.153.233Quadrant III neurons (count)474481+7.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "125.1",
+       "129.3",
+       "21.59"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "372",
+       "363",
+       "−9.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 104: “1” ABChange Write size ‖m‖125.1129.321.59Quadrant III neurons (count)372363−9.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it come"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "65.24",
+       "66.93",
+       "7.538"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "328",
+       "328",
+       "+0"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 104: “1” ABChange Write size ‖m‖65.2466.937.538Quadrant III neurons (count)328328+0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes f"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "30.07",
+       "29.77",
+       "3.096"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "561",
+       "554",
+       "−7.00"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 104: “1” ABChange Write size ‖m‖30.0729.773.096Quadrant III neurons (count)561554−7.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes"
+    },
+    {
+     "map": "2",
+     "rows": null,
+     "text": "Compare A and B for one cellHover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "27.72",
+       "27.91",
+       "7.709"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "411",
+       "411",
+       "+0"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 20: “⏎” ABChange Write size ‖m‖27.7227.917.709Quadrant III neurons (count)411411+0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes fr"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "31.49",
+       "31.18",
+       "0.4478"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "305",
+       "292",
+       "−13.0"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 20: “⏎” ABChange Write size ‖m‖31.4931.180.4478Quadrant III neurons (count)305292−13.0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "85.42",
+       "83.01",
+       "7.992"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "432",
+       "437",
+       "+5.00"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 61: “·do” ABChange Write size ‖m‖85.4283.017.992Quadrant III neurons (count)432437+5.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "40.41",
+       "40.00",
+       "4.373"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "505",
+       "508",
+       "+3.00"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 61: “·do” ABChange Write size ‖m‖40.4140.004.373Quadrant III neurons (count)505508+3.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "41.88",
+       "40.81",
+       "1.249"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "289",
+       "284",
+       "−5.00"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 61: “·do” ABChange Write size ‖m‖41.8840.811.249Quadrant III neurons (count)289284−5.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it come"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "68.52",
+       "71.30",
+       "10.41"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "400",
+       "388",
+       "−12.0"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 73: “·of” ABChange Write size ‖m‖68.5271.3010.41Quadrant III neurons (count)400388−12.0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "24.48",
+       "24.53",
+       "3.386"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "466",
+       "468",
+       "+2.00"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 73: “·of” ABChange Write size ‖m‖24.4824.533.386Quadrant III neurons (count)466468+2.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "29.14",
+       "28.70",
+       "0.5356"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "286",
+       "279",
+       "−7.00"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 73: “·of” ABChange Write size ‖m‖29.1428.700.5356Quadrant III neurons (count)286279−7.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it com"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "89.84",
+       "91.98",
+       "12.89"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "421",
+       "435",
+       "+14.0"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 85: “·confidence” ABChange Write size ‖m‖89.8491.9812.89Quadrant III neurons (count)421435+14.0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright whe"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "36.32",
+       "36.60",
+       "3.135"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "512",
+       "520",
+       "+8.00"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 85: “·confidence” ABChange Write size ‖m‖36.3236.603.135Quadrant III neurons (count)512520+8.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright whe"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "63.76",
+       "62.39",
+       "2.668"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "39",
+       "40",
+       "+1.00"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 85: “·confidence” ABChange Write size ‖m‖63.7662.392.668Quadrant III neurons (count)3940+1.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when i"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "149.1",
+       "149.4",
+       "15.41"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "394",
+       "399",
+       "+5.00"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 104: “1” ABChange Write size ‖m‖149.1149.415.41Quadrant III neurons (count)394399+5.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it come"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "35.02",
+       "35.66",
+       "4.932"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "488",
+       "474",
+       "−14.0"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 104: “1” ABChange Write size ‖m‖35.0235.664.932Quadrant III neurons (count)488474−14.0How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it come"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "43.46",
+       "42.89",
+       "0.7472"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "281",
+       "282",
+       "+1.00"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 104: “1” ABChange Write size ‖m‖43.4642.890.7472Quadrant III neurons (count)281282+1.00How far this MLP's weights moved, B vs A (gate, up, down): 0, 0, 0 (0: this adapter changed no MLP weights)Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it come"
+    }
+   ],
+   "B_attn": [
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "172.0",
+       "155.8",
+       "35.37"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖172.0155.835.37 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 16.4h1 9.85h2 7.71h3 17.7h4 6.60h5 5.33h6 5.15h7 0.734h8 9.34 All bars use one linear scale. The longest bar is 62.8.Change in gold = how far B's vector is from A"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "19.51",
+       "19.61",
+       "5.023"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖19.5119.615.023 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 2.28h1 1.88h2 2.31h3 0.820h4 2.09h5 1.78h6 0.367h7 0.0973h8 0.135 All bars use one linear scale. The longest bar is 13.5.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "15.31",
+       "16.07",
+       "2.985"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖15.3116.072.985 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.777h1 0.842h2 0.303h3 1.05h4 0.500h5 0.794h6 0.539h7 2.18h8 1.11 All bars use one linear scale. The longest bar is 7.57.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "114.8",
+       "111.8",
+       "13.82"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 61: “·do” ABChange Write size of the whole layer's attention ‖a‖114.8111.813.82 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 4.21h1 3.94h2 3.28h3 4.04h4 3.73h5 5.22h6 2.56h7 0.671h8 1.33 All bars use one linear scale. The longest bar is 33.7.Change in gold = how far B's vector is from"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "15.42",
+       "16.26",
+       "4.090"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 61: “·do” ABChange Write size of the whole layer's attention ‖a‖15.4216.264.090 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.58h1 0.848h2 0.434h3 0.471h4 3.20h5 1.33h6 0.0940h7 0.0971h8 0.135 All bars use one linear scale. The longest bar is 7.99.Change in gold = how far B's vector "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "13.63",
+       "14.20",
+       "2.196"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 61: “·do” ABChange Write size of the whole layer's attention ‖a‖13.6314.202.196 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.465h1 0.766h2 0.463h3 0.476h4 0.892h5 1.01h6 0.473h7 0.384h8 1.01 All bars use one linear scale. The longest bar is 9.21.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "130.4",
+       "129.8",
+       "14.22"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 73: “·of” ABChange Write size of the whole layer's attention ‖a‖130.4129.814.22 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 3.49h1 5.00h2 4.25h3 4.51h4 3.29h5 3.84h6 3.01h7 2.57h8 1.60 All bars use one linear scale. The longest bar is 38.0.Change in gold = how far B's vector is from "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "18.80",
+       "18.89",
+       "3.472"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 73: “·of” ABChange Write size of the whole layer's attention ‖a‖18.8018.893.472 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 2.37h1 1.23h2 0.794h3 0.494h4 0.795h5 1.31h6 0.549h7 0.109h8 0.135 All bars use one linear scale. The longest bar is 13.1.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "26.83",
+       "26.26",
+       "2.221"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 73: “·of” ABChange Write size of the whole layer's attention ‖a‖26.8326.262.221 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.324h1 0.702h2 0.369h3 0.323h4 0.802h5 0.901h6 1.34h7 0.987h8 0.772 All bars use one linear scale. The longest bar is 25.9.Change in gold = how far B's vector i"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "175.5",
+       "177.8",
+       "23.00"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 85: “·confidence” ABChange Write size of the whole layer's attention ‖a‖175.5177.823.00 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 8.74h1 7.53h2 3.33h3 6.10h4 5.08h5 5.54h6 5.89h7 6.45h8 5.37 All bars use one linear scale. The longest bar is 77.9.Change in gold = how far B's vector "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "46.88",
+       "43.82",
+       "8.187"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 85: “·confidence” ABChange Write size of the whole layer's attention ‖a‖46.8843.828.187 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.68h1 1.29h2 2.97h3 1.16h4 0.852h5 1.94h6 6.18h7 1.65h8 0.135 All bars use one linear scale. The longest bar is 33.4.Change in gold = how far B's vecto"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "26.74",
+       "26.74",
+       "2.354"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 85: “·confidence” ABChange Write size of the whole layer's attention ‖a‖26.7426.742.354 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.828h1 0.939h2 1.04h3 0.654h4 0.973h5 1.07h6 0.485h7 0.412h8 0.995 All bars use one linear scale. The longest bar is 16.7.Change in gold = how far B's v"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "133.0",
+       "134.8",
+       "16.86"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 104: “1” ABChange Write size of the whole layer's attention ‖a‖133.0134.816.86 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 5.10h1 7.06h2 2.13h3 5.98h4 4.17h5 5.49h6 3.04h7 2.35h8 2.75 All bars use one linear scale. The longest bar is 48.5.Change in gold = how far B's vector is from A"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "18.79",
+       "20.02",
+       "4.715"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 104: “1” ABChange Write size of the whole layer's attention ‖a‖18.7920.024.715 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 3.89h1 2.00h2 0.297h3 0.334h4 1.58h5 1.02h6 0.0846h7 0.0971h8 0.135 All bars use one linear scale. The longest bar is 12.4.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "13.19",
+       "12.49",
+       "1.870"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 104: “1” ABChange Write size of the whole layer's attention ‖a‖13.1912.491.870 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.282h1 0.717h2 0.686h3 0.650h4 0.877h5 0.518h6 0.308h7 1.21h8 0.737 All bars use one linear scale. The longest bar is 7.47.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "2",
+     "rows": null,
+     "text": "Compare A and B for one cellHover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "23.92",
+       "24.66",
+       "5.784"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖23.9224.665.784 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 2.24h1 1.64h2 3.48h3 0.913h4 1.79h5 3.36h6 0.500h7 1.43h8 0.354 All bars use one linear scale. The longest bar is 13.4.Change in gold = how far B's vector is from"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "3.519",
+       "3.587",
+       "0.1040"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖3.5193.5870.1040 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.0151h1 0.0211h2 0.0205h3 0.0209h4 0.0194h5 0.0199h6 0.0363h7 0.0249h8 0.0407 All bars use one linear scale. The longest bar is 1.58.Change in gold = how far B's"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "186.1",
+       "182.8",
+       "3.954"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 61: “·do” ABChange Write size of the whole layer's attention ‖a‖186.1182.83.954 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.684h1 1.03h2 0.463h3 0.486h4 0.731h5 0.628h6 1.20h7 1.27h8 1.28 All bars use one linear scale. The longest bar is 61.0.Change in gold = how far B's vector is "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "24.63",
+       "24.26",
+       "3.845"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 61: “·do” ABChange Write size of the whole layer's attention ‖a‖24.6324.263.845 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.421h1 1.68h2 1.52h3 0.803h4 1.92h5 1.71h6 0.781h7 1.45h8 0.791 All bars use one linear scale. The longest bar is 16.9.Change in gold = how far B's vector is f"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "2.633",
+       "2.688",
+       "0.09234"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 61: “·do” ABChange Write size of the whole layer's attention ‖a‖2.6332.6880.09234 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.0114h1 0.0143h2 0.0157h3 0.0164h4 0.0135h5 0.0173h6 0.0388h7 0.0231h8 0.0409 All bars use one linear scale. The longest bar is 1.14.Change in gold = how far "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "189.7",
+       "184.8",
+       "7.586"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 73: “·of” ABChange Write size of the whole layer's attention ‖a‖189.7184.87.586 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.91h1 0.893h2 3.50h3 2.93h4 2.24h5 1.26h6 2.00h7 3.46h8 1.71 All bars use one linear scale. The longest bar is 60.4.Change in gold = how far B's vector is from"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "15.79",
+       "15.68",
+       "2.760"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 73: “·of” ABChange Write size of the whole layer's attention ‖a‖15.7915.682.760 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.988h1 1.49h2 0.869h3 1.26h4 0.927h5 1.26h6 0.897h7 0.879h8 0.493 All bars use one linear scale. The longest bar is 8.37.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "3.116",
+       "3.169",
+       "0.08954"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 73: “·of” ABChange Write size of the whole layer's attention ‖a‖3.1163.1690.08954 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.0115h1 0.0154h2 0.0155h3 0.0151h4 0.0136h5 0.0180h6 0.0339h7 0.0220h8 0.0419 All bars use one linear scale. The longest bar is 1.03.Change in gold = how far "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "185.1",
+       "180.1",
+       "10.45"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 85: “·confidence” ABChange Write size of the whole layer's attention ‖a‖185.1180.110.45 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.19h1 5.89h2 1.09h3 0.395h4 1.04h5 0.962h6 2.17h7 3.29h8 5.44 All bars use one linear scale. The longest bar is 60.8.Change in gold = how far B's vecto"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "23.47",
+       "23.75",
+       "3.359"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 85: “·confidence” ABChange Write size of the whole layer's attention ‖a‖23.4723.753.359 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.379h1 1.81h2 0.524h3 1.07h4 0.407h5 1.10h6 1.35h7 1.48h8 1.68 All bars use one linear scale. The longest bar is 19.3.Change in gold = how far B's vect"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "2.208",
+       "2.254",
+       "0.09345"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 85: “·confidence” ABChange Write size of the whole layer's attention ‖a‖2.2082.2540.09345 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.0111h1 0.0125h2 0.0106h3 0.0153h4 0.0119h5 0.0163h6 0.0414h7 0.0245h8 0.0440 All bars use one linear scale. The longest bar is 0.930.Change in gold ="
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "190.8",
+       "186.1",
+       "9.550"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 104: “1” ABChange Write size of the whole layer's attention ‖a‖190.8186.19.550 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.761h1 5.05h2 1.09h3 0.296h4 0.813h5 0.536h6 4.32h7 2.82h8 3.28 All bars use one linear scale. The longest bar is 66.0.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "21.41",
+       "22.01",
+       "2.984"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 104: “1” ABChange Write size of the whole layer's attention ‖a‖21.4122.012.984 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.36h1 1.47h2 1.55h3 0.286h4 0.687h5 1.24h6 0.506h7 0.483h8 0.0789 All bars use one linear scale. The longest bar is 15.2.Change in gold = how far B's vector is "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "3.354",
+       "3.414",
+       "0.09190"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 104: “1” ABChange Write size of the whole layer's attention ‖a‖3.3543.4140.09190 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.0110h1 0.0152h2 0.0166h3 0.0289h4 0.0130h5 0.0176h6 0.0346h7 0.0195h8 0.0369 All bars use one linear scale. The longest bar is 1.53.Change in gold = how far B"
+    }
+   ],
+   "A_side": {
+    "real": 2,
+    "synth": 0,
+    "obs": [
+     {
+      "fx": 0.2,
+      "fy": 0.62,
+      "tip": "State · layer 2 · token 90 “?”\n— A · SmolLM2-135M-Instruct\n  ||h^l_t||: 51.39\n— B · Instruct + USA DPO LoRA (3 epochs)\n  ||h^l_t||: 50.88"
+     },
+     {
+      "fx": 0.3,
+      "fy": 0.45,
+      "tip": "Head · layer 23 · head 8 · token 108 “·deal”\n— A · SmolLM2-135M-Instruct\n  ||o^l_{h,t}||: 10.50\n  top keys A[q,k]: 0.651 -> t=0 \"<|im_start|>\"\n— B · Instruct + USA DPO LoRA (3 epochs)\n  ||o^l_{h,t}||: 10.53\n  top keys A[q,k]: 0.661 -> t=0 \"<|im_start|>\""
+     }
+    ],
+    "big": {
+     "rows": [
+      "layer 23 · head 0",
+      "layer 29 · head 2",
+      "layer 24 · head 4",
+      "layer 23 · head 2",
+      "layer 29 · head 1",
+      "layer 29 · head 0"
+     ],
+     "nums": [
+      "26.6",
+      "23.2",
+      "21.1",
+      "16.1",
+      "15.6",
+      "14.9"
+     ]
+    }
+   },
+   "A_delta": {
+    "real": 2,
+    "synth": 0,
+    "obs": [
+     {
+      "fx": 0.2,
+      "fy": 0.62,
+      "tip": "State · layer 2 · token 90 “?”\n— A · SmolLM2-135M-Instruct\n  ||h^l_t||: 51.39\n— Change ‖B − A‖ · B is Instruct + USA DPO LoRA (3 epochs)\n  ||h_B - h_A||: 0.9060"
+     },
+     {
+      "fx": 0.3,
+      "fy": 0.45,
+      "tip": "Head · layer 23 · head 8 · token 108 “·deal”\n— A · SmolLM2-135M-Instruct\n  ||o^l_{h,t}||: 10.50\n  top keys A[q,k]: 0.651 -> t=0 \"<|im_start|>\"\n— Change ‖B − A‖ · B is Instruct + USA DPO LoRA (3 epochs)\n  ||o_B - o_A||: 1.503"
+     }
+    ],
+    "big": {
+     "rows": [
+      "layer 23 · head 0",
+      "layer 29 · head 2",
+      "layer 24 · head 4",
+      "layer 23 · head 2",
+      "layer 29 · head 1",
+      "layer 29 · head 0"
+     ],
+     "nums": [
+      "26.6",
+      "23.2",
+      "21.1",
+      "16.1",
+      "15.6",
+      "14.9"
+     ]
+    }
+   },
+   "A_side_pinned": {
+    "url": "?tab=a&a=smol_inst&b=smol_inst_usa_e3&item=wvs_Q81&hscale=linear&sel=12,3,151",
+    "rows": [
+     [
+      "Write size ‖o‖",
+      "4.819",
+      "4.977",
+      "0.9820"
+     ],
+     [
+      "Push on the margin (DLA)",
+      "-0.01676",
+      "-0.02385",
+      "−0.00709"
+     ],
+     [
+      "Attention covered by the top 16",
+      "0.9939",
+      "0.9950",
+      "+0.00106"
+     ]
+    ],
+    "text": "Head 3 · layer 12 pinnedlearn more Attention to collapsed parts (one Σ arc each, model A): 4 parts Σ 0.61 · user message ends · assistant message starts Σ 0.23 · output rule Σ 0.01 token 151: “·” answer position (t*) ABChange Write size ‖o‖4.8194.9770.9820Push on the margin (DLA)-0.01676-0.02385−0.00709Attention covered by the top 160.99390.9950+0.00106Where this head looks from the answer positio"
+   },
+   "A_delta_pinned": {
+    "url": "?tab=a&a=smol_inst&b=smol_inst_usa_e3&item=wvs_Q81&view=delta&hscale=linear&sel=12,3,151",
+    "rows": [
+     [
+      "Write size ‖o‖",
+      "4.819",
+      "4.977",
+      "0.9820"
+     ],
+     [
+      "Push on the margin (DLA)",
+      "-0.01676",
+      "-0.02385",
+      "−0.00709"
+     ],
+     [
+      "Attention covered by the top 16",
+      "0.9939",
+      "0.9950",
+      "+0.00106"
+     ]
+    ],
+    "text": "Head 3 · layer 12 pinnedlearn more Attention to collapsed parts (one Σ arc each, model A): 4 parts Σ 0.61 · user message ends · assistant message starts Σ 0.23 · output rule Σ 0.01 token 151: “·” answer position (t*) ABChange Write size ‖o‖4.8194.9770.9820Push on the margin (DLA)-0.01676-0.02385−0.00709Attention covered by the top 160.99390.9950+0.00106Where this head looks from the answer positio"
+   }
+  },
+  "smol_base|smol_inst|bank_USA_00023ac74dac": {
+   "C": {
+    "cell": "20,6",
+    "titles": [
+     "A · layer 20 · head 6 · push on the margin +0.005516",
+     "B · layer 20 · head 6 · push on the margin +0.04746",
+     "B − A · layer 20 · head 6 · push on the margin +0.04194 (from the pair export (d_head_attr, d_mlp_attr))"
+    ],
+    "hovers": [
+     {
+      "at": "A · layer 20 · head 6 · push on the margin +0.005516",
+      "rows": [
+       [
+        "Write size ‖o‖",
+        "82.17",
+        "70.57",
+        "25.60"
+       ],
+       [
+        "Push on the margin (DLA)",
+        "0.1021",
+        "0.3238",
+        "+0.222"
+       ],
+       [
+        "Attention covered by the top 16",
+        "0.9871",
+        "0.9731",
+        "−0.0140"
+       ]
+      ],
+      "text": "Head 5 · layer 29 pinnedlearn more Starting point: the head whose push on the margin changed most (B − A). Click anywhere to change it. token 305: “·” answer position (t*) ABChange Write size ‖o‖82.1770.5725.60Push on the margin (DLA)0.10210.3238+0.222Attention covered by the top 160.98710.9731−0.0140Where this head looks from the answer position: its largest attention weights (weight · token numb",
+      "tip": null
+     },
+     {
+      "at": "B · layer 20 · head 6 · push on the margin +0.04746",
+      "rows": [
+       [
+        "Write size ‖o‖",
+        "82.17",
+        "70.57",
+        "25.60"
+       ],
+       [
+        "Push on the margin (DLA)",
+        "0.1021",
+        "0.3238",
+        "+0.222"
+       ],
+       [
+        "Attention covered by the top 16",
+        "0.9871",
+        "0.9731",
+        "−0.0140"
+       ]
+      ],
+      "text": "Head 5 · layer 29 pinnedlearn more Starting point: the head whose push on the margin changed most (B − A). Click anywhere to change it. token 305: “·” answer position (t*) ABChange Write size ‖o‖82.1770.5725.60Push on the margin (DLA)0.10210.3238+0.222Attention covered by the top 160.98710.9731−0.0140Where this head looks from the answer position: its largest attention weights (weight · token numb",
+      "tip": null
+     },
+     {
+      "at": "B − A · layer 20 · head 6 · push on the margin +0.04194 (from the pair export (d_head_attr, d_mlp_attr))",
+      "rows": [
+       [
+        "Write size ‖o‖",
+        "82.17",
+        "70.57",
+        "25.60"
+       ],
+       [
+        "Push on the margin (DLA)",
+        "0.1021",
+        "0.3238",
+        "+0.222"
+       ],
+       [
+        "Attention covered by the top 16",
+        "0.9871",
+        "0.9731",
+        "−0.0140"
+       ]
+      ],
+      "text": "Head 5 · layer 29 pinnedlearn more Starting point: the head whose push on the margin changed most (B − A). Click anywhere to change it. token 305: “·” answer position (t*) ABChange Write size ‖o‖82.1770.5725.60Push on the margin (DLA)0.10210.3238+0.222Attention covered by the top 160.98710.9731−0.0140Where this head looks from the answer position: its largest attention weights (weight · token numb",
+      "tip": null
+     }
+    ],
+    "pinned": {
+     "url": "?tab=c&a=smol_base&b=smol_inst&item=bank_USA_00023ac74dac&sel=20,6",
+     "rows": [
+      [
+       "Write size ‖o‖",
+       "1.383",
+       "8.936",
+       "8.751"
+      ],
+      [
+       "Push on the margin (DLA)",
+       "0.005516",
+       "0.04746",
+       "+0.0419"
+      ],
+      [
+       "Attention covered by the top 16",
+       "0.9937",
+       "0.9796",
+       "−0.0141"
+      ]
+     ],
+     "text": "Head 6 · layer 20 pinnedlearn more token 305: “·” answer position (t*) ABChange Write size ‖o‖1.3838.9368.751Push on the margin (DLA)0.0055160.04746+0.0419Attention covered by the top 160.99370.9796−0.0141Where this head looks from the answer position: its largest attention weights (weight · token number)A0.96 · #0 “<|im_start|>”0.00 · #58 “A”0.00 · #21 “<|im_start|>”0.00 · #3 “You”0.00 · #24 “Ans",
+     "tip": null
+    }
+   },
+   "B_resid": [
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "697.7",
+       "597.7",
+       "529.3"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖697.7597.7529.3Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "209.2",
+       "228.7",
+       "151.4"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖209.2228.7151.4Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "121.1",
+       "114.0",
+       "42.31"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖121.1114.042.31Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "774.7",
+       "758.0",
+       "165.2"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 77: “·tight” ABChange Running-state size ‖h‖774.7758.0165.2Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "229.5",
+       "234.1",
+       "51.63"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 77: “·tight” ABChange Running-state size ‖h‖229.5234.151.63Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "147.2",
+       "149.7",
+       "32.13"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 77: “·tight” ABChange Running-state size ‖h‖147.2149.732.13Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "749.8",
+       "746.6",
+       "159.3"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 117: “·my” ABChange Running-state size ‖h‖749.8746.6159.3Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "206.0",
+       "213.5",
+       "42.54"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 117: “·my” ABChange Running-state size ‖h‖206.0213.542.54Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "119.3",
+       "117.4",
+       "15.17"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 117: “·my” ABChange Running-state size ‖h‖119.3117.415.17Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "827.0",
+       "770.5",
+       "179.2"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 163: “·aside” ABChange Running-state size ‖h‖827.0770.5179.2Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "223.6",
+       "230.2",
+       "48.91"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 163: “·aside” ABChange Running-state size ‖h‖223.6230.248.91Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "145.7",
+       "141.5",
+       "25.64"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 163: “·aside” ABChange Running-state size ‖h‖145.7141.525.64Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "704.5",
+       "698.1",
+       "137.2"
+      ]
+     ],
+     "text": "Running state · entering layer 29 previewlearn more token 194: “·know” ABChange Running-state size ‖h‖704.5698.1137.2Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "222.7",
+       "235.2",
+       "46.21"
+      ]
+     ],
+     "text": "Running state · entering layer 20 previewlearn more token 194: “·know” ABChange Running-state size ‖h‖222.7235.246.21Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "129.2",
+       "132.5",
+       "16.98"
+      ]
+     ],
+     "text": "Running state · entering layer 10 previewlearn more token 194: “·know” ABChange Running-state size ‖h‖129.2132.516.98Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": null,
+     "text": "Compare A and B for one cellHover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "116.3",
+       "115.4",
+       "39.08"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖116.3115.439.08Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "116.3",
+       "115.4",
+       "39.08"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 20: “⏎” ABChange Running-state size ‖h‖116.3115.439.08Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "511.8",
+       "513.2",
+       "97.31"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 77: “·tight” ABChange Running-state size ‖h‖511.8513.297.31Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "153.9",
+       "156.5",
+       "30.85"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 77: “·tight” ABChange Running-state size ‖h‖153.9156.530.85Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "153.9",
+       "156.5",
+       "30.85"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 77: “·tight” ABChange Running-state size ‖h‖153.9156.530.85Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "485.6",
+       "498.5",
+       "94.18"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 117: “·my” ABChange Running-state size ‖h‖485.6498.594.18Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "133.4",
+       "127.4",
+       "20.89"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 117: “·my” ABChange Running-state size ‖h‖133.4127.420.89Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "133.4",
+       "127.4",
+       "20.89"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 117: “·my” ABChange Running-state size ‖h‖133.4127.420.89Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "501.8",
+       "489.2",
+       "93.17"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 163: “·aside” ABChange Running-state size ‖h‖501.8489.293.17Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "145.8",
+       "145.1",
+       "25.31"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 163: “·aside” ABChange Running-state size ‖h‖145.8145.125.31Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "145.8",
+       "145.1",
+       "25.31"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 163: “·aside” ABChange Running-state size ‖h‖145.8145.125.31Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "455.1",
+       "464.6",
+       "81.71"
+      ]
+     ],
+     "text": "Running state · entering layer 25 previewlearn more token 194: “·know” ABChange Running-state size ‖h‖455.1464.681.71Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "126.8",
+       "131.1",
+       "16.87"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 194: “·know” ABChange Running-state size ‖h‖126.8131.116.87Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Running-state size ‖h‖",
+       "126.8",
+       "131.1",
+       "16.87"
+      ]
+     ],
+     "text": "Running state · entering layer 11 previewlearn more token 194: “·know” ABChange Running-state size ‖h‖126.8131.116.87Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it is computed on this page."
+    }
+   ],
+   "B_mlp": [
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "125.8",
+       "169.2",
+       "160.4"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "404",
+       "381",
+       "−23.0"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 20: “⏎” ABChange Write size ‖m‖125.8169.2160.4Quadrant III neurons (count)404381−23.0How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 15 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "40.16",
+       "54.03",
+       "43.58"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "338",
+       "369",
+       "+31.0"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 20: “⏎” ABChange Write size ‖m‖40.1654.0343.58Quadrant III neurons (count)338369+31.0How far this MLP's weights moved, B vs A (gate, up, down): 17, 14, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "32.82",
+       "31.97",
+       "25.72"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "511",
+       "499",
+       "−12.0"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 20: “⏎” ABChange Write size ‖m‖32.8231.9725.72Quadrant III neurons (count)511499−12.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "181.1",
+       "184.3",
+       "61.05"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "305",
+       "298",
+       "−7.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 77: “·tight” ABChange Write size ‖m‖181.1184.361.05Quadrant III neurons (count)305298−7.00How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 15 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "41.17",
+       "41.00",
+       "15.79"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "364",
+       "367",
+       "+3.00"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 77: “·tight” ABChange Write size ‖m‖41.1741.0015.79Quadrant III neurons (count)364367+3.00How far this MLP's weights moved, B vs A (gate, up, down): 17, 14, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "33.01",
+       "33.96",
+       "16.40"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "440",
+       "471",
+       "+31.0"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 77: “·tight” ABChange Write size ‖m‖33.0133.9616.40Quadrant III neurons (count)440471+31.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic whe"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "158.3",
+       "163.9",
+       "53.93"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "277",
+       "285",
+       "+8.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 117: “·my” ABChange Write size ‖m‖158.3163.953.93Quadrant III neurons (count)277285+8.00How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 15 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "41.72",
+       "45.24",
+       "22.31"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "325",
+       "317",
+       "−8.00"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 117: “·my” ABChange Write size ‖m‖41.7245.2422.31Quadrant III neurons (count)325317−8.00How far this MLP's weights moved, B vs A (gate, up, down): 17, 14, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "29.89",
+       "30.53",
+       "9.256"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "537",
+       "528",
+       "−9.00"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 117: “·my” ABChange Write size ‖m‖29.8930.539.256Quadrant III neurons (count)537528−9.00How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "186.9",
+       "183.5",
+       "68.77"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "327",
+       "323",
+       "−4.00"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 163: “·aside” ABChange Write size ‖m‖186.9183.568.77Quadrant III neurons (count)327323−4.00How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 15 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic w"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "48.24",
+       "49.85",
+       "18.96"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "329",
+       "340",
+       "+11.0"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 163: “·aside” ABChange Write size ‖m‖48.2449.8518.96Quadrant III neurons (count)329340+11.0How far this MLP's weights moved, B vs A (gate, up, down): 17, 14, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic w"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "37.54",
+       "33.94",
+       "13.52"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "487",
+       "473",
+       "−14.0"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 163: “·aside” ABChange Write size ‖m‖37.5433.9413.52Quadrant III neurons (count)487473−14.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "150.5",
+       "157.7",
+       "45.88"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "371",
+       "345",
+       "−26.0"
+      ]
+     ],
+     "text": "MLP · layer 27 previewlearn more token 194: “·know” ABChange Write size ‖m‖150.5157.745.88Quadrant III neurons (count)371345−26.0How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 15 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "52.31",
+       "54.61",
+       "20.92"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "330",
+       "346",
+       "+16.0"
+      ]
+     ],
+     "text": "MLP · layer 18 previewlearn more token 194: “·know” ABChange Write size ‖m‖52.3154.6120.92Quadrant III neurons (count)330346+16.0How far this MLP's weights moved, B vs A (gate, up, down): 17, 14, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "34.25",
+       "36.09",
+       "9.308"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "500",
+       "494",
+       "−6.00"
+      ]
+     ],
+     "text": "MLP · layer 9 previewlearn more token 194: “·know” ABChange Write size ‖m‖34.2536.099.308Quadrant III neurons (count)500494−6.00How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic whe"
+    },
+    {
+     "map": "2",
+     "rows": null,
+     "text": "Compare A and B for one cellHover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "23.09",
+       "27.72",
+       "28.46"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "446",
+       "411",
+       "−35.0"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 20: “⏎” ABChange Write size ‖m‖23.0927.7228.46Quadrant III neurons (count)446411−35.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "31.11",
+       "31.49",
+       "4.919"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "324",
+       "305",
+       "−19.0"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 20: “⏎” ABChange Write size ‖m‖31.1131.494.919Quadrant III neurons (count)324305−19.0How far this MLP's weights moved, B vs A (gate, up, down): 14, 12, 12 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "141.0",
+       "144.7",
+       "44.52"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "367",
+       "361",
+       "−6.00"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 77: “·tight” ABChange Write size ‖m‖141.0144.744.52Quadrant III neurons (count)367361−6.00How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 16 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "26.71",
+       "28.46",
+       "12.28"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "488",
+       "472",
+       "−16.0"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 77: “·tight” ABChange Write size ‖m‖26.7128.4612.28Quadrant III neurons (count)488472−16.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "60.44",
+       "65.20",
+       "13.59"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "64",
+       "52",
+       "−12.0"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 77: “·tight” ABChange Write size ‖m‖60.4465.2013.59Quadrant III neurons (count)6452−12.0How far this MLP's weights moved, B vs A (gate, up, down): 14, 12, 12 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "80.17",
+       "74.81",
+       "29.29"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "404",
+       "442",
+       "+38.0"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 117: “·my” ABChange Write size ‖m‖80.1774.8129.29Quadrant III neurons (count)404442+38.0How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 16 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "29.17",
+       "32.69",
+       "11.70"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "456",
+       "465",
+       "+9.00"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 117: “·my” ABChange Write size ‖m‖29.1732.6911.70Quadrant III neurons (count)456465+9.00How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "35.75",
+       "36.65",
+       "3.396"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "211",
+       "215",
+       "+4.00"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 117: “·my” ABChange Write size ‖m‖35.7536.653.396Quadrant III neurons (count)211215+4.00How far this MLP's weights moved, B vs A (gate, up, down): 14, 12, 12 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "148.1",
+       "133.9",
+       "45.73"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "402",
+       "389",
+       "−13.0"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 163: “·aside” ABChange Write size ‖m‖148.1133.945.73Quadrant III neurons (count)402389−13.0How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 16 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic w"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "28.24",
+       "29.76",
+       "12.14"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "475",
+       "487",
+       "+12.0"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 163: “·aside” ABChange Write size ‖m‖28.2429.7612.14Quadrant III neurons (count)475487+12.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic w"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "42.65",
+       "46.59",
+       "10.12"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "92",
+       "92",
+       "+0"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 163: “·aside” ABChange Write size ‖m‖42.6546.5910.12Quadrant III neurons (count)9292+0How far this MLP's weights moved, B vs A (gate, up, down): 14, 12, 12 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic when it"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "96.29",
+       "103.7",
+       "35.64"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "452",
+       "442",
+       "−10.0"
+      ]
+     ],
+     "text": "MLP · layer 24 previewlearn more token 194: “·know” ABChange Write size ‖m‖96.29103.735.64Quadrant III neurons (count)452442−10.0How far this MLP's weights moved, B vs A (gate, up, down): 19, 17, 16 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "21.05",
+       "24.30",
+       "8.652"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "505",
+       "515",
+       "+10.0"
+      ]
+     ],
+     "text": "MLP · layer 12 previewlearn more token 194: “·know” ABChange Write size ‖m‖21.0524.308.652Quadrant III neurons (count)505515+10.0How far this MLP's weights moved, B vs A (gate, up, down): 15, 13, 13 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic wh"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size ‖m‖",
+       "40.57",
+       "43.04",
+       "4.551"
+      ],
+      [
+       "Quadrant III neurons (count)",
+       "208",
+       "190",
+       "−18.0"
+      ]
+     ],
+     "text": "MLP · layer 0 previewlearn more token 194: “·know” ABChange Write size ‖m‖40.5743.044.551Quadrant III neurons (count)208190−18.0How far this MLP's weights moved, B vs A (gate, up, down): 14, 12, 12 Change in gold = how far B's vector is from A's (a length, never negative), exact, from the pair export. Change with a sign = B − A of two numbers: upright when it comes from the pair export, italic whe"
+    }
+   ],
+   "B_attn": [
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "141.1",
+       "172.0",
+       "195.4"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖141.1172.0195.4 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 55.6h1 64.5h2 35.0h3 45.2h4 56.1h5 54.2h6 50.5h7 4.53h8 45.6 All bars use one linear scale. The longest bar is 64.5.Change in gold = how far B's vector is from A'"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "19.68",
+       "19.51",
+       "20.03"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖19.6819.5120.03 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 9.34h1 5.97h2 9.93h3 3.45h4 5.51h5 5.21h6 12.3h7 0.573h8 0.639 All bars use one linear scale. The longest bar is 12.3.Change in gold = how far B's vector is from "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "9.723",
+       "15.31",
+       "14.61"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖9.72315.3114.61 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 7.10h1 3.70h2 3.24h3 7.41h4 3.36h5 3.98h6 3.81h7 7.25h8 4.35 All bars use one linear scale. The longest bar is 7.57.Change in gold = how far B's vector is from A's"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "135.1",
+       "130.4",
+       "33.71"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 77: “·tight” ABChange Write size of the whole layer's attention ‖a‖135.1130.433.71 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 9.41h1 14.8h2 11.6h3 7.66h4 4.40h5 2.36h6 14.4h7 4.10h8 2.80 All bars use one linear scale. The longest bar is 52.2.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "18.29",
+       "20.95",
+       "7.668"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 77: “·tight” ABChange Write size of the whole layer's attention ‖a‖18.2920.957.668 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 2.35h1 3.72h2 1.40h3 2.78h4 1.88h5 4.46h6 0.464h7 0.509h8 0.639 All bars use one linear scale. The longest bar is 11.7.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "9.448",
+       "11.79",
+       "11.24"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 77: “·tight” ABChange Write size of the whole layer's attention ‖a‖9.44811.7911.24 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 3.86h1 4.05h2 2.58h3 5.08h4 5.68h5 3.99h6 3.99h7 3.12h8 3.77 All bars use one linear scale. The longest bar is 5.68.Change in gold = how far B's vector is fro"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "136.2",
+       "132.8",
+       "29.41"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 117: “·my” ABChange Write size of the whole layer's attention ‖a‖136.2132.829.41 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 10.9h1 13.2h2 7.02h3 6.57h4 11.8h5 1.35h6 5.73h7 2.51h8 2.73 All bars use one linear scale. The longest bar is 53.6.Change in gold = how far B's vector is from"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "34.48",
+       "36.80",
+       "12.47"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 117: “·my” ABChange Write size of the whole layer's attention ‖a‖34.4836.8012.47 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 3.53h1 5.19h2 5.36h3 4.05h4 5.35h5 6.64h6 2.77h7 0.511h8 0.639 All bars use one linear scale. The longest bar is 21.3.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "9.518",
+       "9.781",
+       "5.809"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 117: “·my” ABChange Write size of the whole layer's attention ‖a‖9.5189.7815.809 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.58h1 2.30h2 1.32h3 1.94h4 2.25h5 2.90h6 1.26h7 1.37h8 2.28 All bars use one linear scale. The longest bar is 5.97.Change in gold = how far B's vector is from "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "149.1",
+       "134.2",
+       "35.89"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 163: “·aside” ABChange Write size of the whole layer's attention ‖a‖149.1134.235.89 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 8.55h1 11.7h2 11.1h3 13.5h4 9.87h5 11.3h6 10.0h7 1.70h8 3.37 All bars use one linear scale. The longest bar is 41.5.Change in gold = how far B's vector is f"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "21.71",
+       "26.03",
+       "10.42"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 163: “·aside” ABChange Write size of the whole layer's attention ‖a‖21.7126.0310.42 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 3.53h1 5.25h2 1.04h3 4.04h4 4.61h5 5.01h6 0.516h7 0.513h8 0.639 All bars use one linear scale. The longest bar is 11.7.Change in gold = how far B's vector i"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "17.06",
+       "18.00",
+       "4.938"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 163: “·aside” ABChange Write size of the whole layer's attention ‖a‖17.0618.004.938 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.19h1 1.31h2 1.27h3 1.14h4 1.65h5 3.61h6 1.69h7 1.07h8 1.58 All bars use one linear scale. The longest bar is 15.7.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "131.6",
+       "129.9",
+       "30.01"
+      ]
+     ],
+     "text": "Attention · layer 27previewlearn more token 194: “·know” ABChange Write size of the whole layer's attention ‖a‖131.6129.930.01 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 9.77h1 10.2h2 9.28h3 8.37h4 4.13h5 7.65h6 4.63h7 8.83h8 1.21 All bars use one linear scale. The longest bar is 43.1.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "34.41",
+       "33.00",
+       "11.03"
+      ]
+     ],
+     "text": "Attention · layer 18previewlearn more token 194: “·know” ABChange Write size of the whole layer's attention ‖a‖34.4133.0011.03 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 5.49h1 4.13h2 2.11h3 3.32h4 4.22h5 5.19h6 1.10h7 0.518h8 0.640 All bars use one linear scale. The longest bar is 19.6.Change in gold = how far B's vector is "
+    },
+    {
+     "map": "0",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "14.52",
+       "14.67",
+       "4.173"
+      ]
+     ],
+     "text": "Attention · layer 9previewlearn more token 194: “·know” ABChange Write size of the whole layer's attention ‖a‖14.5214.674.173 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.76h1 1.78h2 1.08h3 1.49h4 1.34h5 2.53h6 0.849h7 0.917h8 0.741 All bars use one linear scale. The longest bar is 12.3.Change in gold = how far B's vector is "
+    },
+    {
+     "map": "2",
+     "rows": null,
+     "text": "Compare A and B for one cellHover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt."
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "21.94",
+       "23.92",
+       "23.49"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖21.9423.9223.49 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 7.72h1 4.10h2 10.5h3 4.79h4 9.49h5 10.3h6 2.64h7 7.95h8 11.8 All bars use one linear scale. The longest bar is 13.4.Change in gold = how far B's vector is from A'"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "3.084",
+       "3.519",
+       "0.8052"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 20: “⏎” ABChange Write size of the whole layer's attention ‖a‖3.0843.5190.8052 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.203h1 0.276h2 0.294h3 0.189h4 0.174h5 0.147h6 0.175h7 0.402h8 0.120 All bars use one linear scale. The longest bar is 1.57.Change in gold = how far B's vector i"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "190.1",
+       "189.2",
+       "14.06"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 77: “·tight” ABChange Write size of the whole layer's attention ‖a‖190.1189.214.06 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 1.72h1 1.34h2 1.18h3 9.94h4 9.33h5 1.42h6 1.63h7 2.45h8 1.68 All bars use one linear scale. The longest bar is 61.6.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "13.79",
+       "13.04",
+       "7.512"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 77: “·tight” ABChange Write size of the whole layer's attention ‖a‖13.7913.047.512 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.756h1 4.05h2 2.72h3 1.94h4 1.17h5 4.96h6 3.15h7 0.962h8 0.738 All bars use one linear scale. The longest bar is 8.89.Change in gold = how far B's vector is"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "2.120",
+       "2.121",
+       "0.2772"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 77: “·tight” ABChange Write size of the whole layer's attention ‖a‖2.1202.1210.2772 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.171h1 0.115h2 0.354h3 0.130h4 0.0741h5 0.0805h6 0.156h7 0.150h8 0.134 All bars use one linear scale. The longest bar is 0.784.Change in gold = how far B's "
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "193.5",
+       "194.5",
+       "31.28"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 117: “·my” ABChange Write size of the whole layer's attention ‖a‖193.5194.531.28 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 14.8h1 13.1h2 9.80h3 7.23h4 8.70h5 8.22h6 7.70h7 17.8h8 1.59 All bars use one linear scale. The longest bar is 61.2.Change in gold = how far B's vector is from"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "15.02",
+       "15.50",
+       "7.706"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 117: “·my” ABChange Write size of the whole layer's attention ‖a‖15.0215.507.706 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.494h1 4.78h2 3.04h3 2.24h4 2.54h5 2.49h6 2.95h7 1.01h8 1.24 All bars use one linear scale. The longest bar is 8.70.Change in gold = how far B's vector is fro"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "2.435",
+       "2.665",
+       "0.3485"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 117: “·my” ABChange Write size of the whole layer's attention ‖a‖2.4352.6650.3485 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.112h1 0.130h2 0.189h3 0.114h4 0.142h5 0.138h6 0.0838h7 0.119h8 0.141 All bars use one linear scale. The longest bar is 0.902.Change in gold = how far B's vec"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "192.2",
+       "193.3",
+       "19.02"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 163: “·aside” ABChange Write size of the whole layer's attention ‖a‖192.2193.319.02 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 7.60h1 6.22h2 6.03h3 5.47h4 14.2h5 3.21h6 3.33h7 5.06h8 2.41 All bars use one linear scale. The longest bar is 61.7.Change in gold = how far B's vector is f"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "15.91",
+       "16.95",
+       "6.873"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 163: “·aside” ABChange Write size of the whole layer's attention ‖a‖15.9116.956.873 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.638h1 4.33h2 1.57h3 2.35h4 1.02h5 2.61h6 3.25h7 0.934h8 0.601 All bars use one linear scale. The longest bar is 10.7.Change in gold = how far B's vector i"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "2.480",
+       "2.434",
+       "0.3148"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 163: “·aside” ABChange Write size of the whole layer's attention ‖a‖2.4802.4340.3148 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.0897h1 0.0925h2 0.267h3 0.128h4 0.0879h5 0.0881h6 0.114h7 0.177h8 0.175 All bars use one linear scale. The longest bar is 0.956.Change in gold = how far B"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "187.0",
+       "184.9",
+       "15.53"
+      ]
+     ],
+     "text": "Attention · layer 24previewlearn more token 194: “·know” ABChange Write size of the whole layer's attention ‖a‖187.0184.915.53 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 3.08h1 4.72h2 1.71h3 13.2h4 2.47h5 1.36h6 1.92h7 2.42h8 3.85 All bars use one linear scale. The longest bar is 60.9.Change in gold = how far B's vector is fr"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "13.68",
+       "13.75",
+       "5.735"
+      ]
+     ],
+     "text": "Attention · layer 12previewlearn more token 194: “·know” ABChange Write size of the whole layer's attention ‖a‖13.6813.755.735 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.710h1 3.87h2 1.39h3 1.42h4 1.38h5 2.26h6 2.60h7 1.29h8 1.58 All bars use one linear scale. The longest bar is 9.72.Change in gold = how far B's vector is f"
+    },
+    {
+     "map": "2",
+     "rows": [
+      [
+       "Write size of the whole layer's attention ‖a‖",
+       "2.221",
+       "2.373",
+       "0.3034"
+      ]
+     ],
+     "text": "Attention · layer 0previewlearn more token 194: “·know” ABChange Write size of the whole layer's attention ‖a‖2.2212.3730.3034 The nine heads in this layer. Each has three bars: A's write size, B's write size, and the change. Click a head. h0 0.107h1 0.0783h2 0.269h3 0.133h4 0.132h5 0.100h6 0.102h7 0.128h8 0.138 All bars use one linear scale. The longest bar is 0.906.Change in gold = how far B's v"
+    }
+   ],
+   "A_side": {
+    "real": 3,
+    "synth": 0,
+    "obs": [
+     {
+      "fx": 0.06,
+      "fy": 0.45,
+      "tip": "Head · layer 2 · head 6 · token 64 “·for”\n— A · SmolLM2-135M (pretrained base)\n  ||o^l_{h,t}||: 1.501\n  top keys A[q,k]: 0.117 -> t=2 \"\\n\"\n— B · SmolLM2-135M-Instruct\n  ||o^l_{h,t}||: 1.448\n  top keys A[q,k]: 0.111 -> t=31 \".\""
+     },
+     {
+      "fx": 0.12,
+      "fy": 0.45,
+      "tip": "State · layer 10 · token 95 “·either”\n— A · SmolLM2-135M (pretrained base)\n  ||h^l_t||: 127.7\n— B · SmolLM2-135M-Instruct\n  ||h^l_t||: 129.8"
+     },
+     {
+      "fx": 0.2,
+      "fy": 0.45,
+      "tip": "Head · layer 20 · head 1 · token 136 “·own”\n— A · SmolLM2-135M (pretrained base)\n  ||o^l_{h,t}||: 22.56\n  top keys A[q,k]: 0.224 -> t=134 \" into\"\n— B · SmolLM2-135M-Instruct\n  ||o^l_{h,t}||: 23.22\n  top keys A[q,k]: 0.251 -> t=134 \" into\""
+     }
+    ],
+    "big": {
+     "rows": [
+      "layer 29 · head 2",
+      "layer 29 · head 1",
+      "layer 23 · head 7",
+      "layer 28 · head 5",
+      "layer 29 · head 3",
+      "layer 28 · head 7"
+     ],
+     "nums": [
+      "49.3",
+      "44.2",
+      "37.5",
+      "29.6",
+      "29.6",
+      "26.3"
+     ]
+    }
+   },
+   "A_delta": {
+    "real": 3,
+    "synth": 0,
+    "obs": [
+     {
+      "fx": 0.06,
+      "fy": 0.45,
+      "tip": "Head · layer 2 · head 6 · token 64 “·for”\n— A · SmolLM2-135M (pretrained base)\n  ||o^l_{h,t}||: 1.501\n  top keys A[q,k]: 0.117 -> t=2 \"\\n\"\n— Change ‖B − A‖ · B is SmolLM2-135M-Instruct\n  ||o_B - o_A||: 1.005"
+     },
+     {
+      "fx": 0.12,
+      "fy": 0.45,
+      "tip": "State · layer 10 · token 95 “·either”\n— A · SmolLM2-135M (pretrained base)\n  ||h^l_t||: 127.7\n— Change ‖B − A‖ · B is SmolLM2-135M-Instruct\n  ||h_B - h_A||: 26.56"
+     },
+     {
+      "fx": 0.2,
+      "fy": 0.45,
+      "tip": "Head · layer 20 · head 1 · token 136 “·own”\n— A · SmolLM2-135M (pretrained base)\n  ||o^l_{h,t}||: 22.56\n  top keys A[q,k]: 0.224 -> t=134 \" into\"\n— Change ‖B − A‖ · B is SmolLM2-135M-Instruct\n  ||o_B - o_A||: 11.95"
+     }
+    ],
+    "big": {
+     "rows": [
+      "layer 29 · head 2",
+      "layer 29 · head 1",
+      "layer 23 · head 7",
+      "layer 28 · head 5",
+      "layer 29 · head 3",
+      "layer 28 · head 7"
+     ],
+     "nums": [
+      "49.3",
+      "44.2",
+      "37.5",
+      "29.6",
+      "29.6",
+      "26.3"
+     ]
+    }
+   },
+   "A_side_pinned": {
+    "url": "?tab=a&a=smol_base&b=smol_inst&item=bank_USA_00023ac74dac&hscale=linear&sel=12,3,305",
+    "rows": [
+     [
+      "Write size ‖o‖",
+      "7.258",
+      "5.686",
+      "6.457"
+     ],
+     [
+      "Push on the margin (DLA)",
+      "-0.01227",
+      "-0.01288",
+      "−6.10e-4"
+     ],
+     [
+      "Attention covered by the top 16",
+      "0.9945",
+      "0.9895",
+      "−0.00497"
+     ]
+    ],
+    "text": "Head 3 · layer 12 pinnedlearn more Attention to collapsed parts (one Σ arc each, model A): user message ends · assistant message starts Σ 0.54 · 4 parts Σ 0.34 token 305: “·” answer position (t*) ABChange Write size ‖o‖7.2585.6866.457Push on the margin (DLA)-0.01227-0.01288−6.10e-4Attention covered by the top 160.99450.9895−0.00497Where this head looks from the answer position: its largest attenti"
+   },
+   "A_delta_pinned": {
+    "url": "?tab=a&a=smol_base&b=smol_inst&item=bank_USA_00023ac74dac&view=delta&hscale=linear&sel=12,3,305",
+    "rows": [
+     [
+      "Write size ‖o‖",
+      "7.258",
+      "5.686",
+      "6.457"
+     ],
+     [
+      "Push on the margin (DLA)",
+      "-0.01227",
+      "-0.01288",
+      "−6.10e-4"
+     ],
+     [
+      "Attention covered by the top 16",
+      "0.9945",
+      "0.9895",
+      "−0.00497"
+     ]
+    ],
+    "text": "Head 3 · layer 12 pinnedlearn more Attention to collapsed parts (one Σ arc each, model A): user message ends · assistant message starts Σ 0.54 · 4 parts Σ 0.34 token 305: “·” answer position (t*) ABChange Write size ‖o‖7.2585.6866.457Push on the margin (DLA)-0.01227-0.01288−6.10e-4Attention covered by the top 160.99450.9895−0.00497Where this head looks from the answer position: its largest attenti"
+   }
+  }
+ }
+}
