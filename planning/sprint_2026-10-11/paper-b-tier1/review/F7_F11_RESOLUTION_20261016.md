@@ -28,6 +28,12 @@ the pins the amended specs were built from are the pins of the file actually in 
 normalizes text to LF, so hashes computed from `git show` differ from working-tree hashes
 for CRLF files; both forms are given where they matter. No change to the preregistration.
 
+**The amended pool is rebuildable, not merely hashed.** `python paper_b/heldout/build_pool.py
+--out /tmp/pool_rebuild.csv` reproduces `19241f6f…` byte for byte, because the 12 repairs live in
+`overrides.json` (now `0f5cd2bb…`) as `override` rows over the questionnaire source. The
+amendment therefore pins an artifact a reader can regenerate, which is the stronger claim for
+the appendix.
+
 ## F11 — `config.py` is byte-identical to the preregistration tag; it differs from the cohort-1 runner commits
 
 - `git diff --stat prereg-heldout-2026-10-14 HEAD -- paper_b/config.py` is empty: **byte-identical to the file at the tag**.
