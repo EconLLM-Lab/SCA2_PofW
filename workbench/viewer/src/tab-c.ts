@@ -76,7 +76,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         s += `<rect class="cell" data-l="${l}" data-h="${h}" x="${x.toFixed(1)}" y="${(y(l) + 1).toFixed(1)}" width="${((h < 0 ? mw : cw) - 2).toFixed(1)}" height="${(rowH - 2).toFixed(1)}" rx="2" fill="${diverging(v, vmax)}" ${st}><title>${esc(name)} · layer ${l} · ${h < 0 ? "MLP" : "head " + h} · push on the margin ${sgn(v, 4)}${gi === 2 ? " (" + ddSrc + ")" : ""}</title></rect>`;
       }
       const on = pin && pin.l === -1 ? 'stroke="#fff" stroke-width="2"' : "";
-      s += `<rect class="cell" data-l="-1" data-h="-2" x="${x0}" y="${yEmb}" width="${(H * cw - 2).toFixed(1)}" height="${(rowH - 2).toFixed(1)}" rx="2" fill="${diverging(emb, vmax)}" ${on}><title>embedding term ${sgn(emb, 4)}</title></rect><text x="${x0 + H * cw + cw * 0.4}" y="${yEmb + rowH * 0.7}">embedding</text>`;
+      s += `<rect class="cell" data-l="-1" data-h="-2" x="${x0}" y="${yEmb}" width="${(H * cw - 2).toFixed(1)}" height="${(rowH - 2).toFixed(1)}" rx="2" fill="${diverging(emb, vmax)}" ${on}><title>embedding term ${sgn(emb, 4)}</title></rect>${gi === 0 ? `<text x="${lab - 8}" y="${yEmb + rowH * 0.7}" text-anchor="end"><title>embedding term: what each token's starting vector adds, before layer 0</title>emb</text>` : ""}`;
     });
     // layer axis: every layer ticked, every 5th and the last labelled, the selected layer highlighted
     const sl = (pin || hov)?.l ?? -9;

@@ -92,7 +92,9 @@ function shell(tab: Tab): HTMLElement {
     // selections index into the old prompt's tokens: drop them when the prompt changes
     for (const k of ["sel", "pin", "fly", "hl"]) p.delete(k);
     write(p, true); route(); };
-  ps.onchange = () => { fillItems(is.value); reload(); };
+  const pairTitle = () => { ps.title = ps.selectedOptions[0]?.textContent ?? ""; };
+  pairTitle();
+  ps.onchange = () => { pairTitle(); fillItems(is.value); reload(); };
   is.onchange = reload;
   return app.querySelector<HTMLElement>("#view")!;
 }
