@@ -61,3 +61,20 @@ writes the freeze file.
 `python paper_b/compute_ledger.py publish`. The log parsers now accept both unit families
 (three-letter codes and `P_<bits>`), so a clock rebuilt from bank-2 logs reports the 64 cells
 rather than nothing (fixed in `587df88`).
+
+## 8. The held-out pass spans one code revision with in-place VM plumbing (2026-10-16)
+
+Every manifest records `code_revision_sha256` from the VM checkout's git HEAD, which was `2126045…`
+for the whole pass. During recovery, three VM-side launcher files (`vm_fact_common.py`,
+`vm_score_units.py`, `vm_run_half_a.py`) were patched **in place** on the recovered session to fix a
+child-environment bug, so for the last units that label names the checkout while the plumbing around
+it is newer.
+
+This does not affect the readout, and the claim to make is precise: the scoring modules are
+byte-identical between the patched plumbing and the recorded revision —
+`git diff --quiet 2126045 HEAD -- paper_b/score_runtime.py paper_b/score_plan.py paper_b/score_cohort.py`
+returns clean — and the plumbing change only causes the child environment to be built per call
+instead of at import. Say that, rather than implying the whole pass ran from one unmodified tree.
+
+The same applies to `provision_score_vm.sh` (`164053a`) and the probe's spec check (`ce6599f`):
+infrastructure and analysis, not the scoring path.
