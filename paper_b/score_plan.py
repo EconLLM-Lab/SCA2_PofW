@@ -21,7 +21,7 @@ STAMP = "20261016"
 
 # kind "adapter": base + 64 adapters through score_cohort --model-only.
 # kind "signprompt": base model with the sign prompt for each of the 64 cells (no adapter).
-CONDITIONS = {
+CONDITIONS: dict[str, dict] = {
     "strict_v1": {"run_id": f"bank2-strict-v1-{STAMP}", "battery": "strict", "variant": "v1", "kind": "adapter"},
     "heldout_v1": {"run_id": f"bank2-heldout-v1-{STAMP}", "battery": "heldout", "variant": "v1", "kind": "adapter"},
     "heldout_reverse": {"run_id": f"bank2-heldout-reverse-{STAMP}", "battery": "heldout",
@@ -33,6 +33,25 @@ CONDITIONS = {
     "signprompt_heldout_v1": {"run_id": f"bank2-signprompt-heldout-v1-{STAMP}", "battery": "heldout",
                               "variant": "v1", "kind": "signprompt"},
 }
+
+# Card T4 (2026-10-18). The replicate is the unseeded retrain of one profile unit; it is banked at
+# bank2/<bank run>/replicates/r1/profiles/<unit> in the adapter repo (found by listing that prefix, 2026-10-17).
+REPLICATE_TAG = "r1"
+REPLICATE_UNIT = "P_1_0_1_1_0_1"
+GATE_RUN_ID_T4 = "gate-bank2-replicate-r1-20261018"
+# "units" names the cells a condition scores on its own: all 64, or exactly these.
+CONDITIONS.update({
+    "signprompt_strict_v1": {"run_id": "bank2-signprompt-strict-v1-20261018", "battery": "strict",
+                             "variant": "v1", "kind": "signprompt", "units": "all64"},
+    "replicate_strict_v1": {"run_id": "bank2-replicate-r1-strict-v1-20261018", "battery": "strict",
+                            "variant": "v1", "kind": "adapter", "units": [REPLICATE_UNIT],
+                            "replicate": REPLICATE_TAG},
+    "replicate_heldout_v1": {"run_id": "bank2-replicate-r1-heldout-v1-20261018", "battery": "heldout",
+                             "variant": "v1", "kind": "adapter", "units": [REPLICATE_UNIT],
+                             "replicate": REPLICATE_TAG},
+})
+# Launch order of the T4 session: the cheap single-unit replicate scores first, then the 64-cell sign-prompt cell.
+T4_ORDER = ["replicate_strict_v1", "replicate_heldout_v1", "signprompt_strict_v1"]
 # Priority order of a launch: the preregistered primary first, sensitivity arms after it.
 ORDER = ["strict_v1", "heldout_v1", "signprompt_heldout_v1", "heldout_reverse", "heldout_para_a", "heldout_para_b"]
 
@@ -104,6 +123,64 @@ def score_cohort_args(run_id: str, spec_path: str, marker: str, todo: dict) -> l
     if todo["units"]:
         args += ["--countries", *todo["units"]]
     return args
+
+
+def condition_units(name: str) -> list[str]:
+    """Cells a T4 condition scores by itself. Half-split conditions have no list and raise."""
+    units = CONDITIONS[name].get("units")
+    if units is None:
+        raise ValueError(f"{name} is scored per half (units_for_half), it has no unit list of its own")
+    return F.all_units() if units == "all64" else list(units)
+
+
+def condition_env(name: str) -> dict:
+    """Extra environment for a condition's driver. The replicate switch is the only one: it moves the Hub
+    prefix and the local adapter directory to replicates/<tag>, so the original adapters are never read."""
+    rep = CONDITIONS[name].get("replicate")
+    return {"SCA2_PB_REPLICATE": rep} if rep else {}
+
+
+def todo_condition(name: str, hub_files, spec_sha: str, read_manifest) -> list[str]:
+    """Units of a T4 condition still missing a CSV + manifest recorded under THIS spec (the Hub is the store)."""
+    if read_manifest is None:
+        raise ValueError("a manifest reader is required: a name-only resume would keep superseded scores")
+    c = CONDITIONS[name]
+    suffix = "_adapter" if c["kind"] == "adapter" else ""
+    return [u for u in condition_units(name)
+            if not _present(c["run_id"], hub_files, f"{u}{suffix}", spec_sha, read_manifest)]
+
+
+def check_marker_for(name: str, marker: dict, replicate_adapter_sha: str | None = None) -> None:
+    """Refuse a gate marker that does not authorise this T4 condition.
+
+    A replicate condition scores weights the original run never saw, so the marker must carry the SHA-256 of
+    those exact weights; a marker produced for the original unit has the same unit name and would pass any
+    check that looked at the name alone. The sign-prompt cell loads no adapter: it needs a passed gate on
+    this stack, at the pinned revision, for a real unit.
+    """
+    c = CONDITIONS[name]
+    if not marker.get("gate_pass"):
+        raise RuntimeError("gate marker says gate_pass=false")
+    if marker.get("adapter_revision") != ADAPTER_REVISION:
+        raise RuntimeError(f"gate marker adapter revision {marker.get('adapter_revision')!r} is not the pinned {ADAPTER_REVISION}")
+    if marker.get("unit") not in condition_units(name) and not (
+            c["kind"] == "signprompt" and marker.get("unit") in F.all_units()):
+        raise RuntimeError(f"gate marker unit {marker.get('unit')!r} is outside {name}")
+    if c.get("replicate"):
+        if not replicate_adapter_sha:
+            raise RuntimeError(f"{name}: no replicate adapter SHA-256 to compare the marker against")
+        if marker.get("adapter_sha256") != replicate_adapter_sha:
+            raise RuntimeError(f"{name}: gate marker was made on different weights than the replicate adapter")
+
+
+def t4_steps() -> list[tuple[str, list[str], dict]]:
+    """The detached chain for the T4 session: gate the replicate adapter, then score each condition."""
+    gate_env = {"GATE_UNIT": REPLICATE_UNIT, "SCA2_PB_ADAPTER_REVISION": ADAPTER_REVISION,
+                "SCORE_RUN_ID": GATE_RUN_ID_T4, "SCA2_PB_REPLICATE": REPLICATE_TAG}
+    steps = [("t4_gate", ["paper_b/colab/vm_gate_factorial.py"], gate_env)]
+    for name in T4_ORDER:
+        steps.append((f"t4_{name}", ["paper_b/colab/vm_score_t4.py", name], condition_env(name)))
+    return steps
 
 
 def heldout_items() -> list[str]:
