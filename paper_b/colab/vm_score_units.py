@@ -5,7 +5,7 @@
 # unless the Hub then holds every expected file for this half.
 import json, os, subprocess, sys
 sys.path.insert(0, "/content/SCA2_PofW/paper_b"); sys.path.insert(0, "/content/SCA2_PofW/paper_b/colab")
-from vm_fact_common import ENV, REPO, ROOT
+from vm_fact_common import REPO, ROOT, child_env
 import score_plan as SPL
 from build_scoring_spec import write_spec
 from huggingface_hub import HfApi
@@ -26,7 +26,7 @@ except (OSError, ValueError, RuntimeError) as exc:
     sys.exit(2)
 os.makedirs(f"{ROOT}/specs", exist_ok=True)
 spec_path = write_spec(spec, f"{ROOT}/specs/{cond}.json")
-env = dict(ENV, SCA2_PB_ADAPTER_REVISION=SPL.ADAPTER_REVISION)
+env = child_env(SCA2_PB_ADAPTER_REVISION=SPL.ADAPTER_REVISION)
 marker = f"{ROOT}/adapter_gate.json"
 api = HfApi()
 
