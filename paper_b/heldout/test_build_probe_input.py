@@ -72,3 +72,18 @@ def test_loader_skips_units_that_have_not_landed_yet(tmp_path):
     (tmp_path / f"{F.all_units()[0]}_adapter_option_probabilities.csv").write_text(_frame().to_csv(index=False))
     got = B.load_run_dir(tmp_path)
     assert list(got) == [F.all_units()[0]]
+
+
+def test_a_unit_whose_manifest_records_another_spec_is_excluded(tmp_path):
+    """The amended pass reuses the superseded pass's paths, so a file count cannot tell them apart.
+    Only the manifest's spec_sha256 can, and the probe must honour it."""
+    units = F.all_units()[:3]
+    present = {f"runs/R/synthetic/{u}_adapter_option_probabilities.csv" for u in units}
+    manifests = {units[0]: {"spec_sha256": "new"}, units[1]: {"spec_sha256": "old"}, units[2]: {}}
+    got = B.spec_verified_units(units, "R", present, "new", lambda rid, m: manifests.get(m.replace("_adapter", ""), {}))
+    assert got == [units[0]], "units with a stale or missing manifest must not enter the probe"
+
+
+def test_spec_check_without_a_reader_is_a_programming_error():
+    with pytest.raises(ValueError, match="manifest reader"):
+        B.spec_verified_units(F.all_units()[:1], "R", set(), "new", None)
