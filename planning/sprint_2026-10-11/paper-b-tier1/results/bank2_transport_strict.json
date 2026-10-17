@@ -1,0 +1,391 @@
+{
+ "generated_by": "paper_b/bank2_transport.py",
+ "checkpoint": "C3",
+ "run_date": "2026-10-18",
+ "draws": 2000,
+ "seed": 20261011,
+ "ci": [
+  0.025,
+  0.975
+ ],
+ "n_countries": 42,
+ "n_cells": 26,
+ "n_profiles_sign": 26,
+ "inputs": {
+  "cohort1_strict": {
+   "path": "/Users/bonorinoa/Hermes/Projects/SCA2/paper_b_inputs/cohort1_strict.csv",
+   "sha256": "047cd0e459597cf034cacd609abfa46dee6361e9eee05e3abe9f46f34352d2d9"
+  },
+  "adapter_strict_v1": {
+   "path": "/Users/bonorinoa/Hermes/Projects/SCA2/paper_b_inputs/adapter_strict_v1.csv",
+   "sha256": "3683d221176766377bd30f5c955f560501af8244306206ff5023bb892e0a34fd"
+  },
+  "gps_z": {
+   "path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/synthetic_generation/outputs/gps_sign_relabel_all/gps_z_vectors.json",
+   "sha256": "02972f0ec4a8b702fa84e73cc5760264b44a62f80900279cd00881009fe5ee0d"
+  }
+ },
+ "cohort1_adapter_gps": {
+  "trust": {
+   "point": 0.7441050158009886,
+   "ci_lo": 0.5002088786337604,
+   "ci_hi": 0.8647856310906544,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "risktaking": {
+   "point": 0.4345677011587392,
+   "ci_lo": 0.08459211972226777,
+   "ci_hi": 0.6855238217593994,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "posrecip": {
+   "point": 0.4875617859168625,
+   "ci_lo": 0.12011003554792006,
+   "ci_hi": 0.694575712077336,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "altruism": {
+   "point": 0.40620695243497285,
+   "ci_lo": 0.019705177182032498,
+   "ci_hi": 0.6763677356156965,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "negrecip": {
+   "point": -0.02811765659184831,
+   "ci_lo": -0.41794182001214747,
+   "ci_hi": 0.4062285961335365,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "patience:Q43": {
+   "point": -0.01912557249027031,
+   "ci_lo": -0.4137061784151323,
+   "ci_hi": 0.45208283122682635,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "patience:Q50": {
+   "point": 0.1768900413256624,
+   "ci_lo": -0.3130980978178783,
+   "ci_hi": 0.5799151500605274,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  }
+ },
+ "bank2_adapter_gps": {
+  "trust": {
+   "point": 0.8032452595902299,
+   "ci_lo": 0.6145971882846217,
+   "ci_hi": 0.8764662126321977,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "risktaking": {
+   "point": 0.21009949730748287,
+   "ci_lo": -0.19894637503666981,
+   "ci_hi": 0.5841897694068418,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "posrecip": {
+   "point": 0.3656055731138321,
+   "ci_lo": -0.06790870044573029,
+   "ci_hi": 0.6519695648305968,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "altruism": {
+   "point": 0.3636587051851141,
+   "ci_lo": -0.057258124000831793,
+   "ci_hi": 0.6526523339615622,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "negrecip": {
+   "point": 0.238978038250133,
+   "ci_lo": -0.23661759522156556,
+   "ci_hi": 0.6035792348206974,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "patience:Q43": {
+   "point": 0.005353886803974467,
+   "ci_lo": -0.40296284758533274,
+   "ci_hi": 0.4703697004725019,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "patience:Q50": {
+   "point": 0.160616604119234,
+   "ci_lo": -0.3431572421382079,
+   "ci_hi": 0.5568731230966979,
+   "n": 42,
+   "degenerate_draws": 0,
+   "draws": 2000
+  }
+ },
+ "bank_to_bank": {
+  "trust": {
+   "n_cells": 26,
+   "pearson": 0.9090290133640151,
+   "pearson_lo": 0.7965924666417422,
+   "pearson_hi": 0.9654169281924576,
+   "spearman": 0.9070085470085469,
+   "spearman_lo": 0.774163282409449,
+   "spearman_hi": 0.957361901902584,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "risktaking": {
+   "n_cells": 26,
+   "pearson": 0.597757128274079,
+   "pearson_lo": 0.22895893796148822,
+   "pearson_hi": 0.8194416180571575,
+   "spearman": 0.5439316239316239,
+   "spearman_lo": 0.18659831243534505,
+   "spearman_hi": 0.7716277210434477,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "posrecip": {
+   "n_cells": 26,
+   "pearson": 0.897638626467169,
+   "pearson_lo": 0.7749893587186875,
+   "pearson_hi": 0.9604750565131557,
+   "spearman": 0.937094017094017,
+   "spearman_lo": 0.8179828488128906,
+   "spearman_hi": 0.9828001375988992,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "altruism": {
+   "n_cells": 26,
+   "pearson": 0.949051928421145,
+   "pearson_lo": 0.859138984058649,
+   "pearson_hi": 0.9893966860148004,
+   "spearman": 0.9439316239316239,
+   "spearman_lo": 0.8316586894201866,
+   "spearman_hi": 0.9849223180778179,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "negrecip": {
+   "n_cells": 26,
+   "pearson": 0.7081916581321159,
+   "pearson_lo": 0.4880200356628524,
+   "pearson_hi": 0.8613120685546286,
+   "spearman": 0.5999999999999999,
+   "spearman_lo": 0.2301328653931208,
+   "spearman_hi": 0.8379478078564072,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "patience:Q43": {
+   "n_cells": 26,
+   "pearson": 0.8118359628736878,
+   "pearson_lo": 0.6991562843578307,
+   "pearson_hi": 0.9448071194490927,
+   "spearman": 0.8885470085470085,
+   "spearman_lo": 0.6820894369161743,
+   "spearman_hi": 0.9711666378714581,
+   "degenerate_draws": 0,
+   "draws": 2000
+  },
+  "patience:Q50": {
+   "n_cells": 26,
+   "pearson": 0.9398300934035531,
+   "pearson_lo": 0.8904018954235561,
+   "pearson_hi": 0.9753475800888668,
+   "spearman": 0.9528205128205127,
+   "spearman_lo": 0.8563995612308707,
+   "spearman_hi": 0.9821514573430072,
+   "degenerate_draws": 0,
+   "draws": 2000
+  }
+ },
+ "surfaces_table": [
+  {
+   "surface": "trust",
+   "imprint": true,
+   "cohort1_rho": 0.7441050158009886,
+   "cohort1_lo": 0.5002088786337604,
+   "cohort1_hi": 0.8647856310906544,
+   "bank2_rho": 0.8032452595902299,
+   "bank2_lo": 0.6145971882846217,
+   "bank2_hi": 0.8764662126321977,
+   "c3_reading": "transport holds"
+  },
+  {
+   "surface": "risktaking",
+   "imprint": true,
+   "cohort1_rho": 0.4345677011587392,
+   "cohort1_lo": 0.08459211972226777,
+   "cohort1_hi": 0.6855238217593994,
+   "bank2_rho": 0.21009949730748287,
+   "bank2_lo": -0.19894637503666981,
+   "bank2_hi": 0.5841897694068418,
+   "c3_reading": "transport dropped: interval includes 0"
+  },
+  {
+   "surface": "posrecip",
+   "imprint": true,
+   "cohort1_rho": 0.4875617859168625,
+   "cohort1_lo": 0.12011003554792006,
+   "cohort1_hi": 0.694575712077336,
+   "bank2_rho": 0.3656055731138321,
+   "bank2_lo": -0.06790870044573029,
+   "bank2_hi": 0.6519695648305968,
+   "c3_reading": "transport dropped: interval includes 0"
+  },
+  {
+   "surface": "altruism",
+   "imprint": true,
+   "cohort1_rho": 0.40620695243497285,
+   "cohort1_lo": 0.019705177182032498,
+   "cohort1_hi": 0.6763677356156965,
+   "bank2_rho": 0.3636587051851141,
+   "bank2_lo": -0.057258124000831793,
+   "bank2_hi": 0.6526523339615622,
+   "c3_reading": "transport dropped: interval includes 0"
+  },
+  {
+   "surface": "negrecip",
+   "imprint": false,
+   "cohort1_rho": -0.02811765659184831,
+   "cohort1_lo": -0.41794182001214747,
+   "cohort1_hi": 0.4062285961335365,
+   "bank2_rho": 0.238978038250133,
+   "bank2_lo": -0.23661759522156556,
+   "bank2_hi": 0.6035792348206974,
+   "c3_reading": "reported (not an imprint dimension)"
+  },
+  {
+   "surface": "patience:Q43",
+   "imprint": false,
+   "cohort1_rho": -0.01912557249027031,
+   "cohort1_lo": -0.4137061784151323,
+   "cohort1_hi": 0.45208283122682635,
+   "bank2_rho": 0.005353886803974467,
+   "bank2_lo": -0.40296284758533274,
+   "bank2_hi": 0.4703697004725019,
+   "c3_reading": "reported (not an imprint dimension)"
+  },
+  {
+   "surface": "patience:Q50",
+   "imprint": false,
+   "cohort1_rho": 0.1768900413256624,
+   "cohort1_lo": -0.3130980978178783,
+   "cohort1_hi": 0.5799151500605274,
+   "bank2_rho": 0.160616604119234,
+   "bank2_lo": -0.3431572421382079,
+   "bank2_hi": 0.5568731230966979,
+   "c3_reading": "reported (not an imprint dimension)"
+  }
+ ],
+ "bank_to_bank_table": [
+  {
+   "surface": "trust",
+   "n_cells": 26,
+   "pearson": 0.9090290133640151,
+   "pearson_lo": 0.7965924666417422,
+   "pearson_hi": 0.9654169281924576,
+   "spearman": 0.9070085470085469,
+   "spearman_lo": 0.774163282409449,
+   "spearman_hi": 0.957361901902584
+  },
+  {
+   "surface": "risktaking",
+   "n_cells": 26,
+   "pearson": 0.597757128274079,
+   "pearson_lo": 0.22895893796148822,
+   "pearson_hi": 0.8194416180571575,
+   "spearman": 0.5439316239316239,
+   "spearman_lo": 0.18659831243534505,
+   "spearman_hi": 0.7716277210434477
+  },
+  {
+   "surface": "posrecip",
+   "n_cells": 26,
+   "pearson": 0.897638626467169,
+   "pearson_lo": 0.7749893587186875,
+   "pearson_hi": 0.9604750565131557,
+   "spearman": 0.937094017094017,
+   "spearman_lo": 0.8179828488128906,
+   "spearman_hi": 0.9828001375988992
+  },
+  {
+   "surface": "altruism",
+   "n_cells": 26,
+   "pearson": 0.949051928421145,
+   "pearson_lo": 0.859138984058649,
+   "pearson_hi": 0.9893966860148004,
+   "spearman": 0.9439316239316239,
+   "spearman_lo": 0.8316586894201866,
+   "spearman_hi": 0.9849223180778179
+  },
+  {
+   "surface": "negrecip",
+   "n_cells": 26,
+   "pearson": 0.7081916581321159,
+   "pearson_lo": 0.4880200356628524,
+   "pearson_hi": 0.8613120685546286,
+   "spearman": 0.5999999999999999,
+   "spearman_lo": 0.2301328653931208,
+   "spearman_hi": 0.8379478078564072
+  },
+  {
+   "surface": "patience:Q43",
+   "n_cells": 26,
+   "pearson": 0.8118359628736878,
+   "pearson_lo": 0.6991562843578307,
+   "pearson_hi": 0.9448071194490927,
+   "spearman": 0.8885470085470085,
+   "spearman_lo": 0.6820894369161743,
+   "spearman_hi": 0.9711666378714581
+  },
+  {
+   "surface": "patience:Q50",
+   "n_cells": 26,
+   "pearson": 0.9398300934035531,
+   "pearson_lo": 0.8904018954235561,
+   "pearson_hi": 0.9753475800888668,
+   "spearman": 0.9528205128205127,
+   "spearman_lo": 0.8563995612308707,
+   "spearman_hi": 0.9821514573430072
+  }
+ ],
+ "c3_pass": {
+  "imprint": [
+   "trust",
+   "risktaking",
+   "posrecip",
+   "altruism"
+  ],
+  "kept": [
+   "trust"
+  ],
+  "dropped": [
+   "risktaking",
+   "posrecip",
+   "altruism"
+  ],
+  "all_imprint_keep": false
+ }
+}
