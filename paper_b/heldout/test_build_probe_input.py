@@ -87,3 +87,21 @@ def test_a_unit_whose_manifest_records_another_spec_is_excluded(tmp_path):
 def test_spec_check_without_a_reader_is_a_programming_error():
     with pytest.raises(ValueError, match="manifest reader"):
         B.spec_verified_units(F.all_units()[:1], "R", set(), "new", None)
+
+
+def test_signprompt_arm_uses_its_own_file_and_manifest_names():
+    """The sign-prompt run writes <unit>_option_probabilities.csv and <unit>_manifest.json; reading it
+    through the adapter names would find nothing and look like an empty run."""
+    u = F.all_units()[0]
+    assert B.csv_name("R", u) == f"runs/R/synthetic/{u}_adapter_option_probabilities.csv"   # unchanged
+    assert B.csv_name("R", u, arm="signprompt") == f"runs/R/synthetic/{u}_option_probabilities.csv"
+    asked = []
+    present = {B.csv_name("R", u, arm="signprompt")}
+    got = B.spec_verified_units([u], "R", present, "s",
+                                lambda rid, m: asked.append(m) or {"spec_sha256": "s"}, arm="signprompt")
+    assert got == [u] and asked == [u], "the sign-prompt manifest is <unit>, not <unit>_adapter"
+
+
+def test_an_unknown_arm_is_refused():
+    with pytest.raises(ValueError, match="arm"):
+        B.csv_name("R", F.all_units()[0], arm="prompt")

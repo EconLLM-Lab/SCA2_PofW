@@ -260,3 +260,23 @@ Consequences.
   comparator assignments for these 12 items were made on the pre-amendment wording, since both
   comparator files cover all 223 items. Either they are re-derived on the amended wording, or the
   pre-amendment wording is disclosed for those items.
+
+## 12. Amendment 2 (2026-10-17): the 12 repaired items leave the comparator routes
+
+Decision. Augusto Gonzalez-Bonorino chose exclude-and-disclose for the open item in section 11, in the
+same instruction that authorised the freeze ("exclude-and-disclose and freeze"), on 2026-10-17. The freeze
+was committed at 15:40 (`5982544`) and the first read of held-out human data followed at 15:43 (`83cd427`).
+At the time of the decision no human held-out value had been read and no comparator statistic had been
+computed. This text was written after the primary statistic A had been read; it records the earlier
+decision and changes nothing else.
+
+Rule. The 12 items repaired by Amendment 1 (Q46, Q82, Q121, Q153, Q155, Q157, Q175, Q199, Q253, Q254, Q255,
+Q256) are removed from both comparator files before any comparator statistic is computed, because both
+comparators assigned them on the pre-amendment wording. `analyze_heldout.REPAIRED` holds the list, and a
+test fails if it drifts from section 11.
+
+Effect. Of the 12, only Q82 was assigned by either comparator: trust, sign −1, by both the face-valid rule
+and the Jev majority. The face-valid route goes from 30 to 29 assigned items (imprint set 26 to 25) and the
+Jev route from 42 to 41 (imprint set 41 to 40). Q82 is not in the adapter's primary selection. The adapter
+route is unaffected: its scores were produced on the repaired wording (Q253, a repaired item, is among the
+56 selected and stays). The frozen comparator files are unchanged on disk; the exclusion happens in code.

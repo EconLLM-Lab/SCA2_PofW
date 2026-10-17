@@ -74,11 +74,23 @@ def load_run_dir(path: Path, units: list[str] | None = None) -> dict[str, pd.Dat
     return out
 
 
-def csv_name(run_id: str, unit: str) -> str:
-    return f"runs/{run_id}/synthetic/{unit}_adapter_option_probabilities.csv"
+# arm -> (score-file suffix, manifest model-name suffix). The adapter scorer names both "<unit>_adapter";
+# the sign-prompt scorer (score_sign_profiles.py) names both "<unit>".
+ARMS = {"adapter": ("_adapter", "_adapter"), "signprompt": ("", "")}
 
 
-def spec_verified_units(units, run_id: str, present, spec_sha: str | None, read_manifest) -> list[str]:
+def _arm(arm: str) -> tuple[str, str]:
+    if arm not in ARMS:
+        raise ValueError(f"unknown arm {arm!r}; expected one of {sorted(ARMS)}")
+    return ARMS[arm]
+
+
+def csv_name(run_id: str, unit: str, arm: str = "adapter") -> str:
+    return f"runs/{run_id}/synthetic/{unit}{_arm(arm)[0]}_option_probabilities.csv"
+
+
+def spec_verified_units(units, run_id: str, present, spec_sha: str | None, read_manifest,
+                        arm: str = "adapter") -> list[str]:
     """Units whose scores exist AND (when a spec hash is given) whose manifest records that spec.
 
     The amended pass writes to the paths the pass it supersedes used, so the presence of a file says
@@ -89,10 +101,10 @@ def spec_verified_units(units, run_id: str, present, spec_sha: str | None, read_
         raise ValueError("spec_sha was given, so a manifest reader is required")
     out = []
     for u in units:
-        if csv_name(run_id, u) not in present:
+        if csv_name(run_id, u, arm) not in present:
             continue
         if spec_sha is not None:
-            recorded = (read_manifest(run_id, f"{u}_adapter") or {}).get("spec_sha256")
+            recorded = (read_manifest(run_id, f"{u}{_arm(arm)[1]}") or {}).get("spec_sha256")
             if recorded != spec_sha:
                 continue
         out.append(u)
@@ -100,7 +112,8 @@ def spec_verified_units(units, run_id: str, present, spec_sha: str | None, read_
 
 
 def load_hub_run(run_id: str, repo: str, cache_dir: Path, units: list[str] | None = None,
-                 spec_sha: str | None = None, read_manifest=None) -> dict[str, pd.DataFrame]:
+                 spec_sha: str | None = None, read_manifest=None,
+                 arm: str = "adapter") -> dict[str, pd.DataFrame]:
     import os
     from huggingface_hub import HfApi, hf_hub_download
     units = units or F.all_units()
@@ -111,8 +124,8 @@ def load_hub_run(run_id: str, repo: str, cache_dir: Path, units: list[str] | Non
     if spec_sha is not None and read_manifest is None:
         raise ValueError("spec_sha was given, so a manifest reader is required")
     out = {}
-    for u in spec_verified_units(units, run_id, present, spec_sha, read_manifest):
-        name = csv_name(run_id, u)
+    for u in spec_verified_units(units, run_id, present, spec_sha, read_manifest, arm):
+        name = csv_name(run_id, u, arm)
         p = hf_hub_download(repo, name, repo_type="dataset", local_dir=str(cache_dir), token=tok)
         out[u] = pd.read_csv(p, dtype={"option_code": str, "question_id": str})
     return out
@@ -127,6 +140,8 @@ def main() -> int:
     ap.add_argument("--items-file", default="", help="JSON list of item ids (default: the whole pool)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--cache-dir", default="")
+    ap.add_argument("--arm", default="adapter", choices=sorted(ARMS),
+                    help="which scorer wrote the run: file and manifest names differ")
     ap.add_argument("--spec-sha", default="",
                     help="require each unit's manifest to record this spec hash (Amendment 1 changed "
                          "the held-out wording while the run id and paths stayed the same)")
@@ -147,7 +162,7 @@ def main() -> int:
              else [r["Question"] for r in pd.read_csv(a.pool).to_dict("records")])
     scores = (load_run_dir(Path(a.scores_dir)) if a.scores_dir
               else load_hub_run(a.run_id, a.repo, Path(a.cache_dir or f"/tmp/pb_scores/{a.run_id}"),
-                                spec_sha=a.spec_sha or None, read_manifest=read_manifest))
+                                spec_sha=a.spec_sha or None, read_manifest=read_manifest, arm=a.arm))
     print(f"units with scores: {len(scores)} | items requested: {len(items)}")
     values = probe_values(scores, items)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)

@@ -4,13 +4,12 @@
 Inputs
   FREEZE.json        read FIRST and through require_freeze(): both the selection and the pool are
                      re-hashed, so this cannot run against an un-frozen or since-changed selection
-  data/wvs_eval_full/<CC>_WVS_wave7.parquet
-                     per-country WVS-7 respondent frames; the human surface is the survey-weighted
-                     country mean of the RAW code (screen_test requires raw codes: direction is
-                     carried by the item's sign, so recoding, as the phase-2 composites do, would
-                     destroy it). An item-country cell needs >= 50 valid weighted respondents,
-                     the same floor the phase-2 pipeline uses.
-  ts_crosswalk.json  pool item -> accepted WVS-7 variable
+  data/WVS/WVS_wave7.dta
+                     the human surface is the survey-weighted (W_WEIGHT) country mean of the RAW
+                     code, codes < 0 missing (PREREGISTRATION section 4). Raw, because screen_test
+                     carries direction in the item's sign; recoding would destroy it. The pool's
+                     Qnnn items are WVS-7 variables, so no crosswalk is involved. No respondent
+                     floor is registered; `min_n` exists only for the labelled sensitivity check.
   data/GPS/GPS_dataset_country_level/country_gps.dta
                      country GPS z, loaded exactly as analysis/phase2/13_unified_comparison.py does
 
@@ -36,22 +35,23 @@ import screen_test as ST  # noqa: E402
 
 WVS7 = REPO / "data/WVS/WVS_wave7.dta"   # the pool's Qnnn items ARE WVS-7 variables, so no crosswalk
 GPS_DTA = REPO / "data/GPS/GPS_dataset_country_level/country_gps.dta"
-CEILING = REPO / "planning/sprint_2026-10-11/paper-b-tier1/results/ceiling_surfaces.csv"
 DIMS = ["patience", "risktaking", "posrecip", "negrecip", "altruism", "trust"]
-MIN_N = 50
+MIN_N = 1          # registered: any valid respondent (section 4 sets only codes < 0 missing)
+SENSITIVITY_MIN_N = 50
 
 
 def load_gps() -> pd.DataFrame:
     return pd.read_stata(GPS_DTA).set_index("isocode")[DIMS]
 
 
-def human_surface(items: list[str]) -> tuple[pd.DataFrame, dict]:
+def human_surface(items: list[str], min_n: int = MIN_N) -> tuple[pd.DataFrame, dict]:
     """Country x item survey-weighted means of the RAW code, straight from WVS wave 7."""
     import pyreadstat
 
     usecols = ["B_COUNTRY_ALPHA", "W_WEIGHT"] + items
     df, _ = pyreadstat.read_dta(str(WVS7), usecols=usecols, encoding="latin1")
-    meta = {"countries": 0, "items_requested": len(items), "cells_below_floor": 0}
+    meta = {"countries": 0, "items_requested": len(items), "cells_below_floor": 0,
+            "cells_empty": 0, "min_n": min_n}
     rows = {}
     for cc, g in df.groupby("B_COUNTRY_ALPHA"):
         w = g["W_WEIGHT"].fillna(0)
@@ -59,7 +59,11 @@ def human_surface(items: list[str]) -> tuple[pd.DataFrame, dict]:
         for q in items:
             v = pd.to_numeric(g[q], errors="coerce").astype(float)
             mask = (v >= 0) & (w > 0)
-            if mask.sum() < MIN_N:
+            if mask.sum() == 0:
+                vals[q] = np.nan
+                meta["cells_empty"] += 1          # item not fielded in that country
+                continue
+            if mask.sum() < min_n:
                 vals[q] = np.nan
                 meta["cells_below_floor"] += 1
                 continue
@@ -95,18 +99,16 @@ def main() -> int:
     gps = load_gps()
     covered = [q for q in sel.question_id if q in human.columns]
     print(f"human surface: {human.shape[0]} countries x {human.shape[1]} items "
-          f"({meta['cells_below_floor']} item-country cells below the {MIN_N}-respondent floor)")
+          f"({meta['cells_empty']} cells not fielded, {meta['cells_below_floor']} below a floor of {MIN_N})")
     print(f"countries shared with GPS: {len(human.index.intersection(gps.index))} | "
           f"selected items with human data: {len(covered)} of {len(sel)}")
 
     res = ST.screen(sel, human, gps)                    # registered draws/seed defaults
+    res["cells_empty"] = meta["cells_empty"]
     res["cells_below_floor"] = meta["cells_below_floor"]
-    if CEILING.is_file():
-        c = pd.read_csv(CEILING)
-        res["ceiling_w6_w7"] = {str(k): float(v) for k, v in
-                                c.set_index("surface")["spearman_w6_w7"].dropna().items()}
+    res["min_n"] = MIN_N
     Path(a.out).write_text(json.dumps(res, indent=2) + "\n")
-    print(json.dumps({k: v for k, v in res.items() if k != "ceiling_w6_w7"}, indent=2))
+    print(json.dumps(res, indent=2))
     print("wrote", a.out)
     return 0
 
