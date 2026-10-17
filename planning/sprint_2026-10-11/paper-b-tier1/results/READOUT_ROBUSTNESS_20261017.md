@@ -14,23 +14,25 @@ depends on prompt wording.
 |---|---|---|---|
 | `heldout_reverse` | 56 vs 56 | **39 of 56 = 0.696** | within the bound |
 | `heldout_para_a` | 56 vs 56 | **39 of 56 = 0.696** | within the bound |
-| `heldout_para_b` | — | pending (24 units outstanding at 12:30) | — |
+| `heldout_para_b` | 56 vs 56 | **30 of 56 = 0.536** | within the bound, closest to it |
 
-So neither completed variant triggers the preregistered adverse condition: 30 % of selected items change,
-against a bar of 50 %.
+No variant triggers the preregistered adverse condition, but the margin differs a lot: `para_b` leaves
+30 of 56 unchanged against a bar of 28, so three more items changing would have flipped it. Reverse and
+`para_a` are comfortable at 39 of 56.
 
 ## Two separate things, and they disagree in an informative way
 
 - **Item-level assignment is fairly stable.** Dimension agreement within the primary set is 0.696 for both
   variants, and in every case where the dimension agrees the sign agrees too, which is why the `(d,s)`
   figure equals it exactly.
-- **Set membership is churny.** Membership agreement is only 18 of 56 under reversal (38 in, 38 out) and
-  29 of 56 under paraphrase (27 in, 27 out). Membership is a top-25 % *ranking cut*, and many items sit
-  close to that boundary, so small |t| shifts reshuffle it while each item's own reading stays put.
+- **Set membership is churny in all three variants.** Agreement is 18 of 56 under reversal, 29 of 56 under
+  `para_a`, and 16 of 56 under `para_b`. Membership is a top-25 % *ranking cut*, and many items sit close to
+  that boundary, so small |t| shifts reshuffle it while each item's own reading stays put.
+- Secondary counts also move with the surface: 185 base, 174 reverse, 168 `para_a`, 190 `para_b`.
 
-Supporting detail: `|t_top|` correlation with the base is r = 0.176 under reversal and r = 0.546 under
-paraphrase. Option order matters much more than wording for the magnitudes, even though the registered
-`(d,s)` criterion is met by both.
+Supporting detail: `|t_top|` correlation with the base is r = 0.176 under reversal, r = 0.546 under
+`para_a`, and r = 0.271 under `para_b`. Magnitudes move a great deal on every surface, even where the
+registered `(d,s)` criterion is met.
 
 ## What this means for the freeze
 
