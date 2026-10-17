@@ -1,0 +1,8 @@
+{
+ "pairs": 16,
+ "loads": 80,
+ "failures": 0,
+ "console_errors": 0,
+ "bad": [],
+ "pass": true
+}

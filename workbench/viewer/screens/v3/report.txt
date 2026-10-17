@@ -1,0 +1,104 @@
+
+## 1440×860
+ladder         7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+ladder-pinned  8 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin, drawer
+ladder-fail    8 objects at rest: title-tabs, status, pickers, fail, answer, prompt, ladder, margin
+ladder-bank    7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+matrix (v2 layout, coarse)  7 objects: title-tabs, status, pickers, v2-strip, v2-tools, v2-left, v2-side
+object (v2 layout, coarse)  8 objects: title-tabs, status, pickers, v2-tools, v2-strip, v2-stage, v2-side, v2-mini
+cohort (placeholder)        4 objects: title-tabs, status, pickers, cohort
+
+## 1700×1000
+ladder         7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+ladder-pinned  8 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin, drawer
+ladder-fail    8 objects at rest: title-tabs, status, pickers, fail, answer, prompt, ladder, margin
+ladder-bank    7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+matrix (v2 layout, coarse)  7 objects: title-tabs, status, pickers, v2-strip, v2-tools, v2-left, v2-side
+object (v2 layout, coarse)  8 objects: title-tabs, status, pickers, v2-tools, v2-strip, v2-stage, v2-side, v2-mini
+cohort (placeholder)        4 objects: title-tabs, status, pickers, cohort
+
+## ladder self-test (1440×860)
+{
+ "pin_opens_drawer": true,
+ "drawer_does_not_cover_chart": true,
+ "drawer_does_not_cover_ladder": true,
+ "chart_width_before_after": [
+  190,
+  190
+ ],
+ "pin_marker": true,
+ "url_sel": "20,3",
+ "esc_unpins": true,
+ "face_a": {
+  "url": "a",
+  "label": "A",
+  "sum": "✓ cells + embedding = 1.0586 = A's margin, from the export 1.0586"
+ },
+ "clamp_key_shows_frame_chip": true,
+ "rings": 5,
+ "passing_glyph": "✓ 7",
+ "details_card": "The model's answer · wvs_Q81",
+ "fail_state": {
+  "banner": "✗ 1 check failed · A dla_gap = 0.031 ≥ 0.01 (simulated with ?fail · not data). The parts below do not add up for A; do n",
+  "glyph": "✗ 1 of 7",
+  "green_checks_visible": 0,
+  "red_faces": [
+   "a",
+   "d"
+  ]
+ },
+ "page_errors": []
+}
+
+# v3 port 2/2 (card t_0729b553) — 2026-10-17 16:10
+tsc: exit 0 (tsc.txt)
+sweep (tabs c, b, a, k + landing): 16 pairs, 80 loads, 0 failures, 0 console errors, exit 0 (sweep.json)
+leak_end_on_a (tab=a): start {geometries 10, textures 122} = end, flat true, 0 page errors (leak_end_on_a.json)
+at-rest object counts per tab (all <= 9): ladder 7, matrix 6, object 9, cohort 6, landing first screen 5; matrix pinned 7
+
+## 1440×860
+ladder           7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+matrix           6 objects at rest: title-tabs, status, pickers, answer, map, margin
+matrix-pinned    7 objects at rest: title-tabs, status, pickers, answer, map, margin, drawer
+object           9 objects at rest: title-tabs, status, pickers, answer, scenebar, sceneA, sceneB, inset, minimap
+cohort           6 objects at rest: title-tabs, status, pickers, answer, cohort-empty, illustration
+landing          5 objects at rest: nav, h1, lede, cta, hero
+learn-modal      6 objects at rest: title-tabs, status, pickers, answer, map, margin
+answer-popover   6 objects at rest: title-tabs, status, pickers, answer, map, margin
+
+## 1700×1000
+ladder           7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+matrix           6 objects at rest: title-tabs, status, pickers, answer, map, margin
+matrix-pinned    7 objects at rest: title-tabs, status, pickers, answer, map, margin, drawer
+object           9 objects at rest: title-tabs, status, pickers, answer, scenebar, sceneA, sceneB, inset, minimap
+cohort           6 objects at rest: title-tabs, status, pickers, answer, cohort-empty, illustration
+landing          5 objects at rest: nav, h1, lede, cta, hero
+learn-modal      6 objects at rest: title-tabs, status, pickers, answer, map, margin
+answer-popover   6 objects at rest: title-tabs, status, pickers, answer, map, margin
+
+## matrix + object self-test (1440×860)
+{
+ "matrix_default": {
+  "qty": "attn",
+  "face": "d",
+  "footer": "‖B − A‖ · 0 → 22.1 (99th percentile, linear; brighter cells are clipped) · max 49.5 · pair"
+ },
+ "matrix_hover_tooltip": 3,
+ "matrix_pin_opens_drawer": "Attention · layer 18",
+ "matrix_drawer_does_not_cover_map": true,
+ "matrix_esc_unpins": true,
+ "matrix_switch": [
+  "face=a",
+  "qty=resid"
+ ],
+ "object_default_view": {
+  "view": "delta",
+  "labels": [
+   "A · SmolLM2-135M-Instruct",
+   "‖B − A‖ · the change, B = Instruct + USA DPO LoRA (3 epochs)"
+  ]
+ },
+ "object_labels_in_own_scene": true,
+ "object_inset_has_zero_and_ticks": true,
+ "page_errors": []
+}

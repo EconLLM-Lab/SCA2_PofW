@@ -156,6 +156,7 @@ export class TensorScene {
     readonly delta: { pair: Pair; a: Run } | null = null,   // set: draw ||B - A||, run = B
     readonly showClamped = false,
     lay?: XLayout,
+    readonly opts: { ribbon?: boolean } = {},   // v3: ribbon=false (the flat inset chart carries the margin; no floating sprites)
   ) {
     const m = run.m;
     this.L = m.model.n_layers; this.H = m.model.n_heads; this.T = m.tokens.length; this.ro = m.readout.position;
@@ -207,7 +208,7 @@ export class TensorScene {
     this.hoverBox.matrixAutoUpdate = false;
     this.group.add(this.hoverBox);
     this.addReadoutFrame();
-    if (!d) this.addMarginRibbon();
+    if (!d && this.opts.ribbon !== false) this.addMarginRibbon();
   }
 
   private headColor(l: number, h: number, tt: number): THREE.Color {
@@ -247,14 +248,19 @@ export class TensorScene {
     for (const m of this.lineMats) m.resolution.set(w, h);
   }
 
+  /** t*: a lit floor under the whole answer column, a white frame round it and a "t*" label in front, so it
+   * reads as a highlighted column, not as the object's edge (white = the answer position, as on the ladder). */
   private addReadoutFrame() {
     const { SZ } = LAYOUT;
-    const x = this.lay.x[this.ro] ?? 0;
+    const x = this.lay.x[this.ro] ?? 0, z0 = 1.0, z1 = -(this.L - 1) * SZ - 0.6;
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(1.0, z0 - z1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, depthWrite: false }));
+    floor.rotation.x = -Math.PI / 2; floor.position.set(x, 0.001, (z0 + z1) / 2);
+    this.group.add(floor);
     this.group.add(this.fatLine([
-      new THREE.Vector3(x - 0.5, 0.002, 1.0), new THREE.Vector3(x + 0.5, 0.002, 1.0),
-      new THREE.Vector3(x + 0.5, 0.002, -(this.L - 1) * SZ - 0.6), new THREE.Vector3(x - 0.5, 0.002, -(this.L - 1) * SZ - 0.6),
-      new THREE.Vector3(x - 0.5, 0.002, 1.0),
-    ], COLORS.pos, LINE_PX.readout));
+      new THREE.Vector3(x - 0.5, 0.002, z0), new THREE.Vector3(x + 0.5, 0.002, z0),
+      new THREE.Vector3(x + 0.5, 0.002, z1), new THREE.Vector3(x - 0.5, 0.002, z1),
+      new THREE.Vector3(x - 0.5, 0.002, z0),
+    ], 0xffffff, LINE_PX.readout));
   }
 
   /** running_margin[l] = h^l_{t*} . w, drawn as a polyline beside the readout column.
@@ -478,9 +484,10 @@ export function tokenStrip(run: Run, lay: XLayout = fullLayout(run.m.tokens.leng
   run.m.tokens.forEach((tk, i) => {
     const x = lay.x[i];
     if (x == null) return;
-    const text = tk.text.replace(/\n/g, "\\n").replace(/ /g, "·").slice(0, 18) || "∅";
+    const ro = i === run.m.readout.position;
+    const text = ro ? "t* answer" : tk.text.replace(/\n/g, "\\n").replace(/ /g, "·").slice(0, 18) || "∅";
     g.save(); g.font = "600 32px ui-monospace, Menlo, monospace"; g.translate(px(x), 8); g.rotate(Math.PI / 2);
-    g.fillStyle = i === run.m.readout.position ? "#6b9bff" : i === hl ? "#ffcf5c" : "#e6e6e6";
+    g.fillStyle = ro ? "#ffffff" : i === hl ? "#ffcf5c" : "#e6e6e6";
     g.fillText(text, 0, 0); g.restore();
   });
   for (const gp of lay.gaps) {
@@ -537,7 +544,7 @@ export function layerStrip(L: number, xLeft = 0, xRight = 0): THREE.Group {
   const grp = new THREE.Group();
   for (let l = 0; l < L; l++) {
     const z = -l * LAYOUT.SZ, col = l % 5 === 0 ? "#d4d4d4" : "#9b9b9b";
-    grp.add(textSprite(`L${l}`, col, xLeft - 0.9, 0.05, z, 12, 1));
+    if (l % 5 === 0 || l === L - 1) grp.add(textSprite(`L${l}`, col, xLeft - 0.9, 0.05, z, 12, 1));
     if (xRight) grp.add(textSprite(`L${l}`, col, xRight + 1.4, 0.05, z, 12, 0));
   }
   return grp;

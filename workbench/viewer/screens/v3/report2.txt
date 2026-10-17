@@ -1,0 +1,47 @@
+
+## 1440×860
+ladder           7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+matrix           6 objects at rest: title-tabs, status, pickers, answer, map, margin
+matrix-pinned    7 objects at rest: title-tabs, status, pickers, answer, map, margin, drawer
+object           9 objects at rest: title-tabs, status, pickers, answer, scenebar, sceneA, sceneB, inset, minimap
+cohort           6 objects at rest: title-tabs, status, pickers, answer, cohort-empty, illustration
+landing          5 objects at rest: nav, h1, lede, cta, hero
+learn-modal      6 objects at rest: title-tabs, status, pickers, answer, map, margin
+answer-popover   6 objects at rest: title-tabs, status, pickers, answer, map, margin
+
+## 1700×1000
+ladder           7 objects at rest: title-tabs, status, pickers, answer, prompt, ladder, margin
+matrix           6 objects at rest: title-tabs, status, pickers, answer, map, margin
+matrix-pinned    7 objects at rest: title-tabs, status, pickers, answer, map, margin, drawer
+object           9 objects at rest: title-tabs, status, pickers, answer, scenebar, sceneA, sceneB, inset, minimap
+cohort           6 objects at rest: title-tabs, status, pickers, answer, cohort-empty, illustration
+landing          5 objects at rest: nav, h1, lede, cta, hero
+learn-modal      6 objects at rest: title-tabs, status, pickers, answer, map, margin
+answer-popover   6 objects at rest: title-tabs, status, pickers, answer, map, margin
+
+## matrix + object self-test (1440×860)
+{
+ "matrix_default": {
+  "qty": "attn",
+  "face": "d",
+  "footer": "‖B − A‖ · 0 → 22.1 (99th percentile, linear; brighter cells are clipped) · max 49.5 · pair"
+ },
+ "matrix_hover_tooltip": 3,
+ "matrix_pin_opens_drawer": "Attention · layer 18",
+ "matrix_drawer_does_not_cover_map": true,
+ "matrix_esc_unpins": true,
+ "matrix_switch": [
+  "face=a",
+  "qty=resid"
+ ],
+ "object_default_view": {
+  "view": "delta",
+  "labels": [
+   "A · SmolLM2-135M-Instruct",
+   "‖B − A‖ · the change, B = Instruct + USA DPO LoRA (3 epochs)"
+  ]
+ },
+ "object_labels_in_own_scene": true,
+ "object_inset_has_zero_and_ticks": true,
+ "page_errors": []
+}

@@ -148,12 +148,13 @@ export const CHANGE_FOOT = `<div class="foot">Change in <span class="d">gold</sp
 export function sliceName(D: Bundle, s: Slice): string {
   return s.kind === "head" ? `Head ${s.h} · layer ${s.l}` : s.kind === "mlp" ? `MLP · layer ${s.l}` : s.l === D.A.m.model.n_layers ? "Running state · after the last layer" : `Running state · entering layer ${s.l}`;
 }
-export function inspectorHTML(D: Bundle, s: Slice, o: { pinned?: boolean; clamp?: boolean; note?: string } = {}): string {
+/** o.bare: the body only (no card, no header), for the v3 pin drawer, which draws its own header. */
+export function inspectorHTML(D: Bundle, s: Slice, o: { pinned?: boolean; clamp?: boolean; note?: string; bare?: boolean } = {}): string {
   const tk = D.A.m.tokens, ro = D.A.m.readout.position;
-  let html = `<div class="card ${o.pinned ? "pinned" : ""}"><div class="card-h"><span>${esc(sliceName(D, s))}</span>
-    <span class="tag" title="${o.pinned ? "Press Esc to unpin" : "Click to pin"}">${o.pinned ? "pinned" : "preview"}</span>${lm(s.kind, "learn more")}</div>
-    ${o.note ? `<div class="note">${o.note}</div>` : ""}
-    <div class="tokline">token ${s.t}: “<b>${esc(tokText(tk[s.t].text))}</b>”${s.t === ro ? ' <span class="ro" title="answer position (t*): where the model is about to write its answer">answer position (t*)</span>' : ""}</div>
+  let html = o.bare ? "" : `<div class="card ${o.pinned ? "pinned" : ""}"><div class="card-h"><span>${esc(sliceName(D, s))}</span>
+    <span class="tag" title="${o.pinned ? "Press Esc to unpin" : "Click to pin"}">${o.pinned ? "pinned" : "preview"}</span>${lm(s.kind, "learn more")}</div>`;
+  html += `${o.note ? `<div class="note">${o.note}</div>` : ""}
+    <div class="tokline">token ${s.t}: “<b>${esc(tokText(tk[s.t].text))}</b>”${s.t === ro && tk[s.t].text.trim() === "" ? " (a space; the answer code is the next token)" : ""}${s.t === ro ? ' <span class="ro" title="answer position (t*): where the model is about to write its answer">answer position (t*)</span>' : ""}</div>
     ${cmpTable(compareRows(D, s, o.clamp))}`;
   if (s.kind === "head") {
     const ka = topKeys(D.A, s.l, s.h, s.t), kb = topKeys(D.B, s.l, s.h, s.t);
@@ -166,8 +167,39 @@ export function inspectorHTML(D: Bundle, s: Slice, o: { pinned?: boolean; clamp?
     const dw = D.P.t.d_weight_mlp;
     html += `<div class="sub">How far this MLP's weights moved, B vs A (gate, up, down): <span class="num">${[0, 1, 2].map((j) => fmt(dw.get(s.l, j), 2)).join(", ")}</span> ${dw.get(s.l, 0) === 0 && dw.get(s.l, 1) === 0 && dw.get(s.l, 2) === 0 ? "(0: this adapter changed no MLP weights)" : ""}</div>`;
   }
-  return html + CHANGE_FOOT + "</div>";
+  return html + CHANGE_FOOT + (o.bare ? "" : "</div>");
 }
+
+// ------------------------------------------------------------------ gated checks (frame status glyph, fail banner)
+/** One gated check: every key of `conservation.thresholds` in run A, run B and the pair (an @1 pair has none). */
+export interface Check { who: "A" | "B" | "pair"; k: string; v: number; thr: number; ok: boolean; simulated?: boolean }
+const DEV = Boolean((import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV);
+/** The checks, passing when value < threshold. A manifest whose `pass` is false with no failing key adds a
+ * failing \"pass flag\" entry, so a failure is never lost. Dev server only: `?fail=<key>` (or `fail=1` = dla_gap)
+ * marks the first check with that key as failed, flagged `simulated` (the banner says so). */
+export function checksOf(D: Bundle): Check[] {
+  const out: Check[] = [];
+  const src: [Check["who"], Record<string, unknown> | undefined][] = [["A", D.A.m.conservation as unknown as Record<string, unknown>], ["B", D.B.m.conservation as unknown as Record<string, unknown>], ["pair", D.P.m.conservation as unknown as Record<string, unknown> | undefined]];
+  for (const [who, c] of src) {
+    if (!c) continue;
+    for (const [k, thr] of Object.entries((c.thresholds ?? {}) as Record<string, number>)) {
+      const v = c[k];
+      if (typeof v === "number") out.push({ who, k, v, thr, ok: v < thr });
+    }
+    if (c.pass === false && !out.some((x) => x.who === who && !x.ok)) out.push({ who, k: "pass flag", v: NaN, thr: NaN, ok: false });
+  }
+  const f = DEV ? new URLSearchParams(location.search).get("fail") : null;
+  if (f) {
+    const key = f === "1" ? "dla_gap" : f, i = out.findIndex((c) => c.k === key);
+    if (i >= 0) out[i] = { ...out[i], v: out[i].thr * 3.1, ok: false, simulated: true };
+    else out.push({ who: "A", k: key, v: NaN, thr: NaN, ok: false, simulated: true });
+  }
+  return out;
+}
+/** Which exports a failed check taints. A face of the ladder that uses a tainted export turns red. */
+export const failedWho = (cs: Check[]) => new Set(cs.filter((c) => !c.ok).map((c) => c.who));
+export const faceTainted = (face: string, bad: Set<string>) => (face === "a" ? bad.has("A") : face === "b" ? bad.has("B") : bad.size > 0);
+export const checkLine = (c: Check) => `${c.who} ${c.k} = ${isNaN(c.v) ? "fails" : fmt(c.v, 2)}${isNaN(c.thr) ? "" : (c.ok ? " < " : " ≥ ") + c.thr}${c.simulated ? " (simulated with ?fail · not data)" : ""}`;
 
 // ------------------------------------------------------------------ the answer card (S01–S08)
 export function readoutHTML(D: Bundle): string {
@@ -176,7 +208,7 @@ export function readoutHTML(D: Bundle): string {
     const p = r.m.readout.probs[c], pc = r.m.readout.probs_clamped[c];
     return `<div class="pr"><span>${esc(c)}</span><div class="trk"><div style="width:${(p * 100).toFixed(1)}%;background:${col}"></div><i style="left:${(pc * 100).toFixed(1)}%" title="clamped run: ${pc.toFixed(3)}"></i></div><span class="num">${p.toFixed(3)}</span></div>`;
   }).join("");
-  const ok = [D.A, D.B].every((r) => r.m.conservation.pass) && D.P.m.conservation?.pass !== false;
+  const ok = checksOf(D).every((c) => c.ok);
   return `<div class="card"><div class="card-h"><span>The model's answer · ${esc(it.item_id)}</span>${lm("eq6", "learn more")}</div>
     <div class="q" title="Equivalently logit(“${esc(it.j_plus)}”) − logit(“${esc(it.j_minus)}”): the shared normaliser of the softmax cancels.">Margin = log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}” = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Positive means the model leans toward “${esc(short(lp, 60))}” over “${esc(short(lmn, 60))}”.</div>
     <div class="q">Answer codes: ${codes.map((c, i) => `<b>${esc(c)}</b> ${esc(short(String(it.labels[i]), isBank(D.A) ? 70 : 40))}`).join(" · ")}</div>
@@ -228,7 +260,7 @@ export function learnText(D: Bundle, key: string): [string, string] {
     tstar: ["The answer position (t*)", `<p>A prompt is a list of tokens (word pieces). The model writes its answer right after the last one. That last position is called t*. Here t* = ${ro}. The answer probabilities, the margin, and every “push on the margin” number are read at this one position. Other positions are shown for context. Think of t* as the one row of the data where the outcome is evaluated.</p>`],
     norm: ["What is the size of a vector (‖·‖)?", `<p>A vector here is a list of numbers (576 for a running state). Its size, written ‖v‖, is the usual length: the square root of the sum of squares. Bigger means the part wrote more. It does not say in which direction. Two vectors of equal size can push the answer opposite ways. Only the DLA numbers at the answer position carry a direction.</p>`],
     dla: ["How much did each part push the answer? (DLA)", `<p>Direct logit attribution (DLA) splits the margin into additive pieces, like splitting a logit index into β·x terms. Each part's addition is read straight through the model's last steps, with the final rescaling ρ held fixed. Then the margin is exactly the embedding term + Σ heads + Σ neurons. Blue pushes toward “${lp}”, orange toward “${lmn}”.</p><p><b>Limit.</b> DLA is the direct effect only, like a direct effect in a mediation model. A head that changes what a later layer does gets no credit for that path.</p>${ref("w = γ<sub>final</sub> ⊙ (W<sub>U</sub>[j₊] − W<sub>U</sub>[j₋]) / ρ. Arrays: <code>head_attr</code>, <code>mlp_attr</code>, <code>neuron_attr</code>, <code>readout.embed_attr</code>; B − A: <code>d_head_attr</code>, <code>d_mlp_attr</code>, <code>d_embed_attr</code>.")}`],
-    conservation: ["Do the parts add up? The checks", `<p>Three questions. Do the parts add up to the final state? Do they add up to the margin? Does our code give the same numbers as the reference implementation? All three have to pass, for both models.</p>
+    conservation: ["Do the parts add up? The checks", `${checksOf(D).filter((c) => !c.ok).map((c) => `<p class="badp">✗ ${esc(checkLine(c))}</p>`).join("")}<p>Three questions. Do the parts add up to the final state? Do they add up to the margin? Does our code give the same numbers as the reference implementation? All three have to pass, for both models.</p>
       <table class="lt"><tr><th>Check</th><th>Must be below</th><th>A</th><th>B</th></tr>
       <tr><td>The parts add up to the final state (largest gap in any coordinate, any token)</td><td>1e-3</td><td>${fmt(cA.residual_closure_inf, 2)}</td><td>${fmt(cB.residual_closure_inf, 2)}</td></tr>
       <tr><td>The parts add up to the margin (absolute gap)</td><td>1e-2</td><td>${fmt(cA.dla_gap, 2)}</td><td>${fmt(cB.dla_gap, 2)}</td></tr>
@@ -246,6 +278,11 @@ export function learnText(D: Bundle, key: string): [string, string] {
     segments: ["Template text and collapsed parts of the prompt", `<p>Most of the ${D.A.m.tokens.length} tokens are the chat template and fixed instructions. The prompt is split into labelled parts (message markers, instructions, the ${isBank(D.A) ? "scenario" : "question"}, the options, the answer cue, the answer position). The question, the options and the answer position are open by default. A collapsed part draws nothing: it is a gap with a label, never a summary block. A grey pill in the text is one collapsed part.</p><p>${D.A.m.segments ? "The parts come from the export (<code>manifest.segments</code>, contract @1.1): the exporter knows how the prompt was built." : "This is an @1 export without <code>segments</code>, so the prompt is shown as one part."}</p>`],
     clamp: ["Quadrant III and the clamped run", `<p>A neuron here has two input signals, a gate and an up signal. Quadrant III neurons have both below −0.05. The clamped run sets their outputs to zero in every layer and at every position, while the model runs, and records the new answer probabilities (the purple ticks). It is like re-estimating with a group of terms switched off, except that later layers respond to the change. The neurons were not chosen for being large or small. Whether this group matters for the answer is a hypothesis to test, not something this page shows.</p>`],
     models: ["The two models: A and B", `<p><b>A</b> is ${esc(D.A.m.model.label)} (<code>${esc(D.A.m.model.model_id)}</code>${D.A.m.model.adapter ? " plus an adapter" : ""}). <b>B</b> is ${esc(D.B.m.model.label)} (<code>${esc(D.B.m.model.model_id)}</code>${D.B.m.model.adapter ? " plus a LoRA adapter" : ""}).${D.B.m.model.adapter ? " The adapter was trained with DPO on made-up everyday scenarios, preferring the answer that matches the USA's direction on the Global Preferences Survey (e.g. more trusting, more patient). It was not trained on survey responses." : ""} The prompt, the ${isBank(D.A) ? "scenario" : "question"} and the answer position are the same for both. Only the model differs.${mlpZero ? " In this pair the adapter changed only attention weights." : ""}</p>`],
+    answer: [`The model's answer · ${it.item_id}`, readoutHTML(D)],
+    "howto-c": ["How to read the ladder", `<p>Each cell is one part of the model, read at the answer position t* (the last position of the prompt, where the model is about to write its answer): nine attention heads, then the MLP, for each of the ${D.A.m.model.n_layers} layers, with layer 0 at the bottom. Its colour is that part's push on the margin (DLA): blue toward “${lp}”, orange toward “${lmn}”. The cells plus the embedding term add up to the margin; the line under the ladder re-sums the face shown.</p><p>The switch shows one face at a time: <b>A</b>, <b>B</b>, or <b>B − A</b> (the default: how the fine-tune changed each push). The <span style="color:var(--delta)">gold rings</span> mark the five largest changes, B − A, on every face. Click a cell to pin it: a thick white outline marks it, the drawer on the right compares A and B for it, and the prompt shades by where that head looks.</p><p>The chart on the right is the margin you would read off the running state after each layer (log-odds, final rescaling held fixed), for A and B.</p><p>More: ${lm("segments", "template text and the parts of the prompt")} ${lm("dla", "what is a push (DLA)?")} ${lm("resid", "the running state")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>C</code> clamped run · <code>/</code> find a word in the prompt · <code>Esc</code> unpin · <code>[ ]</code> step the pinned head through its layer · <code>?</code> this help.</p>`],
+    "howto-b": ["How to read the matrix", `<p>One map, one face at a time. Each cell is one layer (rows, layer 0 at the bottom) at one token (columns). Its brightness is the size of a vector there: by default the <b>attention write</b> ‖a‖ of that layer (<code>attn_norm</code>), or the running state ‖h‖ or the MLP write ‖m‖. Brighter means larger. It shows where activity is large, not which way it pushes the answer.</p><p>The switch shows <b>A</b>, <b>B</b>, or <b>‖B − A‖</b> (the default: how far B's vector is from A's, exact, from the pair export; never negative, its own gold scale). Colour is linear and clipped at the 99th percentile; the footer prints the clip value and the maximum. Template text is squeezed to 2 px columns, never dropped. The white frame is the answer position t*.</p><p>The column on the right is the margin you would read off the running state after each layer, for A and B, on the map's rows. Hover a cell for A, B and ‖B − A‖; click to pin it and open the drawer. ${lm("norm", "the size of a vector")} ${lm("delta", "‖B − A‖ vs B − A")} ${lm("resid", "the running state")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>Esc</code> unpin · <code>?</code> this help.</p>`],
+    "howto-a": ["How to read the 3D object", `<p>The whole run as blocks. Left to right: the tokens of the prompt (template text is collapsed into labelled gaps). Front to back: the layers, layer 0 nearest. Height: the size of a vector, on a log scale shared by A and B. Each layer has a thin bar for the running state, nine slivers for the heads and a block for the MLP.</p><p>By default the left scene is <b>A</b> and the right scene is <b>‖B − A‖</b>, the change, on its own gold scale. Under log heights A and B look almost the same, so the change is the useful second scene; the switch also offers A next to B, or A alone. The <b>t*</b> column (white frame, lit floor) is the answer position; only there do blue and orange mean a push toward an answer.</p><p>The small chart between the scenes is the margin, read off after each layer, for A and B. The prompt map below shows every token; click a band to open or collapse that part. Hover a block for A, B and the change; click to pin it and open the drawer. ${lm("scale", "heights and colours")} ${lm("segments", "template text")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>Esc</code> unpin · <code>?</code> this help.</p>`],
+    "howto-k": ["Cohort · one base vs many adapters", `<p>This view will put one base model against N adapters on the same item: one row per adapter, its change in push on the margin by layer (adapter − base, <code>d_attn_attr + d_mlp_attr</code>), rows sorted by <code>d_margin</code>. Clicking a row will open that adapter as B in the ladder.</p><p>It needs one pair export per (base, adapter) on the same item, each with <code>d_attn_attr</code> and <code>d_mlp_attr</code> (capture@1.1), for at least three adapters. Until those exports exist the tab shows no data. The thumbnail is an illustration from the design mockup and is badged as such.</p>`],
     terms: ["Terms", `<dl class="terms">${GLOSSARY.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`],
     resid: ["The running state (residual stream)", `<p>Each token has a running state: a list of 576 numbers that travels up through the layers. Each layer adds to it: state after = state before + attention addition + MLP addition. Nothing is overwritten. Because the parts only add, their contributions can be summed. (This “residual” is not a regression residual. It is a running total.) The bar height is the state's size ‖h<sup>l</sup><sub>t</sub>‖.</p><p>At the answer position, h<sup>l</sup>·w is the margin you would get by reading the answer off the state after l layers, with the final rescaling held fixed. It is the line in the charts. Its last point is the margin.</p>${ref("Arrays: <code>resid_norm</code>, <code>running_margin</code>.")}`],
     scale: ["Heights and colours", `<p>One scale per quantity, shared by A and B, so equal height means equal value. The scale is logarithmic with the median as its knee, so small values stay visible next to large ones. Heatmap colours are clipped at the 99th percentile so one extreme token does not wash out the rest; each colour key prints the clip value. The change maps have their own scale (gold). Outside the answer column, colours only name the kind of block. Inside it, blue and orange show the direction of the push.</p>`],
@@ -260,5 +297,37 @@ export function openLearn(D: Bundle, key: string) {
   }
   const [h, body] = learnText(D, key);
   dlg.innerHTML = `<div class="lm-h"><b>${esc(h)}</b><button class="x">close ✕</button></div><div class="lm-b">${body}</div>`;
+  // The answer card is a pop-over anchored under the answer strip (SYSTEM §3); every other topic is a centred modal.
+  const strip = key === "answer" ? document.getElementById("answer") : null;
+  dlg.classList.toggle("pop", !!strip);
+  if (strip) { const r = strip.getBoundingClientRect(); dlg.style.margin = "0"; dlg.style.left = `${Math.round(r.left)}px`; dlg.style.top = `${Math.round(r.bottom + 6)}px`; }
+  else { dlg.style.margin = ""; dlg.style.left = ""; dlg.style.top = ""; }
   if (!dlg.open) dlg.showModal();
+}
+
+// ------------------------------------------------------------------ v3: the answer strip (SYSTEM §3), shared by every workbench tab
+/** One sentence, two margin bars (each value inside its own group), P(j₊) A → B, and the full card on demand (key A). */
+export function answerStrip(D: Bundle, clamp = false): string {
+  const it = D.A.m.item, jp = `“${it.j_plus}” (${short(labelPlus(D.A), 30)})`, jm = `“${it.j_minus}” (${short(labelMinus(D.A), 30)})`;
+  const a = clamp ? D.A.m.readout.margin_clamped : D.A.m.readout.margin, b = clamp ? D.B.m.readout.margin_clamped : D.B.m.readout.margin;
+  const dd = dAttr(D, clamp), d = dd.margin;
+  const pA = (clamp ? D.A.m.readout.probs_clamped : D.A.m.readout.probs)[it.j_plus], pB = (clamp ? D.B.m.readout.probs_clamped : D.B.m.readout.probs)[it.j_plus];
+  const mx = Math.max(Math.abs(a), Math.abs(b)) || 1, neg = a < 0 || b < 0;
+  const bar = (v: number, col: string) => { const w = 72 * Math.abs(v) / mx; const left = neg ? 72 + (v < 0 ? -w : 0) : 0;
+    return `<span class="trk2${neg ? " two" : ""}"><i style="left:${left.toFixed(1)}px;width:${w.toFixed(1)}px;background:${col}"></i>${neg ? `<b style="left:72px"></b>` : ""}</span>`; };
+  const dsrc = dd.marginExported ? `pair export (${clamp ? "d_margin_clamped" : "d_margin"})` : "computed in this browser from A and B";
+  const n = it.codes.length;
+  const pTip = `Probability of answer “${it.j_plus}”, A → B.\nP is over all ${n} codes; the margin compares only “${it.j_plus}” vs “${it.j_minus}”, so P is not sigmoid(margin).`;
+  return `<span class="say" title="Margin = log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}” = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Change ${dsrc}.&#10;P is over all ${n} codes; the margin compares only “${esc(it.j_plus)}” vs “${esc(it.j_minus)}”.">B leans further toward <b>${esc(d >= 0 ? jp : jm)}</b> than A: margin <span class="num ${dd.marginExported ? "" : "calc"}">${sgn(d, 3)}</span> log-odds${clamp ? ` <span class="clampw">clamped run</span>` : ""}</span>
+    <span class="minis"><span class="mini" title="A's margin (log-odds), ${esc(D.A.m.model.label)}"><span style="color:${A_COL}">A</span>${bar(a, A_COL)}<span class="num">${a.toFixed(2)}</span></span>
+    <span class="mini" title="B's margin (log-odds), ${esc(D.B.m.model.label)}"><span style="color:${B_COL}">B</span>${bar(b, B_COL)}<span class="num">${b.toFixed(2)}</span></span>
+    <span class="mini" title="${esc(pTip)}">P(“${esc(it.j_plus)}”) <span class="num">${pA.toFixed(2)} → ${pB.toFixed(2)}</span></span></span>
+    <span class="sp"></span><button class="details" data-learn="answer" title="The full answer card: codes, four probabilities, the clamped run (key A)">details</button>`;
+}
+
+/** The pin drawer's chrome (same component on the ladder, the matrix and the object). */
+export function drawerHTML(title: string, sub: string, body: string, failing: Check[]): string {
+  const taint = failing.length ? `<div class="badp">✗ A check failed (${esc(failing.map(checkLine).join(" · "))}): these numbers are not conserved.</div>` : "";
+  return `<div class="dr-h"><i class="pinbox" title="The pinned mark has this thick white outline"></i><h3>${esc(title)}</h3><span class="sp"></span><button id="unpin" title="Unpin (Esc)">Esc ✕</button></div>
+    <div class="muted dr-sub">${sub}</div>${taint}${body}`;
 }

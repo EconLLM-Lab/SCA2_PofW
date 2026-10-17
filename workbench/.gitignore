@@ -21,3 +21,5 @@ models/
 design/layout-v2/shots/
 viewer/screens/**/*.png
 !viewer/screens/v2/final/*.png
+design/layout-v3/shots/
+!viewer/screens/v3/final/*.png

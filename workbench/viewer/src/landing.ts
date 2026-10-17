@@ -4,7 +4,7 @@
 
 import type { Bundle } from "./data";
 import type { Tab } from "./main";
-import { A_COL, B_COL, C, dAttr, esc, isBank, labelPlus, learnText, lm, makeRamp, mix, questionText, rampU, roleOf, segmentsOf, sgn, short } from "./common";
+import { A_COL, B_COL, C, dAttr, esc, isBank, labelPlus, learnText, lm, makeRamp, mix, rampU, roleOf, segmentsOf, sgn, short } from "./common";
 
 export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | null, extra?: Record<string, string>) => void }): () => void {
   void nav;
@@ -14,15 +14,15 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
   const nameB = roleOf(D, "B") ? "B · fine-tuned" : `B · ${short(D.B.m.model.label, 18)}`;
   const lp = labelPlus(D.A);
   app.innerHTML = `<div class="wrap">
-<nav class="lnav"><span title="SCA2 = Synthetic Cultural Agents from Aggregate Anchors"><b>SCA2 workbench</b></span><span><a href="#s1">How it works</a><a href="#s2">What we measure</a><a href="#s3">The three views</a><a href="#s4">Limits</a><a href="#" data-learn="terms">Terms</a><a href="#" data-go="c">Open the workbench →</a></span></nav>
-<div class="hero">
-  <div>
-    <h1>Where does a language model's <em>survey answer</em> come from?</h1>
-    <p class="lede">We ask a small language model a ${bank ? "question about an everyday scenario" : "survey question from the World Values Survey"}. Its answer is a probability for each response code, like the predicted shares from a choice model. We split that answer into the contributions of the model's parts and check that they add up. Then we fine-tune the model toward one country's preferences and compare the two, part by part.</p>
-    <p class="lede2">Written for readers who know regression and survey items. No machine-learning background assumed. SCA2 stands for <i>Synthetic Cultural Agents from Aggregate Anchors</i> (arXiv:2610.06562).</p>
-    <div class="cta"><a href="#" data-go="c">Open the workbench</a><a class="sec" href="#s1">How it works ↓</a></div>
+<nav class="lnav" data-obj="nav"><span class="brand" title="SCA2 = Synthetic Cultural Agents from Aggregate Anchors">SCA2 workbench</span><span class="sp"></span><a href="#s1">How it works</a><a href="#s4">Limits</a><a href="#" data-learn="terms">Terms</a><a class="open" href="#" data-go="c">Open the workbench →</a></nav>
+<div class="hero3">
+  <div class="hl">
+    <h1 data-obj="h1">Where does a language model's <em>survey answer</em> come from?</h1>
+    <div data-obj="lede"><p class="lede">We ask a small language model a ${bank ? "question about an everyday scenario" : "survey question"}. Its answer is a probability for each response code. We split that answer into the contributions of the model's parts, check that they add up, and compare a model before and after a fine-tune, part by part.</p>
+    <p class="small2">For readers who know regression and survey items. No machine-learning background assumed. SCA2 is <i>Synthetic Cultural Agents from Aggregate Anchors</i> (arXiv:2610.06562).</p></div>
+    <div class="cta3" data-obj="cta"><a class="p" href="#" data-go="c">Open the workbench</a><a href="#s1">How it works ↓</a></div>
   </div>
-  <figure class="fig"><span class="badge data">real data · one run of each model</span><svg id="hero" viewBox="0 0 560 330" width="100%"></svg><figcaption id="heroCap"></figcaption></figure>
+  <figure class="hf" data-obj="hero"><div class="cap">The margin, layer by layer · real data</div><svg id="hero" viewBox="0 0 560 330" width="100%"></svg><figcaption id="heroCap"></figcaption></figure>
 </div>
 
 <section class="s" id="s1"><div class="sn"><b>1</b>what is inside the model</div><div>
@@ -47,9 +47,10 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
     <div class="eq">P(code j | prompt) = exp(z<sub>j</sub>) / Σ<sub>k ∈ codes</sub> exp(z<sub>k</sub>)        margin = z<sub>j₊</sub> − z<sub>j₋</sub></div>
     <p class="eqnote">z is the model's raw score for a code. The probability is that code's share of exp(score) among the response codes.</p>
     <p><b>The split.</b> Direct logit attribution (DLA) gives each part a share of the margin, like splitting a logit index into its β·x terms. Each part's entry is read straight through the model's last steps, with the final rescaling held fixed. Then the margin is the sum of an embedding term, 270 head terms and 46,080 neuron terms, with nothing left over. This is the direct effect only: a part that changes what a later layer does gets no credit for that path (see Limits).</p>
-    <p><b>The checks.</b> Every run uses 64-bit arithmetic (float64) and has to pass three tests. (1) The parts add up to the final state, to within 1e-3. (2) The parts add up to the margin, to within 1e-2. (3) Our code reproduces the Hugging Face reference implementation to within 1e-10 (relative), once the reference's own 32-bit rounding steps are switched off. If a check fails, the status line next to the answer turns red. The numbers are in the table below.</p>
+    <p><b>The checks.</b> Every run uses 64-bit arithmetic (float64) and has to pass three tests. (1) The parts add up to the final state, to within 1e-3. (2) The parts add up to the margin, to within 1e-2. (3) Our code reproduces the Hugging Face reference implementation to within 1e-10 (relative), once the reference's own 32-bit rounding steps are switched off. If a check fails, the check glyph in the frame turns into a red banner that cannot be dismissed. The numbers are in the table below.</p>
     <p><b>Before and after.</b> The same prompt goes through two models. A is ${esc(D.A.m.model.label)}. B is ${esc(D.B.m.model.label)}${adapter ? ": A plus a small add-on (a LoRA adapter) trained with DPO on made-up everyday scenarios, preferring the answer that matches the USA's direction on the Global Preferences Survey (e.g. more trusting, more patient)" : ""}. For every layer and token, we store how far B's vector is from A's, and also how far the weights moved.</p>
   </div>
+  <p class="prose story" id="s2b"></p>
   <div class="cols">
     <figure class="fig"><span class="badge data" title="readout.probs, readout.probs_clamped">real data · the model's answer probabilities</span><div id="probs"></div><figcaption id="probCap"></figcaption></figure>
     <figure class="fig"><span class="badge data">real data · which layers changed the margin</span><svg id="wf" viewBox="0 0 470 250" width="100%"></svg><figcaption id="wfCap"></figcaption></figure>
@@ -58,14 +59,14 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
 </div></section>
 
 <section class="s" id="s3"><div class="sn"><b>3</b>the three views</div><div>
-  <h2>Three views of the same model run</h2>
+  <h2>Four views of the same model run</h2>
   <div class="prose"><p>All three views draw the same saved numbers from the same run. Pick by the question you have. <b>Which parts decided the answer?</b> Start with the ladder. <b>Where, in the prompt and in depth, did the fine-tune change things?</b> Use the matrix. <b>What does the whole run look like?</b> Use the 3D object. Hover anything to compare A and B.</p></div>
   <div class="shots">
-    <a href="#" data-go="c"><img src="/screens/v2/c-1700.png" alt="the ladder"><h3>The ladder</h3><p>Every attention head and MLP at the answer position, in three panels: A, B and B − A. Each panel adds up to its margin. The prompt is shown as text, shaded by where the selected head looks.</p></a>
-    <a href="#" data-go="b"><img src="/screens/v2/b-1700.png" alt="the matrix"><h3>The matrix</h3><p>Heatmaps of layer by token for A, B and the change ‖B − A‖, with one shared crosshair. Template text is squeezed, not dropped. Charts for the answer position are below.</p></a>
-    <a href="#" data-go="a"><img src="/screens/v2/a-side-1700.png" alt="the 3D object"><h3>The 3D object</h3><p>The whole run as 3D blocks (token by layer by size). Template text is collapsed into labelled gaps. There is a prompt map, a word search and camera presets.</p></a>
+    <a href="#" data-go="c"><img src="/screens/v3/ladder-1440.png" alt="the ladder"><h3>The ladder</h3><p>Every attention head and MLP at the answer position, one face at a time (B − A by default; A and B one press away). Each face re-sums to its margin. Gold rings mark the five largest changes.</p></a>
+    <a href="#" data-go="b"><img src="/screens/v3/matrix-1440.png" alt="the matrix"><h3>The matrix</h3><p>One layer-by-token map of the attention writes, showing the change ‖B − A‖ by default, with the margin by layer on the same rows. Template text is squeezed, not dropped.</p></a>
+    <a href="#" data-go="a"><img src="/screens/v3/object-1440.png" alt="the 3D object"><h3>The 3D object</h3><p>The whole run as 3D blocks (token by layer by size): A next to the change ‖B − A‖, with the margin between them and a prompt map below. The fourth view, Cohort, waits for exports of more adapters.</p></a>
   </div>
-  <p class="muted small">Thumbnails are screenshots of this app (viewer/screens/v2), default pair and prompt.</p>
+  <p class="muted small">Thumbnails are screenshots of this app (viewer/screens/v3), default pair and prompt.</p>
 </div></section>
 
 <section class="s" id="s4"><div class="sn"><b>4</b>limits</div><div>
@@ -84,26 +85,23 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
 
   // HERO: running_margin (h^l_{t*}·w) per layer for A and B — the answer forming, layer by layer
   {
-    const W = 560, Hh = 330, pl = 46, pr = 128, pt = 34, pb = 40; let lo = 0, hi = 0;
+    const W = 560, Hh = 330, pl = 30, pr = 150, pt = 16, pb = 40; let lo = 0, hi = 0;
     for (const r of [D.A, D.B]) for (const v of r.t.running_margin.data) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
     const X = (l: number) => pl + (l / L) * (W - pl - pr), Y = (v: number) => pt + ((hi - v) / (hi - lo || 1)) * (Hh - pt - pb);
-    let s = `<text x="${pl}" y="14" fill="#bbb" font-size="11.5">The margin, log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}”, as it builds up layer by layer</text><text x="${pl}" y="27" fill="#888" font-size="10.5">Positive = toward “${esc(short(lp, 50))}”.</text>`;
-    for (let l = 0; l <= L; l += 5) s += `<line x1="${X(l)}" x2="${X(l)}" y1="${pt}" y2="${Hh - pb}" stroke="#1d1d1d"/><text x="${X(l)}" y="${Hh - pb + 16}" fill="#777" font-size="10.5" text-anchor="middle">${l}</text>`;
-    s += `<line x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#444"/><text x="${pl - 8}" y="${Y(0) + 4}" fill="#777" font-size="10.5" text-anchor="end">0</text><text x="${pl - 8}" y="${Y(hi) + 4}" fill="#777" font-size="10.5" text-anchor="end">${hi.toFixed(1)}</text>${lo < -0.05 * (hi - lo) ? `<text x="${pl - 8}" y="${Y(lo) + 4}" fill="#777" font-size="10.5" text-anchor="end">${lo.toFixed(1)}</text>` : ""}`;
-    s += `<text x="${(pl + W - pr) / 2}" y="${Hh - 6}" fill="#777" font-size="10.5" text-anchor="middle">after this many layers (0 = the starting vector, ${L} = the final state)</text>`;
+    let s = `<line x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#555" stroke-dasharray="2 3"/><text x="${pl - 8}" y="${Y(0) + 4}" text-anchor="end">0</text>`;
+    s += `<text x="${pl}" y="${Hh - 10}">after this many layers: 0 … ${L}</text>`;
     const ys: number[] = [];
     for (const [r, col, name] of [[D.A, A_COL, nameA], [D.B, B_COL, nameB]] as const) {
       let d = ""; for (let l = 0; l <= L; l++) d += `${l ? "L" : "M"}${X(l).toFixed(1)},${Y(r.t.running_margin.get(l)).toFixed(1)}`;
-      s += `<path d="${d}" fill="none" stroke="${col}" stroke-width="2.4"/>`;
-      for (let l = 0; l <= L; l++) s += `<circle cx="${X(l)}" cy="${Y(r.t.running_margin.get(l))}" r="2" fill="${col}"/>`;
-      const m = r.m.readout.margin; let y = Y(m) + 4; if (ys.length && Math.abs(y - ys[0]) < 44) y = ys[0] + (y >= ys[0] ? 44 : -44); ys.push(y);
-      s += `<text x="${X(L) + 10}" y="${y}" fill="${col}" font-size="12">${esc(name)}</text><text x="${X(L) + 10}" y="${y + 14}" fill="#999" font-size="10.5">margin ${m.toFixed(2)}</text><text x="${X(L) + 10}" y="${y + 27}" fill="#999" font-size="10.5">P(“${esc(it.j_plus)}”) ${r.m.readout.probs[it.j_plus].toFixed(2)}</text>`;
+      s += `<path d="${d}" fill="none" stroke="${col}" stroke-width="2"/>`;
+      const m = r.m.readout.margin; let y = Y(m) + 4; if (ys.length && Math.abs(y - ys[0]) < 16) y = ys[0] + (y >= ys[0] ? 16 : -16); ys.push(y);
+      s += `<text x="${X(L) + 10}" y="${y}" style="fill:${col}">${esc(name)} ${m.toFixed(2)}</text>`;
     }
     $("hero").innerHTML = s;
-    const qt = questionText(D.A);
-    const head = bank ? "Scenario" : `WVS ${esc(String(it.meta.question_id ?? it.item_id))}`;
-    $("heroCap").innerHTML = `${head}: ${qt ? `“${esc(short(qt, bank ? 220 : 300))}”` : "(question text not in this export)"} <span title="running_margin: h·w after n layers at t*, read with the final layer's rescaling held fixed">Each dot is the margin you would get by reading the answer off the running state after that many layers.</span> ${story()}`;
+    const dm = D.P.m.d_margin;
+    $("heroCap").innerHTML = `${esc(it.item_id)}: B ends ${sgn(dm, 3)} ${dm >= 0 ? "further toward" : "back from"} “${esc(short(lp, 40))}” than A. <a href="#s2b" class="u">Read the story</a>`;
   }
+  $("s2b").innerHTML = `<b>The story of this item.</b> ${story()}`;
   function story() { // computed from the arrays, not written by hand
     const a = D.A.t.running_margin, b = D.B.t.running_margin, dd = dAttr(D, false); let best = 0, bl = 0;
     for (let l = 0; l < L; l++) { const d = (b.get(l + 1) - b.get(l)) - (a.get(l + 1) - a.get(l)); if (Math.abs(d) > Math.abs(best)) { best = d; bl = l; } }

@@ -1,209 +1,204 @@
-// Tab B, the matrix: layer × token heatmaps for A, B and ‖B − A‖ with one shared crosshair, and
-// two charts of the answer position below. Segments come from manifest.segments (contract @1.1).
-// URL keys: qty=resid|attn|mlp, fold=0 (template text full width), pin=l,t, hl=l.
+// Tab B, the matrix (v3, design/layout-v3/SYSTEM.md + DECISION.md). One map, one face at a time:
+// A, B, or ‖B − A‖ (the default). Rows are layers (layer 0 at the bottom), columns are tokens; template text
+// is squeezed to 2 px columns, never dropped. Default quantity: the attention write ‖a‖ (attn_norm /
+// d_attn_norm, Augusto's ruling), with the running state (resid) and the MLP write (mlp) selectable.
+// Colour is linear and clipped at the 99th percentile; the footer prints the clip value and the max (rule 5).
+// At rest: the answer strip, the map, the margin column on the map's rows. Hover = crosshair + tooltip;
+// click pins a cell and opens the same drawer as the ladder (its own grid column).
+// URL keys: qty=attn|resid|mlp (attn default), face=a|b|d (d default), fold=0, pin=l,t.
 
-import type { Bundle } from "./data";
+import type { Bundle, Tensor } from "./data";
 import type { Ctx } from "./main";
 import {
-  A_COL, B_COL, C, inspectorHTML, cmpTable, CHANGE_FOOT, esc, fmt, labelPlus, lm, makeRamp, mix, rampLegend, rampU,
-  readoutHTML, segmentsOf, short, tokText, type Slice,
+  A_COL, B_COL, C, CHANGE_FOOT, answerStrip, checkLine, checksOf, cmpTable, drawerHTML, esc, failedWho, faceTainted, fmt, inspectorHTML,
+  mix, openLearn, segmentsOf, short, tokText, type Slice,
 } from "./common";
 
+type Qty = "attn" | "resid" | "mlp";
+type Face = "a" | "b" | "d";
+const QTY: [Qty, string, string][] = [["attn", "attention write ‖a‖", "Size of each layer's attention write (attn_norm)"], ["resid", "running state ‖h‖", "Size of the running state after each layer (resid_norm)"], ["mlp", "MLP write ‖m‖", "Size of each layer's MLP write (mlp_norm)"]];
+const FACES: [Face, string][] = [["a", "A"], ["b", "B"], ["d", "‖B − A‖"]];
+const SRC = { resid: ["resid_norm", "d_resid_norm"], attn: ["attn_norm", "d_attn_norm"], mlp: ["mlp_norm", "d_mlp_norm"] } as const;
+
 export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void {
-  const L = D.A.m.model.n_layers, H = D.A.m.model.n_heads, T = D.A.m.tokens.length, ro = D.A.m.readout.position;
-  root.className = "tab-b";
+  const L = D.A.m.model.n_layers, H = D.A.m.model.n_heads, T = D.A.m.tokens.length, ro = D.A.m.readout.position, it = D.A.m.item;
+  const checks = checksOf(D), bad = failedWho(checks), failing = checks.filter((c) => !c.ok);
+  root.className = "tab-b v3";
   root.innerHTML = `
-    <div class="strip"><span class="badge data" title="Every figure on this tab is drawn from the exports of the current pair and prompt">real data · drawn from the exports</span> Each cell is the size of one vector at one layer (rows) and one token (columns). Brighter means larger. This shows where activity is large, not which way it pushes the answer. ${lm("norm", "What is the size of a vector? ↗")}</div>
-    <div class="tools">
-      <span class="grp">Show <button data-q="resid">Running-state size ‖h‖</button><button data-q="attn">Attention write size ‖a‖</button><button data-q="mlp">MLP write size ‖m‖</button></span>
-      <span class="grp">Find a word <input id="q" placeholder="Type a word, press Enter" autocomplete="off" /></span>
-      <span class="grp"><button id="fold" title="Squeezed columns are 2 px wide. Every token still has a column."></button></span>
+    <section id="answer" data-obj="answer">${answerStrip(D)}</section>
+    <div id="work" class="b-work">
+      <section class="obj" id="map" data-obj="map"><header><span class="cap">Size of</span>
+          <span class="seg" id="qty">${QTY.map(([k, t, tip]) => `<button data-q="${k}" title="${esc(tip)}">${esc(t)}</button>`).join("")}</span><span class="sp"></span>
+          <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}">${t}</button>`).join("")}</span></header>
+        <canvas id="cv"></canvas><div class="foot" id="bfoot"></div></section>
+      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="running_margin: h^l·w at t*, read with the final layer's rescaling held fixed">Margin by layer</span><span class="sp"></span><span id="mleg"></span></header>
+        <svg id="mc"></svg><div class="foot" id="mfoot"></div></section>
+      <aside id="drawer" class="obj" data-obj="drawer" hidden></aside>
     </div>
-    <div class="b-main">
-      <div id="left"><div id="maps"></div>
-        <div id="charts">
-          <div class="chart"><div class="mh"><b>Margin if the answer were read off at each layer</b>${lm("resid", "learn more")}</div><canvas id="c1"></canvas>
-            <div class="legend muted"><span><i style="background:${A_COL}"></i>A</span><span><i style="background:${B_COL}"></i>B</span><span><i class="dash" style="border-color:${A_COL}"></i><i class="dash" style="border-color:${B_COL}"></i>clamped run (dashed)</span></div></div>
-          <div class="chart"><div class="mh"><b>Push on the margin, layer by layer</b>${lm("dla", "learn more")}</div><canvas id="c2"></canvas>
-            <div class="legend muted"><span><i style="background:${A_COL}"></i>A</span><span><i style="background:${B_COL}"></i>B</span><span>filled = attention, outlined = MLP</span><span>right of 0 = toward “${esc(short(labelPlus(D.A), 30))}” (code ${esc(D.A.m.item.j_plus)})</span></div></div>
-        </div></div>
-      <aside id="side"><div id="ro"></div><div id="insp"></div></aside>
-    </div>`;
+    <div id="ptip" hidden></div>`;
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>("#" + id)!;
   const segs = segmentsOf(D.A);
-  let qty = (ctx.get("qty") as "resid" | "attn" | "mlp") || "resid", squeeze = ctx.get("fold") !== "0";
-  let hov: Slice | null = null, pin: Slice | null = null, hovLayer: number | null = ctx.get("hl") != null ? +ctx.get("hl")! : null;
-  const SRC = { resid: ["resid_norm", "d_resid_norm", L + 1], attn: ["attn_norm", "d_attn_norm", L], mlp: ["mlp_norm", "d_mlp_norm", L] } as const;
-  const NAME = { resid: "size of the running state", attn: "size of the attention write", mlp: "size of the MLP write" };
+  let qty: Qty = (["attn", "resid", "mlp"].includes(ctx.get("qty") ?? "") ? ctx.get("qty") : "attn") as Qty;
+  let face: Face = (["a", "b", "d"].includes(ctx.get("face") ?? "") ? ctx.get("face") : "d") as Face;
+  let squeeze = ctx.get("fold") !== "0";
+  let hov: { l: number; t: number } | null = null, pin: { l: number; t: number } | null = null;
+  const rows = () => (qty === "resid" ? L + 1 : L);
+  const tensor = (f: Face): Tensor => (f === "d" ? D.P.t[SRC[qty][1]] : (f === "a" ? D.A : D.B).t[SRC[qty][0]]);
+  const rowName = (l: number) => (qty === "resid" ? (l === 0 ? "state before layer 0" : `state after layer ${l - 1}`) : `layer ${l}`);
 
-  // Focus + context: EVERY token keeps a column; squeezed (template) columns are 2 px, open ones wide.
-  const AX = 38;   // left gutter for the layer axis
-  let cx: number[] = [], cw: number[] = [];
-  function columns(W: number) {
+  // ---------------- columns: every token keeps one; squeezed (template) columns are 2 px
+  const AX = 34, BAND = 18;
+  let cx: number[] = [], cw: number[] = [], W = 600, rowH = 8, Hc = 400;
+  function columns(w: number) {
     const nOpen = segs.filter((s) => s.open).reduce((a, s) => a + s.n, 0), nSq = T - nOpen, thin = squeeze ? 2 : 0;
-    const wide = squeeze ? (W - nSq * thin) / Math.max(1, nOpen) : W / T; let x = AX; cx = []; cw = [];
-    for (const s of segs) for (let t = s.a; t <= s.b; t++) { const w = !squeeze || s.open ? wide : thin; cx.push(x); cw.push(w); x += w; }
+    const wide = squeeze ? (w - nSq * thin) / Math.max(1, nOpen) : w / T; let x = AX; cx = []; cw = [];
+    for (const s of segs) for (let t = s.a; t <= s.b; t++) { const ww = !squeeze || s.open ? wide : thin; cx.push(x); cw.push(ww); x += ww; }
   }
   const tAt = (x: number) => { for (let t = 0; t < T; t++) if (x < cx[t] + cw[t]) return t; return T - 1; };
+  const yRow = (l: number) => BAND + (rows() - 1 - l) * rowH;
 
-  let ROWH = 5; const BAND = 18, TOKH = 58;
+  /** p99 clip and max of one face, linear. */
+  function scaleOf(tn: Tensor) {
+    const v = Array.from(tn.data).sort((a, b) => a - b);
+    return { p99: v[Math.floor(v.length * 0.99)] || 1, max: v[v.length - 1] };
+  }
+  const faceCol = () => (face === "a" ? A_COL : face === "b" ? B_COL : C.delta);
+
   function draw() {
-    const [an, dn, R] = SRC[qty];
-    const sAB = makeRamp([D.A.t[an], D.B.t[an]]), sD = makeRamp([D.P.t[dn]]);
-    const hd = (k: string, lab: string, src: string, i: number) => `<div class="mh"><span><b>${k}</b> · ${lab}</span><span class="muted" title="${esc(src)}">Rows: layers, first at the bottom. ${i === 2 ? '<span style="color:var(--delta)">Colour: its own scale (gold), so it cannot be compared with A and B.</span>' : "Colour: one log scale shared by A and B."} ${i === 0 ? lm("scale", "how are colours scaled?") : i === 2 ? lm("delta", "what is ‖B − A‖?") : ""}</span></div>`;
-    $("maps").innerHTML =
-      hd("A", `${esc(D.A.m.model.label)}: ${NAME[qty]}, by layer and token`, an, 0) + `<canvas class="hm" data-i="0"></canvas>` +
-      hd("B", `${esc(D.B.m.model.label)}: ${NAME[qty]}, by layer and token`, an, 1) + `<canvas class="hm" data-i="1"></canvas>` +
-      rampLegend(sAB, "#141416", "#dfe6ee", "A and B", an) +
-      hd("‖B − A‖", `how far B's vector is from A's, by layer and token (exact, from both float64 runs)`, dn, 2) + `<canvas class="hm" data-i="2"></canvas>` +
-      rampLegend(sD, "#1a1a1c", C.delta, "‖B − A‖", dn);
-    const left = $("left"), W = left.clientWidth - 30 - AX; columns(W);
-    // fit maps + keys + charts in the window: rows are 2 to 6 px
-    const chartH = 150, fixed = 3 * 26 + 3 * BAND + TOKH + 2 * 44 + chartH + 70;
-    ROWH = Math.max(2, Math.min(6, Math.floor((left.clientHeight - fixed) / (3 * R))));
-    root.querySelectorAll<HTMLCanvasElement>("canvas.hm").forEach((c) => {
-      const i = +c.dataset.i!, src = i === 0 ? D.A.t[an] : i === 1 ? D.B.t[an] : D.P.t[dn], s = i === 2 ? sD : sAB;
-      const showTok = i === 2, Hh = BAND + R * ROWH + (showTok ? TOKH : 4), dpr = devicePixelRatio || 1, Wc = W + AX;
-      c.style.width = Wc + "px"; c.style.height = Hh + "px"; c.width = Wc * dpr; c.height = Hh * dpr; const g = c.getContext("2d")!; g.scale(dpr, dpr);
-      const yl = (l: number) => BAND + (R - 1 - l) * ROWH;
-      for (let l = 0; l < R; l++) for (let t = 0; t < T; t++) {
-        const u = rampU(s, src.get(l, t)); g.fillStyle = i === 2 ? mix("#1a1a1c", C.delta, u) : mix("#141416", "#dfe6ee", u);
-        g.fillRect(cx[t], yl(l), Math.max(1, cw[t] - (cw[t] > 4 ? 0.5 : 0)), ROWH - (ROWH > 3 ? 0.5 : 0));
-      }
-      // layer axis: a tick per layer, labels every 5th and the last, plus the hovered/pinned layer
-      g.font = "10px ui-monospace, Menlo, monospace"; g.textBaseline = "middle"; g.textAlign = "right";
-      const sel = (pin || hov)?.l ?? hovLayer ?? -9;
-      for (let l = 0; l < R; l++) {
-        g.fillStyle = "#3a3a3a"; g.fillRect(AX - 4, yl(l) + ROWH / 2 - 0.5, 3, 1);
-        const lab = l === sel || l % 10 === 0 || l === R - 1 || (ROWH >= 4 && l % 5 === 0);
-        if (lab) { g.fillStyle = l === sel ? "#ffcf5c" : "#999"; g.fillText(qty === "resid" ? `h${l}` : `L${l}`, AX - 6, yl(l) + ROWH / 2); }
-      }
-      g.textAlign = "left";
-      // segment band: labelled spans; click toggles open
-      g.font = "10.5px ui-monospace, Menlo, monospace";
-      for (const sg of segs) {
-        const x0 = cx[sg.a], x1 = cx[sg.b] + cw[sg.b];
-        g.fillStyle = sg.kind === "readout" ? "#6b9bff" : sg.open ? "#2c3a52" : "#1d1d1d"; g.fillRect(x0, 2, Math.max(1, x1 - x0 - 1), BAND - 5);
-        if (x1 - x0 > 30) { g.save(); g.beginPath(); g.rect(x0 + 2, 0, x1 - x0 - 4, BAND); g.clip(); g.fillStyle = sg.open ? "#e6e6e6" : "#8a8a8a"; g.fillText(sg.label, x0 + 4, BAND / 2); g.restore(); }
-      }
-      if (showTok) {
-        g.font = "10px ui-monospace, Menlo, monospace";
-        for (let t = 0; t < T; t++) if (cw[t] >= 6) { g.save(); g.translate(cx[t] + cw[t] / 2 + 3, BAND + R * ROWH + 4); g.rotate(Math.PI / 2);
-          g.fillStyle = t === ro ? "#6b9bff" : t === hov?.t || t === pin?.t ? "#ffcf5c" : "#bdbdbd"; g.fillText(tokText(D.A.m.tokens[t].text).slice(0, 9), 0, 0); g.restore(); }
-      }
-      g.strokeStyle = "#6b9bff"; g.lineWidth = 1.5; g.strokeRect(cx[ro] + 0.5, BAND, cw[ro] - 1, R * ROWH);
-      for (const [s2, col] of [[pin, "#ffffff"], [hov, "#ffcf5c"]] as const) if (s2 && s2.l < R) {
-        g.strokeStyle = col; g.lineWidth = 1; g.strokeRect(cx[s2.t], BAND, cw[s2.t], R * ROWH); g.strokeRect(AX, yl(s2.l), W, ROWH);
-        g.lineWidth = 2; g.strokeRect(cx[s2.t] - 1, yl(s2.l) - 1, cw[s2.t] + 2, ROWH + 1);
-      }
-      if (hovLayer != null && hovLayer < R) { g.fillStyle = "#6b9bff22"; g.fillRect(AX, yl(hovLayer), W, ROWH); }
-      const at = (e: MouseEvent) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-      c.onmousemove = (e) => {
-        const { x, y } = at(e);
-        if (y < BAND) { c.style.cursor = "pointer"; const t = tAt(x), sg = segs.find((q) => t >= q.a && t <= q.b); c.title = sg ? `Click to open or squeeze: ${sg.label}` : ""; return; }
-        c.title = ""; c.style.cursor = "crosshair"; const l = R - 1 - Math.floor((y - BAND) / ROWH);
-        if (l < 0 || l >= R || x < AX) return;
-        if (showTok && y > BAND + R * ROWH) { c.title = tokText(D.A.m.tokens[tAt(x)].text); return; }
-        const s2 = { kind: qty === "attn" ? "head" : qty, l, t: tAt(x) } as Slice;
-        const k = (q: Slice | null) => (q ? `${q.l},${q.t}` : "");
-        if (k(s2) !== k(hov)) { hov = s2; draw(); if (!pin) inspect(s2, false); }
-      };
-      c.onmouseleave = () => { hov = null; draw(); if (!pin) idle(); };
-      c.onclick = (e) => {
-        const { x, y } = at(e);
-        if (y < BAND) { const t = tAt(x), sg = segs.find((q) => t >= q.a && t <= q.b)!; if (sg.kind !== "readout") { sg.open = !sg.open; draw(); } return; }
-        if (!hov) return; pin = hov; ctx.set("pin", `${pin.l},${pin.t}`); inspect(pin, true); draw();
-      };
-    });
-    charts(chartH);
-  }
-
-  // ---------------- inspector (an attention cell adds the per-head split of that layer)
-  function inspect(s: Slice, pinned: boolean) {
-    if (qty !== "attn" || s.kind !== "head") { $("insp").innerHTML = inspectorHTML(D, s, { pinned }); return; }
-    const a = D.A.t, b = D.B.t, p = D.P.t, l = s.l, t = s.t;
-    const vmax = Math.max(...Array.from({ length: H }, (_, h) => Math.max(a.head_norm.get(l, h, t), b.head_norm.get(l, h, t), p.d_head_norm.get(l, h, t))));
-    $("insp").innerHTML = `<div class="card ${pinned ? "pinned" : ""}"><div class="card-h"><span>Attention · layer ${l}</span><span class="tag">${pinned ? "pinned (Esc to unpin)" : "preview"}</span>${lm("head", "learn more")}</div>
-      <div class="tokline">token ${t}: “<b>${esc(tokText(D.A.m.tokens[t].text))}</b>”${t === ro ? ' <span class="ro">answer position (t*)</span>' : ""}</div>
-      ${cmpTable([{ label: "Write size of the whole layer's attention ‖a‖", tip: "attn_norm · d_attn_norm", a: a.attn_norm.get(l, t), b: b.attn_norm.get(l, t), d: { v: p.d_attn_norm.get(l, t), how: "len", src: "d_attn_norm" } }])}
-      <div class="sub">The nine heads in this layer. Each has three bars: <span style="color:${A_COL}">A's write size</span>, <span style="color:${B_COL}">B's write size</span>, and <span style="color:var(--delta)">the change</span>. Click a head.</div>
-      ${Array.from({ length: H }, (_, h) => `<div class="hrow" data-h="${h}"><span>h${h}</span><span class="hb3">
-        <i style="top:0;width:${((a.head_norm.get(l, h, t) / vmax) * 100).toFixed(1)}%;background:${A_COL}"></i>
-        <i style="top:4.5px;width:${((b.head_norm.get(l, h, t) / vmax) * 100).toFixed(1)}%;background:${B_COL}"></i>
-        <i style="top:9px;height:3px;width:${((p.d_head_norm.get(l, h, t) / vmax) * 100).toFixed(1)}%;background:${C.delta}"></i></span><span class="num">${fmt(p.d_head_norm.get(l, h, t), 3)}</span></div>`).join("")}
-      <div class="foot">All bars use one linear scale. The longest bar is ${fmt(vmax, 3)}.</div>${CHANGE_FOOT}</div>`;
-    $("insp").querySelectorAll<HTMLElement>(".hrow").forEach((r) => (r.onclick = () => {
-      pin = { kind: "head", l, h: +r.dataset.h!, t };
-      $("insp").innerHTML = inspectorHTML(D, pin, { pinned: true }) + `<button id="back">← Back to layer ${l} attention</button>`;
-      $("back").onclick = () => inspect({ kind: "head", l, h: 0, t }, true);
-    }));
-  }
-  function idle() { $("insp").innerHTML = `<div class="card"><div class="card-h"><span>Compare A and B for one cell</span></div><p class="muted" style="margin:0">Hover a cell: the same layer and token light up in all three maps, and this card compares A, B and the change. Click to pin. Click a band above a map to open or squeeze that part of the prompt.</p></div>`; }
-  window.addEventListener("keydown", (e) => { if (e.key === "Escape" && !document.querySelector("dialog[open]")) { pin = null; ctx.set("pin", null); idle(); draw(); } }, { signal: ctx.signal });
-
-  // ---------------- the answer position as two charts (hover a layer → its row lights up in the maps)
-  function charts(Hh: number) {
-    const setup = (c: HTMLCanvasElement) => { const W = c.parentElement!.clientWidth - 16, dpr = devicePixelRatio || 1; c.style.width = W + "px"; c.style.height = Hh + "px"; c.width = W * dpr; c.height = Hh * dpr; const g = c.getContext("2d")!; g.scale(dpr, dpr); g.font = "10.5px ui-monospace, Menlo, monospace"; return [g, W] as const; };
-    {
-      const c = $<HTMLCanvasElement>("c1"), [g, W] = setup(c);
-      const series = [[D.A.t.running_margin, A_COL, []], [D.B.t.running_margin, B_COL, []], [D.A.t.running_margin_clamped, A_COL, [4, 3]], [D.B.t.running_margin_clamped, B_COL, [4, 3]]] as const;
-      let lo = 0, hi = 0; for (const [s] of series) for (const v of s.data) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
-      const pl = 40, px = (l: number) => pl + (l / L) * (W - pl - 70), py = (v: number) => 10 + ((hi - v) / (hi - lo || 1)) * (Hh - 34);
-      g.strokeStyle = "#333"; g.beginPath(); g.moveTo(pl, py(0)); g.lineTo(W - 70, py(0)); g.stroke();
-      g.fillStyle = "#888"; g.textAlign = "right"; g.fillText("0", pl - 6, py(0) + 3); g.fillText(hi.toFixed(1), pl - 6, py(hi) + 4); if (lo < -0.05 * (hi - lo)) g.fillText(lo.toFixed(1), pl - 6, py(lo)); g.textAlign = "left";
-      for (let l = 0; l <= L; l += 5) g.fillText(`L${l}`, px(l) - 8, Hh - 8);
-      g.fillText("layer →", W - 66, Hh - 8);
-      if (hovLayer != null) { g.fillStyle = "#6b9bff22"; g.fillRect(px(hovLayer) - 4, 6, 8, Hh - 30); }
-      for (const [s, col, dash] of series) { g.strokeStyle = col; g.setLineDash(dash as unknown as number[]); g.lineWidth = dash.length ? 1.5 : 2; g.beginPath(); for (let l = 0; l <= L; l++) l ? g.lineTo(px(l), py(s.get(l))) : g.moveTo(px(l), py(s.get(l))); g.stroke(); }
-      g.setLineDash([]);
-      const ya = py(D.A.m.readout.margin), yb = py(D.B.m.readout.margin), sep = Math.abs(ya - yb) < 12 ? 7 : 0;
-      g.fillStyle = A_COL; g.fillText(`A ${D.A.m.readout.margin.toFixed(2)}`, W - 64, ya + 3 - (ya <= yb ? sep : -sep));
-      g.fillStyle = B_COL; g.fillText(`B ${D.B.m.readout.margin.toFixed(2)}`, W - 64, yb + 3 + (ya <= yb ? sep : -sep));
-      c.onmousemove = (e) => { const r = c.getBoundingClientRect(); const l = Math.round(((e.clientX - r.left - pl) / (W - pl - 70)) * L); if (l >= 0 && l <= L && l !== hovLayer) { hovLayer = l; ctx.set("hl", l); draw(); if (!pin) inspect({ kind: "resid", l, t: ro }, false); } };
-      c.onmouseleave = () => { hovLayer = null; ctx.set("hl", null); draw(); };
+    const box = $("map"), head = (box.querySelector("header") as HTMLElement).offsetHeight + 10;
+    W = Math.max(300, box.clientWidth - AX - 4); columns(W);
+    const R = rows(), availH = box.clientHeight - head - $("bfoot").offsetHeight - 14 - BAND - 22;
+    rowH = Math.max(3, Math.min(22, availH / R)); Hc = BAND + R * rowH + 20;
+    const tn = tensor(face), sc = scaleOf(tn), col = faceCol(), tainted = faceTainted(face, bad);
+    const c = $<HTMLCanvasElement>("cv"), dpr = devicePixelRatio || 1, Wc = W + AX;
+    c.style.width = Wc + "px"; c.style.height = Hc + "px"; c.width = Wc * dpr; c.height = Hc * dpr;
+    const g = c.getContext("2d")!; g.scale(dpr, dpr);
+    for (let l = 0; l < R; l++) for (let t = 0; t < T; t++) {
+      g.fillStyle = mix("#141416", col, Math.min(1, tn.get(l, t) / sc.p99));
+      g.fillRect(cx[t], yRow(l), Math.max(1, cw[t] - (cw[t] > 4 ? 0.5 : 0)), rowH - (rowH > 3 ? 0.5 : 0));
     }
-    {
-      const c = $<HTMLCanvasElement>("c2"), [g, W] = setup(c);
-      const ser = [[D.A.t.attn_attr, D.A.t.mlp_attr, A_COL], [D.B.t.attn_attr, D.B.t.mlp_attr, B_COL]] as const;
-      let m = 0; for (const [x, y] of ser) m = Math.max(m, x.absMax(), y.absMax());
-      const pl = 36, top = 4, bot = 18, zx = pl + (W - pl) / 2, sx = ((W - pl) / 2 - 14) / (m || 1), rh = (Hh - top - bot) / L;
-      g.strokeStyle = "#444"; g.beginPath(); g.moveTo(zx, top); g.lineTo(zx, Hh - bot); g.stroke();
-      g.fillStyle = "#888"; g.fillText(`−${m.toFixed(2)}`, pl, Hh - 4); g.textAlign = "right"; g.fillText(`+${m.toFixed(2)}`, W - 2, Hh - 4); g.textAlign = "center"; g.fillText("0", zx, Hh - 4);
-      g.textAlign = "right"; g.textBaseline = "middle";
-      for (let l = 0; l < L; l++) {
-        const y = top + (L - 1 - l) * rh;
-        if (l === hovLayer) { g.fillStyle = "#6b9bff22"; g.fillRect(pl, y, W - pl, rh); }
-        g.fillStyle = "#3a3a3a"; g.fillRect(pl - 4, y + rh / 2 - 0.5, 3, 1);
-        if (l % 5 === 0 || l === L - 1 || l === hovLayer) { g.fillStyle = l === hovLayer ? "#ffcf5c" : "#888"; g.fillText(`L${l}`, pl - 6, y + rh / 2); }
-        ser.forEach(([at, mp, col], k) => { const v1 = at.get(l), v2 = mp.get(l), y0 = y + (k * rh) / 2; g.fillStyle = col; g.fillRect(Math.min(zx, zx + v1 * sx), y0 + 0.5, Math.abs(v1 * sx), rh / 4 - 0.5); g.strokeStyle = col; g.lineWidth = 1; g.strokeRect(Math.min(zx, zx + v2 * sx), y0 + rh / 4, Math.abs(v2 * sx), Math.max(0.5, rh / 4 - 1)); });
-      }
-      g.textAlign = "left"; g.textBaseline = "alphabetic";
-      c.onmousemove = (e) => { const r = c.getBoundingClientRect(); const l = L - 1 - Math.floor((e.clientY - r.top - top) / rh); if (l >= 0 && l < L && l !== hovLayer) { hovLayer = l; ctx.set("hl", l); draw(); if (!pin) inspect({ kind: "mlp", l, t: ro }, false); } };
-      c.onmouseleave = () => { hovLayer = null; ctx.set("hl", null); draw(); };
+    // layer axis: every 5th, the last, and the hovered/pinned row
+    g.font = "11px ui-monospace, Menlo, monospace"; g.textBaseline = "middle"; g.textAlign = "right";
+    const sel = (hov ?? pin)?.l ?? -9;
+    for (let l = 0; l < R; l++) if (l % 5 === 0 || l === R - 1 || l === sel) { g.fillStyle = l === sel ? "#fff" : "#8a8a8f"; g.fillText(qty === "resid" ? `h${l}` : `L${l}`, AX - 6, yRow(l) + rowH / 2); }
+    // segment band: open parts labelled; click a band to open or squeeze it
+    g.textAlign = "left";
+    for (const sg of segs) {
+      const x0 = cx[sg.a], x1 = cx[sg.b] + cw[sg.b];
+      g.fillStyle = sg.open ? "#2a2a2e" : "#1a1a1d"; g.fillRect(x0, 2, Math.max(1, x1 - x0 - 1), BAND - 6);
+      if (x1 - x0 > 34) { g.save(); g.beginPath(); g.rect(x0 + 2, 0, x1 - x0 - 6, BAND); g.clip(); g.fillStyle = sg.open ? "#d8d6d0" : "#77777c"; g.fillText(sg.kind === "readout" ? "t*" : sg.label, x0 + 5, BAND / 2); g.restore(); }
     }
-  }
-
-  root.querySelectorAll<HTMLElement>("[data-q]").forEach((b) => (b.onclick = () => { qty = b.dataset.q as typeof qty; ctx.set("qty", qty === "resid" ? null : qty); pin = null; ctx.set("pin", null); idle(); sync(); draw(); }));
-  $("fold").onclick = () => { squeeze = !squeeze; ctx.set("fold", squeeze ? null : 0); sync(); draw(); };
-  function sync() {
+    // t*: a white frame over its column
+    g.strokeStyle = "#fff"; g.lineWidth = 1.5; g.strokeRect(cx[ro] + 0.75, BAND, Math.max(1, cw[ro] - 1.5), R * rowH);
+    // crosshair (hover): faint row + column; pin: thick white cell outline
+    if (hov) { g.fillStyle = "#ffffff14"; g.fillRect(AX, yRow(hov.l), W, rowH); g.fillRect(cx[hov.t], BAND, Math.max(2, cw[hov.t]), R * rowH);
+      g.strokeStyle = "#bbb"; g.lineWidth = 1; g.strokeRect(cx[hov.t] - 0.5, yRow(hov.l) - 0.5, Math.max(2, cw[hov.t]) + 1, rowH + 1); }
+    if (pin && pin.l < R) { g.strokeStyle = "#fff"; g.lineWidth = 3; g.strokeRect(cx[pin.t] - 2, yRow(pin.l) - 2, Math.max(2, cw[pin.t]) + 4, rowH + 4); }
+    // token labels under the open columns (wide enough only)
+    g.font = "10px ui-monospace, Menlo, monospace"; g.fillStyle = "#77777c"; g.textBaseline = "top";
+    let lastX = -99; for (let t = 0; t < T; t++) if (cw[t] >= 9 && cx[t] - lastX > 26) { lastX = cx[t]; g.fillStyle = t === ro ? "#fff" : t === (hov ?? pin)?.t ? "#fff" : "#6a6a70"; g.fillText(t === ro ? "t*" : tokText(D.A.m.tokens[t].text).slice(0, 4), cx[t], BAND + R * rowH + 5); }
+    box.classList.toggle("tainted", tainted);
+    root.querySelectorAll<HTMLElement>("[data-face]").forEach((b) => { b.classList.toggle("on", b.dataset.face === face); b.classList.toggle("bad", faceTainted(b.dataset.face!, bad)); });
     root.querySelectorAll<HTMLElement>("[data-q]").forEach((b) => b.classList.toggle("on", b.dataset.q === qty));
-    $("fold").textContent = squeeze ? "Template text: squeezed" : "Template text: full width"; $("fold").classList.toggle("on", squeeze);
+    const nSq = segs.filter((s) => !s.open).reduce((a, s) => a + s.n, 0);
+    const why = tainted ? failing.filter((c) => face === "d" || c.who === face.toUpperCase()).map(checkLine).join(" · ") : "";
+    $("bfoot").innerHTML = `<div class="krow"><i class="kbar" style="background:linear-gradient(90deg,#141416,${col})"></i><span><b class="fl ${tainted ? "bad" : ""}">${face === "d" ? "‖B − A‖" : face.toUpperCase()}</b> · 0 → <span class="num">${fmt(sc.p99, 3)}</span> (99th percentile, linear; brighter cells are clipped) · max <span class="num">${fmt(sc.max, 3)}</span> · ${face === "d" ? `pair <code>${SRC[qty][1]}</code>, its own scale` : `run <code>${SRC[qty][0]}</code> of ${face.toUpperCase()}`}</span></div>
+      <div class="krow"><span>rows: ${qty === "resid" ? "running state h0 (start) … h" + L : "layers, L0 at the bottom"} · white frame: answer position t* · ${squeeze ? `${nSq} template tokens squeezed to 2 px` : "template text full width"} (<button class="lnk" id="fold">${squeeze ? "show full width" : "squeeze"}</button>)${why ? ` · <span class="sumline bad">check failed: ${esc(why)}</span>` : ""}</span></div>`;
+    $("fold").onclick = () => { squeeze = !squeeze; ctx.set("fold", squeeze ? null : 0); draw(); };
+    margin();
   }
-  $<HTMLInputElement>("q").onkeydown = (e) => {
-    if (e.key !== "Enter") return; const s = $<HTMLInputElement>("q").value.toLowerCase().trim();
-    const t = D.A.m.tokens.findIndex((x) => x.text.toLowerCase().trim() === s || (s.length >= 2 && x.text.toLowerCase().includes(s)));
-    if (t < 0) return; const sg = segs.find((g) => t >= g.a && t <= g.b)!; sg.open = true;
-    pin = { kind: qty === "attn" ? "head" : qty, l: SRC[qty][2] - 1, t } as Slice; ctx.set("pin", `${pin.l},${t}`); draw(); inspect(pin, true);
-  };
-  $("ro").innerHTML = readoutHTML(D); idle(); sync();
+
+  // ---------------- margin column: running_margin of A and B on the map's rows
+  function margin() {
+    const host = $("mchart"), Wm = Math.max(150, host.clientWidth), R = rows(), a = D.A.t.running_margin, b = D.B.t.running_margin;
+    // after k layers: on a layer map, the boundary above row k−1; on the state map, the centre of row k
+    const OY = 18, Y = (k: number) => OY + (qty === "resid" ? yRow(k) + rowH / 2 : BAND + (R - k) * rowH);
+    let lo = 0, hi = 0; for (const r of [a, b]) for (const v of r.data) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    const span = hi - lo || 1, raw = span / 3, mag = 10 ** Math.floor(Math.log10(raw)), step = [1, 2, 5, 10].map((k) => k * mag).find((k) => k >= raw)!;
+    lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+    const pl = 10, pr = 12, X = (v: number) => pl + ((v - lo) / (hi - lo || 1)) * (Wm - pl - pr), yAx = OY + BAND + R * rowH + 4;
+    let o = `<line x1="${pl}" x2="${Wm - pr}" y1="${yAx}" y2="${yAx}" class="ax"/>`;
+    for (let v = lo; v <= hi + step / 2; v += step) { const vv = Math.abs(v) < step / 1e6 ? 0 : v; o += `<line x1="${X(vv)}" x2="${X(vv)}" y1="${yAx}" y2="${yAx + 4}" class="ax"/><text x="${X(vv)}" y="${yAx + 15}" text-anchor="middle">${vv === 0 ? "0" : +vv.toFixed(3)}</text>`; }
+    o += `<line x1="${X(0)}" x2="${X(0)}" y1="${OY + BAND - 4}" y2="${yAx}" class="zero"/>`;
+    const sel = (hov ?? pin)?.l;
+    if (sel != null) o += `<rect x="1" y="${OY + yRow(sel)}" width="${Wm - 2}" height="${rowH}" class="rowhl"/>`;
+    const ends: { n: string; v: number; col: string }[] = [];
+    for (const [r, col, n] of [[a, A_COL, "A"], [b, B_COL, "B"]] as const) {
+      let d = ""; for (let k = 0; k <= L; k++) d += `${k ? "L" : "M"}${X(r.get(k)).toFixed(1)},${Y(k).toFixed(1)}`;
+      o += `<path d="${d}" fill="none" stroke="${col}" stroke-width="1.8"/><circle cx="${X(r.get(L))}" cy="${Y(L)}" r="3" fill="${col}"/>`;
+      ends.push({ n, v: r.get(L), col });
+    }
+    const close = Math.abs(X(ends[0].v) - X(ends[1].v)) < 56;
+    ends.sort((p, q) => p.v - q.v).forEach((e, i) => { const x = Math.max(pl + 18, Math.min(Wm - pr - 18, X(e.v))); o += `<text x="${x}" y="${close ? OY + BAND - 18 + i * 12 : OY + BAND - 6}" text-anchor="middle" style="fill:${e.col}">${e.n} ${e.v.toFixed(2)}</text>`; });
+    const svg = $("mc"); svg.setAttribute("width", String(Wm)); svg.setAttribute("height", String(yAx + 22)); svg.style.marginTop = `-${OY}px`; svg.innerHTML = o;
+    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}”, if read off after each layer · dashed: 0 = even odds</span>`;
+    $("mleg").innerHTML = `<i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B`;
+  }
+
+  // ---------------- hover: crosshair + tooltip (A, B, ‖B − A‖ of one cell); click pins
+  const tip = $("ptip"), cv = $<HTMLCanvasElement>("cv");
+  const at = (e: MouseEvent) => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  cv.addEventListener("mousemove", (e) => {
+    const { x, y } = at(e), R = rows();
+    if (y < BAND) { cv.style.cursor = "pointer"; const t = tAt(x), sg = segs.find((q) => t >= q.a && t <= q.b); tip.hidden = false; tip.textContent = sg ? `${sg.label} · ${sg.n} tokens · click to ${sg.open ? "squeeze" : "open"}` : ""; tip.style.left = e.clientX + 14 + "px"; tip.style.top = e.clientY + 14 + "px"; return; }
+    cv.style.cursor = "crosshair";
+    const l = R - 1 - Math.floor((y - BAND) / rowH);
+    if (l < 0 || l >= R || x < AX) { tip.hidden = true; if (hov) { hov = null; draw(); } return; }
+    const t = tAt(x), [an, dn] = SRC[qty];
+    tip.textContent = `${rowName(l)} · token ${t} “${tokText(D.A.m.tokens[t].text)}”${t === ro ? " (t*)" : ""}\nA ${fmt(D.A.t[an].get(l, t), 4)}   B ${fmt(D.B.t[an].get(l, t), 4)}\n‖B − A‖ ${fmt(D.P.t[dn].get(l, t), 4)} (pair export)`;
+    tip.hidden = false; tip.style.left = e.clientX + 14 + "px"; tip.style.top = e.clientY + 14 + "px";
+    if (!hov || hov.l !== l || hov.t !== t) { hov = { l, t }; draw(); }
+  });
+  cv.addEventListener("mouseleave", () => { tip.hidden = true; hov = null; draw(); });
+  cv.addEventListener("click", (e) => {
+    const { x, y } = at(e);
+    if (y < BAND) { const t = tAt(x), sg = segs.find((q) => t >= q.a && t <= q.b); if (sg && sg.kind !== "readout") { sg.open = !sg.open; draw(); } return; }
+    if (!hov) return;
+    setPin(pin && pin.l === hov.l && pin.t === hov.t ? null : { ...hov });
+  });
+  function setPin(s: { l: number; t: number } | null) {
+    pin = s; ctx.set("pin", s ? `${s.l},${s.t}` : null);
+    $("work").classList.toggle("pinned", !!s); drawer(); draw();
+  }
+
+  // ---------------- the drawer (same component as the ladder's)
+  function drawer() {
+    const dr = $("drawer");
+    if (!pin) { dr.hidden = true; dr.innerHTML = ""; return; }
+    const { l, t } = pin, tok = `token ${t} “${tokText(D.A.m.tokens[t].text)}”${t === ro ? " · answer position t*" : ""}`;
+    let body: string;
+    if (qty === "attn") {
+      const a = D.A.t, b = D.B.t, p = D.P.t;
+      const vmax = Math.max(...Array.from({ length: H }, (_, h) => Math.max(a.head_norm.get(l, h, t), b.head_norm.get(l, h, t), p.d_head_norm.get(l, h, t)))) || 1;
+      body = cmpTable([{ label: "Attention write ‖a‖", tip: "attn_norm · d_attn_norm", a: a.attn_norm.get(l, t), b: b.attn_norm.get(l, t), d: { v: p.d_attn_norm.get(l, t), how: "len", src: "d_attn_norm" } }])
+        + `<div class="sub">The ${H} heads of layer ${l} at this token: <span style="color:${A_COL}">A</span>, <span style="color:${B_COL}">B</span> and <span style="color:var(--delta)">‖B − A‖</span>, one linear scale (longest ${fmt(vmax, 3)}).</div>`
+        + Array.from({ length: H }, (_, h) => `<div class="hrow"><span>h${h}</span><span class="hb3"><i style="top:0;width:${(a.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${A_COL}"></i><i style="top:4.5px;width:${(b.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${B_COL}"></i><i style="top:9px;height:3px;width:${(p.d_head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${C.delta}"></i></span><span class="num">${fmt(p.d_head_norm.get(l, h, t), 3)}</span></div>`).join("")
+        + CHANGE_FOOT;
+    } else body = inspectorHTML(D, { kind: qty, l, t } as Slice, { pinned: true, bare: true });
+    dr.hidden = false;
+    dr.innerHTML = drawerHTML(`${qty === "attn" ? "Attention" : qty === "mlp" ? "MLP" : "Running state"} · ${rowName(l)}`, `pinned · ${esc(short(tok, 60))}`, body, failing);
+    $("unpin").onclick = () => setPin(null);
+  }
+
+  // ---------------- controls and keys
+  root.querySelectorAll<HTMLElement>("[data-q]").forEach((b) => (b.onclick = () => { qty = b.dataset.q as Qty; ctx.set("qty", qty === "attn" ? null : qty); setPin(null); }));
+  root.querySelectorAll<HTMLElement>("[data-face]").forEach((b) => (b.onclick = () => { face = b.dataset.face as Face; ctx.set("face", face === "d" ? null : face); draw(); }));
+  window.addEventListener("keydown", (e) => {
+    const t = e.target as HTMLElement;
+    if (e.metaKey || e.ctrlKey || e.altKey || /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName) || document.querySelector("dialog[open]")) return;
+    if (e.key === "Escape") setPin(null);
+    else if (e.key === "a" || e.key === "A") openLearn(D, "answer");
+  }, { signal: ctx.signal });
+
+  // ---------------- initial state from the URL; nothing pinned at rest
   const pp = ctx.get("pin")?.split(",").map(Number);
-  if (pp && pp.length === 2 && pp[0] >= 0 && pp[0] < SRC[qty][2] && pp[1] >= 0 && pp[1] < T) {
-    pin = { kind: qty === "attn" ? "head" : qty, l: pp[0], t: pp[1] } as Slice;
-    const sg = segs.find((g) => pin!.t >= g.a && pin!.t <= g.b); if (sg) sg.open = true;
-    inspect(pin, true);
+  if (pp && pp.length === 2 && pp[0] >= 0 && pp[0] < rows() && pp[1] >= 0 && pp[1] < T) {
+    pin = { l: pp[0], t: pp[1] }; const sg = segs.find((g) => pin!.t >= g.a && pin!.t <= g.b); if (sg) sg.open = true;
   }
-  draw();
-  const ro_ = new ResizeObserver(() => draw()); ro_.observe($("left"));
-  requestAnimationFrame(() => ctx.ready());
-  return () => ro_.disconnect();
+  ctx.mode(false);
+  $("work").classList.toggle("pinned", !!pin);
+  drawer(); draw();
+  const ro_ = new ResizeObserver(() => draw()); ro_.observe($("work"));
+  requestAnimationFrame(() => { draw(); ctx.ready(); });
+  return () => { ro_.disconnect(); tip.hidden = true; };
 }
