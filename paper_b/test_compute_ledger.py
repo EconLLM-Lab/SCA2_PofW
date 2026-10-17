@@ -108,3 +108,20 @@ def test_estimate_does_not_invent_a_billed_total():
     blob = json.dumps(estimate)
     assert "273.63" in blob
     assert "invoice" in blob
+
+
+def test_bank2_profile_units_are_parsed_and_cohort_one_still_works():
+    """Verifier F9: the log parsers accepted only 3-letter codes, so P_<bits> units vanished from any
+    publication clock built from the training logs."""
+    import compute_ledger as CL
+    log = ("===== P_0_0_1_0_0_1 =====\n"
+           "  saved adapter -> /content/pb_data/adapters/P_0_0_1_0_0_1 in 17.2 min\n"
+           "===== P_0_0_1_0_1_0 =====\n"
+           "===== CHN =====\n"
+           "  saved adapter -> /content/pb_data/adapters/CHN in 16.4 min\n"
+           "cohort done: 2 adapters | elapsed 33.6 min\n")
+    got = CL.parse_training_log(log)
+    assert [s["country"] for s in got["saved"]] == ["P_0_0_1_0_0_1", "CHN"]
+    assert got["saved"][0]["train_minutes_printed"] == 17.2
+    assert got["incomplete_starts"] == ["P_0_0_1_0_1_0"]
+    assert got["cohort_elapsed"] == [{"n_reported_done": 2, "elapsed_minutes": 33.6}]

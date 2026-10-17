@@ -33,8 +33,11 @@ ESTIMATE_SCHEMA = "sca2.compute_estimate.v1"
 # by at least 0.6, so 0.06 separates rounding from a different run.
 PRINT_MATCH_TOLERANCE_MIN = 0.06
 
-_HEADER = re.compile(r"^===== ([A-Z]{3}) =====", re.M)
-_SAVED = re.compile(r"saved adapter -> .+/([A-Z]{3}) in ([0-9.]+) min")
+# A unit is either a cohort-1 three-letter country code or a bank-2 profile cell P_<six bits>.
+# Kept as an explicit alternation: a looser token would match arbitrary text in the log.
+_UNIT = r"(?:[A-Z]{3}|P_[01](?:_[01]){5})"
+_HEADER = re.compile(rf"^===== ({_UNIT}) =====", re.M)
+_SAVED = re.compile(rf"saved adapter -> .+/({_UNIT}) in ([0-9.]+) min")
 _ELAPSED = re.compile(r"cohort done: (\d+) adapters \| elapsed ([0-9.]+) min")
 _VRAM = re.compile(r"VRAM free ([0-9.]+)/([0-9.]+) GiB")
 
