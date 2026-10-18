@@ -1,0 +1,337 @@
+{
+  "generated_by": "paper_b/heldout/per_dimension.py",
+  "frozen_at": "2026-10-17T22:39:57.692303+00:00",
+  "selection_sha256": "782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21",
+  "pool_sha256": "19241f6f103c51d64e295045162bb370920223b7ffad7c5f3c8991f5c101bd44",
+  "human_cells_not_fielded": 174,
+  "n_countries": 42,
+  "pool_n": 223,
+  "seed": 20261015,
+  "boot": 2000,
+  "perm_draws": 10000,
+  "registered": [
+    "A_d",
+    "ci95"
+  ],
+  "not_registered": [
+    "p_perm_descriptive",
+    "null_mean",
+    "null_q95"
+  ],
+  "c5_rule": "an imprint dimension whose interval includes 0 is not transport",
+  "routes": {
+    "adapter_primary": {
+      "route": "adapter_primary",
+      "label": "adapter primary rule (selection_amended_20261016.csv, primary_selected)",
+      "n_items": 56,
+      "pool_n": 223,
+      "per_dimension": {
+        "trust": {
+          "A": 0.061990181778894225,
+          "n": 12,
+          "ci95": [
+            -0.047382010893214845,
+            0.1727328209556771
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.2598,
+          "null_mean": 0.03149003399128673,
+          "null_q95": 0.1108007522350971
+        },
+        "risktaking": {
+          "A": 0.15764688119675135,
+          "n": 13,
+          "ci95": [
+            0.01489773912721483,
+            0.290118750512865
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": true,
+          "reading": "interval excludes 0: transport",
+          "p_perm_descriptive": 0.0007,
+          "null_mean": 0.019410389640313157,
+          "null_q95": 0.09447274659107632
+        },
+        "posrecip": {
+          "A": -0.07056301611037857,
+          "n": 11,
+          "ci95": [
+            -0.2813719124536821,
+            0.15361833334889569
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.9479,
+          "null_mean": -0.0038264946167755284,
+          "null_q95": 0.06230816687566545
+        },
+        "altruism": {
+          "A": 0.06875398141280163,
+          "n": 20,
+          "ci95": [
+            -0.03597847548682662,
+            0.17698592366184254
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.0262,
+          "null_mean": 0.0022775173491502193,
+          "null_q95": 0.058742786286204336
+        }
+      }
+    },
+    "adapter_secondary": {
+      "route": "adapter_secondary",
+      "label": "adapter secondary rule (fixed threshold, secondary_selected)",
+      "n_items": 185,
+      "pool_n": 223,
+      "per_dimension": {
+        "trust": {
+          "A": 0.0923204914767592,
+          "n": 44,
+          "ci95": [
+            -0.018750270321402404,
+            0.19901116843854785
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.0037,
+          "null_mean": 0.027345852330600405,
+          "null_q95": 0.06677886171790551
+        },
+        "risktaking": {
+          "A": 0.14316919391779825,
+          "n": 50,
+          "ci95": [
+            0.04496694539573593,
+            0.2289147465625959
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": true,
+          "reading": "interval excludes 0: transport",
+          "p_perm_descriptive": 0.0,
+          "null_mean": 0.022911585470004388,
+          "null_q95": 0.05960700231306378
+        },
+        "posrecip": {
+          "A": -0.04895002898406189,
+          "n": 22,
+          "ci95": [
+            -0.19784626486387846,
+            0.11669469241576272
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.9452,
+          "null_mean": -0.0035038790572201363,
+          "null_q95": 0.04375343884702931
+        },
+        "altruism": {
+          "A": 0.04045385057123941,
+          "n": 69,
+          "ci95": [
+            -0.03795642565621646,
+            0.11730255824571305
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.04,
+          "null_mean": 0.007574983899403881,
+          "null_q95": 0.03852807315663963
+        }
+      }
+    },
+    "signprompt_primary": {
+      "route": "signprompt_primary",
+      "label": "sign-prompt primary (signprompt_selection_20261017.csv, primary_selected)",
+      "n_items": 56,
+      "pool_n": 223,
+      "per_dimension": {
+        "trust": {
+          "A": 0.027886269552101026,
+          "n": 56,
+          "ci95": [
+            -0.10739591425980483,
+            0.15907491178283087
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.5012,
+          "null_mean": 0.02818010848154087,
+          "null_q95": 0.06247097277119899
+        }
+      }
+    },
+    "face_valid": {
+      "route": "face_valid",
+      "label": "face-valid reader (imprint set, Amendment 2 repaired items removed)",
+      "n_items": 25,
+      "pool_n": 223,
+      "per_dimension": {
+        "trust": {
+          "A": 0.10955028939773843,
+          "n": 19,
+          "ci95": [
+            -0.15432651431830105,
+            0.37924414129987694
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.0283,
+          "null_mean": 0.03770838042855555,
+          "null_q95": 0.09925935996650885
+        },
+        "risktaking": {
+          "A": 0.04417458193841153,
+          "n": 4,
+          "ci95": [
+            -0.1700900736417934,
+            0.24258129342395002
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.2007,
+          "null_mean": -0.024929165839036354,
+          "null_q95": 0.10912284255732912
+        },
+        "altruism": {
+          "A": 0.05485779110282797,
+          "n": 2,
+          "ci95": [
+            -0.16282660368637566,
+            0.2651761922969634
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.406,
+          "null_mean": 0.025664518304882564,
+          "null_q95": 0.1981934203062961
+        }
+      }
+    },
+    "jev_majority": {
+      "route": "jev_majority",
+      "label": "Jev majority (imprint set, Amendment 2 repaired items removed)",
+      "n_items": 40,
+      "pool_n": 223,
+      "per_dimension": {
+        "trust": {
+          "A": 0.15103818650153025,
+          "n": 32,
+          "ci95": [
+            -0.0759579012610154,
+            0.369616204271492
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.0,
+          "null_mean": 0.03233720910298358,
+          "null_q95": 0.07922374361656713
+        },
+        "risktaking": {
+          "A": -0.07392120075046905,
+          "n": 1,
+          "ci95": [
+            -0.3981830288572681,
+            0.23876601189020136
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.5302,
+          "null_mean": -0.05052897520760195,
+          "null_q95": 0.22016044080706587
+        },
+        "altruism": {
+          "A": 0.04902878905390857,
+          "n": 7,
+          "ci95": [
+            -0.07839369730716798,
+            0.16462682002227502
+          ],
+          "boot": 2000,
+          "seed": 20261015,
+          "excludes_zero": false,
+          "reading": "interval includes 0: not transport",
+          "p_perm_descriptive": 0.22,
+          "null_mean": 0.004035295387965032,
+          "null_q95": 0.10077409695960823
+        }
+      }
+    }
+  },
+  "amendment2": {
+    "excluded_from_face": [
+      "Q82"
+    ],
+    "excluded_from_jev": [
+      "Q82"
+    ]
+  },
+  "cross_check": {
+    "source": "planning/sprint_2026-10-11/paper-b-tier1/results/heldout_analysis.json",
+    "note": "the same statistic A_d; the committed values are point estimates only",
+    "per_dimension": {
+      "altruism": {
+        "A_ours": 0.06875398141280163,
+        "A_committed": 0.06875398141280163,
+        "A_abs_diff": 0.0,
+        "n_ours": 20,
+        "n_committed": 20,
+        "n_match": true
+      },
+      "posrecip": {
+        "A_ours": -0.07056301611037857,
+        "A_committed": -0.07056301611037857,
+        "A_abs_diff": 0.0,
+        "n_ours": 11,
+        "n_committed": 11,
+        "n_match": true
+      },
+      "risktaking": {
+        "A_ours": 0.15764688119675135,
+        "A_committed": 0.15764688119675135,
+        "A_abs_diff": 0.0,
+        "n_ours": 13,
+        "n_committed": 13,
+        "n_match": true
+      },
+      "trust": {
+        "A_ours": 0.061990181778894225,
+        "A_committed": 0.061990181778894225,
+        "A_abs_diff": 0.0,
+        "n_ours": 12,
+        "n_committed": 12,
+        "n_match": true
+      }
+    },
+    "A_max_abs_diff": 0.0,
+    "n_all_match": true
+  }
+}
