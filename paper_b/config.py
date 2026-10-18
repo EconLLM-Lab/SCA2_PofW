@@ -91,3 +91,8 @@ def _maybe_apply_bank2() -> None:
 
 
 _maybe_apply_bank2()
+
+
+def resolve_units(names, cohort):
+    """Upper-case ISO codes, but leave a name that is already a unit alone (near-zero units include GBR_control)."""
+    return [c if c in cohort else c.upper() for c in names]

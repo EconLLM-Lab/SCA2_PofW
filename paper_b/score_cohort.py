@@ -449,7 +449,7 @@ def _score_model_only_gpu(a, spec: dict) -> int:
     revision = R.require_revision(a.adapter_revision)
     questions = spec["questions"]
     arms = {x.strip() for x in a.arms.split(",") if x.strip()}
-    countries = [c.upper() for c in (a.countries or C.COHORT)]
+    countries = C.resolve_units(a.countries or C.COHORT, C.COHORT)
     unknown = [c for c in countries if c not in C.COHORT]
     if unknown:
         print(f"refusing unknown: {unknown}")
@@ -562,7 +562,7 @@ def main() -> int:
               "Use --model-only with a local scoring spec.")
         return 2
     arms = {x.strip() for x in a.arms.split(",") if x.strip()}
-    countries = [c.upper() for c in (a.countries or C.COHORT)]
+    countries = C.resolve_units(a.countries or C.COHORT, C.COHORT)
     unknown = [c for c in countries if c not in C.COHORT]
     if unknown:
         print(f"refusing unknown: {unknown}")

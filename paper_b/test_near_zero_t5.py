@@ -512,3 +512,33 @@ def test_run_cohort_keeps_the_case_of_unit_names_that_exist():
     assert RC.resolve_units(["gbr", "col"], cohort) == ["GBR", "COL"]           # cohort-1 behaviour: upper-cased
     assert RC.resolve_units(["ARG"], ["ARG", "AUS"]) == ["ARG"]
     assert RC.resolve_units(["nope"], cohort) == ["NOPE"]                       # unknown names still fail the later check
+
+
+# ---- scoring run found these on the VM: three places still upper-cased 'GBR_control' to 'GBR_CONTROL' ----
+def test_config_resolve_units_keeps_existing_unit_names():
+    import config as C
+    cohort = ["GBR", "COL", "GBR_control", "COL_control"]
+    assert C.resolve_units(["GBR", "COL_control"], cohort) == ["GBR", "COL_control"]
+    assert C.resolve_units(["gbr"], cohort) == ["GBR"]
+    assert C.resolve_units(["nope"], cohort) == ["NOPE"]
+
+
+def test_run_unit_accepts_a_mixed_case_unit_name(tmp_path, monkeypatch):
+    import config as C
+    import score_runtime as R
+    import test_run_unit as T
+    monkeypatch.setattr(C, "COHORT", ["GBR", "GBR_control"])
+    spec = T._spec()
+    prod, ref, sb = T._loaders(tmp_path, cc="GBR_control")
+    result = R.run_unit(
+        country="GBR_control", spec=spec, spec_sha=T._spec_sha(spec), revision=T.FULL_SHA,
+        cache_root=tmp_path / "cache", run_id="run-1", repo=R.ARTIFACTS_REPO, hub=T.FakeHub(),
+        code_revision=T.CODE_REV, local_dir=tmp_path / "out", downloader=None,
+        production_scorer=prod, reference_scorer=ref, switchback_scorer=sb,
+        tol_logprob=1e-9, tol_prob=1e-12)
+    assert result["gate"]["gate_pass"] is True
+
+
+def test_score_cohort_does_not_upper_case_unit_names_blindly():
+    src = (HERE / "score_cohort.py").read_text()
+    assert "c.upper() for c in" not in src

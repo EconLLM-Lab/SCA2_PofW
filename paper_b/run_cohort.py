@@ -58,7 +58,7 @@ def save_manifest(path, m: dict) -> None:
 
 def resolve_units(names: list[str], cohort: list[str]) -> list[str]:
     """Upper-case ISO codes, but leave a name that is already a unit alone (near-zero units include GBR_control)."""
-    return [c if c in cohort else c.upper() for c in names]
+    return C.resolve_units(names, cohort)
 
 
 def run_tag(replicate: str, wave: int | None, nearzero: bool) -> str:

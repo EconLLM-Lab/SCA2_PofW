@@ -694,7 +694,7 @@ def run_unit(country: str, spec: dict, spec_sha: str, revision: str,
     reference_scorer(spec, model_name) is an INDEPENDENT loader of the SAME
     weights. Both get the same adapter dir resolved at `revision`.
     """
-    country = country.upper()
+    country = C.resolve_units([country], C.COHORT)[0]
     if country not in C.COHORT:
         raise ValueError(f"country {country!r} not in cohort")
     for _name, _fn in (("production_scorer", production_scorer),
