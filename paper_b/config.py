@@ -33,6 +33,10 @@ TRAIN_FRAC = 0.80
 SEED = 42
 TRAIN_ROWS = int(N_ROWS * TRAIN_FRAC)   # 526 for cohort 1; protocol_bank2 recomputes it
 UNITS = "countries"                      # protocol_bank2 may switch to "profiles"
+# Near-zero refits (card T5): protocol_bank2.apply fills these under SCA2_PB_NEARZERO. The defaults exist so that
+# a module reload always resets them: a leaked per-unit n_train would change the cohort-1 run-record check.
+EXPECTED_N_TRAIN: dict = {}              # unit -> training rows; empty means TRAIN_ROWS for every unit
+NEARZERO_DIR = None                      # directory of the reduced banks, or None
 
 
 # ---------------------------------------------------------------- reference pass

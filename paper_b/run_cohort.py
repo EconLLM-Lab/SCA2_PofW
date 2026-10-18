@@ -56,6 +56,20 @@ def save_manifest(path, m: dict) -> None:
     tmp.replace(path)
 
 
+def resolve_units(names: list[str], cohort: list[str]) -> list[str]:
+    """Upper-case ISO codes, but leave a name that is already a unit alone (near-zero units include GBR_control)."""
+    return [c if c in cohort else c.upper() for c in names]
+
+
+def run_tag(replicate: str, wave: int | None, nearzero: bool) -> str:
+    """Hub state/<tag>/ folder for this run's logs and ledger; each kind of run owns its folder."""
+    if replicate:
+        return f"replicate_{replicate}"
+    if nearzero:
+        return "nearzero"
+    return f"wave{wave}" if wave else "units"
+
+
 HUB_REQUIRED = ("adapter_model.safetensors", "adapter_config.json", "run_record.json")
 
 
@@ -98,7 +112,7 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
 
     if a.countries:
-        countries = [c.upper() for c in a.countries]
+        countries = resolve_units(a.countries, C.COHORT)
     elif a.wave:
         countries = WAVES[a.wave]
     else:
@@ -132,7 +146,7 @@ def main(argv: list[str] | None = None) -> int:
     api = pins = None
     on_hub: set[str] = set()
     rep = os.environ.get("SCA2_PB_REPLICATE", "").strip()
-    tag = f"replicate_{rep}" if rep else (f"wave{a.wave}" if a.wave else "units")
+    tag = run_tag(rep, a.wave, bool(os.environ.get("SCA2_PB_NEARZERO", "").strip()))
     if bank2:
         import hub_io
         from huggingface_hub import HfApi

@@ -11,9 +11,15 @@ Units (SCA2_PB_UNITS):
   countries  (default) the 42 GPS∩WVS7 countries; hub prefix bank2/<run>/adapters
   profiles   the 64 sign-profile factorial cells (paper_b/factorial.py); hub prefix
              bank2/<run>/profiles; requires SCA2_PB_PROFILE_DIR
+
+Near-zero refits (card T5, C6; SCA2_PB_NEARZERO=<dir>, requires SCA2_PB_UNITS=profiles): the unit list becomes
+GBR, COL (refits) and GBR_control, COL_control (size-matched controls). Hub prefixes bank2/<run>/near_zero/<CC> and
+bank2/<run>/near_zero_control/<CC>. The reduced banks are checked against their SHA-256 manifests. The frozen band
+(MIN_TRIPLETS..MAX_TRIPLETS) still applies to the FULL bank manifests only, never to a reduced bank.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -25,6 +31,13 @@ MIN_TRIPLETS = 640
 MAX_TRIPLETS = 660
 MIN_PER_DIMENSION = 100
 N_FACTORIAL_UNITS = 64
+NEARZERO_UNITS = ["GBR", "COL", "GBR_control", "COL_control"]
+# Declared in C6_DESIGN.md sections 2 and 9: GBR keeps 164 training rows, COL 260; each control matches its refit.
+# near_zero_prepare.py asserts these counts; the run-record check reads the manifests' own counts.
+NEARZERO_EXPECTED_TRAIN = {"GBR": 164, "COL": 260, "GBR_control": 164, "COL_control": 260}
+NEARZERO_REFIT_DIR = "near_zero"
+NEARZERO_CONTROL_DIR = "near_zero_control"
+CONTROL_SUFFIX = "_control"
 
 
 def bank2_selected() -> bool:
@@ -44,6 +57,47 @@ def replicate_tag() -> str:
     if tag and not _REPLICATE_TAG.match(tag):
         raise RuntimeError(f"SCA2_PB_REPLICATE must match [a-z0-9]{{1,16}}, got {tag!r}")
     return tag
+
+
+def nearzero_dir() -> Path | None:
+    env = os.environ.get("SCA2_PB_NEARZERO", "").strip()
+    return Path(env) if env else None
+
+
+def nearzero_selected() -> bool:
+    return nearzero_dir() is not None
+
+
+def load_nearzero_manifests(nz_dir: Path, run_id: str) -> dict[str, dict]:
+    """Manifest of every near-zero unit, each checked against its own bank file. Fail closed."""
+    out: dict[str, dict] = {}
+    for unit in NEARZERO_UNITS:
+        mpath = Path(nz_dir) / unit / "manifest.json"
+        if not mpath.is_file():
+            raise RuntimeError(f"near-zero unit {unit}: manifest missing at {mpath}")
+        m = json.loads(mpath.read_text())
+        if m.get("bank_run_id") != run_id:
+            raise RuntimeError(f"near-zero unit {unit}: bank_run_id {m.get('bank_run_id')!r} is not {run_id!r}")
+        if m.get("country") != unit:
+            raise RuntimeError(f"near-zero unit {unit}: manifest names {m.get('country')!r}")
+        want = (m.get("sha256") or {}).get(m.get("file"))
+        bank = Path(nz_dir) / unit / str(m.get("file"))
+        got = hashlib.sha256(bank.read_bytes()).hexdigest() if bank.is_file() else None
+        if not want or got != want:
+            raise RuntimeError(f"near-zero unit {unit}: sha256 of {bank.name} is {got!r}, manifest says {want!r}")
+        out[unit] = m
+    return out
+
+
+def nearzero_record_fields(config_module, unit: str) -> dict:
+    """Extra run-record fields for a near-zero unit; {} outside the switch."""
+    nz = getattr(config_module, "NEARZERO_DIR", None)
+    if nz is None:
+        return {}
+    m = json.loads((Path(nz) / unit / "manifest.json").read_text())
+    return {"nearzero_arm": "control" if unit.endswith(CONTROL_SUFFIX) else "refit",
+            "nearzero_profile_unit": m["profile_unit"], "nearzero_bank_file": m["file"],
+            "nearzero_bank_sha256": m["sha256"][m["file"]], "nearzero_train_rows": int(m["train_kept"])}
 
 
 def load_bank_manifest(path: Path) -> dict:
@@ -110,6 +164,18 @@ def apply(config_module) -> None:
     data_root = Path(root)
     rep = replicate_tag()
     adapter_dir = data_root / "adapters"
+    nz_manifests = None
+    if nearzero_selected():
+        if units != "profiles":
+            raise RuntimeError("SCA2_PB_NEARZERO requires SCA2_PB_UNITS=profiles (the reduced banks derive from profile banks)")
+        if rep:
+            raise RuntimeError("SCA2_PB_NEARZERO cannot be combined with SCA2_PB_REPLICATE")
+        nz_manifests = load_nearzero_manifests(nearzero_dir(), run_id)
+        config_module.COHORT = list(NEARZERO_UNITS)
+        config_module.EXPECTED_N_TRAIN = {u: int(m["train_kept"]) for u, m in nz_manifests.items()}
+        config_module.NEARZERO_DIR = nearzero_dir()
+        prefix = f"bank2/{run_id}/{NEARZERO_REFIT_DIR}"
+        adapter_dir = data_root / "adapters_nearzero"
     if rep:
         head, _, tail = prefix.rpartition("/")                 # bank2/<run>/profiles -> .../replicates/<tag>/profiles
         prefix = f"{head}/replicates/{rep}/{tail}"
@@ -131,6 +197,9 @@ def apply(config_module) -> None:
 
 def hub_adapter_path_from_prefix(prefix: str, country_code: str) -> str:
     prefix = str(prefix).strip("/")
+    if nearzero_selected() and country_code.endswith(CONTROL_SUFFIX) and prefix.endswith(f"/{NEARZERO_REFIT_DIR}"):
+        prefix = prefix[: -len(NEARZERO_REFIT_DIR)] + NEARZERO_CONTROL_DIR            # GBR_control -> near_zero_control/GBR
+        country_code = country_code[: -len(CONTROL_SUFFIX)]
     path = f"{prefix}/{country_code}"
     if bank2_selected():
         if prefix == COHORT1_PREFIX or path.startswith("adapters/"):

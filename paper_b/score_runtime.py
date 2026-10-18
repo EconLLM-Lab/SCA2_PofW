@@ -105,10 +105,12 @@ def validate_run_record(record: dict, country: str) -> bool:
             raise ValueError(
                 f"run_record lora.{k}={lora.get(k)!r} != frozen "
                 f"{FROZEN_TRAINING['lora'][k]!r}")
+    # near-zero units (card T5) train on fewer rows by design: config.EXPECTED_N_TRAIN exists only under that switch
+    want_n = getattr(C, "EXPECTED_N_TRAIN", {}).get(country, C.TRAIN_ROWS)
     if "n_train" not in record or isinstance(record["n_train"], bool) \
-            or not isinstance(record["n_train"], int) or record["n_train"] != C.TRAIN_ROWS:
+            or not isinstance(record["n_train"], int) or record["n_train"] != want_n:
         raise ValueError(
-            f"run_record n_train must be the frozen integer {C.TRAIN_ROWS}, got "
+            f"run_record n_train must be the frozen integer {want_n}, got "
             f"{record.get('n_train')!r}")
     return True
 

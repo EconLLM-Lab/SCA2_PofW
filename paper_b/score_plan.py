@@ -7,9 +7,11 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 from pathlib import Path
 
 import factorial as F
+import protocol_bank2 as P2
 
 HERE = Path(__file__).resolve().parent
 POOL = HERE / "heldout" / "pool_skeleton.csv"
@@ -50,6 +52,14 @@ CONDITIONS.update({
                              "variant": "v1", "kind": "adapter", "units": [REPLICATE_UNIT],
                              "replicate": REPLICATE_TAG},
 })
+# Card T5 (2026-10-18, C6): the four near-zero adapters, scored on the strict battery under one run id. The unit
+# names double as model names: GBR_adapter, COL_adapter (refits) and GBR_control_adapter, COL_control_adapter.
+# Their Hub paths are bank2/<bank run>/near_zero/<CC> and .../near_zero_control/<CC> (protocol_bank2).
+NEARZERO_DIR_VM = "/content/pb_data/near_zero"
+NEARZERO_STAMP = "20261018"
+CONDITIONS["nearzero_strict_v1"] = {
+    "run_id": f"bank2-nearzero-strict-v1-{NEARZERO_STAMP}", "battery": "strict", "variant": "v1", "kind": "adapter",
+    "units": list(P2.NEARZERO_UNITS), "nearzero": True}
 # Launch order of the T4 session: the cheap single-unit replicate scores first, then the 64-cell sign-prompt cell.
 T4_ORDER = ["replicate_strict_v1", "replicate_heldout_v1", "signprompt_strict_v1"]
 # Priority order of a launch: the preregistered primary first, sensitivity arms after it.
@@ -113,13 +123,13 @@ def todo_units(run_id: str, half: str, hub_files, spec_sha: str | None = None,
             "base": bool(scores_base(half) and not _present(run_id, hub_files, "base", spec_sha, read_manifest))}
 
 
-def score_cohort_args(run_id: str, spec_path: str, marker: str, todo: dict) -> list[str]:
+def score_cohort_args(run_id: str, spec_path: str, marker: str, todo: dict, revision: str | None = None) -> list[str]:
     """Arguments for score_cohort --model-only, or [] when nothing is left to score."""
     arms = (["base"] if todo["base"] else []) + (["adapter"] if todo["units"] else [])
     if not arms:
         return []
     args = ["--model-only", "--spec-file", str(spec_path), "--run-id", run_id, "--gate-marker", marker,
-            "--adapter-revision", ADAPTER_REVISION, "--artifact-repo", ARTIFACTS_REPO, "--arms", ",".join(arms)]
+            "--adapter-revision", revision or ADAPTER_REVISION, "--artifact-repo", ARTIFACTS_REPO, "--arms", ",".join(arms)]
     if todo["units"]:
         args += ["--countries", *todo["units"]]
     return args
@@ -134,10 +144,88 @@ def condition_units(name: str) -> list[str]:
 
 
 def condition_env(name: str) -> dict:
-    """Extra environment for a condition's driver. The replicate switch is the only one: it moves the Hub
-    prefix and the local adapter directory to replicates/<tag>, so the original adapters are never read."""
-    rep = CONDITIONS[name].get("replicate")
+    """Extra environment for a condition's driver. Two switches exist: the replicate switch moves the Hub prefix and
+    the local adapter directory to replicates/<tag>, so the original adapters are never read; the near-zero switch
+    points config at the reduced banks and the near_zero/ Hub prefixes."""
+    c = CONDITIONS[name]
+    if c.get("nearzero"):
+        return {"SCA2_PB_NEARZERO": NEARZERO_DIR_VM}
+    rep = c.get("replicate")
     return {"SCA2_PB_REPLICATE": rep} if rep else {}
+
+
+def adapter_revision_for(name: str) -> str:
+    """The adapter-repo commit a condition scores at. Near-zero adapters did not exist at ADAPTER_REVISION, so
+    their commit is a separate pin (`nearzero_adapter_revision`), written after the upload."""
+    if not CONDITIONS[name].get("nearzero"):
+        return ADAPTER_REVISION
+    rev = json.loads(PINS.read_text()).get("nearzero_adapter_revision")
+    if not rev:
+        raise RuntimeError("nearzero_adapter_revision is not pinned in score_plan_pins.json yet; upload the adapters, "
+                           "then pin the adapter-repo commit")
+    return rev
+
+
+def _append_pin(key: str, value) -> None:
+    """Add a top-level key to the pins file. Never changes an existing entry; the same value again is a no-op."""
+    pins = json.loads(PINS.read_text())
+    if key in pins:
+        if pins[key] == value:
+            return
+        raise RuntimeError(f"{key} is already pinned to {pins[key]!r}; existing pins are never changed")
+    pins[key] = value
+    PINS.write_text(json.dumps(pins, indent=2) + "\n")
+
+
+def pin_nearzero_revision(sha: str) -> None:
+    """Append `nearzero_adapter_revision`: the adapter-repo commit that holds the four near-zero adapters."""
+    if not re.fullmatch(r"[0-9a-f]{40}", sha or ""):
+        raise ValueError(f"adapter revision must be a full 40-hex SHA, got {sha!r}")
+    _append_pin("nearzero_adapter_revision", sha)
+
+
+def pin_nearzero_bundle(hub_path: str, sha256: str) -> None:
+    """Append `nearzero_bank_bundle`: where the four reduced banks live on the Hub and the SHA-256 of the archive."""
+    if not re.fullmatch(r"[0-9a-f]{64}", sha256 or ""):
+        raise ValueError(f"bundle SHA-256 must be 64 hex characters, got {sha256!r}")
+    _append_pin("nearzero_bank_bundle", {"hub_path": hub_path, "sha256": sha256})
+
+
+def gate_marker_name(unit: str) -> str:
+    return f"adapter_gate_nearzero_{unit}.json"
+
+
+def gate_run_id_nearzero(unit: str) -> str:
+    return f"gate-bank2-nearzero-{unit}-{NEARZERO_STAMP}"
+
+
+def check_marker_nearzero(marker: dict, unit: str, adapter_sha256: str | None, revision: str) -> None:
+    """Refuse a gate marker that does not authorise scoring THIS near-zero unit's weights at THIS revision."""
+    if not marker.get("gate_pass"):
+        raise RuntimeError(f"{unit}: gate marker says gate_pass=false")
+    if marker.get("unit") != unit:
+        raise RuntimeError(f"{unit}: gate marker unit is {marker.get('unit')!r}")
+    if marker.get("adapter_revision") != revision:
+        raise RuntimeError(f"{unit}: gate marker revision {marker.get('adapter_revision')!r} is not {revision}")
+    if not adapter_sha256 or marker.get("adapter_sha256") != adapter_sha256:
+        raise RuntimeError(f"{unit}: gate marker was made on different weights than the adapter to be scored")
+
+
+def nearzero_train_steps() -> list[tuple[str, list[str], dict]]:
+    """Detached chain 1 (training): prepare the four training files, then train and upload the four adapters."""
+    env = {"SCA2_PB_NEARZERO": NEARZERO_DIR_VM}
+    return [("nz_prepare", ["paper_b/near_zero_prepare.py"], dict(env)),
+            ("nz_train", ["paper_b/run_cohort.py", "--countries", *P2.NEARZERO_UNITS, "--skip-prepare"], dict(env))]
+
+
+def nearzero_score_steps(revision: str) -> list[tuple[str, list[str], dict]]:
+    """Detached chain 2 (after the adapter revision is pinned): one gate per adapter, then the strict scoring."""
+    base = {"SCA2_PB_NEARZERO": NEARZERO_DIR_VM, "SCA2_PB_ADAPTER_REVISION": revision}
+    steps = [(f"nz_gate_{u}", ["paper_b/colab/vm_gate_factorial.py"],
+              {**base, "GATE_UNIT": u, "SCORE_RUN_ID": gate_run_id_nearzero(u), "GATE_MARKER_NAME": gate_marker_name(u)})
+             for u in P2.NEARZERO_UNITS]
+    steps.append(("nz_score", ["paper_b/colab/vm_score_t4.py", "nearzero_strict_v1"], dict(base)))
+    return steps
 
 
 def todo_condition(name: str, hub_files, spec_sha: str, read_manifest) -> list[str]:
@@ -206,8 +294,9 @@ def spec_hash(spec: dict) -> str:
 
 
 def write_pins() -> dict:
-    pins = {"adapter_revision": ADAPTER_REVISION,
-            "spec_sha256": {n: spec_hash(build_spec(n)) for n in CONDITIONS}}
+    old = json.loads(PINS.read_text()) if PINS.exists() else {}
+    pins = {**old, "adapter_revision": ADAPTER_REVISION,
+            "spec_sha256": {n: spec_hash(build_spec(n)) for n in CONDITIONS}}      # keeps nearzero_adapter_revision
     PINS.write_text(json.dumps(pins, indent=2) + "\n")
     return pins
 

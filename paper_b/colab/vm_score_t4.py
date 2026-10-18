@@ -1,5 +1,6 @@
 # VM-side scoring driver for ONE card-T4 condition (Hub is the only durable store).
 #   python paper_b/colab/vm_score_t4.py <condition>
+# Card T5 adds nearzero_strict_v1 (GBR, COL, GBR_control, COL_control; each adapter needs its own gate marker).
 # Conditions: signprompt_strict_v1 (all 64 sign-prompt cells, no adapter), replicate_strict_v1 and
 # replicate_heldout_v1 (the r1 retrain of one unit). Pins and run ids live in paper_b/score_plan.py.
 # Unlike vm_score_units.py there is no half split: a condition names its own units. The driver builds the spec,
@@ -23,6 +24,14 @@ want_rep = c.get("replicate", "")
 if os.environ.get("SCA2_PB_REPLICATE", "") != want_rep:      # the switch moves every adapter path: it must match
     print(f"REFUSING [{cond}]: SCA2_PB_REPLICATE={os.environ.get('SCA2_PB_REPLICATE', '')!r}, condition needs {want_rep!r}; no model loaded")
     sys.exit(2)
+nearzero = bool(c.get("nearzero"))
+if nearzero and os.environ.get("SCA2_PB_NEARZERO") != SPL.NEARZERO_DIR_VM:     # the switch moves every adapter path
+    print(f"REFUSING [{cond}]: SCA2_PB_NEARZERO={os.environ.get('SCA2_PB_NEARZERO')!r}, condition needs {SPL.NEARZERO_DIR_VM!r}; no model loaded")
+    sys.exit(2)
+try:
+    rev = SPL.adapter_revision_for(cond)                # a near-zero condition scores at its own pinned adapter commit
+except RuntimeError as exc:
+    print(f"REFUSING [{cond}]: {exc}; no model loaded"); sys.exit(2)
 pins = json.loads(SPL.PINS.read_text())
 assert pins["adapter_revision"] == SPL.ADAPTER_REVISION, "pins file and plan disagree on the adapter revision"
 spec = SPL.build_spec(cond)
@@ -34,19 +43,31 @@ if got != pins["spec_sha256"][cond]:
 marker = f"{ROOT}/adapter_gate.json"
 rep_sha = None
 try:
-    if want_rep:
+    if nearzero:
+        import eval_config as E, score_runtime as R             # imported only after the near-zero switch is verified
+        markers = []
+        for u in units:                                          # every adapter needs its own gate, made on its own weights
+            adapter_dir, source = R.resolve_adapter(u, rev, E.ADAPTER_CACHE_DIR)
+            sha = R.adapter_sha256(adapter_dir)
+            mk = f"{ROOT}/{SPL.gate_marker_name(u)}"
+            SPL.check_marker_nearzero(json.loads(open(mk).read()), u, sha, rev)
+            markers.append(mk)
+            print(f"[{cond}] {u} from {source}: sha256 {sha[:12]} | gate marker ok")
+        marker = markers[0]                                      # score_cohort reads only gate_pass from the one it is handed
+    elif want_rep:
         import eval_config as E, score_runtime as R             # imported only after the replicate switch is verified
         adapter_dir, source = R.resolve_adapter(units[0], SPL.ADAPTER_REVISION, E.ADAPTER_CACHE_DIR)
         rep_sha = R.adapter_sha256(adapter_dir)
         print(f"[{cond}] replicate adapter {units[0]} from {source}: {adapter_dir} sha256 {rep_sha[:12]}")
-    SPL.check_marker_for(cond, json.loads(open(marker).read()), replicate_adapter_sha=rep_sha)
+    if not nearzero:
+        SPL.check_marker_for(cond, json.loads(open(marker).read()), replicate_adapter_sha=rep_sha)
 except (OSError, ValueError, RuntimeError) as exc:
     print(f"REFUSING [{cond}]: {exc}; no model loaded")
     sys.exit(2)
 
 os.makedirs(f"{ROOT}/specs", exist_ok=True)
 spec_path = write_spec(spec, f"{ROOT}/specs/{cond}.json")
-env = child_env(SCA2_PB_ADAPTER_REVISION=SPL.ADAPTER_REVISION)
+env = child_env(SCA2_PB_ADAPTER_REVISION=rev)
 api = HfApi(token=token)
 
 
@@ -62,7 +83,7 @@ def read_manifest(run_id, model):
 
 
 todo = SPL.todo_condition(cond, listing(), got, read_manifest)
-print(f"[{cond}] run_id {c['run_id']} | spec {got[:12]} | adapter revision {SPL.ADAPTER_REVISION[:12]} | "
+print(f"[{cond}] run_id {c['run_id']} | spec {got[:12]} | adapter revision {rev[:12]} | "
       f"to score: {len(todo)} of {len(units)} units")
 rc = 0
 if todo and c["kind"] == "signprompt":
@@ -73,7 +94,7 @@ if todo and c["kind"] == "signprompt":
                              "--spec", str(spec_path), "--out-dir", f"{ROOT}/signprompt/out", "--only", *todo,
                              "--hub-run", c["run_id"]], cwd=REPO, env=env).returncode
 elif todo:
-    args = SPL.score_cohort_args(c["run_id"], str(spec_path), marker, {"units": todo, "base": False})
+    args = SPL.score_cohort_args(c["run_id"], str(spec_path), marker, {"units": todo, "base": False}, revision=rev)
     rc = subprocess.run([sys.executable, "paper_b/score_cohort.py", *args], cwd=REPO, env=env).returncode
 missing = SPL.todo_condition(cond, listing(), got, read_manifest)
 print(f"[{cond}] score rc={rc} | missing on the Hub: {len(missing)} {missing[:4]}")

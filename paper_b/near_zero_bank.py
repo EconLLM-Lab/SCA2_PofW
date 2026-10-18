@@ -20,6 +20,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import config as C  # noqa: E402
 import factorial as F  # noqa: E402
@@ -98,6 +100,25 @@ def reduced_bank(rows: list[dict], z: dict, train: set[str]) -> dict:
             "train_dropped": sum(r["split"] == "train" for r in dropped)}
 
 
+CONTROL_SEED = 20261018      # C6_DESIGN.md section 9, item 2
+
+
+def control_bank(rows: list[dict], train: set[str], k: int, seed: int = CONTROL_SEED) -> dict:
+    """Size-matched control: k of the unit's TRAINING rows, uniformly at random, every dimension eligible.
+
+    The training rows are sorted by triplet_id, then `numpy.random.default_rng(seed).choice(n, size=k,
+    replace=False)` picks positions. The draw never reads a score or a dimension. Only training rows enter the
+    control file: eval rows are unused by training.
+    """
+    tagged = [{**r, "split": _split_of(r, train)} for r in rows]
+    pool = sorted((r for r in tagged if r["split"] == "train"), key=lambda r: r["triplet_id"])
+    if not 0 < k <= len(pool):
+        raise ValueError(f"cannot draw {k} control rows from {len(pool)} training rows")
+    idx = np.random.default_rng(seed).choice(len(pool), size=k, replace=False)
+    kept = [pool[i] for i in sorted(int(i) for i in idx)]
+    return {"kept": kept, "n_train_pool": len(pool), "seed": seed}
+
+
 def declare_subset(candidates: list[dict]) -> dict:
     """The preregistered rule: most near-zero TRAINING rows; one singleton-profile country, one multi-member.
 
@@ -142,6 +163,37 @@ def write_bank(out_dir: Path, cc: str, unit: str, z: dict, red: dict, *, bank_ru
         "file": name, "sha256": {name: _sha(d / name)},
         "source_profile_file_sha256": source_sha256,
         "notes": ["rows are the unit's bank-2 rows with an added `split` field (train|eval)",
+                  "no model call, no upload; ref log-probs join on the VM by (prompt, completion)"],
+    }
+    (d / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    return manifest
+
+
+def write_control_bank(out_dir: Path, unit: str, profile_unit: str, ctl: dict, *, bank_run_id: str,
+                       source_rows: int, matched_to: str, source_sha256: str | None = None) -> dict:
+    """Write one control bank under <out_dir>/<unit>/ (unit is e.g. GBR_control) with a SHA-256 manifest."""
+    d = Path(out_dir) / unit
+    d.mkdir(parents=True, exist_ok=True)
+    name = f"D_syn_{unit}.jsonl"
+    rows = sorted(ctl["kept"], key=lambda r: r["triplet_id"])
+    with (d / name).open("w", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    per_dim: dict[str, int] = {}
+    for r in rows:
+        per_dim[r["gps_dimension"]] = per_dim.get(r["gps_dimension"], 0) + 1
+    manifest = {
+        "country": unit, "arm": "control", "matched_to": matched_to, "profile_unit": profile_unit,
+        "bank_run_id": bank_run_id,
+        "rule": f"uniform random subsample of the unit's training rows, size matched to {matched_to}; "
+                f"numpy.random.default_rng({ctl['seed']}).choice(n_train_rows_sorted_by_triplet_id, size=k, replace=False)",
+        "seed": ctl["seed"], "train_frac": C.TRAIN_FRAC, "split_seed": C.SEED,
+        "n_source": source_rows, "n_kept": len(rows), "train_kept": len(rows),
+        "train_dropped": ctl["n_train_pool"] - len(rows), "eval_kept": 0,
+        "kept_by_dimension": dict(sorted(per_dim.items())),
+        "file": name, "sha256": {name: _sha(d / name)},
+        "source_profile_file_sha256": source_sha256,
+        "notes": ["rows are the unit's bank-2 training rows with an added `split` field (always train)",
                   "no model call, no upload; ref log-probs join on the VM by (prompt, completion)"],
     }
     (d / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
@@ -210,6 +262,11 @@ def main() -> int:
         manifests[cc] = m
         print(f"{role} {cc} {unit}: train {m['train_kept'] + m['train_dropped']} -> kept {m['train_kept']} "
               f"dropped {m['train_dropped']}; all rows kept {m['n_kept']} dropped {m['n_dropped']}")
+        ctl = control_bank(rows, train, m["train_kept"])
+        cm = write_control_bank(out, f"{cc}_control", unit, ctl, bank_run_id=bank_run_id, source_rows=len(rows),
+                                matched_to=cc, source_sha256=_sha(Path(a.profiles) / f"D_syn_{unit}.jsonl"))
+        manifests[f"{cc}_control"] = cm
+        print(f"control {cc}_control {unit}: {cm['train_kept']} training rows, by dimension {cm['kept_by_dimension']}")
     declaration = {"rule": "among cohort countries with >=1 dimension |z| < 0.10, the singleton-profile country and the "
                            "multi-member-profile country with the most near-zero TRAINING rows; ties -> first ISO3",
                    "uses_scores": False, "bank_run_id": bank_run_id, "label_equality": proof,

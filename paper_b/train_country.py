@@ -114,7 +114,11 @@ def train_country(country_code: str) -> Path:
         "max_length": C.MAX_LENGTH, "grad_accum": C.GRADIENT_ACCUMULATION_STEPS,
         "train_minutes": round(mins, 2), "train_wall_scope": "trainer.train",
         "bank_run_id": C.BANK_RUN_ID,
+        # optimizer steps the trainer planned and took (C6_DESIGN.md section 3 asks for these on the shorter runs)
+        "max_steps": int(trainer.state.max_steps), "global_step": int(trainer.state.global_step),
     }
+    import protocol_bank2
+    record.update(protocol_bank2.nearzero_record_fields(C, country_code))       # {} unless SCA2_PB_NEARZERO is set
     if hw.get("gpu"):
         record["gpu_name"] = hw["gpu"]
     if hw.get("vram_total_gib") is not None:

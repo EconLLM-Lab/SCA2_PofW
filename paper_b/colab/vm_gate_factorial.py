@@ -162,7 +162,7 @@ def main() -> int:
         print("ADAPTER GATE FAILED — tolerances will not be widened")
         return 1
 
-    marker = OUT / "adapter_gate.json"
+    marker = OUT / os.environ.get("GATE_MARKER_NAME", "adapter_gate.json")    # near-zero gates write one marker per unit
     marker.write_text(json.dumps({
         "gate_pass": True, "unit": GATE_UNIT, "adapter_revision": REVISION,
         "adapter_sha256": report["adapter_sha256"],
