@@ -292,5 +292,259 @@
     "mean_abs_inter_surface_r": 0.8627998102474066
    }
   }
+ },
+ "route_contrast_64_cells": {
+  "n_cells": 64,
+  "note": "full 2^6 design (intercept + six main effects + fifteen two-way interactions, factorial_effects.fit, error df 42); same views as route_contrast_26_cells",
+  "adapter": {
+   "plan_V5_rowwise_raw": {
+    "hits": 2,
+    "n": 6,
+    "share": 0.3333333333333333,
+    "chance": 0.14285714285714285,
+    "p_binomial": 0.20686108679206794,
+    "per_dimension": {
+     "trust": false,
+     "risktaking": false,
+     "patience": false,
+     "altruism": true,
+     "posrecip": false,
+     "negrecip": true
+    }
+   },
+   "rowwise_standardized": {
+    "hits": 2,
+    "n": 6,
+    "per_dimension": {
+     "trust": true,
+     "risktaking": false,
+     "patience": true,
+     "altruism": false,
+     "posrecip": false,
+     "negrecip": false
+    },
+    "largest_surface": {
+     "trust": "trust",
+     "risktaking": "altruism",
+     "patience": "patience:Q43",
+     "altruism": "risktaking",
+     "posrecip": "altruism",
+     "negrecip": "risktaking"
+    }
+   },
+   "columnwise": {
+    "hits": 1,
+    "n": 7,
+    "chance": 0.16666666666666666,
+    "per_surface": {
+     "altruism": false,
+     "negrecip": false,
+     "patience:Q43": false,
+     "patience:Q50": false,
+     "posrecip": false,
+     "risktaking": false,
+     "trust": true
+    },
+    "largest_bit": {
+     "altruism": "risktaking",
+     "negrecip": "risktaking",
+     "patience:Q43": "risktaking",
+     "patience:Q50": "trust",
+     "posrecip": "trust",
+     "risktaking": "negrecip",
+     "trust": "trust"
+    }
+   },
+   "diagonal": {
+    "trust": {
+     "bit": "trust",
+     "beta": 0.36358243388594513,
+     "t": 16.739507266736755,
+     "t_lenth": 4.3251581245936865,
+     "sign": 1
+    },
+    "risktaking": {
+     "bit": "risktaking",
+     "beta": 0.14000873839053002,
+     "t": 4.136962388035595,
+     "t_lenth": 0.8285888009269544,
+     "sign": 1
+    },
+    "patience:Q43": {
+     "bit": "patience",
+     "beta": 0.049414495561863836,
+     "t": 3.627074125481945,
+     "t_lenth": 0.9321358457646337,
+     "sign": 1
+    },
+    "patience:Q50": {
+     "bit": "patience",
+     "beta": 0.13250479634657153,
+     "t": 6.119567952549184,
+     "t_lenth": 1.3233335290215136,
+     "sign": 1
+    },
+    "altruism": {
+     "bit": "altruism",
+     "beta": 0.24208090186424142,
+     "t": 6.322075943283543,
+     "t_lenth": 2.3760499030971323,
+     "sign": 1
+    },
+    "posrecip": {
+     "bit": "posrecip",
+     "beta": 0.12419389655920332,
+     "t": 3.0248054304834446,
+     "t_lenth": 1.0218575682977686,
+     "sign": 1
+    },
+    "negrecip": {
+     "bit": "negrecip",
+     "beta": 0.6247672859863043,
+     "t": 11.644528744364122,
+     "t_lenth": 2.208770860725514,
+     "sign": 1
+    }
+   },
+   "general_factor": {
+    "pc1_share": 0.5130116356330489,
+    "pc2_share": 0.1996957229136829,
+    "mean_abs_inter_surface_r": 0.3951729780611314
+   },
+   "surface_sd_over_units": {
+    "altruism": 0.6235366526996808,
+    "negrecip": 0.6439724613385175,
+    "patience:Q43": 0.11039634857074147,
+    "patience:Q50": 0.31470860067576295,
+    "posrecip": 0.3213750778285402,
+    "risktaking": 0.2983736763666053,
+    "trust": 0.2221221851300779
+   }
+  },
+  "signprompt": {
+   "plan_V5_rowwise_raw": {
+    "hits": 2,
+    "n": 6,
+    "share": 0.3333333333333333,
+    "chance": 0.14285714285714285,
+    "p_binomial": 0.20686108679206794,
+    "per_dimension": {
+     "trust": true,
+     "risktaking": false,
+     "patience": true,
+     "altruism": false,
+     "posrecip": false,
+     "negrecip": false
+    }
+   },
+   "rowwise_standardized": {
+    "hits": 1,
+    "n": 6,
+    "per_dimension": {
+     "trust": true,
+     "risktaking": false,
+     "patience": false,
+     "altruism": false,
+     "posrecip": false,
+     "negrecip": false
+    },
+    "largest_surface": {
+     "trust": "trust",
+     "risktaking": "patience:Q43",
+     "patience": "negrecip",
+     "altruism": "posrecip",
+     "posrecip": "patience:Q43",
+     "negrecip": "patience:Q43"
+    }
+   },
+   "columnwise": {
+    "hits": 1,
+    "n": 7,
+    "chance": 0.16666666666666666,
+    "per_surface": {
+     "altruism": false,
+     "negrecip": false,
+     "patience:Q43": false,
+     "patience:Q50": false,
+     "posrecip": false,
+     "risktaking": false,
+     "trust": true
+    },
+    "largest_bit": {
+     "altruism": "trust",
+     "negrecip": "trust",
+     "patience:Q43": "trust",
+     "patience:Q50": "trust",
+     "posrecip": "trust",
+     "risktaking": "trust",
+     "trust": "trust"
+    }
+   },
+   "diagonal": {
+    "trust": {
+     "bit": "trust",
+     "beta": 1.7796863115995532,
+     "t": 394.464722468053,
+     "t_lenth": 94.83621161740982,
+     "sign": 1
+    },
+    "risktaking": {
+     "bit": "risktaking",
+     "beta": -0.4567087152154239,
+     "t": -22.314438466557654,
+     "t_lenth": -3.7328020364000274,
+     "sign": -1
+    },
+    "patience:Q43": {
+     "bit": "patience",
+     "beta": -0.06918062400906969,
+     "t": -19.75058960040434,
+     "t_lenth": -1.535613104362407,
+     "sign": -1
+    },
+    "patience:Q50": {
+     "bit": "patience",
+     "beta": 0.4210699711397531,
+     "t": 17.629552532092998,
+     "t_lenth": 3.987936223880313,
+     "sign": 1
+    },
+    "altruism": {
+     "bit": "altruism",
+     "beta": 0.3643732082194353,
+     "t": 11.987732008296755,
+     "t_lenth": 13.273231194264698,
+     "sign": 1
+    },
+    "posrecip": {
+     "bit": "posrecip",
+     "beta": 0.10313613448686443,
+     "t": 5.663036102499089,
+     "t_lenth": 1.505957421866151,
+     "sign": 1
+    },
+    "negrecip": {
+     "bit": "negrecip",
+     "beta": -0.023307224836190077,
+     "t": -1.797194531600336,
+     "t_lenth": -1.5502015416614534,
+     "sign": -1
+    }
+   },
+   "general_factor": {
+    "pc1_share": 0.8352930408769921,
+    "pc2_share": 0.06238825326506132,
+    "mean_abs_inter_surface_r": 0.8066794815516464
+   },
+   "surface_sd_over_units": {
+    "altruism": 0.5756097397115659,
+    "negrecip": 0.14269438342073176,
+    "patience:Q43": 0.10077538684720891,
+    "patience:Q50": 1.010707201108002,
+    "posrecip": 0.39343867765112117,
+    "risktaking": 0.5235163262614668,
+    "trust": 0.9015406398185634
+   }
+  }
  }
 }
