@@ -354,28 +354,8 @@ sentence nicer: it would make a future retrain differ from the 64 banked adapter
 Recommendation, exact sentence: "The cohort-1 defaults of `paper_b/config.py` are unchanged when the environment
 variable `SCA2_PB_PROTOCOL` is not set to `bank2`."
 
-| Do not write: "`config.py` is byte-identical to the cohort-1 runner", and **do not write "when `SCA2_PB_UNITS` is
+Do not write: "`config.py` is byte-identical to the cohort-1 runner", and **do not write "when `SCA2_PB_UNITS` is
 unset"**. Two conflicts between the checklist and the code, surfaced here and not resolved silently:
-|
-| 1. **The variable is wrong in the checklist.** In the code the switch is `SCA2_PB_PROTOCOL` (`config.py:86`).
-|    `SCA2_PB_UNITS` is read only inside `protocol_bank2.apply`, which runs only when `SCA2_PB_PROTOCOL=bank2`. With the
-|    protocol set to `bank2` and `SCA2_PB_UNITS` unset, `apply` still redirects `BANK_RUN_ID`, `DATA_ROOT`, `N_ROWS`
-|    and the adapter paths. The sentence "unchanged when `SCA2_PB_UNITS` is unset" would therefore be false.
-| 2. **The byte-identity statement in `F7_F11_RESOLUTION_20261016.md` is stale.** It said `git diff --stat
-|    prereg-heldout-2026-10-14 HEAD -- paper_b/config.py` is empty. At HEAD it is not: commits `979cf73` and `d1ab226`
-|    (card T5) added `EXPECTED_N_TRAIN`, `NEARZERO_DIR` and `resolve_units` (9 insertions); the file's git object is no
-|    longer the tag's. The held-out arm and the strict scoring ran before those commits, so no result is affected. The
-|    property that remains true, and is the one to state, is behavioural: loading `config.py` with every `SCA2_PB_*`
-|    variable unset gives the same value for every constant that exists at `a43fff2`, `86fbf10` and the preregistration
-|    tag. A check run for this draft (`/Users/bonorinoa/.hermes/profiles/engineer/cache/scratch/t9/cfg_check.py`, output
-|    `cfg_check.out` beside it, exit 0) found zero differing values among the constants each of the three revisions shares with HEAD (counts in that
-|    file); the constants present only at HEAD are the later additions.
-| 
-| Recommendation, exact sentence: "The cohort-1 defaults of `paper_b/config.py` are unchanged when the environment
-| variable `SCA2_PB_PROTOCOL` is not set to `bank2`."
-|
-| Reason: the sentence must name the real switch and be about behaviour, because byte-identity was never the property
-| the results depend on, and it is no longer true.
 
 1. **The variable is wrong in the checklist.** In the code the switch is `SCA2_PB_PROTOCOL` (`config.py:86`).
    `SCA2_PB_UNITS` is read only inside `protocol_bank2.apply`, which runs only when `SCA2_PB_PROTOCOL=bank2`. With the
