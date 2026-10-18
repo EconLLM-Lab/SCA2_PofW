@@ -1,0 +1,22 @@
+% Table 3: registered contrasts with the questionnaire comparators and with the prompt route (surface H, retrospective).
+\begin{table}[htbp]
+\centering
+\caption{Retrospective screen: the adapters against two questionnaire readers and against prompting with the same signs.}\label{tab:comparators}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+ & Face-valid reader & Typed decision model, majority of \dc{5}{jev_runs} runs & Sign-profile prompt \\
+\midrule
+Items assigned by both routes & \cl{5}{CMP_face_valid_D_common:n} & \cl{9}{CMP_jev_D_common:n} & \cl{16}{SP_overlap_with_adapter} \\
+Same dimension and sign on those items & \cl{1}{CMP_face_valid_common_same_dim_sign} & \cl{7}{CMP_jev_common_same_dim_sign} & \cl{6}{SP_overlap_same_dim_sign} \\
+Adapter minus route, shared items & \cl{0.020}{CMP_face_valid_D_common} \newline \ci{-0.181}{0.215}{CMP_face_valid_D_common} & \cl{-0.002}{CMP_jev_D_common} \newline \ci{-0.064}{0.061}{CMP_jev_D_common} & \cl{0.004}{SP_D_common} \newline \ci{-0.065}{0.075}{SP_D_common} \\
+Adapter minus route, own items & \cl{-0.034}{CMP_face_valid_D_own} \newline \ci{-0.242}{0.169}{CMP_face_valid_D_own} & \cl{-0.067}{CMP_jev_D_own} \newline \ci{-0.237}{0.103}{CMP_jev_D_own} & \cl{0.033}{SP_D_own} \newline \ci{-0.083}{0.143}{SP_D_own} \\
+Route's own $A$ (items) & \cl{0.095}{CMP_face_valid_A_imprint} (\cl{25}{CMP_face_valid_A_imprint:n}) & \cl{0.128}{CMP_jev_A_imprint} (\cl{40}{CMP_jev_A_imprint:n}) & \cl{0.028}{SP_A_primary} (\cl{56}{SP_A_primary:n}) \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Differences are adapter minus the named route, with \dc{95}{ci_level}\% intervals from the paired country bootstrap (\dc{2,000}{boot_draws} resamples). The registered primary contrast with each questionnaire reader is the one on shared items. The questionnaire readers' own items are restricted to the imprint set, with the \dc{12}{repaired_items} items repaired by Amendment~1 removed. The adapter's own $A$ is \cl{0.061}{SCR_A_primary} on \cl{56}{SCR_A_primary:n} items. Every interval in the table covers zero.
+\end{minipage}
+\end{table}

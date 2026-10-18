@@ -1,0 +1,34 @@
+% Table 2: both checks per imprint dimension. Every number is a \cl / \ci macro tied to NUMBERS_TABLE.csv.
+\begin{table}[htbp]
+\centering
+\caption{The second-bank check and the retrospective screen, by imprint dimension. The two checks are reported side by side and never averaged.}\label{tab:checks}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+ & S2: second bank & H: primary rule & H: primary rule, Bonferroni & H: secondary rule \\
+Dimension & $\rho$ [\dc{95}{ci_level}\% interval] & $A_d$ [\dc{95}{ci_level}\% interval], items & $A_d$ [adjusted interval] & $A_d$ [\dc{95}{ci_level}\% interval], items \\
+\midrule
+Trust & \cl{0.803}{B2_bank2_trust_rho} \newline \ci{0.615}{0.876}{B2_bank2_trust_rho}
+ & \cl{0.062}{PD_adapter_primary_trust_A} \newline \ci{-0.047}{0.173}{PD_adapter_primary_trust_A}, \cl{12}{PD_adapter_primary_trust_A:n}
+ & \ci{-0.088}{0.199}{PD_adapter_primary_trust_A_bonf}
+ & \cl{0.092}{PD_adapter_secondary_trust_A} \newline \ci{-0.019}{0.199}{PD_adapter_secondary_trust_A}, \cl{44}{PD_adapter_secondary_trust_A:n} \\
+Risk taking & \cl{0.210}{B2_bank2_risktaking_rho} \newline \ci{-0.199}{0.584}{B2_bank2_risktaking_rho}
+ & \cl{0.158}{PD_adapter_primary_risktaking_A} \newline \ci{0.015}{0.290}{PD_adapter_primary_risktaking_A}, \cl{13}{PD_adapter_primary_risktaking_A:n}
+ & \ci{-0.026}{0.326}{PD_adapter_primary_risktaking_A_bonf}
+ & \cl{0.143}{PD_adapter_secondary_risktaking_A} \newline \ci{0.045}{0.229}{PD_adapter_secondary_risktaking_A}, \cl{50}{PD_adapter_secondary_risktaking_A:n} \\
+Positive reciprocity & \cl{0.366}{B2_bank2_posrecip_rho} \newline \ci{-0.068}{0.652}{B2_bank2_posrecip_rho}
+ & \cl{-0.071}{PD_adapter_primary_posrecip_A} \newline \ci{-0.281}{0.154}{PD_adapter_primary_posrecip_A}, \cl{11}{PD_adapter_primary_posrecip_A:n}
+ & \ci{-0.332}{0.205}{PD_adapter_primary_posrecip_A_bonf}
+ & \cl{-0.049}{PD_adapter_secondary_posrecip_A} \newline \ci{-0.198}{0.117}{PD_adapter_secondary_posrecip_A}, \cl{22}{PD_adapter_secondary_posrecip_A:n} \\
+Altruism & \cl{0.364}{B2_bank2_altruism_rho} \newline \ci{-0.057}{0.653}{B2_bank2_altruism_rho}
+ & \cl{0.069}{PD_adapter_primary_altruism_A} \newline \ci{-0.036}{0.177}{PD_adapter_primary_altruism_A}, \cl{20}{PD_adapter_primary_altruism_A:n}
+ & \ci{-0.058}{0.198}{PD_adapter_primary_altruism_A_bonf}
+ & \cl{0.040}{PD_adapter_secondary_altruism_A} \newline \ci{-0.038}{0.117}{PD_adapter_secondary_altruism_A}, \cl{69}{PD_adapter_secondary_altruism_A:n} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} S2 is the Spearman correlation between second-bank adapter composites and the GPS coordinate over \dc{42}{countries} countries, with a profile-block bootstrap (\dc{2,000}{boot_draws} draws, seed \dc{20261011}{seed_c3}); model side only. H is the retrospective screen against WVS Wave~7 country means: $A_d$ is the mean signed item agreement over the selected items the instrument assigned to the dimension, with the registered country bootstrap (\dc{2,000}{boot_draws} resamples, seed \dc{20261015}{seed_screen}). The registered intervals are unadjusted. The Bonferroni intervals over the \dc{4}{imprint_dims} imprint dimensions are exploratory and read off the same draws. The secondary rule is a registered reliability check. No dimension has an interval above zero on both S2 and H.
+\end{minipage}
+\end{table}

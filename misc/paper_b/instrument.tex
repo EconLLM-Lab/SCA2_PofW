@@ -1,0 +1,38 @@
+\section{The Instrument}\label{sec:instrument}
+
+The instrument maps declared aggregate preference signs into choice policies and reads those policies on survey items without naming any country. We summarize the construction of \citet{gonzalezbonorino2026} and state what this paper changes. Throughout, a language model is treated as a conditional distribution over response sequences given a prompt \citep{ludwig2026}.
+
+\subsection{From declared signs to a shared pair bank}
+
+Let $z_c=(z_{c1},\ldots,z_{cK})$ be the GPS coordinates of country $c$ on the $K$ dimensions trust, risk taking, patience, altruism, positive reciprocity and negative reciprocity. Only the sign profile $s_c$, with $s_{ck}=1\{z_{ck}\geq 0\}$, enters the construction. A teacher model and a response generator produce a shared bank of scenarios, each with two responses intended to express a higher and a lower level of one dimension $k_i$. For country $c$, the chosen and rejected responses on pair $i$ are
+\begin{equation}
+(y_{w,ci},\,y_{\ell,ci})=\begin{cases}(y_i^{+},\,y_i^{-}), & s_{c,k_i}=1,\\ (y_i^{-},\,y_i^{+}), & s_{c,k_i}=0.\end{cases}
+\label{eq:sign_rule}
+\end{equation}
+The scenario and response text is identical for every country; only the label changes. No scenario names a country and none reuses WVS question wording, and the intended loading of each pair is a generator judgment rather than a verified trait manipulation. Two countries with the same sign profile receive identical labels, so the instrument cannot distinguish them, and nothing in the construction carries the magnitude $|z_{ck}|$.
+
+\subsection{Preference optimization as regularized pairwise choice}
+
+Each sign profile is fitted with Direct Preference Optimization. Under the Bradley--Terry model, the probability that $y_w$ is chosen over $y_\ell$ after prompt $x$ is $\sigma\{r(x,y_w)-r(x,y_\ell)\}$, with $\sigma$ the logistic function and $r$ a latent utility index. DPO writes the index as $r(x,y)=\beta\log\{\pi_\theta(y\mid x)/\pi_{\mathrm{ref}}(y\mid x)\}$ up to a prompt-specific constant that cancels from pairwise differences, and minimizes the negative log likelihood of the labeled pairs,
+\begin{equation}
+\mathcal{L}_c(\theta)=-\frac{1}{|\mathcal{D}_c|}\sum_{(x,y_w,y_\ell)\in\mathcal{D}_c}\log\sigma\!\left\{\beta\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}-\beta\log\frac{\pi_\theta(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)}\right\}.
+\label{eq:dpo}
+\end{equation}
+The parameter $\beta$ penalizes departures from the reference policy, which makes the estimator a regularized Bradley--Terry fit \citep{bradleyterry1952,rafailov2023}. Because the labels are deterministic, the likelihood serves as a fitting criterion and says nothing about the noise in human choices. Each adapter is a low-rank update to a quantized Llama~3.1 8B Instruct base model \citep{hu2022,dettmers2023}, trained jointly on all six dimensions for one epoch on \dc{526}{train_rows} of the \dc{658}{bank_pairs} pairs, with LoRA rank \dc{16}{lora_r} and $\beta=\dc{0.1}{dpo_beta}$. A joint adapter does not isolate any single dimension; whether the dimensions separate in practice is the subject of the factorial diagnostic in Section~\ref{sec:design}.
+
+\subsection{Two cohorts and a prompt route}
+
+The paper uses two sets of adapters. The first cohort has one adapter for each of the \dc{42}{countries} countries in the intersection of the GPS and WVS Wave~7, trained on the original scenario bank. These \dc{42}{countries} countries realize \dc{26}{profiles_realized} distinct sign profiles. The second cohort is trained on a second, independently generated bank of \dc{658}{bank_pairs} pairs under the same sign rule and the same text restrictions, and it contains one adapter for every one of the \dc{64}{cells} possible sign profiles of the six dimensions. Because the labels depend on the country only through its sign profile, each of the \dc{42}{countries} countries takes the adapter of its profile when country-level comparisons are needed; we verified that each country's labels on the second bank equal those of its profile. The \dc{64}{cells} profiles form a full $2^6$ factorial in the six sign bits. Each profile is a constructed design cell, and most of them are realized by no country.
+
+The sign-profile prompt route gives the base model the same six signs in words, with no country name and no adapter. It carries the same declared information through a different channel, which makes it the natural comparison for the trained route. It is different from the country-named persona prompt of \citet{gonzalezbonorino2026}, which also changes the information supplied.
+
+\subsection{Readout}
+
+For an item $q$ with candidate response codes $j$, the instrument computes the teacher-forced log probability of each code after the rendered item prompt and normalizes over the supplied codes,
+\begin{equation}
+\widehat P_u(j\mid q)=\frac{\exp \ell_{uqj}}{\sum_h \exp \ell_{uqh}},
+\qquad
+y_{uq}=\sum_j g_q(j)\,\widehat P_u(j\mid q),
+\label{eq:readout}
+\end{equation}
+where $\ell_{uqj}$ is the summed token log probability of code $j$ for unit $u$ (an adapter or a prompted profile) and $g_q$ is the item's recode. The score $y_{uq}$ is the expected recoded response. No evaluation prompt names a country. The prompt template, the option order, the leading space before each code and the recode are frozen in a scoring specification whose hash every scoring run must reproduce before a model is loaded. On the original \dc{23}{strict_items}-item WVS battery, item scores are averaged into seven surfaces: trust, risk taking, altruism, positive reciprocity, negative reciprocity, and two separate patience items. We call this the strict battery. The normalized code probabilities are a scoring convention, and their dispersion need not match the response distributions of any human population.

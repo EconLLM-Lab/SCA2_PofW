@@ -1,0 +1,36 @@
+% Table 4: the sign-profile factorial on the strict battery (surface F, model side only).
+\begin{table}[htbp]
+\centering
+\caption{Own effects of the six sign bits and summary of entanglement, by route. Strict battery, all \dc{64}{cells} sign profiles.}\label{tab:factorial}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X r r r r@{}}
+\toprule
+ & \multicolumn{2}{c}{Trained adapters} & \multicolumn{2}{c}{Sign-profile prompt} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Own effect on surface & Main effect & $t$ & Main effect & $t$ \\
+\midrule
+Trust & \cl{0.364}{FX_adapter64_trust_own_beta} & \cl{16.74}{FX_adapter64_trust_own_t} & \cl{1.780}{FX_signprompt64_trust_own_beta} & \cl{394.46}{FX_signprompt64_trust_own_t} \\
+Negative reciprocity & \cl{0.625}{FX_adapter64_negrecip_own_beta} & \cl{11.64}{FX_adapter64_negrecip_own_t} & \cl{-0.023}{FX_signprompt64_negrecip_own_beta} & \cl{-1.80}{FX_signprompt64_negrecip_own_t} \\
+Altruism & \cl{0.242}{FX_adapter64_altruism_own_beta} & \cl{6.32}{FX_adapter64_altruism_own_t} & \cl{0.364}{FX_signprompt64_altruism_own_beta} & \cl{11.99}{FX_signprompt64_altruism_own_t} \\
+Patience (Q50) & \cl{0.133}{FX_adapter64_patience_Q50_own_beta} & \cl{6.12}{FX_adapter64_patience_Q50_own_t} & \cl{0.421}{FX_signprompt64_patience_Q50_own_beta} & \cl{17.63}{FX_signprompt64_patience_Q50_own_t} \\
+Risk taking & \cl{0.140}{FX_adapter64_risktaking_own_beta} & \cl{4.14}{FX_adapter64_risktaking_own_t} & \cl{-0.457}{FX_signprompt64_risktaking_own_beta} & \cl{-22.31}{FX_signprompt64_risktaking_own_t} \\
+Patience (Q43) & \cl{0.049}{FX_adapter64_patience_Q43_own_beta} & \cl{3.63}{FX_adapter64_patience_Q43_own_t} & \cl{-0.069}{FX_signprompt64_patience_Q43_own_beta} & \cl{-19.75}{FX_signprompt64_patience_Q43_own_t} \\
+Positive reciprocity & \cl{0.124}{FX_adapter64_posrecip_own_beta} & \cl{3.02}{FX_adapter64_posrecip_own_t} & \cl{0.103}{FX_signprompt64_posrecip_own_beta} & \cl{5.66}{FX_signprompt64_posrecip_own_t} \\
+\midrule
+Summary of entanglement & \multicolumn{2}{r}{Trained adapters} & \multicolumn{2}{r}{Sign-profile prompt} \\
+\midrule
+Own effects against the intended direction & \multicolumn{2}{r}{\cl{0}{FX_adapter64_own_effects_wrong_signed} of \cl{7}{FX_adapter64_own_effects_wrong_signed:n}} & \multicolumn{2}{r}{\cl{3}{FX_signprompt64_own_effects_wrong_signed} of \cl{7}{FX_signprompt64_own_effects_wrong_signed:n}} \\
+Bits dominant on their own surface (V5) & \multicolumn{2}{r}{\cl{2}{FX_adapter64_V5_hits} of \cl{6}{FX_adapter64_V5_hits:n}} & \multicolumn{2}{r}{\cl{2}{FX_signprompt64_V5_hits} of \cl{6}{FX_signprompt64_V5_hits:n}} \\
+Same, on standardized effects & \multicolumn{2}{r}{\cl{2}{FX_adapter64_rowwise_standardized_hits} of \cl{6}{FX_adapter64_rowwise_standardized_hits:n}} & \multicolumn{2}{r}{\cl{1}{FX_signprompt64_rowwise_standardized_hits} of \cl{6}{FX_signprompt64_rowwise_standardized_hits:n}} \\
+Surfaces whose largest mover is their own bit & \multicolumn{2}{r}{\cl{1}{FX_adapter64_columnwise_hits} of \cl{7}{FX_adapter64_columnwise_hits:n}} & \multicolumn{2}{r}{\cl{1}{FX_signprompt64_columnwise_hits} of \cl{7}{FX_signprompt64_columnwise_hits:n}} \\
+Surfaces whose largest mover is the trust bit & \multicolumn{2}{r}{\cl{3}{FX_adapter64_surfaces_largest_mover_is_trust_bit} of \cl{7}{FX_adapter64_surfaces_largest_mover_is_trust_bit:n}} & \multicolumn{2}{r}{\cl{7}{FX_signprompt64_surfaces_largest_mover_is_trust_bit} of \cl{7}{FX_signprompt64_surfaces_largest_mover_is_trust_bit:n}} \\
+Variance on the first principal component & \multicolumn{2}{r}{\cl{51.3}{FX_adapter64_pc1_share:pct}\%} & \multicolumn{2}{r}{\cl{83.5}{FX_signprompt64_pc1_share:pct}\%} \\
+Mean absolute correlation between surfaces & \multicolumn{2}{r}{\cl{0.395}{FX_adapter64_mean_abs_inter_surface_r}} & \multicolumn{2}{r}{\cl{0.807}{FX_signprompt64_mean_abs_inter_surface_r}} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Main effects are differences in mean surface composite between profiles with the bit set and without it, from an OLS fit with the six bits and their \dc{15}{interactions} two-way interactions (\dc{42}{error_df} error degrees of freedom); composites are expected recoded responses averaged over the surface's items, so the units differ across surfaces. The manipulation is of synthetic training labels or prompted signs; the effects are changes in model response distributions. V5 was a planned acceptance check (at least \dc{4}{v5_required} of \dc{6}{sign_bits} bits); the other summary rows are exploratory.
+\end{minipage}
+\end{table}

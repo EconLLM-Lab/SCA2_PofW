@@ -2,10 +2,13 @@
 
 Card T10, writer profile, 2026-10-18. Route: anthropic / claude-opus-5-5 (ASU seat).
 
-Claim source until the lock is amended: `planning/sprint_2026-10-11/paper-b-tier1/C7_CLAIM_LOCK_AMENDMENT_DRAFT.md`
-(sections 1 to 8 and 10) with `NUMBERS_TABLE.csv` (sha256 acc1c09c..., 212 rows). Methods source: `paper_b/heldout/PREREGISTRATION.md`
-(sections 1 to 12), `results/TIER1_ANALYSIS_20261017.md`, `VERIFICATION.md`, `review/PAPER_WORDING_CHECKLIST.md`.
-Venue rubric: `~/.hermes/profiles/writer/venue-cards/sociological-methods-and-research.md` (draft, awaiting Augusto).
+Claim source: `planning/TWO_PAPER_CLAIM_LOCK.md`, "Amendment C7 2026-10-18", with
+`planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv` (sha256 90f0f467...0ec1f, 220 rows). Wording follows
+`C7_CLAIM_LOCK_AMENDMENT_DRAFT.md` sections 1 to 8 as modified by the amendment (C5 strict reading: every surface-H
+result is a retrospective screen and the word "transport" is never used for it; the general transport sentence stays
+unwritten). Methods source: `paper_b/heldout/PREREGISTRATION.md` (sections 1 to 12), `results/TIER1_ANALYSIS_20261017.md`,
+`VERIFICATION.md`, `review/PAPER_WORDING_CHECKLIST.md`.
+Venue rubric: `~/.hermes/profiles/writer/venue-cards/sociological-methods-and-research.md` (confirmed 2026-10-18).
 
 Every number in the .tex carries a `% claim:` comment with its claim_id, so a rebuilt table is a mechanical swap.
 Design constants that are not statistics (223 items, 42 countries, 64 cells, 2,000 resamples, 10,000 draws, error df 42,
@@ -72,15 +75,16 @@ availability statement (HASH_pool_worktree, HASH_pool_git_blob_lf, HASH_override
     B2_bank2_{trust,risktaking,posrecip,altruism}_rho; B2_cohort1_{trust,risktaking,posrecip,altruism}_rho;
     B2_bank2_{negrecip,patience:Q43,patience:Q50}_rho; B2_n_imprint_kept; B2_n_imprint_dropped;
     B2_bank_to_bank_{trust,altruism,posrecip,negrecip,risktaking}_pearson.
-5.2 Held-out screen (surface H, retrospective).
+5.2 Retrospective held-out screen (surface H).
     SCR_A_primary; SCR_p_perm; SCR_null_mean; SCR_null_q95; SCR_share_a_pos; SCR_ceiling_mean; SCR_A_over_ceiling;
     SCR_one_third_ceiling; SCR_cells_not_fielded; SCR_secondary_A; SCR_secondary_p_perm; SCR_loco_min; SCR_loco_max;
     SCR_A_wave6; SCR_A_wave7 (exploratory).
     Per dimension: PD_adapter_primary_{trust,risktaking,posrecip,altruism}_A;
     PD_adapter_secondary_{trust,risktaking,posrecip,altruism}_A; PD_adapter_primary_{posrecip,risktaking}_share_pos.
-    Table 2: both checks per imprint dimension (C3 and C5 side by side, never averaged).
-    `% TODO(Augusto): C5 framing, draft section 9.7`; `% TODO(Augusto): transport sentence` (the general transport sentence
-    stays unwritten).
+    Exploratory multiplicity (not registered): PD_adapter_primary_{trust,risktaking,posrecip,altruism}_A_bonf;
+    PD_adapter_secondary_{trust,risktaking,posrecip,altruism}_A_bonf (Bonferroni over four imprint dimensions, same
+    2,000 draws). The primary-rule risk-taking interval does not survive the adjustment; say so plainly.
+    Table 2: both checks per imprint dimension (C3 and the retrospective screen side by side, never averaged).
 5.3 Comparators and the prompt route.
     CMP_face_valid_{D_common,D_own,A_imprint,common_same_dim_sign}; CMP_jev_{D_common,D_own,A_imprint,common_same_dim_sign};
     SP_A_primary; SP_p_perm; SP_D_own; SP_D_common; SP_overlap_with_adapter; SP_overlap_same_dim_sign.

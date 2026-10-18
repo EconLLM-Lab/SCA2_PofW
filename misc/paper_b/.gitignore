@@ -1,0 +1,9 @@
+tools/__pycache__/
+tools/.pytest_cache/
+*.aux
+*.log
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.out
