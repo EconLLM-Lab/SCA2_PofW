@@ -133,6 +133,62 @@ with a human criterion on items the probe selects.
 
 cvprofiles stays a **separate** paper (validator lane). Do not fuse.
 
+### Amendment C7 2026-10-18 (Paper B; orchestrator, under Augusto's delegation)
+
+Paper A is untouched by this amendment.
+
+**Claim source.** Paper B numbers come only from
+`planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv` (220 rows, sha256 `90f0f467…0ec1f`, built by
+`paper_b/build_numbers_table.py`). Each number carries its surface label (S1, S2, H, F, R, N; defined in
+`C7_CLAIM_LOCK_AMENDMENT_DRAFT.md` section 1). For wording, the draft's sections 1–8 apply, as modified below.
+If the draft and this amendment disagree, this amendment wins.
+
+**Status of the two additional claims.** Neither one is earned. Neither appears as a result.
+
+- *Transport.* No imprint dimension passes both checks. On the bank-2 strict battery (S2), only trust keeps
+  an interval above 0: 0.803 [0.615, 0.876]. On the held-out screen (H), only risk taking does, under the
+  registered primary rule: 0.158 [0.015, 0.290], 13 items. After a Bonferroni adjustment over the four
+  imprint dimensions (exploratory, same draws), that interval is [−0.026, 0.326]. The general transport
+  sentence stays unwritten.
+- *Pre-piloting.* Untested. The only allowed sentence is "a prospective use that this paper does not test".
+
+**C5 is not passed (decision on draft §9.7).** The journey plan states that "C5 fails if that file is the
+only human source", and WVS-7 is the only human source. Every H result is a **retrospective screen**:
+
+- Say "retrospective" first.
+- Never use the word "transport" for an H result.
+
+The screen itself is reported as registered: A 0.061 [−0.007, 0.126], one-sided permutation p 0.0097, 8.1%
+of the wave-6/7 ceiling. The null is rejected and the signal is weak.
+
+**What Paper B is.** A preregistered evaluation of the sign compiler as a scoring instrument. Its findings:
+
+- *Holds.* Trust on a second scenario bank. A weak, retrospective held-out screen. All seven own effects of
+  the adapter factorial point the intended way.
+- *Fails.* V5 (2 of 6). No dimension passes both checks. Positive reciprocity points the wrong way on H.
+  The comparators do not distinguish the adapters from a careful reader (5 and 9 shared items).
+- *Untested.* Pre-piloting. The near-zero filter (C6) is a footnote: it is not promoted and no reversal is
+  claimed.
+
+**Accepted wording.** Draft §8 for F7 (both pool hashes), F8 ("an unseeded retrain"; no weight cosine) and
+F11 ("unchanged when `SCA2_PB_PROTOCOL` is not set to `bank2`"). Draft §6.2 for C6. Draft §5 for the
+comparators: "does not distinguish", with the registered phrase beside it. Draft §7 for the non-claims, plus
+one more: the primary-rule risk-taking interval does not survive adjustment for four dimensions.
+
+**"Required before those claims" status.**
+
+| Item | Status |
+|---|---|
+| 1. 42 countries | Done |
+| 2. Second bank | Done (sign-retrain not done) |
+| 3. Sign-profile prompt cell | Done (64 cells) |
+| 4. Independent human check | **Not done**. This is the gap that keeps both claims prospective. |
+| 5. Optional protocol papers | Unchanged |
+
+**Pending.** The provenance card `t_ef474f3c` compares the archived scores with today's scorer. If it finds
+drift, the table is rebuilt with the same claim_ids. A rebuilt table needs a new dated amendment of this
+file.
+
 ---
 
 ## Never quote as current

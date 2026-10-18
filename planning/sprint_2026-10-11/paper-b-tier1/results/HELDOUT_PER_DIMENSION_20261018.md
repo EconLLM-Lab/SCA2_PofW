@@ -94,6 +94,22 @@ C5 reading, one line per dimension:
 - risktaking: interval includes 0: not transport (A_d -0.074, n 1, interval [-0.398, 0.239])
 - altruism: interval includes 0: not transport (A_d 0.049, n 7, interval [-0.078, 0.165])
 
+## Exploratory: Bonferroni-adjusted intervals (not registered)
+
+Added 2026-10-18 by the orchestrator for SMR's multiplicity request. Bonferroni over the 4 imprint dimensions,
+read off the same 2,000 draws: percentiles 0.625 and 99.375. The registered 95% intervals above are unchanged.
+
+| route | dimension | items | A_d | registered 95% | Bonferroni |
+|---|---|---|---|---|---|
+| adapter_primary | trust | 12 | 0.062 | [-0.047, 0.173] | [-0.088, 0.199] |
+| adapter_primary | risktaking | 13 | 0.158 | [0.015, 0.290] | [-0.026, 0.326] |
+| adapter_primary | posrecip | 11 | -0.071 | [-0.281, 0.154] | [-0.332, 0.205] |
+| adapter_primary | altruism | 20 | 0.069 | [-0.036, 0.177] | [-0.058, 0.198] |
+| adapter_secondary | trust | 44 | 0.092 | [-0.019, 0.199] | [-0.049, 0.236] |
+| adapter_secondary | risktaking | 50 | 0.143 | [0.045, 0.229] | [0.017, 0.253] |
+| adapter_secondary | posrecip | 22 | -0.049 | [-0.198, 0.117] | [-0.227, 0.154] |
+| adapter_secondary | altruism | 69 | 0.040 | [-0.038, 0.117] | [-0.054, 0.133] |
+
 ## Sanity check against the committed point estimates
 
 `planning/sprint_2026-10-11/paper-b-tier1/results/heldout_analysis.json` reports the same A_d without intervals. Largest absolute difference here:

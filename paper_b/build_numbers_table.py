@@ -155,6 +155,12 @@ def per_dimension_rows(t: Table, freeze: dict):
             t.add(f"PD_{route}_{dim}_A", f"C5 reading for {dim}, {route}: {cell['reading']}",
                   "A_d (mean signed Spearman over items assigned to dimension)", cell["A"],
                   ci=cell["ci95"], n=cell["n"], surface=labels[route], run_id=run, script=f, out=o)
+            if route in ("adapter_primary", "adapter_secondary") and "ci_bonf" in cell:
+                t.add(f"PD_{route}_{dim}_A_bonf",
+                      f"Exploratory, not registered: Bonferroni interval over {cell['bonf_m']} imprint "
+                      f"dimensions for {dim}, {route} (same draws as the registered interval)",
+                      "A_d with Bonferroni-adjusted country-bootstrap interval", cell["A"],
+                      ci=cell["ci_bonf"], n=cell["n"], surface=labels[route], run_id=run, script=f, out=o)
     for dim, cell in ha["s4_descriptives"]["per_dimension"].items():
         t.add(f"PD_adapter_primary_{dim}_share_pos", f"Share of the {dim} items with a_i > 0 (adapter primary)",
               "share of items with a_i > 0", cell["share_pos"], n=cell["n"], surface=labels["adapter_primary"],

@@ -53,6 +53,18 @@ def test_the_same_seed_gives_identical_intervals():
     assert PD.point_interval(sel, hum, gps, boot=50, seed=8) != a
 
 
+def test_bonferroni_interval_comes_from_the_same_draws_and_is_wider():
+    """Exploratory, not registered: Bonferroni over the imprint dimensions, read off the same draws."""
+    sel, hum, gps = _world(seed=3)
+    out = PD.point_interval(sel, hum, gps, boot=200, seed=7)
+    assert PD.BONF_M == len(AH.IMPRINT)
+    for d, v in out.items():
+        assert v["bonf_m"] == PD.BONF_M
+        assert v["ci_bonf"][0] <= v["ci95"][0] and v["ci_bonf"][1] >= v["ci95"][1]
+    again = PD.point_interval(sel, hum, gps, boot=200, seed=7)
+    assert {d: v["ci95"] for d, v in again.items()} == {d: v["ci95"] for d, v in out.items()}
+
+
 def test_the_same_seed_gives_the_same_permutation_p():
     sel, hum, gps = _world(seed=3)
     pool = list(sel.question_id)
