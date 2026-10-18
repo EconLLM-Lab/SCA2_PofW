@@ -342,6 +342,7 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (named instrument or model version): SHA-256
   note  explained (section or amendment number of a cited document): Amendment~1
   note  explained (section or amendment number of a cited document): Amendment~2
+  note  explained (section or amendment number of a cited document): Amendment~2
 
 == tables/tab_checks.tex: 52 statistics, 9 design constants
   PASS         0.615  B2_bank2_trust_rho:lo                                   full 0.6145971882846217 -> 0.615
