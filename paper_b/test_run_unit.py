@@ -188,6 +188,21 @@ class TestRunUnit:
         # is a pure cache hit — exactly one extra production call, not two.
         assert len(calls) == n_first + 1
 
+    def test_none_switchback_scorer_is_refused_with_a_named_error(self, tmp_path):
+        """run_unit calls switchback_scorer unguarded before the gate ran; a
+        None must be refused by name, not crash as 'NoneType' object is not
+        callable (score_runtime.py:710)."""
+        spec = _spec()
+        prod, ref, sb = _loaders(tmp_path)
+        with pytest.raises(TypeError, match="run_unit: switchback_scorer"):
+            R.run_unit(
+                country="CHN", spec=spec, spec_sha=_spec_sha(spec), revision=FULL_SHA,
+                cache_root=tmp_path / "cache", run_id="run-1",
+                repo=R.ARTIFACTS_REPO, hub=FakeHub(), code_revision=CODE_REV,
+                local_dir=tmp_path / "out", downloader=None,
+                production_scorer=prod, reference_scorer=ref,
+                switchback_scorer=None, tol_logprob=1e-9, tol_prob=1e-12)
+
 
 class TestGPULaunchBlock:
     def test_cohort_refuses_to_start_without_gate_marker(self, tmp_path):
@@ -200,13 +215,97 @@ class TestGPULaunchBlock:
     def test_cohort_starts_when_gate_marker_present(self, tmp_path):
         marker = tmp_path / "gate_marker.json"
         marker.write_text(json.dumps({"gate_pass": True, "adapter_sha256": "x" * 64}))
-        # CHN not in cache and no downloader -> fails for the *right* reason
-        with pytest.raises(FileNotFoundError):
+        prod, ref, sb = _loaders(tmp_path)
+        calls = []
+
+        def no_adapter(cc, dest, rev):
+            # hermetic: the adapter is not in this cache and the downloader
+            # yields nothing, so a warm (or cold) machine-level HF cache can no
+            # longer decide this test's outcome — and no network is touched.
+            calls.append((cc, rev))
+            raise FileNotFoundError(
+                f"{cc}: no adapter at revision {rev} (test downloader)")
+
+        with pytest.raises(FileNotFoundError, match="no adapter at revision"):
             R.run_cohort(countries=["CHN"], spec=_spec(), gate_marker_path=marker,
-                         cache_root=tmp_path, run_id="run-1",
+                         cache_root=tmp_path / "empty_cache", run_id="run-1",
                          repo=R.ARTIFACTS_REPO, hub=FakeHub(),
-                         code_revision=CODE_REV, local_dir=tmp_path,
-                         downloader=None)
+                         code_revision=CODE_REV, local_dir=tmp_path / "out",
+                         downloader=no_adapter, production_scorer=prod,
+                         reference_scorer=ref, switchback_scorer=sb)
+        # it got PAST the launch block: adapter resolution was reached, the
+        # refusal came from there, and nothing was scored or written.
+        assert [c[0] for c in calls] == ["CHN"]
+        assert not (tmp_path / "out").exists()
+
+
+class TestCohortScorerWiring:
+    """run_cohort must ask for its three scorers explicitly: the adapter-path
+    gate's switchback comparison is a design requirement, so a missing scorer
+    must be refused with a named TypeError up front — never reached as a
+    `None(...)` call inside run_unit."""
+
+    @staticmethod
+    def _marker(tmp_path):
+        marker = tmp_path / "gate_marker.json"
+        marker.write_text(json.dumps({"gate_pass": True, "adapter_sha256": "x" * 64}))
+        return marker
+
+    def _cohort(self, tmp_path, hub=None, missing=None):
+        prod, ref, sb = _loaders(tmp_path)  # fixture adapter sits in cache_root,
+        # so a regression here fails on the scorer wiring, never on resolution.
+        return R.run_cohort(
+            countries=["CHN"], spec=_spec(),
+            gate_marker_path=self._marker(tmp_path),
+            cache_root=tmp_path / "cache", run_id="run-1",
+            repo=R.ARTIFACTS_REPO, hub=FakeHub() if hub is None else hub,
+            code_revision=CODE_REV, local_dir=tmp_path / "out",
+            downloader=None,
+            production_scorer=None if missing == "production_scorer" else prod,
+            reference_scorer=None if missing == "reference_scorer" else ref,
+            switchback_scorer=None if missing == "switchback_scorer" else sb)
+
+    @pytest.mark.parametrize("missing", ["production_scorer", "reference_scorer",
+                                         "switchback_scorer"])
+    def test_cohort_refuses_a_none_scorer(self, tmp_path, missing):
+        hub = FakeHub()
+        with pytest.raises(TypeError, match=f"run_cohort: {missing}"):
+            self._cohort(tmp_path, hub=hub, missing=missing)
+        # refused before anything was scored, uploaded or written
+        assert hub.files == {}
+        assert not (tmp_path / "out").exists()
+
+    def test_cohort_forwards_each_scorer_to_its_own_slot(self, tmp_path):
+        """The positive half of the wiring: refusing a None (above) does not by
+        itself prove run_cohort hands each scorer to the slot run_unit reads, so
+        a dropped or swapped argument would pass every other test in this file."""
+        prod, ref, sb = _loaders(tmp_path)
+        calls = {"production_scorer": 0, "reference_scorer": 0, "switchback_scorer": 0}
+
+        def counted(name, fn):
+            def wrapped(*args, **kwargs):
+                calls[name] += 1
+                return fn(*args, **kwargs)
+            return wrapped
+
+        results = R.run_cohort(
+            countries=["CHN"], spec=_spec(),
+            gate_marker_path=self._marker(tmp_path),
+            cache_root=tmp_path / "cache", run_id="run-1",
+            repo=R.ARTIFACTS_REPO, hub=FakeHub(), code_revision=CODE_REV,
+            local_dir=tmp_path / "out", downloader=None,
+            production_scorer=counted("production_scorer", prod),
+            reference_scorer=counted("reference_scorer", ref),
+            switchback_scorer=counted("switchback_scorer", sb),
+            tol_logprob=1e-9, tol_prob=1e-12)
+        assert results[0]["gate"]["gate_pass"] is True
+        assert results[0]["persisted"]["verified"] is True
+        # the gate asks for the switchback before and after the adapter is
+        # disabled and for the independent reference loader once; production is
+        # called once in the gate and once more for the cold score cache. A
+        # swapped or dropped argument cannot reproduce these counts.
+        assert calls == {"production_scorer": 2, "reference_scorer": 1,
+                         "switchback_scorer": 2}
 
 
 def test_waves_cover_the_unit_list_in_order():

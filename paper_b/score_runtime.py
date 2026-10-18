@@ -697,6 +697,15 @@ def run_unit(country: str, spec: dict, spec_sha: str, revision: str,
     country = country.upper()
     if country not in C.COHORT:
         raise ValueError(f"country {country!r} not in cohort")
+    for _name, _fn in (("production_scorer", production_scorer),
+                       ("reference_scorer", reference_scorer),
+                       ("switchback_scorer", switchback_scorer)):
+        if not callable(_fn):
+            raise TypeError(
+                f"run_unit: {_name} is required and must be callable "
+                f"(got {_fn!r}) — refusing to score {country} without the full "
+                "adapter-path gate (production + independent reference + "
+                "switchback)")
     adapter_dir, source = resolve_adapter(country, revision, cache_root,
                                           downloader=downloader)
     adapter_sha = adapter_sha256(adapter_dir)
@@ -766,7 +775,14 @@ def run_cohort(countries: list[str], spec: dict, gate_marker_path: Path | None,
                tol_prob: float = 1e-4, force: bool = False) -> list[dict]:
     """Score adapters country by country. GPU-launch block: refuses to start
     unless an adapter-path gate marker exists (written by the gate exercise).
-    Halts at the first failed unit (exception propagates)."""
+    Halts at the first failed unit (exception propagates).
+
+    production_scorer / reference_scorer / switchback_scorer are REQUIRED: the
+    gate's switchback comparison is a design requirement, not an optional
+    extra. The `=None` defaults are kept only so a caller that omits one gets
+    the named TypeError below instead of a bare "'NoneType' object is not
+    callable" from inside run_unit.
+    """
     if gate_marker_path is None or not Path(gate_marker_path).exists():
         raise RuntimeError(
             "adapter-path gate marker missing: the GPU cohort launch stays "
@@ -775,6 +791,17 @@ def run_cohort(countries: list[str], spec: dict, gate_marker_path: Path | None,
     marker = json.loads(Path(gate_marker_path).read_text())
     if not marker.get("gate_pass"):
         raise RuntimeError("adapter-path gate marker says gate_pass=false")
+
+    missing = [name for name, fn in (("production_scorer", production_scorer),
+                                     ("reference_scorer", reference_scorer),
+                                     ("switchback_scorer", switchback_scorer))
+               if not callable(fn)]
+    if missing:
+        raise TypeError(
+            f"run_cohort: {', '.join(missing)} must be callable — the "
+            "adapter-path gate needs production, independent-reference and "
+            "switchback scoring (the switchback comparison is a design "
+            "requirement, not an optional extra); refusing to start the cohort")
 
     from build_scoring_spec import spec_sha256
     spec_sha = spec_sha256(spec)
