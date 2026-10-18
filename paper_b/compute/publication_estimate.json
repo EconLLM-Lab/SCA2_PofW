@@ -236,5 +236,1099 @@
     ],
     "do_not_sum_clocks": true,
     "why": "The optimizer clock, the reference-cache clock, the training-loop wall clock, and the score-upload span cover different work. Adding them would mix those scopes and still omit idle time."
+  },
+  "tier1_bank2": {
+    "schema": "sca2.compute_tier1.v1",
+    "recorded_at": "2026-10-17T20:43:27-07:00",
+    "bank_run_id": "gps_sign_relabel_bank2_20261015_062543Z",
+    "do_not_cite_as_invoice": true,
+    "measured": {
+      "train_surviving": {
+        "n": 69,
+        "wall_minutes": 1087.93,
+        "gpu_hours": 18.1322,
+        "scope": "trainer.train",
+        "source": "adapter run_record.json under bank2/gps_sign_relabel_bank2_20261015_062543Z/ on Bonorinoa/SCA2-paper-b-adapters (one clock per trained adapter)",
+        "excludes": [
+          "model_load",
+          "model_download",
+          "adapter_save",
+          "hub_upload",
+          "session_idle"
+        ]
+      },
+      "score_live": {
+        "n": 98,
+        "wall_minutes": 606.9796,
+        "gpu_hours": 10.1163,
+        "scope": "score_and_persist",
+        "source": "runs/*/compute/ledger.jsonl on Bonorinoa/SCA2-paper-b-artifacts, deduped per run id and unit",
+        "excludes": [
+          "session_idle",
+          "the 64 sign-prompt cells of each sign-prompt run, which record no per-unit ledger row"
+        ]
+      },
+      "ref_cache": {
+        "schema": "sca2.compute_event.v1",
+        "stage": "ref_cache",
+        "unit": "shared",
+        "role": "surviving_artifact",
+        "status": "measured",
+        "wall_minutes": 6.33,
+        "scope": "forward_passes_after_model_load",
+        "source": "Bonorinoa/SCA2-paper-b-artifacts:bank2/gps_sign_relabel_bank2_20261015_062543Z/state/refcache/shared_reference_logps_manifest.json",
+        "excludes": [
+          "model_download",
+          "model_load"
+        ],
+        "includes": [
+          "1052 pairs this run",
+          "1052 pairs in the completed cache"
+        ],
+        "provenance": {
+          "bank_run_id": "gps_sign_relabel_bank2_20261015_062543Z",
+          "model_name": "meta-llama/Llama-3.1-8B-Instruct",
+          "n_pairs_computed_this_run": 1052,
+          "n_pairs_total": 1052
+        },
+        "hardware": {},
+        "recorded_at": "2026-10-17T20:43:27-07:00",
+        "notes": "",
+        "event_id": "9efdb50d419da8fc"
+      },
+      "gpu_sessions": [
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-1",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 52.7833,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "3 recorded unit clocks",
+            "ref_cache",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-15T07:18:46+00:00",
+            "last_utc": "2026-10-15T08:11:33+00:00",
+            "n_events": 3
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "fd7f876d6037583b",
+          "n_events": 3,
+          "units": [
+            "shared",
+            "P_1_0_1_1_0_1",
+            "P_1_0_0_0_0_0"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-2",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 52.0167,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "4 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-15T08:28:53+00:00",
+            "last_utc": "2026-10-15T09:20:54+00:00",
+            "n_events": 4
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "1ccf2c2db7649810",
+          "n_events": 4,
+          "units": [
+            "P_1_0_0_0_0_1",
+            "P_1_0_0_0_1_0",
+            "P_1_0_0_0_1_1",
+            "P_1_0_0_1_0_0"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-3",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 17.3833,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "2 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-15T09:38:15+00:00",
+            "last_utc": "2026-10-15T09:55:38+00:00",
+            "n_events": 2
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "d7b7acfd9cdf92ac",
+          "n_events": 2,
+          "units": [
+            "P_1_0_0_1_0_1",
+            "P_1_0_0_1_1_0"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-4",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 58.5833,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "8 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T05:23:11+00:00",
+            "last_utc": "2026-10-16T06:21:46+00:00",
+            "n_events": 8
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "a1d3b27f2135efed",
+          "n_events": 8,
+          "units": [
+            "P_1_0_0_1_1_1",
+            "P_0_0_1_0_1_0",
+            "P_1_0_1_0_0_0",
+            "P_0_0_1_0_1_1",
+            "P_1_0_1_0_0_1",
+            "P_0_0_1_1_0_0",
+            "P_1_0_1_0_1_0",
+            "P_0_0_1_1_0_1"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-5",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 51.2,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "7 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T06:32:17+00:00",
+            "last_utc": "2026-10-16T07:23:29+00:00",
+            "n_events": 7
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "c1a1cd9fd33447be",
+          "n_events": 7,
+          "units": [
+            "P_1_0_1_0_1_1",
+            "P_0_0_1_1_1_0",
+            "P_1_0_1_1_0_0",
+            "P_0_0_1_1_1_1",
+            "P_1_0_1_1_1_0",
+            "P_0_1_0_0_0_0",
+            "P_1_0_1_1_1_1"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-6",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 55.9833,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "8 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T07:36:19+00:00",
+            "last_utc": "2026-10-16T08:32:18+00:00",
+            "n_events": 8
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "1cdb60d6b7b9e215",
+          "n_events": 8,
+          "units": [
+            "P_0_1_0_0_0_1",
+            "P_1_1_0_0_0_0",
+            "P_0_1_0_0_1_0",
+            "P_1_1_0_0_0_1",
+            "P_0_1_0_0_1_1",
+            "P_1_1_0_0_1_0",
+            "P_1_1_0_0_1_1",
+            "P_0_1_0_1_0_0"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-7",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 57.9667,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "8 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T08:48:54+00:00",
+            "last_utc": "2026-10-16T09:46:52+00:00",
+            "n_events": 8
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "4bc932aad507d6cf",
+          "n_events": 8,
+          "units": [
+            "P_1_1_0_1_0_0",
+            "P_0_1_0_1_0_1",
+            "P_1_1_0_1_0_1",
+            "P_0_1_0_1_1_0",
+            "P_1_1_0_1_1_0",
+            "P_0_1_0_1_1_1",
+            "P_1_1_0_1_1_1",
+            "P_0_1_1_0_0_0"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-8",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 51.6833,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "7 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T09:57:56+00:00",
+            "last_utc": "2026-10-16T10:49:37+00:00",
+            "n_events": 7
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "314da4d586c9a38f",
+          "n_events": 7,
+          "units": [
+            "P_1_1_1_0_0_0",
+            "P_0_1_1_0_0_1",
+            "P_1_1_1_0_0_1",
+            "P_0_1_1_0_1_0",
+            "P_1_1_1_0_1_0",
+            "P_0_1_1_0_1_1",
+            "P_1_1_1_0_1_1"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-9",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 57.2333,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "8 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T11:01:20+00:00",
+            "last_utc": "2026-10-16T11:58:34+00:00",
+            "n_events": 8
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "83b25d6f37369415",
+          "n_events": 8,
+          "units": [
+            "P_0_1_1_1_0_0",
+            "P_1_1_1_1_0_0",
+            "P_0_1_1_1_0_1",
+            "P_1_1_1_1_0_1",
+            "P_0_1_1_1_1_0",
+            "P_1_1_1_1_1_0",
+            "P_0_1_1_1_1_1",
+            "P_1_1_1_1_1_1"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-10",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 0.0,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "1 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T12:16:13+00:00",
+            "last_utc": "2026-10-16T12:16:13+00:00",
+            "n_events": 1
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "4ff2b573f077e18c",
+          "n_events": 1,
+          "units": [
+            "P_1_0_1_1_0_1"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-11",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 0.9333,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "2 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-16T19:19:11+00:00",
+            "last_utc": "2026-10-16T19:20:07+00:00",
+            "n_events": 2
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "65ce095245121dd5",
+          "n_events": 2,
+          "units": [
+            "P_1_1_1_1_1_0_adapter",
+            "P_1_1_1_1_1_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-12",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 59.6167,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "10 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T05:18:07+00:00",
+            "last_utc": "2026-10-17T06:17:44+00:00",
+            "n_events": 10
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "4a71268a76096972",
+          "n_events": 10,
+          "units": [
+            "P_0_1_0_1_0_1_adapter",
+            "P_0_1_0_1_1_0_adapter",
+            "P_0_1_0_1_1_1_adapter",
+            "P_0_1_1_0_0_0_adapter",
+            "P_0_1_1_0_0_1_adapter",
+            "P_0_1_1_0_1_0_adapter",
+            "P_0_1_1_0_1_1_adapter",
+            "P_0_1_1_1_0_0_adapter",
+            "P_0_1_1_1_0_1_adapter",
+            "P_0_1_1_1_1_0_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-13",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 0.0,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "1 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T06:24:21+00:00",
+            "last_utc": "2026-10-17T06:24:21+00:00",
+            "n_events": 1
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "c95893704f95919d",
+          "n_events": 1,
+          "units": [
+            "P_0_1_1_1_1_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-14",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 54.3667,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "9 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T10:29:44+00:00",
+            "last_utc": "2026-10-17T11:24:06+00:00",
+            "n_events": 9
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "0166ed649298206e",
+          "n_events": 9,
+          "units": [
+            "base",
+            "P_0_0_0_0_0_0_adapter",
+            "P_0_0_0_0_0_1_adapter",
+            "P_0_0_0_0_1_0_adapter",
+            "P_0_0_0_0_1_1_adapter",
+            "P_0_0_0_1_0_0_adapter",
+            "P_0_0_0_1_0_1_adapter",
+            "P_0_0_0_1_1_0_adapter",
+            "P_0_0_0_1_1_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-15",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 53.6167,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "9 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T11:30:44+00:00",
+            "last_utc": "2026-10-17T12:24:21+00:00",
+            "n_events": 9
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "89d284d00b3b97fc",
+          "n_events": 9,
+          "units": [
+            "P_0_0_1_0_0_0_adapter",
+            "P_0_0_1_0_0_1_adapter",
+            "P_0_0_1_0_1_0_adapter",
+            "P_0_0_1_0_1_1_adapter",
+            "P_0_0_1_1_0_0_adapter",
+            "P_0_0_1_1_0_1_adapter",
+            "P_0_0_1_1_1_0_adapter",
+            "P_0_0_1_1_1_1_adapter",
+            "P_0_1_0_0_0_0_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-16",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 54.95,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "9 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T12:31:08+00:00",
+            "last_utc": "2026-10-17T13:26:05+00:00",
+            "n_events": 9
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "2a99c365fcddc5c3",
+          "n_events": 9,
+          "units": [
+            "P_0_1_0_0_0_1_adapter",
+            "P_0_1_0_0_1_0_adapter",
+            "P_0_1_0_0_1_1_adapter",
+            "P_0_1_0_1_0_0_adapter",
+            "P_0_1_0_1_0_1_adapter",
+            "P_0_1_0_1_1_0_adapter",
+            "P_0_1_0_1_1_1_adapter",
+            "P_0_1_1_0_0_0_adapter",
+            "P_0_1_1_0_0_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-17",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 56.0167,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "9 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T13:33:02+00:00",
+            "last_utc": "2026-10-17T14:29:03+00:00",
+            "n_events": 9
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "70013037f596f6ed",
+          "n_events": 9,
+          "units": [
+            "P_0_1_1_0_1_0_adapter",
+            "P_0_1_1_0_1_1_adapter",
+            "P_0_1_1_1_0_0_adapter",
+            "P_0_1_1_1_0_1_adapter",
+            "P_0_1_1_1_1_0_adapter",
+            "P_0_1_1_1_1_1_adapter",
+            "base",
+            "P_0_0_0_0_0_0_adapter",
+            "P_0_0_0_0_0_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-18",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 59.1167,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "10 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T14:35:36+00:00",
+            "last_utc": "2026-10-17T15:34:43+00:00",
+            "n_events": 10
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "c013ed1353b3517e",
+          "n_events": 10,
+          "units": [
+            "P_0_0_0_0_1_0_adapter",
+            "P_0_0_0_0_1_1_adapter",
+            "P_0_0_0_1_0_0_adapter",
+            "P_0_0_0_1_0_1_adapter",
+            "P_0_0_0_1_1_0_adapter",
+            "P_0_0_0_1_1_1_adapter",
+            "P_0_0_1_0_0_0_adapter",
+            "P_0_0_1_0_0_1_adapter",
+            "P_0_0_1_0_1_0_adapter",
+            "P_0_0_1_0_1_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-19",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 53.85,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "9 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T15:41:21+00:00",
+            "last_utc": "2026-10-17T16:35:12+00:00",
+            "n_events": 9
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "973c6d30171c2b0c",
+          "n_events": 9,
+          "units": [
+            "P_0_0_1_1_0_0_adapter",
+            "P_0_0_1_1_0_1_adapter",
+            "P_0_0_1_1_1_0_adapter",
+            "P_0_0_1_1_1_1_adapter",
+            "P_0_1_0_0_0_0_adapter",
+            "P_0_1_0_0_0_1_adapter",
+            "P_0_1_0_0_1_0_adapter",
+            "P_0_1_0_0_1_1_adapter",
+            "P_0_1_0_1_0_0_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-20",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 55.4333,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "9 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T16:42:02+00:00",
+            "last_utc": "2026-10-17T17:37:28+00:00",
+            "n_events": 9
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "02d2c664dcee4de2",
+          "n_events": 9,
+          "units": [
+            "P_0_1_0_1_0_1_adapter",
+            "P_0_1_0_1_1_0_adapter",
+            "P_0_1_0_1_1_1_adapter",
+            "P_0_1_1_0_0_0_adapter",
+            "P_0_1_1_0_0_1_adapter",
+            "P_0_1_1_0_1_0_adapter",
+            "P_0_1_1_0_1_1_adapter",
+            "P_0_1_1_1_0_0_adapter",
+            "P_0_1_1_1_0_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-21",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 7.05,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "2 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T17:44:30+00:00",
+            "last_utc": "2026-10-17T17:51:33+00:00",
+            "n_events": 2
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "6ceeae817950d614",
+          "n_events": 2,
+          "units": [
+            "P_0_1_1_1_1_0_adapter",
+            "P_0_1_1_1_1_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-22",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 54.6667,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "10 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T20:29:07+00:00",
+            "last_utc": "2026-10-17T21:23:47+00:00",
+            "n_events": 10
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "57c602dfee3a0422",
+          "n_events": 10,
+          "units": [
+            "P_0_1_0_0_1_1_adapter",
+            "P_0_1_0_1_0_0_adapter",
+            "P_0_1_0_1_0_1_adapter",
+            "P_0_1_0_1_1_0_adapter",
+            "P_0_1_0_1_1_1_adapter",
+            "P_0_1_1_0_0_0_adapter",
+            "P_0_1_1_0_0_1_adapter",
+            "P_0_1_1_0_1_0_adapter",
+            "P_0_1_1_0_1_1_adapter",
+            "P_0_1_1_1_0_0_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-23",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 12.2667,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "3 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-17T21:29:55+00:00",
+            "last_utc": "2026-10-17T21:42:11+00:00",
+            "n_events": 3
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "d216574e907e63c4",
+          "n_events": 3,
+          "units": [
+            "P_0_1_1_1_0_1_adapter",
+            "P_0_1_1_1_1_0_adapter",
+            "P_0_1_1_1_1_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-24",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 7.9667,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "2 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-18T00:01:34+00:00",
+            "last_utc": "2026-10-18T00:09:32+00:00",
+            "n_events": 2
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "51d625f9c1fcb527",
+          "n_events": 2,
+          "units": [
+            "P_1_0_1_1_0_1_adapter",
+            "P_1_0_1_1_0_1_adapter"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-25",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 29.05,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "4 recorded unit clocks",
+            "train"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-18T01:46:03+00:00",
+            "last_utc": "2026-10-18T02:15:06+00:00",
+            "n_events": 4
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "383270905fb218c5",
+          "n_events": 4,
+          "units": [
+            "GBR",
+            "COL",
+            "GBR_control",
+            "COL_control"
+          ]
+        },
+        {
+          "schema": "sca2.compute_event.v1",
+          "stage": "gpu_session",
+          "unit": "tier1-session-26",
+          "role": "session_loop",
+          "status": "measured",
+          "wall_minutes": 2.9833,
+          "scope": "gpu session wall clock: first to last recorded unit clock",
+          "source": "harvested from Hub compute ledgers",
+          "excludes": [
+            "vm provision",
+            "session idle outside the recorded clocks",
+            "units whose session ledger was never uploaded"
+          ],
+          "includes": [
+            "4 recorded unit clocks",
+            "score"
+          ],
+          "provenance": {
+            "first_utc": "2026-10-18T02:59:07+00:00",
+            "last_utc": "2026-10-18T03:02:06+00:00",
+            "n_events": 4
+          },
+          "hardware": {},
+          "recorded_at": "2026-10-17T20:43:27-07:00",
+          "notes": "",
+          "event_id": "f0c0cfa1ddb59f32",
+          "n_events": 4,
+          "units": [
+            "GBR_adapter",
+            "COL_adapter",
+            "GBR_control_adapter",
+            "COL_control_adapter"
+          ]
+        }
+      ]
+    },
+    "stage_totals": {
+      "training": {
+        "n": 69,
+        "wall_minutes": 1087.93,
+        "gpu_hours": 18.1322
+      },
+      "scoring": {
+        "n": 98,
+        "wall_minutes": 606.9796,
+        "gpu_hours": 10.1163
+      }
+    },
+    "endpoints": {
+      "total_cost_usd": 13.994752,
+      "per_endpoint_usd": {
+        "hf-teacher": 3.76203,
+        "hf-generator": 7.52406,
+        "hf-scorer": 2.708662
+      },
+      "elapsed_seconds": 5417.324,
+      "historical_observed_total_usd": 36.14,
+      "source": "Bonorinoa/SCA2-paper-b-artifacts:banks/bank2_gps_sign_relabel_bank2_20261015_062543Z/gen_raw/generation_manifest.json",
+      "note": "Endpoint spend for the bank-2 generation. The historical figure is the provider console's observed total since endpoint creation, calibration only."
+    },
+    "colab_units": {
+      "observations": [
+        {
+          "card": "T4",
+          "session": "2026-10-18T00:01Z..03:02Z",
+          "before": 192.74,
+          "after": 189.98,
+          "stage": "scoring",
+          "covers": [
+            "replicate r1 strict + heldout",
+            "64 sign-prompt cells, strict"
+          ],
+          "source": "final comment of kanban card T4 (t_b42d0d84)"
+        },
+        {
+          "card": "T5",
+          "session": "2026-10-18T01:46Z..03:02Z",
+          "before": 188.96,
+          "after": 186.74,
+          "stage": "training+scoring",
+          "covers": [
+            "4 near-zero adapters (1.6 T4 units, the card's own session hours)",
+            "Augusto's separate TPU assignment in the same window"
+          ],
+          "source": "final comment of kanban card T5 (t_719abccf) plus the orchestrator's 2026-10-17 addendum"
+        }
+      ],
+      "note": "Colab reports a remaining balance, not consumption. The before/after pairs are quoted from the kanban cards named in each observation; the training and scoring sessions of 2026-10-15/16 have no balance reading, so their unit cost is unknown."
+    },
+    "repeated_units": [
+      [
+        "train_country.py",
+        "train",
+        "P_1_0_1_1_0_1"
+      ]
+    ],
+    "unknown": [
+      "Billed Colab units per stage. Only two before/after balance pairs exist, both from card comments.",
+      "Sessions of 2026-10-15/16 (bank-2 training waves) have no balance reading.",
+      "VM provision, model download, adapter upload and session idle.",
+      "The 10 profile units whose 2026-10-15 session ledger was never uploaded: their training clock survives in the adapter run record, their session wall time does not."
+    ]
   }
 }
