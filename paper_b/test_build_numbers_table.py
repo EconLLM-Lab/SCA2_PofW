@@ -102,6 +102,18 @@ def test_per_dimension_rows_match_per_dimension_json(by_id):
     assert float(t["ci_low"]) < 0 < float(t["ci_high"])
 
 
+def test_bonferroni_rows_are_exploratory_and_match_per_dimension_json(by_id):
+    """Orchestrator 2026-10-18: SMR asks for multiplicity adjustment; the adjusted interval is a separate,
+    unregistered row so the registered row stays as it was."""
+    routes = _j("heldout_per_dimension.json")["routes"]
+    for route in ("adapter_primary", "adapter_secondary"):
+        for dim, cell in routes[route]["per_dimension"].items():
+            r = by_id[f"PD_{route}_{dim}_A_bonf"]
+            assert float(r["value"]) == cell["A"]
+            assert [float(r["ci_low"]), float(r["ci_high"])] == cell["ci_bonf"]
+            assert "not registered" in r["sentence_use"]
+
+
 def test_bank2_rows_match_transport_json(by_id):
     b = _j("bank2_transport_strict.json")
     r = by_id["B2_bank2_trust_rho"]

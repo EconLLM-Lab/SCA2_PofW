@@ -16,7 +16,8 @@
   "not_registered": [
     "p_perm_descriptive",
     "null_mean",
-    "null_q95"
+    "null_q95",
+    "ci_bonf"
   ],
   "c5_rule": "an imprint dimension whose interval includes 0 is not transport",
   "routes": {
@@ -35,6 +36,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.08800915110070029,
+            0.19935899835032975
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.2598,
@@ -50,6 +56,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.02602158566475677,
+            0.32605926396054474
+          ],
+          "bonf_m": 4,
           "excludes_zero": true,
           "reading": "interval excludes 0: transport",
           "p_perm_descriptive": 0.0007,
@@ -65,6 +76,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.33201091248606873,
+            0.2046621888542461
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.9479,
@@ -80,6 +96,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.058364598374362746,
+            0.19761882602074507
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.0262,
@@ -103,6 +124,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.0490439184572969,
+            0.23571158993143504
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.0037,
@@ -118,6 +144,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            0.016856075633086547,
+            0.25283844833699126
+          ],
+          "bonf_m": 4,
           "excludes_zero": true,
           "reading": "interval excludes 0: transport",
           "p_perm_descriptive": 0.0,
@@ -133,6 +164,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.22650808298085584,
+            0.15360959148605877
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.9452,
@@ -148,6 +184,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.054321119279365566,
+            0.13327725168447802
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.04,
@@ -171,6 +212,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.14086108355859686,
+            0.2008340945247989
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.5012,
@@ -194,6 +240,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.2585556334712563,
+            0.45195566463356446
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.0283,
@@ -209,6 +260,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.21755240842524032,
+            0.28821643249207785
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.2007,
@@ -224,6 +280,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.2073229543844669,
+            0.3202753840616877
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.406,
@@ -247,6 +308,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.1424744768385639,
+            0.4268072519501266
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.0,
@@ -262,6 +328,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.4687686009743427,
+            0.3120307580314308
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.5302,
@@ -277,6 +348,11 @@
           ],
           "boot": 2000,
           "seed": 20261015,
+          "ci_bonf": [
+            -0.11160799939562252,
+            0.20818502428761881
+          ],
+          "bonf_m": 4,
           "excludes_zero": false,
           "reading": "interval includes 0: not transport",
           "p_perm_descriptive": 0.22,

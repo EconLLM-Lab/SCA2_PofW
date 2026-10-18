@@ -54,6 +54,10 @@ SEED = ST.PERM_SEED              # 20261015, the registered seed
 BOOT_DRAWS = ST.BOOT_DRAWS       # 2,000, the registered country bootstrap
 PERM_DRAWS = ST.PERM_DRAWS       # 10,000
 CI = (2.5, 97.5)
+# Exploratory, NOT registered (orchestrator 2026-10-18, for SMR's multiplicity request): a Bonferroni interval
+# over the imprint dimensions, read off the same bootstrap draws as the registered 95% interval.
+BONF_M = len(AH.IMPRINT)
+CI_BONF = (100 * 0.05 / (2 * BONF_M), 100 * (1 - 0.05 / (2 * BONF_M)))
 
 ROUTES = [
     ("adapter_primary", "adapter primary rule (selection_amended_20261016.csv, primary_selected)"),
@@ -132,7 +136,10 @@ def point_interval(sel: pd.DataFrame, human: pd.DataFrame, gps: pd.DataFrame, *,
             draws[b] = float(np.nanmean(_a_i(sub, hs, gs)))
         out[d] = {"A": float(sub.a_i.mean()), "n": int(len(sub)),
                   "ci95": [float(np.nanpercentile(draws, CI[0])), float(np.nanpercentile(draws, CI[1]))],
-                  "boot": int(boot), "seed": int(seed)}
+                  "boot": int(boot), "seed": int(seed),
+                  "ci_bonf": [float(np.nanpercentile(draws, CI_BONF[0])),
+                              float(np.nanpercentile(draws, CI_BONF[1]))],
+                  "bonf_m": int(BONF_M)}
     return out
 
 
@@ -238,6 +245,18 @@ def render_note(res: dict) -> str:
                      f"interval [{v['ci95'][0]:.3f}, {v['ci95'][1]:.3f}])")
         L.append("")
     cc = res["cross_check"]
+    L += ["## Exploratory: Bonferroni-adjusted intervals (not registered)", "",
+          f"Added 2026-10-18 by the orchestrator for SMR's multiplicity request. Bonferroni over the "
+          f"{BONF_M} imprint dimensions,",
+          f"read off the same {res['boot']:,} draws: percentiles {CI_BONF[0]:.3f} and {CI_BONF[1]:.3f}. "
+          "The registered 95% intervals above are unchanged.", "",
+          "| route | dimension | items | A_d | registered 95% | Bonferroni |", "|---|---|---|---|---|---|"]
+    for name in ("adapter_primary", "adapter_secondary"):
+        for d, v in res["routes"][name]["per_dimension"].items():
+            if d in AH.IMPRINT:
+                L.append(f"| {name} | {d} | {v['n']} | {v['A']:.3f} | [{v['ci95'][0]:.3f}, {v['ci95'][1]:.3f}] | "
+                         f"[{v['ci_bonf'][0]:.3f}, {v['ci_bonf'][1]:.3f}] |")
+    L.append("")
     L += ["## Sanity check against the committed point estimates", "",
           f"`{cc['source']}` reports the same A_d without intervals. Largest absolute difference here:",
           f"{cc['A_max_abs_diff']:.2e}; item counts all match: {cc['n_all_match']}.", ""]
@@ -266,7 +285,7 @@ def build(*, signprompt: Path = SIGNPROMPT, boot: int = BOOT_DRAWS, draws: int =
                  "n_countries": int(len(human.index.intersection(gps.index))), "pool_n": len(pool),
                  "seed": int(seed), "boot": int(boot), "perm_draws": int(draws),
                  "registered": ["A_d", "ci95"],
-                 "not_registered": ["p_perm_descriptive", "null_mean", "null_q95"],
+                 "not_registered": ["p_perm_descriptive", "null_mean", "null_q95", "ci_bonf"],
                  "c5_rule": "an imprint dimension whose interval includes 0 is not transport",
                  "routes": {}}
     for name, rt in routes.items():
