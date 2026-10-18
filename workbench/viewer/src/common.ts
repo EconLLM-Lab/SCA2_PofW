@@ -3,12 +3,19 @@
 // says so in its name and comment (a browser B − A fallback for @1 files, segment sums).
 // Copy follows design/layout-v2/COPY.md (string IDs in comments) and its PM rulings.
 
-import type { Bundle, Run, Segment, Tensor } from "./data";
+import type { Bundle, Conservation, RelativeCheck, RelativeConservation, Run, Segment, Tensor } from "./data";
 
 // ------------------------------------------------------------------ formatting
 export const esc = (s: unknown) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
 export const fmt = (v: number, p = 4) => (v === 0 ? "0" : Math.abs(v) >= 1e4 || Math.abs(v) < 1e-3 ? v.toExponential(p - 1) : v.toPrecision(p));
 export const sgn = (v: number, p = 3) => (v >= 0 ? "+" : "−") + fmt(Math.abs(v), p);
+/** A tau as the gate table writes it: an exact power of ten keeps its two-digit exponent (1e-04). */
+export const tauStr = (t: number) => {
+  const r = Math.round(Math.log10(t));
+  return Math.abs(t - 10 ** r) <= 1e-12 * t ? `1e${r < 0 ? "-" : "+"}${String(Math.abs(r)).padStart(2, "0")}` : t.toExponential(1);
+};
+/** A relative error in the two-digit exponent form the plan and the gate table use (6.23e-06). */
+export const relFmt = (v: number) => (v === 0 ? "0" : v.toExponential(1).replace(/e([+-])(\d)$/, "e$10$2"));
 export const tokText = (s: string) => s.replace(/\n/g, "⏎").replace(/ /g, "·") || "∅";
 
 // ------------------------------------------------------------------ colours
@@ -171,8 +178,23 @@ export function inspectorHTML(D: Bundle, s: Slice, o: { pinned?: boolean; clamp?
 }
 
 // ------------------------------------------------------------------ gated checks (frame status glyph, fail banner)
-/** One gated check: every key of `conservation.thresholds` in run A, run B and the pair (an @1 pair has none). */
-export interface Check { who: "A" | "B" | "pair"; k: string; v: number; thr: number; ok: boolean; simulated?: boolean }
+/** One gated check. A `relative` row comes from `conservation.relative.checks[k]` of a capture@1.1
+ * manifest: `v` is then an error relative to `scale`, `thr` its tau, and `ok` the row's own `pass`.
+ * A legacy row (a manifest without `relative`) comes from
+ * `conservation.thresholds[k]`: `v` is an absolute value and `thr` the absolute bound. */
+export interface Check { who: "A" | "B" | "pair"; k: string; v: number; thr: number; ok: boolean;
+  /** true when `v` is relative to `scale` and `thr` is a tau, not an absolute bound. */
+  relative?: boolean; scale?: number; simulated?: boolean }
+/** The dev `?fail=` keys, mapped onto the row name that key stands for in a manifest of either
+ * generation: the absolute set and the relative set ask the same questions under different names,
+ * so one dev key names one check either way (and an unknown key still adds a simulated row). */
+const FAIL_KEYS: Record<string, string[]> = {
+  "1": ["dla_gap", "readout"], dla_gap: ["dla_gap", "readout"], readout: ["readout", "dla_gap"],
+  residual_closure_inf: ["residual_closure_inf", "residual_closure"],
+  residual_closure: ["residual_closure", "residual_closure_inf"],
+  hf64_logits_max_rel_gap: ["hf64_logits_max_rel_gap", "logits_reference"],
+  logits_reference: ["logits_reference", "hf64_logits_max_rel_gap"],
+};
 const DEV = Boolean((import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV);
 /** The checks, passing when value < threshold. A manifest whose `pass` is false with no failing key adds a
  * failing \"pass flag\" entry, so a failure is never lost. Dev server only: `?fail=<key>` (or `fail=1` = dla_gap)
@@ -182,24 +204,38 @@ export function checksOf(D: Bundle): Check[] {
   const src: [Check["who"], Record<string, unknown> | undefined][] = [["A", D.A.m.conservation as unknown as Record<string, unknown>], ["B", D.B.m.conservation as unknown as Record<string, unknown>], ["pair", D.P.m.conservation as unknown as Record<string, unknown> | undefined]];
   for (const [who, c] of src) {
     if (!c) continue;
-    for (const [k, thr] of Object.entries((c.thresholds ?? {}) as Record<string, number>)) {
-      const v = c[k];
-      if (typeof v === "number") out.push({ who, k, v, thr, ok: v < thr });
+    const rel = c.relative as RelativeConservation | undefined;
+    if (rel && rel.checks) {
+      // capture@1.1 with the relative gates (t_1547e1a8): one row per check, rel against its tau,
+      // and the row's own `pass` is the verdict -- the exporter's, not one recomputed from here.
+      for (const [k, g] of Object.entries(rel.checks))
+        out.push({ who, k, v: g.rel, thr: g.tau, ok: g.pass, relative: true, scale: g.scale });
+    } else {
+      // No relative block: a manifest written before relative gates. The absolute
+      // gate is all there is, and that is what such an export was gated by.
+      for (const [k, thr] of Object.entries((c.thresholds ?? {}) as Record<string, number>)) {
+        const v = c[k];
+        if (typeof v === "number") out.push({ who, k, v, thr, ok: v < thr });
+      }
     }
     if (c.pass === false && !out.some((x) => x.who === who && !x.ok)) out.push({ who, k: "pass flag", v: NaN, thr: NaN, ok: false });
   }
   const f = DEV ? new URLSearchParams(location.search).get("fail") : null;
   if (f) {
-    const key = f === "1" ? "dla_gap" : f, i = out.findIndex((c) => c.k === key);
+    const keys = FAIL_KEYS[f] ?? [f], i = out.findIndex((c) => keys.includes(c.k));
     if (i >= 0) out[i] = { ...out[i], v: out[i].thr * 3.1, ok: false, simulated: true };
-    else out.push({ who: "A", k: key, v: NaN, thr: NaN, ok: false, simulated: true });
+    else out.push({ who: "A", k: keys[0], v: NaN, thr: NaN, ok: false, simulated: true });
   }
   return out;
 }
 /** Which exports a failed check taints. A face of the ladder that uses a tainted export turns red. */
 export const failedWho = (cs: Check[]) => new Set(cs.filter((c) => !c.ok).map((c) => c.who));
 export const faceTainted = (face: string, bad: Set<string>) => (face === "a" ? bad.has("A") : face === "b" ? bad.has("B") : bad.size > 0);
-export const checkLine = (c: Check) => `${c.who} ${c.k} = ${isNaN(c.v) ? "fails" : fmt(c.v, 2)}${isNaN(c.thr) ? "" : (c.ok ? " < " : " ≥ ") + c.thr}${c.simulated ? " (simulated with ?fail · not data)" : ""}`;
+/** One check as a line of text: `A residual_closure rel 6.2e-06 < 1e-04` for a relative gate,
+ * `A residual_closure_inf = 5.6e-3 ≥ 0.001` for a legacy absolute one. */
+export const checkLine = (c: Check) => c.relative
+  ? `${c.who} ${c.k} rel ${relFmt(c.v)} ${c.ok ? "<" : "≥"} ${tauStr(c.thr)}${c.simulated ? " (simulated with ?fail · not data)" : ""}`
+  : `${c.who} ${c.k} = ${isNaN(c.v) ? "fails" : fmt(c.v, 2)}${isNaN(c.thr) ? "" : (c.ok ? " < " : " ≥ ") + c.thr}${c.simulated ? " (simulated with ?fail · not data)" : ""}`;
 
 // ------------------------------------------------------------------ the answer card (S01–S08)
 export function readoutHTML(D: Bundle): string {
@@ -249,6 +285,63 @@ export const GLOSSARY: [string, string][] = [
   ["size of a vector (‖·‖)", "The usual length: the square root of the sum of squares."],
 ];
 
+// ------------------------------------------------------------------ the checks table of "learn more" (P04)
+/** Row labels for the gate keys of either generation of manifest (`conservation.relative.checks` of
+ * `gates.py`, and the absolute set it replaced). An unknown key falls back to its own name, so a
+ * gate added later still shows up here. */
+const CHECK_LABEL: Record<string, string> = {
+  residual_closure: "The parts add up to the final state (largest gap in any coordinate, any token)",
+  head_closure: "The heads add up to the attention write (largest gap in any coordinate, any token)",
+  readout: "The parts add up to the margin (DLA gap)",
+  logits_reference: "Our code vs the Hugging Face reference (largest relative gap)",
+  residual_closure_inf: "The parts add up to the final state (largest gap in any coordinate, any token)",
+  head_closure_inf: "The heads add up to the attention write (largest gap in any coordinate, any token)",
+  dla_gap: "The parts add up to the margin (absolute gap)",
+  hf64_logits_max_rel_gap: "Our code vs the Hugging Face reference, with its float32 rounding steps switched off (relative gap)",
+  gap_f64: "B − A of the parts adds up to B − A of the margin (float64 differences)",
+  gap_f32: "B − A of the parts adds up to B − A of the margin (summed from the stored float32 arrays)",
+};
+const checkLabel = (k: string) => (CHECK_LABEL[k] ?? k) + (k.endsWith("_clamped") ? " · Quadrant III clamped run" : "");
+/** One cell of the relative table: the relative error, then the row's own verdict. The tooltip says
+ * what the error was divided by, which is what makes the gate comparable across dtypes and models. */
+const relCell = (g: RelativeCheck, tip = "") =>
+  `<td class="num" title="${esc(`${tip}rel = ${fmt(g.error, 2)} ÷ ${fmt(g.scale, 2)} (${g.scale_desc})`)}">${relFmt(g.rel)} ${g.pass ? "✓" : "✗"}</td>`;
+
+/** The checks table for a bundle whose runs carry `conservation.relative` (a float32 export, and any
+ * capture@1.1 manifest written after t_1547e1a8). Every row is `rel = error / scale` against its tau,
+ * which is the verdict the exporter computed. The absolute thresholds still travel in the manifest
+ * and the browser re-sum still shows its number, but neither can fail this table: below one ulp of
+ * the stream they are not gates, which is the whole point of the relative set. */
+function relativeTable(D: Bundle, cA: Conservation, cB: Conservation): string {
+  const ra = cA.relative!, rb = cB.relative!;
+  const row = (k: string, ga: RelativeCheck, gb?: RelativeCheck) =>
+    `<tr><td>${esc(checkLabel(k))}</td><td class="num">rel ≤ ${tauStr(ga.tau)}</td>${relCell(ga)}${gb ? relCell(gb) : `<td class="num">—</td>`}</tr>`;
+  const keys = Object.keys(ra.checks);
+  const main = keys.filter((k) => !k.endsWith("_clamped"));
+  const clamped = keys.filter((k) => k.endsWith("_clamped"));
+  const notGated = cA.legacy_absolute_applicable === false || cB.legacy_absolute_applicable === false;
+  const pc = D.P.m.conservation;
+  const pairRow = !pc
+    ? `<tr><td colspan="4" class="muted">This pair export is @1: it has no B − A check of its own.</td></tr>`
+    : pc.relative?.checks
+      ? Object.entries(pc.relative.checks).map(([k, g]) =>
+          `<tr><td>${esc(checkLabel(k))}</td><td class="num">rel ≤ ${tauStr(g.tau)}</td>${relCell(g, "pair · ").replace('<td class="num"', '<td colspan="2" class="num"')}</tr>`).join("\n      ")
+      : `<tr><td>${esc(checkLabel("gap_f32"))}. This pair block carries no relative gate, so the bound is the absolute one of the contract.</td><td class="num">1e-6</td><td colspan="2" class="num">${fmt(pc.d_attr_gap_float32, 2)} · clamped ${fmt(pc.d_attr_gap_float32_clamped, 2)}</td></tr>`;
+  return `<table class="lt"><tr><th>Check</th><th>rel ≤ τ</th><th>A</th><th>B</th></tr>
+      ${main.map((k) => row(k, ra.checks[k], rb.checks[k])).join("\n      ")}
+      <tr><td>Recomputed in this browser from the float32 arrays drawn: |margin − ΣDLA|</td><td class="num">${notGated ? "not gated here" : "1e-2"}</td><td class="num">${fmt(D.A.clientCheck.dlaGap, 2)}</td><td class="num">${fmt(D.B.clientCheck.dlaGap, 2)}</td></tr>
+      ${pairRow}</table>
+      <details><summary>show the clamped run and the information-only rows</summary><table class="lt">
+      ${clamped.map((k) => row(k, ra.checks[k], rb.checks[k])).join("\n      ")}
+      <tr><td>Our code vs the reference as shipped (relative gap). Information only.</td><td class="num">none</td><td class="num">${fmt(cA.hf_logits_max_rel_gap, 2)}</td><td class="num">${fmt(cB.hf_logits_max_rel_gap, 2)}</td></tr>
+      <tr><td>Eq. 6 vs the full-answer calculation (absolute gap). A test checks this; each export also records the gap.</td><td class="num">none</td><td class="num">${fmt(cA.eq6_teacher_forced_max_abs_gap, 2)}</td><td class="num">${fmt(cB.eq6_teacher_forced_max_abs_gap, 2)}</td></tr>
+      </table></details>
+      <p>Every row of the first table is <b>relative</b>: <code>rel</code> is the error divided by the size of the quantity the error is an error of (each row's tooltip names that scale), and the row passes when <code>rel ≤ τ</code>. A τ is ${ra.tau_multiple}× the largest round-off measured for that check on this model family, rounded up to the next power of ten (<code>plans/stage1_f32_gaps.md</code>), so the gate does not fire on round-off and still catches a real break.</p>
+      <p>${notGated
+        ? "This export was computed in <b>float32</b> (<code>provenance.compute_dtype</code>). The absolute bounds of the contract cannot be met at that dtype: the residual gate 1e-3 is about nine float32 ulps wide at a state whose largest entry is 8.9e2, so it fires on round-off rather than on a break in the capture. Those rows are still shown where they exist, and the browser re-sum is shown with its number, but the verdict is this relative table."
+        : "This export was computed in <b>float64</b> (<code>provenance.compute_dtype</code>); the relative gates still carry the verdict, with more headroom than the absolute set had."}</p>`;
+}
+
 export function learnText(D: Bundle, key: string): [string, string] {
   const it = D.A.m.item, cA = D.A.m.conservation, cB = D.B.m.conservation, ro = D.A.m.readout.position;
   const lp = esc(short(labelPlus(D.A), 70)), lmn = esc(short(labelMinus(D.A), 70));
@@ -261,7 +354,7 @@ export function learnText(D: Bundle, key: string): [string, string] {
     norm: ["What is the size of a vector (‖·‖)?", `<p>A vector here is a list of numbers (576 for a running state). Its size, written ‖v‖, is the usual length: the square root of the sum of squares. Bigger means the part wrote more. It does not say in which direction. Two vectors of equal size can push the answer opposite ways. Only the DLA numbers at the answer position carry a direction.</p>`],
     dla: ["How much did each part push the answer? (DLA)", `<p>Direct logit attribution (DLA) splits the margin into additive pieces, like splitting a logit index into β·x terms. Each part's addition is read straight through the model's last steps, with the final rescaling ρ held fixed. Then the margin is exactly the embedding term + Σ heads + Σ neurons. Blue pushes toward “${lp}”, orange toward “${lmn}”.</p><p><b>Limit.</b> DLA is the direct effect only, like a direct effect in a mediation model. A head that changes what a later layer does gets no credit for that path.</p>${ref("w = γ<sub>final</sub> ⊙ (W<sub>U</sub>[j₊] − W<sub>U</sub>[j₋]) / ρ. Arrays: <code>head_attr</code>, <code>mlp_attr</code>, <code>neuron_attr</code>, <code>readout.embed_attr</code>; B − A: <code>d_head_attr</code>, <code>d_mlp_attr</code>, <code>d_embed_attr</code>.")}`],
     conservation: ["Do the parts add up? The checks", `${checksOf(D).filter((c) => !c.ok).map((c) => `<p class="badp">✗ ${esc(checkLine(c))}</p>`).join("")}<p>Three questions. Do the parts add up to the final state? Do they add up to the margin? Does our code give the same numbers as the reference implementation? All three have to pass, for both models.</p>
-      <table class="lt"><tr><th>Check</th><th>Must be below</th><th>A</th><th>B</th></tr>
+      ${cA.relative && cB.relative ? relativeTable(D, cA, cB) : `<table class="lt"><tr><th>Check</th><th>Must be below</th><th>A</th><th>B</th></tr>
       <tr><td>The parts add up to the final state (largest gap in any coordinate, any token)</td><td>1e-3</td><td>${fmt(cA.residual_closure_inf, 2)}</td><td>${fmt(cB.residual_closure_inf, 2)}</td></tr>
       <tr><td>The parts add up to the margin (absolute gap)</td><td>1e-2</td><td>${fmt(cA.dla_gap, 2)}</td><td>${fmt(cB.dla_gap, 2)}</td></tr>
       <tr><td>Our code vs the Hugging Face reference, with its float32 rounding steps switched off (relative gap)</td><td>1e-10</td><td>${fmt(cA.hf64_logits_max_rel_gap, 2)}</td><td>${fmt(cB.hf64_logits_max_rel_gap, 2)}</td></tr></table>
@@ -272,7 +365,7 @@ export function learnText(D: Bundle, key: string): [string, string] {
       <tr><td>Recomputed in this browser from the float32 arrays drawn: |margin − ΣDLA|</td><td>1e-2</td><td>${fmt(D.A.clientCheck.dlaGap, 2)}</td><td>${fmt(D.B.clientCheck.dlaGap, 2)}</td></tr>
       ${D.P.m.conservation ? `<tr><td>B − A of the parts adds up to B − A of the margin (pair export, float32 arrays)</td><td>1e-6</td><td colspan="2">${fmt(D.P.m.conservation.d_attr_gap_float32, 2)} · clamped ${fmt(D.P.m.conservation.d_attr_gap_float32_clamped, 2)}</td></tr>` : `<tr><td colspan="4" class="muted">This pair export is @1: it has no B − A check of its own.</td></tr>`}
       </table></details>
-      <p>Each run uses float64 arithmetic. If the parts failed to add up to the whole, the status line next to the answer would turn red, and the figures should not be read as measurements until the export is fixed.</p>`],
+      <p>Each run uses float64 arithmetic. If the parts failed to add up to the whole, the status line next to the answer would turn red, and the figures should not be read as measurements until the export is fixed.</p>`}`],
     delta: ["What the fine-tune changed: ‖B − A‖ and B − A", `<p>For the same prompt, token and layer, the pair export stores <b>‖B − A‖</b>: the length of the difference between B's vector and A's vector. It is computed from both float64 runs and is exact. It is not the difference of two lengths: ‖B − A‖ is not ‖B‖ − ‖A‖. It is never negative, so it says how much changed and not in which direction.</p><p><b>B − A</b> with a sign is a difference between two single numbers, such as two DLA values, like the change in a coefficient. For the push on the margin it comes from the pair export (<code>d_head_attr</code>, <code>d_mlp_attr</code>); other signed changes are computed on this page and shown in italics.</p><p>‖W<sub>B</sub> − W<sub>A</sub>‖ shows where the weights moved.${mlpZero ? " In this pair every MLP weight change is exactly 0, so any MLP change is downstream of changed attention." : ""}</p>`],
     mlp: ["What is an MLP block?", `<p>After attention, each layer runs a small feed-forward network (an MLP) on every token separately. It has 1,536 hidden units, called neurons, per layer. Nothing moves between tokens here. The block height is the size of what it adds, ‖m‖.</p><p>Each neuron multiplies two input signals: a “gate” g̃ (passed through SiLU) and an “up” signal u. <b>Quadrant III</b> neurons are those where both g̃ and u are below −0.05 (counted in <code>q3_count</code>). In the clamped run we set these neurons' outputs to zero in every layer and position and run the model again. The purple ticks show what that does to the answer probabilities.</p>${ref("m = Σ_i SiLU(g̃_i) u_i W_down[:, i]")}`],
     segments: ["Template text and collapsed parts of the prompt", `<p>Most of the ${D.A.m.tokens.length} tokens are the chat template and fixed instructions. The prompt is split into labelled parts (message markers, instructions, the ${isBank(D.A) ? "scenario" : "question"}, the options, the answer cue, the answer position). The question, the options and the answer position are open by default. A collapsed part draws nothing: it is a gap with a label, never a summary block. A grey pill in the text is one collapsed part.</p><p>${D.A.m.segments ? "The parts come from the export (<code>manifest.segments</code>, contract @1.1): the exporter knows how the prompt was built." : "This is an @1 export without <code>segments</code>, so the prompt is shown as one part."}</p>`],

@@ -135,6 +135,14 @@ def test_d_attribution_sums_hit_the_gate(pair_q57):
         out_a, out_b, ra["margin_clamped"], rb["margin_clamped"], clamped=True)
     assert chk_c["pass"] and "attn_attr" not in arrays_c
     assert abs(d_embed - (rb["embed_attr"] - ra["embed_attr"])) == 0.0
+    conservation = EX.pair_conservation(chk, chk_c)
+    assert conservation["pass"] and conservation["relative"]["pass"]
+    assert set(conservation["relative"]["checks"]) == {
+        "d_attr_gap", "d_attr_gap_float32", "d_attr_gap_clamped", "d_attr_gap_float32_clamped"
+    }
+    for gate in conservation["relative"]["checks"].values():
+        assert {"error", "scale", "scale_desc", "rel", "tau", "pass"} <= set(gate)
+        assert gate["pass"]
 
 
 def test_gate_fails_when_the_margin_is_off(pair_q57):

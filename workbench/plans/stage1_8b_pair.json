@@ -1,0 +1,572 @@
+{
+ "adapter": {
+  "dir": "hf://datasets/Bonorinoa/SCA2-paper-b-adapters@c4b0f36eae0c15e508f72b606861798c8359131f/adapters/USA",
+  "sha256": "7329c4a1e621d86fdc32c55b47b5fda047830404dc0d697ec468febe19717eef",
+  "r": 16,
+  "lora_alpha": 32.0,
+  "scale": 2.0,
+  "target_modules": [
+   "k_proj",
+   "v_proj",
+   "q_proj",
+   "o_proj"
+  ],
+  "base_model_name_or_path": "meta-llama/Llama-3.1-8B-Instruct",
+  "applied": "unmerged: x W^T + (alpha/r) (x A^T) B^T, A/B read from the file",
+  "repo": "Bonorinoa/SCA2-paper-b-adapters (dataset)",
+  "path_in_repo": "adapters/USA",
+  "country": "USA",
+  "item_split": null,
+  "item_split_note": "unknown: the adapter's train/held-out split lives under data/, out of fence"
+ },
+ "taus_f64_8b": {
+  "residual_closure": 1e-13,
+  "step_closure": 1e-14,
+  "head_closure": 1e-15,
+  "readout": 1e-13,
+  "pair_attribution": 1e-06,
+  "logits_reference": 0.0001
+ },
+ "parity_tau": 0.0001,
+ "items": {
+  "wvs_Q81": {
+   "T": 148,
+   "stats": {
+    "item": "wvs_Q81",
+    "dtype": "float64",
+    "T": 148,
+    "passes": 4,
+    "wall_seconds": 33.2,
+    "peak_rss_gb": 10.56,
+    "torch": "2.14.1",
+    "threads": 8
+   },
+   "llama31_8b": {
+    "pass": true,
+    "margin": 0.2555285022962366,
+    "probs": {
+     "1": 0.004471226388248025,
+     "2": 0.7892477562818028,
+     "3": 0.2028180209208489,
+     "4": 0.0034629964091002024
+    },
+    "paper_b_probs": {
+     "1": 0.004471353559925845,
+     "2": 0.7892404842657176,
+     "3": 0.20282520910050572,
+     "4": 0.0034629530738509626
+    },
+    "paper_b_scores": [
+     -21.679288864135742,
+     -16.505908966064453,
+     -17.864635467529297,
+     -21.934858322143555
+    ],
+    "parity_gap": 7.272016085191346e-06,
+    "hf_logits_rel_gap": 3.0021618089579415e-06,
+    "relative": {},
+    "bin_bytes": 23205600,
+    "json_bytes": 16936
+   },
+   "llama31_8b_usa": {
+    "pass": true,
+    "margin": 17.914469990881866,
+    "probs": {
+     "1": 0.6948280974292421,
+     "2": 0.3051717998056073,
+     "3": 9.123800148623559e-08,
+     "4": 1.1527149052057509e-08
+    },
+    "paper_b_probs": {
+     "1": 0.6948237692040174,
+     "2": 0.30517612802808647,
+     "3": 9.124025520285244e-08,
+     "4": 1.1527641042621598e-08
+    },
+    "paper_b_scores": [
+     -28.161453247070312,
+     -28.984222412109375,
+     -44.00712585449219,
+     -46.07587432861328
+    ],
+    "parity_gap": 4.328225224670135e-06,
+    "hf_logits_rel_gap": 1.7970194634300821e-06,
+    "relative": {},
+    "bin_bytes": 23205600,
+    "json_bytes": 17851
+   },
+   "a_vs_stage1b_base": {
+    "head_attr": 0.0,
+    "neuron_attr": 0.0,
+    "logits_last": 0.0,
+    "running_margin": 0.0
+   },
+   "pair": {
+    "d_margin": 17.65894148858563,
+    "d_probs": {
+     "1": 0.6903568710409941,
+     "2": -0.48407595647619545,
+     "3": -0.20281792968284743,
+     "4": -0.0034629848819511502
+    },
+    "conservation": {
+     "d_attr_gap": 1.4210854715202004e-14,
+     "d_attr_gap_float32": 1.3302040358098566e-07,
+     "d_attr_gap_clamped": 4.930084118726086e-15,
+     "d_attr_gap_float32_clamped": 1.7989020485026375e-08,
+     "relative": {
+      "plain": {
+       "gap_f64": {
+        "error": 1.4210854715202004e-14,
+        "scale": 18.65894148858563,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 7.616109801242109e-16,
+        "tau": 1e-06,
+        "pass": true
+       },
+       "gap_f32": {
+        "error": 1.3302040358098566e-07,
+        "scale": 18.65894148858563,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 7.129043395219349e-09,
+        "tau": 1e-06,
+        "pass": true
+       }
+      },
+      "clamped": {
+       "gap_f64": {
+        "error": 4.930084118726086e-15,
+        "scale": 1.0084242097140494,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 4.888899008210115e-15,
+        "tau": 1e-06,
+        "pass": true
+       },
+       "gap_f32": {
+        "error": 1.7989020485026375e-08,
+        "scale": 1.0084242097140494,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 1.783874317151447e-08,
+        "tau": 1e-06,
+        "pass": true
+       }
+      }
+     },
+     "pass": true
+    },
+    "bin_bytes": 688976,
+    "json_bytes": 4008,
+    "shapes": {
+     "d_resid_norm": [
+      33,
+      148
+     ],
+     "d_attn_norm": [
+      32,
+      148
+     ],
+     "d_mlp_norm": [
+      32,
+      148
+     ],
+     "d_head_norm": [
+      32,
+      32,
+      148
+     ],
+     "d_weight_head": [
+      32,
+      32,
+      4
+     ],
+     "d_weight_mlp": [
+      32,
+      3
+     ],
+     "d_head_attr": [
+      32,
+      32
+     ],
+     "d_mlp_attr": [
+      32
+     ],
+     "d_attn_attr": [
+      32
+     ],
+     "d_head_attr_clamped": [
+      32,
+      32
+     ],
+     "d_mlp_attr_clamped": [
+      32
+     ]
+    }
+   },
+   "run_shapes": {
+    "resid_norm": [
+     33,
+     148
+    ],
+    "attn_norm": [
+     32,
+     148
+    ],
+    "mlp_norm": [
+     32,
+     148
+    ],
+    "head_norm": [
+     32,
+     32,
+     148
+    ],
+    "attn_topk_idx": [
+     32,
+     32,
+     148,
+     16
+    ],
+    "attn_topk_val": [
+     32,
+     32,
+     148,
+     16
+    ],
+    "attn_topk_mass": [
+     32,
+     32,
+     148
+    ],
+    "q3_count": [
+     32,
+     148
+    ],
+    "q3_write_norm": [
+     32,
+     148
+    ],
+    "g_last": [
+     32,
+     14336
+    ],
+    "u_last": [
+     32,
+     14336
+    ],
+    "c_last": [
+     32,
+     14336
+    ],
+    "head_attr": [
+     32,
+     32
+    ],
+    "neuron_attr": [
+     32,
+     14336
+    ],
+    "attn_attr": [
+     32
+    ],
+    "mlp_attr": [
+     32
+    ],
+    "running_margin": [
+     33
+    ],
+    "running_margin_clamped": [
+     33
+    ],
+    "head_attr_clamped": [
+     32,
+     32
+    ],
+    "mlp_attr_clamped": [
+     32
+    ]
+   },
+   "archived_paper_b_usa": {
+    "file": "planning/sprint_2026-10-11/paper-b-20261011/scores_for_join/USA_adapter_option_probabilities.csv",
+    "adapter_revision": "7550fd4cfe514470bb8d80918a43c9ae424d26b5",
+    "run_id": "paper-b-20261011",
+    "probs": {
+     "1": 0.9999948252337094,
+     "2": 5.17391876584071e-06,
+     "3": 6.587808574246541e-10,
+     "4": 1.887438757318324e-10
+    },
+    "logprobs": {
+     "1": -27.921875,
+     "2": -40.09375,
+     "3": -49.0625,
+     "4": -50.3125
+    },
+    "max_abs_prob_gap_vs_ours": 0.3051667278044673,
+    "max_abs_prob_gap_vs_paper_b_now": 0.30517105602969197,
+    "archived_base": {
+     "probs": {
+      "1": 0.0689226122143898,
+      "2": 0.8011989658708782,
+      "3": 0.1287643916452025,
+      "4": 0.0011140302695295
+     },
+     "logprobs": {
+      "1": -20.0,
+      "2": -17.546875,
+      "3": -19.375,
+      "4": -24.125
+     }
+    }
+   }
+  },
+  "bank_USA_00023ac74dac": {
+   "T": 299,
+   "stats": {
+    "item": "bank_USA_00023ac74dac",
+    "dtype": "float64",
+    "T": 299,
+    "passes": 4,
+    "wall_seconds": 61.7,
+    "peak_rss_gb": 11.5,
+    "torch": "2.14.1",
+    "threads": 8
+   },
+   "llama31_8b": {
+    "pass": true,
+    "margin": -1.259827002179442,
+    "probs": {
+     "1": 0.22100367426913553,
+     "2": 0.7789963257308643
+    },
+    "paper_b_probs": {
+     "1": 0.22100997226821625,
+     "2": 0.7789900277317838
+    },
+    "paper_b_scores": [
+     -13.239524841308594,
+     -11.979734420776367
+    ],
+    "parity_gap": 6.29799908072326e-06,
+    "hf_logits_rel_gap": 3.013128270084062e-06,
+    "relative": {},
+    "bin_bytes": 39383744,
+    "json_bytes": 23826
+   },
+   "llama31_8b_usa": {
+    "pass": true,
+    "margin": 13.15738268559032,
+    "probs": {
+     "1": 0.9999980688301848,
+     "2": 1.931169815273113e-06
+    },
+    "paper_b_probs": {
+     "1": 0.9999980687239026,
+     "2": 1.931276097244201e-06
+    },
+    "paper_b_scores": [
+     -27.861555099487305,
+     -41.018882751464844
+    ],
+    "parity_gap": 1.0628220525887855e-10,
+    "hf_logits_rel_gap": 2.2728443950415964e-06,
+    "relative": {},
+    "bin_bytes": 39383744,
+    "json_bytes": 24746
+   },
+   "a_vs_stage1b_base": {
+    "head_attr": 0.0,
+    "neuron_attr": 0.0,
+    "logits_last": 0.0,
+    "running_margin": 0.0
+   },
+   "pair": {
+    "d_margin": 14.417209687769763,
+    "d_probs": {
+     "1": 0.7789943945610494,
+     "2": -0.778994394561049
+    },
+    "conservation": {
+     "d_attr_gap": 1.7763568394002505e-15,
+     "d_attr_gap_float32": 6.721662337838552e-08,
+     "d_attr_gap_clamped": 2.942091015256665e-15,
+     "d_attr_gap_float32_clamped": 3.0273923312673645e-08,
+     "relative": {
+      "plain": {
+       "gap_f64": {
+        "error": 1.7763568394002505e-15,
+        "scale": 15.417209687769763,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 1.1521908797863775e-16,
+        "tau": 1e-06,
+        "pass": true
+       },
+       "gap_f32": {
+        "error": 6.721662337838552e-08,
+        "scale": 15.417209687769763,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 4.359843625381021e-09,
+        "tau": 1e-06,
+        "pass": true
+       }
+      },
+      "clamped": {
+       "gap_f64": {
+        "error": 2.942091015256665e-15,
+        "scale": 1.4702565067466793,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 2.0010732833053723e-15,
+        "tau": 1e-06,
+        "pass": true
+       },
+       "gap_f32": {
+        "error": 3.0273923312673645e-08,
+        "scale": 1.4702565067466793,
+        "scale_desc": "|d_margin| + 1",
+        "rel": 2.0590912656229277e-08,
+        "tau": 1e-06,
+        "pass": true
+       }
+      }
+     },
+     "pass": true
+    },
+    "bin_bytes": 1366064,
+    "json_bytes": 4016,
+    "shapes": {
+     "d_resid_norm": [
+      33,
+      299
+     ],
+     "d_attn_norm": [
+      32,
+      299
+     ],
+     "d_mlp_norm": [
+      32,
+      299
+     ],
+     "d_head_norm": [
+      32,
+      32,
+      299
+     ],
+     "d_weight_head": [
+      32,
+      32,
+      4
+     ],
+     "d_weight_mlp": [
+      32,
+      3
+     ],
+     "d_head_attr": [
+      32,
+      32
+     ],
+     "d_mlp_attr": [
+      32
+     ],
+     "d_attn_attr": [
+      32
+     ],
+     "d_head_attr_clamped": [
+      32,
+      32
+     ],
+     "d_mlp_attr_clamped": [
+      32
+     ]
+    }
+   },
+   "run_shapes": {
+    "resid_norm": [
+     33,
+     299
+    ],
+    "attn_norm": [
+     32,
+     299
+    ],
+    "mlp_norm": [
+     32,
+     299
+    ],
+    "head_norm": [
+     32,
+     32,
+     299
+    ],
+    "attn_topk_idx": [
+     32,
+     32,
+     299,
+     16
+    ],
+    "attn_topk_val": [
+     32,
+     32,
+     299,
+     16
+    ],
+    "attn_topk_mass": [
+     32,
+     32,
+     299
+    ],
+    "q3_count": [
+     32,
+     299
+    ],
+    "q3_write_norm": [
+     32,
+     299
+    ],
+    "g_last": [
+     32,
+     14336
+    ],
+    "u_last": [
+     32,
+     14336
+    ],
+    "c_last": [
+     32,
+     14336
+    ],
+    "head_attr": [
+     32,
+     32
+    ],
+    "neuron_attr": [
+     32,
+     14336
+    ],
+    "attn_attr": [
+     32
+    ],
+    "mlp_attr": [
+     32
+    ],
+    "running_margin": [
+     33
+    ],
+    "running_margin_clamped": [
+     33
+    ],
+    "head_attr_clamped": [
+     32,
+     32
+    ],
+    "mlp_attr_clamped": [
+     32
+    ]
+   },
+   "archived_paper_b_usa": null
+  }
+ },
+ "weight_delta_wall_s": 0.2,
+ "index_pairs": [
+  "pair__llama31_8b__llama31_8b_usa__bank_USA_00023ac74dac.json",
+  "pair__llama31_8b__llama31_8b_usa__wvs_Q81.json"
+ ]
+}

@@ -1,0 +1,118 @@
+W1017 19:00:28.943000 97478 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6858.46it/s]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 9458.93it/s]
+smol_inst          wvs_Q57                  step rel  f64 2.55e-16  f32 2.29e-07
+smol_inst          wvs_Q43                  step rel  f64 3.17e-16  f32 1.65e-07
+smol_inst          wvs_Q81                  step rel  f64 2.25e-16  f32 2.26e-07
+smol_inst          bank_USA_00023ac74dac    step rel  f64 3.07e-16  f32 1.70e-07
+smol_inst          bank_USA_7232414df567    step rel  f64 4.64e-16  f32 1.70e-07
+smol_inst          bank_USA_f48d3d37c50e    step rel  f64 6.42e-16  f32 1.76e-07
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 7187.77it/s]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 11015.79it/s]
+smol_inst_usa_e3   wvs_Q57                  step rel  f64 1.95e-15  f32 2.84e-07
+smol_inst_usa_e3   wvs_Q43                  step rel  f64 1.95e-15  f32 2.84e-07
+smol_inst_usa_e3   wvs_Q81                  step rel  f64 1.95e-15  f32 2.84e-07
+smol_inst_usa_e3   bank_USA_00023ac74dac    step rel  f64 1.95e-15  f32 2.84e-07
+smol_inst_usa_e3   bank_USA_7232414df567    step rel  f64 1.95e-15  f32 2.84e-07
+smol_inst_usa_e3   bank_USA_f48d3d37c50e    step rel  f64 1.95e-15  f32 2.84e-07
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights:  84%|████████▍ | 228/272 [00:00<00:00, 2255.59it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 2383.62it/s]
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6181.83it/s]
+smol_base          wvs_Q57                  step rel  f64 4.29e-16  f32 2.30e-07
+smol_base          wvs_Q43                  step rel  f64 4.29e-16  f32 2.30e-07
+smol_base          wvs_Q81                  step rel  f64 4.29e-16  f32 2.30e-07
+smol_base          bank_USA_00023ac74dac    step rel  f64 4.29e-16  f32 2.30e-07
+smol_base          bank_USA_7232414df567    step rel  f64 4.29e-16  f32 2.30e-07
+smol_base          bank_USA_f48d3d37c50e    step rel  f64 4.29e-16  f32 2.30e-07
+
+float64: max step_closure rel 1.946e-15 -> tau (10x, next power of ten) 1e-13
+float32: max step_closure rel 2.845e-07 -> tau (10x, next power of ten) 1e-05
+{
+ "wvs_Q57": {
+  "float64": {
+   "largest": {
+    "layer": 11,
+    "step_closure": 9982830233.570297,
+    "residual_closure": 58564581956.285934,
+    "readout": 0.013851357204962602
+   },
+   "median": {
+    "layer": 21,
+    "step_closure": 3216448511.762263,
+    "residual_closure": 113307628.1464235,
+    "readout": 0.013851357204962602
+   },
+   "smallest": {
+    "layer": 5,
+    "step_closure": 2139974513.5022087,
+    "residual_closure": 18456176.46222569,
+    "readout": 0.013851357204962602
+   },
+   "clean_step_over_tau": 0.002553174535264162
+  },
+  "float32": {
+   "largest": {
+    "layer": 11,
+    "step_closure": 99.83623729918207,
+    "residual_closure": 58.56926026706763,
+    "readout": 0.007971211143274396
+   },
+   "median": {
+    "layer": 21,
+    "step_closure": 32.16541144470113,
+    "residual_closure": 0.11335949182203385,
+    "readout": 0.007971211143274396
+   },
+   "smallest": {
+    "layer": 5,
+    "step_closure": 21.399674003892734,
+    "residual_closure": 0.018492730715136133,
+    "readout": 0.007971211143274396
+   },
+   "clean_step_over_tau": 0.022885408297997307
+  }
+ },
+ "wvs_Q81": {
+  "float64": {
+   "largest": {
+    "layer": 11,
+    "step_closure": 9982830233.570297,
+    "residual_closure": 58564581956.285934,
+    "readout": 0.013806136204195405
+   },
+   "median": {
+    "layer": 21,
+    "step_closure": 3173906666.6380196,
+    "residual_closure": 108957266.87254226,
+    "readout": 0.013806136204195405
+   },
+   "smallest": {
+    "layer": 5,
+    "step_closure": 2264390704.4735804,
+    "residual_closure": 18410541.274641387,
+    "readout": 0.013806136204195405
+   },
+   "clean_step_over_tau": 0.002253514669847189
+  },
+  "float32": {
+   "largest": {
+    "layer": 11,
+    "step_closure": 99.83623729918207,
+    "residual_closure": 58.56926026706763,
+    "readout": 0.013322523401893646
+   },
+   "median": {
+    "layer": 21,
+    "step_closure": 31.745774657767704,
+    "residual_closure": 0.10890642159393633,
+    "readout": 0.013322523401893646
+   },
+   "smallest": {
+    "layer": 5,
+    "step_closure": 22.65040289250389,
+    "residual_closure": 0.018380757962785522,
+    "readout": 0.013322523401893646
+   },
+   "clean_step_over_tau": 0.022580968579033838
+  }
+ }
+}

@@ -1,0 +1,7 @@
+W1017 18:56:36.871000 88023 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 3888.14it/s]
+Q57 T=136 clamp=False: worst mlp_attr 6.66e-16; resid_all 0.00e+00; margin +0.755343 (ref +0.755343)
+Q57 T=136 clamp=True: worst mlp_attr 3.10e-16; resid_all 0.00e+00; margin +3.097841 (ref +3.097841)
+Q81 T=152 clamp=False: worst mlp_attr 9.71e-16; resid_all 0.00e+00; margin +1.058629 (ref +1.058629)
+Q81 T=152 clamp=True: worst mlp_attr 9.99e-16; resid_all 0.00e+00; margin +2.437163 (ref +2.437163)
+WORST over all arrays / items / modes: 9.99e-16  (gate 1e-12)

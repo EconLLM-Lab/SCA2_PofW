@@ -96,38 +96,52 @@ The pair manifest adds these top-level scalars, all float64:
 The block of a **pair** manifest is new in @1.1 and is described after the run table below.
 
 
-The block lists each check, its threshold, and the `pass` flag.
+A run manifest carries two representations of its checks:
 
-| Check | Threshold |
-|---|---|
-| Residual closure | < 1e-3 (brief) |
-| DLA gap | < 1e-2 (brief) |
-| `hf64_logits_max_rel_gap` | < 1e-10 |
-| `hf_*` (HF as shipped) | none; listed for information |
-| Eq. 6 teacher-forced gap | none; listed for information |
+1. **`conservation.relative` is the live verdict.** Every check is stored as
+   `{error, scale, scale_desc, rel, tau, pass}`, where `rel = error / scale`, and the block's
+   `pass` is true only when every listed check passes. Its `taus` object records the calibration
+   used for that model and compute dtype. Checks currently include residual closure, per-step
+   closure, head closure, readout closure (plain and clamped), and the logits reference; streamed
+   Paper B runs also include scorer parity. Readers must iterate the checks rather than hardcoding
+   their names, because additive checks may appear within capture@1.1.
+2. **The top-level absolute fields and `thresholds` are legacy compatibility data.** They remain so
+   capture@1 readers can load a capture@1.1 file, but they do not decide `conservation.pass` when a
+   `relative` block exists. `legacy_absolute_applicable` is true only when *all* legacy checks use
+   their original float64 reference path; streamed captures set it false even when their arithmetic
+   is float64 because their independent HF reference runs in float32.
 
-The DLA gap is checked in both the normal and the clamped pass.
+The scales and calibrated thresholds are defined in `spec/conservation.md` and emitted in every
+manifest. The readout check runs in both the normal and clamped pass. A failed live check is never
+hidden by the viewer.
 
 **Pair `conservation` block (new in @1.1).** The B − A of the readout attributions sums to the B − A of the margin:
 
     Σ d_head_attr + Σ d_mlp_attr + d_embed_attr = d_margin           (and the same with _clamped, d_margin_clamped)
 
-| Check | Threshold |
-|---|---|
-| `d_attr_gap`, `d_attr_gap_clamped` (float64 sums of the differences) | < 1e-6 |
-| `d_attr_gap_float32`, `d_attr_gap_float32_clamped` (sums of the stored float32 arrays, in float64, plus the float64 `d_embed_attr`) | < 1e-6 |
+The four pair checks (`d_attr_gap`, `d_attr_gap_float32`, and their `_clamped` forms) are
+rows in the same canonical `conservation.relative.checks` map as run checks. Float64 sums and sums
+reconstructed from stored float32 arrays, each plain and clamped, use the live `pair_attribution`
+relative gate: error / (`|d_margin| + 1`) ≤ τ. The current τ is 1e-6 and the exporter refuses a
+pair that fails. Over the original 16 small-model pairs, the
+worst stored-array error was 7.4e-8; the 8B pair records its own measured value in its manifest.
 
-`pass` is true only when all four hold, and the exporter raises before it writes the pair if one fails. The float32 gap is what a viewer can add up. Over the 16 exported pairs its worst value is 7.4e-8.
-
-The `hf64` check compares our pass with HF after removing HF's three float32 casts: RMSNorm, RoPE and the eager softmax. That gap is about 5e-15 relative. With the casts left in, HF differs from our pass by about 1e-6 relative. That difference is float32 round-off in HF, and the `hf_*` gaps record it.
+The legacy `hf64` field compares the small-model float64 pass with HF after removing HF's three
+float32 casts: RMSNorm, RoPE and the eager softmax. That gap is about 5e-15 relative. With the casts
+left in, HF differs by about 1e-6. Streamed 8B manifests name the actual reference key under
+`conservation.relative.reference_key`; do not infer the reference dtype from the capture dtype.
 
 ## Readout (Eq. 6)
 
 The prompt comes from `paper_b` v1 (verbatim, no country name) and is wrapped in the Instruct chat template. Each completion is " " + code.
 
-SmolLM2 splits " 1" into `Ġ` + `1`. The code tokens therefore diverge one position after the template, at the shared `Ġ`. That position is t*. At t*, a softmax over the code-token logits equals the full teacher-forced Eq. 6, and a test checks this.
-
-Items whose codes do not split as a shared prefix plus one token are refused. Q50 is one, because " 10" shares a prefix with " 1".
+SmolLM2 and Llama-3 both split `" 1"` into a shared space token plus the code token. The code
+tokens therefore diverge one position after that shared space; that position is t*. At t*, a
+softmax over the code-token logits equals the full teacher-forced Eq. 6, and a test checks this.
+The tokenizer probe is mandatory for each model family: the chat-templated prompt must remain an
+exact prefix, and every completion must be a shared prefix plus exactly one final token. SmolLM2
+refuses Q50 because `" 10"` is not compatible with its one-token code rule; Llama-3 accepts it
+(`" 10" = [220, 605]`).
 
 Bank items are the anchor scenario posed as a two-option question. The option order comes from a hash of `triplet_id`. j₊ is always the chosen (GPS-sign-aligned) code. For an adapter run, `model.adapter.item_split` records whether the scenario was in the adapter's training split.
 
@@ -148,7 +162,15 @@ Additive only. No array, shape, offset or gate of @1 changed. After re-export, e
 | `smol_inst` | HuggingFaceTB/SmolLM2-135M-Instruct |
 | `smol_inst_usa_e1` | smol_inst + `models/usa_e1` (USA DPO LoRA, paper recipe, 1 epoch) |
 | `smol_inst_usa_e3` | smol_inst + `models/usa_e3` (3 epochs) |
+| `llama31_8b` | meta-llama/Llama-3.1-8B-Instruct, streamed one decoder layer at a time |
+| `llama31_8b_usa` | llama31_8b + Paper B USA LoRA from the private HF dataset artifact bus |
 
-All four use the Instruct tokenizer; the vocabulary is identical across them.
+The four SmolLM entries use the Instruct tokenizer; the vocabulary is identical across them. The
+Llama pair uses the Llama-3.1 tokenizer and Paper B's own prompt preparation. `index.json` lists the
+serveable top-level run and pair manifests. Diagnostic captures kept in nested export subdirectories
+are deliberately outside that index and are not viewer inputs.
 
-Adapters are merged after an explicit state-dict load, and every LoRA tensor is checked against the file. This works around peft 0.21.2, which silently loads LoRA B as zero into a float64 base.
+The SmolLM adapters are merged only after an explicit state-dict load, and every LoRA tensor is
+checked against the file. This works around peft 0.21.2, which can silently leave LoRA B at zero in
+a float64 base. The streamed Llama adapter remains unmerged and is applied as
+`W x + (alpha/r) B(Ax)` inside each loaded layer; tests compare it with an explicit merge.

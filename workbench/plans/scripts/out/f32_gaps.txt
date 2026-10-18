@@ -1,0 +1,40 @@
+W1017 18:42:47.401000 63687 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights:  94%|█████████▍| 255/272 [00:00<00:00, 2519.69it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 2594.78it/s]
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 10184.98it/s]
+smol_inst            wvs_Q57                  T=136 resid 8.21e-16 -> 6.89e-08 margin +0.755 -> +0.755 (2.0s)
+smol_inst            wvs_Q43                  T=144 resid 8.21e-16 -> 6.89e-08 margin +0.039 -> +0.039 (2.9s)
+smol_inst            wvs_Q81                  T=152 resid 8.21e-16 -> 6.89e-08 margin +1.059 -> +1.059 (3.9s)
+smol_inst            bank_USA_00023ac74dac    T=306 resid 8.21e-16 -> 6.89e-08 margin +1.075 -> +1.075 (6.1s)
+smol_inst            bank_USA_7232414df567    T=230 resid 8.21e-16 -> 6.89e-08 margin -0.986 -> -0.986 (7.7s)
+smol_inst            bank_USA_f48d3d37c50e    T=255 resid 8.21e-16 -> 6.89e-08 margin +0.776 -> +0.776 (9.3s)
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6811.09it/s]
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 9903.91it/s]
+smol_inst_usa_e3     wvs_Q57                  T=136 resid 2.99e-15 -> 8.03e-07 margin +1.777 -> +1.777 (11.7s)
+smol_inst_usa_e3     wvs_Q43                  T=144 resid 2.99e-15 -> 8.03e-07 margin +0.419 -> +0.419 (12.6s)
+smol_inst_usa_e3     wvs_Q81                  T=152 resid 2.99e-15 -> 8.03e-07 margin +2.920 -> +2.920 (13.8s)
+smol_inst_usa_e3     bank_USA_00023ac74dac    T=306 resid 2.99e-15 -> 8.03e-07 margin +1.647 -> +1.647 (16.2s)
+smol_inst_usa_e3     bank_USA_7232414df567    T=230 resid 2.99e-15 -> 8.03e-07 margin -1.764 -> -1.764 (17.8s)
+smol_inst_usa_e3     bank_USA_f48d3d37c50e    T=255 resid 2.99e-15 -> 8.03e-07 margin +1.410 -> +1.410 (19.5s)
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights:  78%|███████▊  | 211/272 [00:00<00:00, 2093.08it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 2266.02it/s]
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 9635.56it/s]
+smol_base            wvs_Q57                  T=136 resid 5.45e-15 -> 6.23e-06 margin +1.229 -> +1.229 (21.6s)
+smol_base            wvs_Q43                  T=144 resid 5.45e-15 -> 6.23e-06 margin +2.302 -> +2.302 (22.4s)
+smol_base            wvs_Q81                  T=152 resid 5.45e-15 -> 6.23e-06 margin +2.508 -> +2.508 (23.5s)
+smol_base            bank_USA_00023ac74dac    T=306 resid 5.45e-15 -> 6.23e-06 margin +0.733 -> +0.733 (25.6s)
+smol_base            bank_USA_7232414df567    T=230 resid 5.45e-15 -> 6.23e-06 margin -0.940 -> -0.940 (27.2s)
+smol_base            bank_USA_f48d3d37c50e    T=255 resid 5.45e-15 -> 6.23e-06 margin +0.923 -> +0.923 (29.0s)
+wrote workbench/plans/stage1_f32_gaps.md and workbench/plans/stage1_f32_gaps.csv in 29.0s

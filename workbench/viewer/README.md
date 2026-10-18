@@ -33,7 +33,12 @@ The full contract is `../spec/export_contract.md`.
 
 ## Conservation bar
 
-The bar shows the Python checks for every pass. It also shows one check recomputed in the browser: ΣDLA (embedding + heads + neurons) against the margin, using the float32 arrays that are drawn.
+The bar shows the Python checks for every pass. A `capture@1.1` manifest written after t_1547e1a8 carries `conservation.relative`: one row per check, `rel = |error| / scale` against its `tau`, and that block is the verdict the frame draws. The absolute fields and `conservation.thresholds` stay in the manifest for older readers, but below one ulp of the stream they are not gates: a float32 export meets the relative ones and cannot meet those. A manifest without a relative block (every export written before t_1547e1a8, and the pair block) is read the old way, against `conservation.thresholds`.
+
+The bar also shows one check recomputed in the browser: ΣDLA (embedding + heads + neurons) against the margin, using the float32 arrays that are drawn. That re-sum has no relative form in the manifest, so in a float32 export (`legacy_absolute_applicable: false`) the page shows its number and says the verdict comes from the relative gates, instead of comparing it to the absolute bound.
+
+`npm run build` exercises this; `screens/f32-gates/` holds the harness that renders both cases and
+the screenshots (`README.md` there explains how to run it).
 
 ## Not built yet
 

@@ -32,8 +32,32 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
+from sca2_workbench.gates import worst_step
+
 #: Quadrant III threshold (Cammarata): both poles below -EPS.
 EPS_Q3 = 0.05
+
+
+@dataclass(frozen=True)
+class RopeScaling:
+    """The RoPE frequency scaling a config asks for, restricted to what we reproduce exactly.
+
+    ``rope_type="default"`` is the unscaled table. ``"llama3"`` is the Llama-3.x scheme: the
+    low-frequency end of the table is divided by ``factor``, the middle band is blended between
+    the two ends, and ``original_max_position_embeddings`` is the length the bands are measured
+    against. Both types have ``attention_scaling`` 1.0 in HF, so the cos/sin are not rescaled.
+    Any other type is refused by ``_rope_scaling``: the rotation would silently be the unscaled one.
+    """
+
+    rope_type: str = "default"
+    factor: float = 1.0
+    low_freq_factor: float = 1.0
+    high_freq_factor: float = 4.0
+    original_max_position_embeddings: int = 8192
+
+    @property
+    def scaled(self) -> bool:
+        return self.rope_type != "default"
 
 
 @dataclass
@@ -47,6 +71,7 @@ class LlamaWeights:
     head_dim: int
     rms_eps: float
     rope_theta: float
+    rope_scaling: RopeScaling = RopeScaling()
 
     @property
     def n_layers(self) -> int:
@@ -61,49 +86,125 @@ class LlamaWeights:
         return int(self.layers[0]["gate"].shape[0])
 
 
-def _rope_theta(cfg) -> float:
+#: The ``rope_scaling`` keys the llama3 scheme needs (HF ``_compute_llama3_parameters``).
+_LLAMA3_KEYS = ("factor", "low_freq_factor", "high_freq_factor", "original_max_position_embeddings")
+
+
+def _rope_block(cfg) -> dict:
+    """The rope dict HF reads: transformers 5.x ``rope_parameters``, else 4.x ``rope_scaling``."""
     for source in (getattr(cfg, "rope_parameters", None), getattr(cfg, "rope_scaling", None)):
-        if isinstance(source, dict) and "rope_theta" in source:
-            if source.get("rope_type", "default") != "default":
-                raise ValueError(f"only default RoPE is implemented; got {source}")
-            return float(source["rope_theta"])
+        if isinstance(source, dict) and source:
+            return source
+    return {}
+
+
+def _rope_theta(cfg) -> float:
+    """The RoPE base HF reads from this config."""
+    block = _rope_block(cfg)
+    if "rope_theta" in block:
+        return float(block["rope_theta"])
     theta = getattr(cfg, "rope_theta", None)
     if theta is None:
         raise ValueError("config carries no rope_theta")
     return float(theta)
 
 
-def weights_from_hf(model) -> LlamaWeights:
-    """float64 views of a ``LlamaForCausalLM``. Biases must be absent, because DLA assumes none."""
+def _rope_scaling(cfg) -> RopeScaling:
+    """The frequency scaling HF applies to ``cfg``. Only what we reproduce exactly is accepted.
+
+    A refusal here is what keeps a model with an unimplemented scheme (yarn, linear, dynamic,
+    longrope) from being captured with an unscaled rotation, which would be a different model.
+    """
+    block = _rope_block(cfg)
+    rope_type = block.get("rope_type") or getattr(cfg, "rope_type", None) or "default"
+    if rope_type == "default":
+        return RopeScaling()
+    if rope_type != "llama3":
+        raise ValueError(f"only default and llama3 RoPE are implemented; got {rope_type!r} in {block}")
+    missing = [k for k in _LLAMA3_KEYS if k not in block]
+    if missing:
+        raise ValueError(f"llama3 RoPE needs {list(missing)}; config carries {block}")
+    partial = float(block.get("partial_rotary_factor", 1.0))
+    if partial != 1.0:
+        raise ValueError(f"partial_rotary_factor={partial} is not implemented")
+    return RopeScaling(
+        rope_type="llama3",
+        factor=float(block["factor"]),
+        low_freq_factor=float(block["low_freq_factor"]),
+        high_freq_factor=float(block["high_freq_factor"]),
+        original_max_position_embeddings=int(block["original_max_position_embeddings"]),
+    )
+
+
+def rope_inv_freq(head_dim: int, theta: float, scaling: RopeScaling = RopeScaling(),
+                  *, dtype: torch.dtype = torch.float64) -> torch.Tensor:
+    """HF's inverse frequencies for ``head_dim``, built in ``dtype``.
+
+    The base table is ``LlamaRotaryEmbedding.compute_default_rope_parameters``; the rescaling is
+    ``modeling_rope_utils._compute_llama3_parameters``, branch for branch:
+
+      * wavelength > ``original_max_position_embeddings / low_freq_factor``: divide by ``factor``;
+      * wavelength < ``original_max_position_embeddings / high_freq_factor``: leave alone;
+      * between the two: blend the divided and undivided values with the smooth factor.
+
+    ``tests/test_llama3_rope.py`` checks this against HF's own module in HF's own code, so the
+    branches are not a transcription on trust.
+    """
+    inv_freq = 1.0 / (theta ** (torch.arange(0, head_dim, 2, dtype=dtype) / head_dim))
+    if not scaling.scaled:
+        return inv_freq
+    old_context_len = float(scaling.original_max_position_embeddings)
+    low_freq_wavelen = old_context_len / scaling.low_freq_factor
+    high_freq_wavelen = old_context_len / scaling.high_freq_factor
+
+    wavelen = 2 * math.pi / inv_freq
+    inv_llama = torch.where(wavelen > low_freq_wavelen, inv_freq / scaling.factor, inv_freq)
+    smooth_factor = (old_context_len / wavelen - scaling.low_freq_factor) / (
+        scaling.high_freq_factor - scaling.low_freq_factor)
+    smoothed = (1 - smooth_factor) * inv_llama / scaling.factor + smooth_factor * inv_llama
+    is_medium_freq = ~(wavelen < high_freq_wavelen) * ~(wavelen > low_freq_wavelen)
+    return torch.where(is_medium_freq, smoothed, inv_llama)
+
+
+def weights_from_hf(model, *, dtype: torch.dtype = torch.float64) -> LlamaWeights:
+    """Views of a ``LlamaForCausalLM`` in ``dtype``. Biases must be absent, because DLA assumes none.
+
+    ``dtype`` is the precision the whole pass runs in: the weights, the residual stream, the norm
+    and the softmax. float64 is the default and the only mode the 135M exports use; float32 is the
+    mode for models whose float64 copy does not fit, and it is gated relatively (see ``gates.py``).
+    """
     cfg = model.config
     if getattr(cfg, "attention_bias", False) or getattr(cfg, "mlp_bias", False):
         raise ValueError("biases are not supported (DLA closure assumes bias-free projections)")
     if cfg.hidden_act != "silu":
         raise ValueError(f"expected SiLU gating, got {cfg.hidden_act}")
+    if dtype not in (torch.float32, torch.float64):
+        raise ValueError(f"only float32 and float64 passes are supported; got {dtype}")
     core = model.model
-    f64 = lambda t: t.detach().to(device="cpu", dtype=torch.float64)  # noqa: E731
+    f = lambda t: t.detach().to(device="cpu", dtype=dtype)  # noqa: E731
     layers = []
     for blk in core.layers:
         att, mlp = blk.self_attn, blk.mlp
         layers.append({
-            "in_norm": f64(blk.input_layernorm.weight),
-            "q": f64(att.q_proj.weight), "k": f64(att.k_proj.weight),
-            "v": f64(att.v_proj.weight), "o": f64(att.o_proj.weight),
-            "post_norm": f64(blk.post_attention_layernorm.weight),
-            "gate": f64(mlp.gate_proj.weight), "up": f64(mlp.up_proj.weight),
-            "down": f64(mlp.down_proj.weight),
+            "in_norm": f(blk.input_layernorm.weight),
+            "q": f(att.q_proj.weight), "k": f(att.k_proj.weight),
+            "v": f(att.v_proj.weight), "o": f(att.o_proj.weight),
+            "post_norm": f(blk.post_attention_layernorm.weight),
+            "gate": f(mlp.gate_proj.weight), "up": f(mlp.up_proj.weight),
+            "down": f(mlp.down_proj.weight),
         })
     n_heads = cfg.num_attention_heads
     return LlamaWeights(
-        embed=f64(core.embed_tokens.weight),
-        unembed=f64(model.lm_head.weight),
-        final_norm=f64(core.norm.weight),
+        embed=f(core.embed_tokens.weight),
+        unembed=f(model.lm_head.weight),
+        final_norm=f(core.norm.weight),
         layers=layers,
         n_heads=n_heads,
         n_kv=cfg.num_key_value_heads,
         head_dim=getattr(cfg, "head_dim", None) or cfg.hidden_size // n_heads,
         rms_eps=float(cfg.rms_norm_eps),
         rope_theta=_rope_theta(cfg),
+        rope_scaling=_rope_scaling(cfg),
     )
 
 
@@ -116,30 +217,45 @@ def _rotate_half(x: torch.Tensor) -> torch.Tensor:
     return torch.cat((-x[..., half:], x[..., :half]), dim=-1)
 
 
-def _rope(T: int, head_dim: int, theta: float) -> tuple:
-    inv_freq = 1.0 / (theta ** (torch.arange(0, head_dim, 2, dtype=torch.float64) / head_dim))
-    freqs = torch.arange(T, dtype=torch.float64)[:, None] * inv_freq[None, :]
+def _rope(T: int, head_dim: int, theta: float, scaling: RopeScaling = RopeScaling(),
+          *, dtype: torch.dtype = torch.float64) -> tuple:
+    """The rotation tables for positions 0..T-1, built in ``dtype``.
+
+    The tables must be built in the pass's dtype: ``q * cos`` over a float32 ``q`` and a
+    float64 ``cos`` promotes the whole stream to float64, which would turn a float32 pass into
+    a slow float64 one without saying so.
+    """
+    inv_freq = rope_inv_freq(head_dim, theta, scaling, dtype=dtype)
+    freqs = torch.arange(T, dtype=dtype)[:, None] * inv_freq[None, :]
     emb = torch.cat((freqs, freqs), dim=-1)
     return emb.cos(), emb.sin()
 
 
 def run(W: LlamaWeights, ids, *, j_plus: int | None = None, j_minus: int | None = None,
-        clamp_q3: bool = False, eps_q3: float = EPS_Q3, keep_head_out: bool = False) -> dict:
-    """One float64 forward pass over ``ids``. Readout and DLA sit at the last position.
+        clamp_q3: bool = False, eps_q3: float = EPS_Q3, keep_head_out: bool = False,
+        drop_head_write: tuple[int, int] | None = None,
+        scale_mlp_write: tuple[int, float] | None = None) -> dict:
+    """One forward pass over ``ids`` in the weights' dtype. Readout and DLA sit at the last position.
 
     With ``clamp_q3`` the Quadrant-III products are set to zero in every layer at every
     position *during* the pass, so the effect propagates downstream.
+
+    ``drop_head_write=(layer, head)`` is a corruption for the conservation-gate tests only:
+    that head's write is removed from the *stored* attention slice while the residual stream
+    keeps it, which is what a capture bug looks like from the outside. Nothing in the export
+    path sets it. The returned ``residual_closure_inf`` then fails its gate, by design.
     """
     ids = torch.as_tensor(ids, dtype=torch.long)
+    dtype = W.embed.dtype
     T, H, KV, hd, eps = int(ids.shape[0]), W.n_heads, W.n_kv, W.head_dim, W.rms_eps
     rep = H // KV
-    cos, sin = _rope(T, hd, W.rope_theta)
+    cos, sin = _rope(T, hd, W.rope_theta, W.rope_scaling, dtype=dtype)
     causal = torch.triu(torch.ones(T, T, dtype=torch.bool), diagonal=1)
 
     h = W.embed[ids].clone()
     resid, attn_out, mlp_out, head_out, probs = [h], [], [], [], []
     g_all, u_all, c_all, q3_mask, q3_write = [], [], [], [], []
-    for lw in W.layers:
+    for layer, lw in enumerate(W.layers):
         x = rms_norm(h, lw["in_norm"], eps)
         q = (x @ lw["q"].T).view(T, H, hd).transpose(0, 1)
         k = (x @ lw["k"].T).view(T, KV, hd).transpose(0, 1)
@@ -155,6 +271,13 @@ def run(W: LlamaWeights, ids, *, j_plus: int | None = None, j_minus: int | None 
         o = torch.einsum("htk,hkd->htd", z, w_o)                               # (H, T, d)
         a = o.sum(0)
         h = h + a
+        if drop_head_write is not None and drop_head_write[0] == layer:
+            # Both stored pieces lose the head (the exporter forgot to write it down); the
+            # residual stream above keeps it, because the addition already happened.
+            dropped = o[drop_head_write[1]]
+            o = o.clone()
+            o[drop_head_write[1]] = 0.0
+            a = a - dropped
 
         x2 = rms_norm(h, lw["post_norm"], eps)
         g = x2 @ lw["gate"].T
@@ -164,6 +287,8 @@ def run(W: LlamaWeights, ids, *, j_plus: int | None = None, j_minus: int | None 
         c = c_raw.masked_fill(q3, 0.0) if clamp_q3 else c_raw
         m = c @ lw["down"].T
         h = h + m
+        if scale_mlp_write is not None and scale_mlp_write[0] == layer:
+            m = m * scale_mlp_write[1]            # the stream above already added the true m
 
         resid.append(h)
         attn_out.append(a)
@@ -189,9 +314,22 @@ def run(W: LlamaWeights, ids, *, j_plus: int | None = None, j_minus: int | None 
 
     closure = (R[-1] - (R[0] + Aout.sum(0) + Mout.sum(0))).abs().max().item()
     head_closure = (Aout - O.sum(1)).abs().max().item()
+    # Scales the relative gates divide by (``gates.py``): the size of the quantity the error is
+    # an error of. Both are inf-norms of what the stream and the attention write actually are.
+    resid_scale = R[-1].abs().max().item()
+    attn_scale = Aout.abs().max().item()
+
+    # Step closure: each layer's addition at its own grain (see ``gates.py``), in the pass dtype.
+    step_err = (R[1:] - R[:-1] - Aout - Mout).abs().amax(-1)                   # (L, T)
+    step_scale = R[1:].abs().amax(-1)                                          # (L, T)
+    step_err_inf, step_scale_inf = worst_step(step_err, step_scale)
 
     out = {
         "T": T,
+        "dtype": str(dtype).replace("torch.", ""),
+        "step_err_inf": step_err_inf,
+        "step_scale_inf": step_scale_inf,
+        "step_err_by_layer": step_err.amax(-1),                                 # (L,)
         "resid_norm": R.norm(dim=-1),                       # (L+1, T)
         "attn_norm": Aout.norm(dim=-1),                     # (L, T)
         "mlp_norm": Mout.norm(dim=-1),
@@ -205,7 +343,9 @@ def run(W: LlamaWeights, ids, *, j_plus: int | None = None, j_minus: int | None 
         "logits": logits,
         "logits_last": logits[-1],
         "residual_closure_inf": closure,
+        "residual_scale_inf": resid_scale,
         "head_closure_inf": head_closure,
+        "attn_scale_inf": attn_scale,
         "_resid": R, "_attn": Aout, "_mlp": Mout,
     }
     if keep_head_out:
@@ -244,8 +384,37 @@ def code_probs(logits_last: torch.Tensor, code_token: dict) -> dict:
     return {c: float(p[i]) for i, c in enumerate(codes)}
 
 
-def load_hf(model_id: str, adapter_dir: str | None = None):
-    """float64 eager HF model on CPU. An adapter is merged in (W + (alpha/r) B A) by peft.
+def check_adapter(adapter_dir, model_id: str) -> tuple:
+    """The guards every adapter passes before it is applied. Returns ``(config, file state dict)``.
+
+    The config must describe a plain LoRA for THIS base, otherwise the model built from it is
+    not the one the adapter was trained on; and the file must hold LoRA tensors.
+    """
+    import json  # noqa: PLC0415
+    from pathlib import Path  # noqa: PLC0415
+
+    from safetensors.torch import load_file  # noqa: PLC0415
+
+    cfg = json.loads((Path(adapter_dir) / "adapter_config.json").read_text())
+    if cfg.get("base_model_name_or_path") != model_id:
+        raise ValueError(f"adapter was trained on {cfg.get('base_model_name_or_path')!r}, "
+                         f"not {model_id!r}")
+    if cfg.get("bias", "none") != "none":
+        raise ValueError(f"adapter bias={cfg['bias']!r} is not supported (only 'none')")
+    if cfg.get("modules_to_save"):
+        raise ValueError(f"adapter modules_to_save={cfg['modules_to_save']} is not supported")
+    file_sd = load_file(str(Path(adapter_dir) / "adapter_model.safetensors"))
+    if not any("lora_" in k for k in file_sd):
+        raise ValueError("adapter file holds no lora_ tensors")
+    return cfg, file_sd
+
+
+def load_hf(model_id: str, adapter_dir: str | None = None, *, dtype: torch.dtype = torch.float64):
+    """Eager HF model on CPU in ``dtype``. An adapter is merged in (W + (alpha/r) B A) by peft.
+
+    float64 is the default (the 135M path). ``dtype=torch.float32`` loads and merges in float32,
+    which is what a model whose float64 copy does not fit needs; the adapter merge keeps the same
+    guards in both modes.
 
     peft 0.21.2 ``PeftModel.from_pretrained`` silently leaves every LoRA B at zero when the
     base model is float64, which turns the fine-tune into the base model. So the adapter
@@ -255,27 +424,12 @@ def load_hf(model_id: str, adapter_dir: str | None = None):
     from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: PLC0415
 
     tok = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float64,
+    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype,
                                                  attn_implementation="eager")
     if adapter_dir:
-        import json  # noqa: PLC0415
-        from pathlib import Path  # noqa: PLC0415
-
         from peft import PeftModel, set_peft_model_state_dict  # noqa: PLC0415
-        from safetensors.torch import load_file  # noqa: PLC0415
 
-        # The config must describe a plain LoRA for THIS base. Otherwise the merge below is a
-        # different model than the one the adapter was trained on.
-        cfg = json.loads((Path(adapter_dir) / "adapter_config.json").read_text())
-        if cfg.get("base_model_name_or_path") != model_id:
-            raise ValueError(f"adapter was trained on {cfg.get('base_model_name_or_path')!r}, "
-                             f"not {model_id!r}")
-        if cfg.get("bias", "none") != "none":
-            raise ValueError(f"adapter bias={cfg['bias']!r} is not supported (only 'none')")
-        if cfg.get("modules_to_save"):
-            raise ValueError(f"adapter modules_to_save={cfg['modules_to_save']} is not supported")
-
-        file_sd = load_file(str(Path(adapter_dir) / "adapter_model.safetensors"))
+        _, file_sd = check_adapter(adapter_dir, model_id)
         model = PeftModel.from_pretrained(model, adapter_dir)
         res = set_peft_model_state_dict(model, file_sd)
         if res.unexpected_keys:
@@ -309,11 +463,19 @@ def _rmsnorm_native_dtype(self, hidden_states):
 
 
 def _rope_native_dtype(self, x, position_ids):
-    """``LlamaRotaryEmbedding.forward`` with the tables built in x's dtype, not float32."""
+    """``LlamaRotaryEmbedding.forward`` with the tables built in x's dtype, not float32.
+
+    HF builds ``inv_freq`` in float32 at init and casts it to float32 again in ``forward``. This
+    keeps its formula, including the llama3 rescaling, but removes that cast: the table is built
+    in the precision the rest of the pass uses.
+    """
     cfg = self.config
     dim = getattr(cfg, "head_dim", None) or cfg.hidden_size // cfg.num_attention_heads
     theta = _rope_theta(cfg)
-    inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2, dtype=x.dtype, device=x.device) / dim))
+    # HF computes the table in float32 and casts it to x.dtype; keep x's precision when it is
+    # the wider one (the float64 case this patch exists for), else keep HF's float32 table.
+    table_dtype = x.dtype if x.dtype in (torch.float32, torch.float64) else torch.float32
+    inv_freq = rope_inv_freq(dim, theta, _rope_scaling(cfg), dtype=table_dtype).to(x.dtype)
     freqs = position_ids[..., None].to(x.dtype) * inv_freq
     emb = torch.cat((freqs, freqs), dim=-1)
     return emb.cos() * self.attention_scaling, emb.sin() * self.attention_scaling
@@ -348,6 +510,10 @@ def reference_check(model, ids, ours: dict) -> dict:
       * ``hf64_*``: HF with exactly those three casts removed, patched only for this call.
         This gap must be float64 round-off. If it is, the three casts explain all of the
         stock gap, and our decomposition is the HF computation.
+
+    On a float32 pass those three casts are no-ops, so ``hf_*`` and ``hf64_*`` measure the same
+    gap; either one is what ``gates.logits_reference`` divides by. ``hf_logits_scale`` is the
+    max |logit| of the reference, i.e. that gate's scale.
     """
     from transformers.models.llama import modeling_llama as ml  # noqa: PLC0415
 
@@ -359,7 +525,8 @@ def reference_check(model, ids, ours: dict) -> dict:
         hid = max((hs[l][0] - ours["_resid"][l]).abs().max().item() for l in range(L))
         hid_scale = max(hs[l][0].abs().max().item() for l in range(L))
         lg = (ref.logits[0] - ours["logits"]).abs().max().item()
-        return hid, hid / hid_scale, lg, lg / ref.logits[0].abs().max().item()
+        lg_scale = ref.logits[0].abs().max().item()
+        return hid, hid / hid_scale, lg, lg / lg_scale, lg_scale
 
     stock = gaps(model(input_ids=ids_t, output_hidden_states=True))
     saved = (ml.LlamaRMSNorm.forward, ml.LlamaRotaryEmbedding.forward, ml.eager_attention_forward)
@@ -375,6 +542,7 @@ def reference_check(model, ids, ours: dict) -> dict:
         "hf_logits_max_abs_gap": stock[2], "hf_logits_max_rel_gap": stock[3],
         "hf64_hidden_max_abs_gap": exact[0], "hf64_hidden_max_rel_gap": exact[1],
         "hf64_logits_max_abs_gap": exact[2], "hf64_logits_max_rel_gap": exact[3],
+        "hf_logits_scale": stock[4],
     }
 
 

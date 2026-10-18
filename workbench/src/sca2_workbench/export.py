@@ -27,6 +27,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from sca2_workbench import gates as G
 from sca2_workbench import items as I
 from sca2_workbench import llama_capture as LC
 
@@ -35,12 +36,18 @@ EXPORTS = WORKBENCH / "exports"
 SCHEMA = "sca2-workbench/capture@1.1"
 TOPK = 16
 
-#: Thresholds of the live conservation bar. The first two come from the brief. The third is
-#: ours: HF with its float32 casts removed must match our pass to float64 round-off.
+#: Thresholds of the legacy absolute gate set. The first two come from the brief. They stay in
+#: the manifest because ``capture@1.1`` readers (the viewer) compare `conservation[k]` against
+#: `conservation.thresholds[k]`. They are NOT the gate any more: below one ulp of the stream
+#: they cannot be met (see `gates.py`), so the verdict is `conservation.relative.pass`.
 THRESHOLDS = {"residual_closure_inf": 1e-3, "dla_gap": 1e-2, "hf64_logits_max_rel_gap": 1e-10}
 
-#: Pair gate (new in @1.1): the B - A of the readout attributions sums to the B - A of the margin.
-PAIR_THRESHOLDS = {"d_attr_gap": 1e-6}
+#: The live gate set, chosen by the compute dtype. Calibrated in `plans/stage1_f32_gaps.md`.
+TAUS = {torch.float64: G.TAUS_F64, torch.float32: G.TAUS_F32}
+
+#: Pair gate: the B - A of the readout attributions sums to the B - A of the margin, relative
+#: to |d_margin| + 1. Same value as the absolute gate it replaces (worst measured 7.4e-8).
+PAIR_THRESHOLDS = {"d_attr_gap": G.TAUS_F64.pair_attribution}
 
 MODELS = {
     "smol_base": {"model_id": "HuggingFaceTB/SmolLM2-135M", "adapter": None,
@@ -124,10 +131,19 @@ def _topk_attention(probs: torch.Tensor, k: int):
 
 
 class Session:
-    """Loads each model once and runs every item through it."""
+    """Loads each model once and runs every item through it.
 
-    def __init__(self):
+    ``dtype`` is the capture mode: float64 (default, every 135M export) or float32 (models whose
+    float64 copy does not fit). It selects the gate set too -- the two are calibrated separately
+    in ``plans/stage1_f32_gaps.md``.
+    """
+
+    def __init__(self, dtype=torch.float64):
         from transformers import AutoTokenizer  # noqa: PLC0415
+        if dtype not in TAUS:
+            raise ValueError(f"capture dtype must be one of {list(TAUS)}; got {dtype}")
+        self.dtype = dtype
+        self.taus = TAUS[dtype]
         self.tok = AutoTokenizer.from_pretrained(TOKENIZER_ID)
         self._loaded: dict = {}
 
@@ -137,8 +153,8 @@ class Session:
             adapter = str(WORKBENCH / spec["adapter"]) if spec["adapter"] else None
             if adapter and not Path(adapter).exists():
                 raise FileNotFoundError(f"{key}: adapter dir {adapter} is missing")
-            hf, _ = LC.load_hf(spec["model_id"], adapter)
-            self._loaded[key] = (hf, LC.weights_from_hf(hf), adapter)   # ~1.1 GB per model
+            hf, _ = LC.load_hf(spec["model_id"], adapter, dtype=self.dtype)
+            self._loaded[key] = (hf, LC.weights_from_hf(hf, dtype=self.dtype), adapter)
         return self._loaded[key]
 
 
@@ -168,13 +184,24 @@ def capture_run(sess: Session, key: str, item: I.Item, keep_head_out: bool = Fal
         "eq6_teacher_forced_max_abs_gap": max(abs(probs[c] - tf[c]) for c in probs),
         **ref,
         "thresholds": THRESHOLDS,
+        "legacy_absolute_applicable": sess.dtype == torch.float64,
     }
-    conservation["pass"] = bool(
-        conservation["residual_closure_inf"] < THRESHOLDS["residual_closure_inf"]
-        and conservation["residual_closure_inf_clamped"] < THRESHOLDS["residual_closure_inf"]
-        and conservation["dla_gap"] < THRESHOLDS["dla_gap"]
-        and conservation["dla_gap_clamped"] < THRESHOLDS["dla_gap"]
-        and conservation["hf64_logits_max_rel_gap"] < THRESHOLDS["hf64_logits_max_rel_gap"])
+    # The live gate set (``gates.py``): every check is |error| / scale <= tau, with the scale
+    # stated per check. The float64 report above is kept for capture@1.1 readers; the verdict is
+    # this block, because an absolute threshold below one ulp of the stream cannot be met.
+    rel = {}
+    rel.update(G.check_capture(out, sess.taus))
+    rel.update(G.check_capture(clamped, sess.taus, suffix="_clamped"))
+    # The reference gap is already relative (to the largest reference logit); name its scale.
+    # float64: HF with its three float32 casts removed (the cast-free pass IS our computation).
+    # float32: HF as shipped -- at that dtype its casts are no-ops, so both are the same gap.
+    ref_abs = ref["hf64_logits_max_abs_gap"] if sess.dtype == torch.float64 else ref["hf_logits_max_abs_gap"]
+    rel["logits_reference"] = G.logits_reference(ref_abs, ref["hf_logits_scale"],
+                                                 sess.taus.logits_reference)
+    conservation["relative"] = G.as_manifest(rel, sess.taus)
+    conservation["relative"]["reference_key"] = (
+        "hf64_logits_max_rel_gap" if sess.dtype == torch.float64 else "hf_logits_max_rel_gap")
+    conservation["pass"] = G.all_ok(rel)
 
     b = BinWriter()
     b.add("resid_norm", out["resid_norm"], "||h^l_t||_2, residual entering layer l (l=L: final, pre-norm). (L+1, T)")
@@ -235,7 +262,7 @@ def capture_run(sess: Session, key: str, item: I.Item, keep_head_out: bool = Fal
         "provenance": {"prompt_sha256": hashlib.sha256(ro["formatted_prompt"].encode()).hexdigest(),
                        "tokenizer": TOKENIZER_ID, "git_head": _git_head(),
                        "torch": torch.__version__, "python": platform.python_version(),
-                       "compute_dtype": "float64", "stored_dtype": "float32",
+                       "compute_dtype": str(sess.dtype).replace("torch.", ""), "stored_dtype": "float32",
                        "attention_storage": f"top-{TOPK} per row + row mass",
                        "wall_seconds": round(wall, 2),
                        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
@@ -289,8 +316,34 @@ def d_attribution_gate(out_a: dict, out_b: dict, margin_a: float, margin_b: floa
         arrays["attn_attr"] = (b["attn_attr"] - a["attn_attr"]).to(torch.float32)
     gap_f32 = abs(arrays["head_attr"].double().sum().item() + arrays["mlp_attr"].double().sum().item()
                   + d_embed - d_margin)
-    thr = PAIR_THRESHOLDS["d_attr_gap"]
-    return arrays, d_embed, {"gap_f64": gap_f64, "gap_f32": gap_f32, "pass": bool(gap_f64 < thr and gap_f32 < thr)}
+    tau = PAIR_THRESHOLDS["d_attr_gap"]
+    gates = {"gap_f64": G.pair_attribution(d_margin, gap_f64, tau),
+             "gap_f32": G.pair_attribution(d_margin, gap_f32, tau)}
+    return arrays, d_embed, {"gap_f64": gap_f64, "gap_f32": gap_f32,
+                             "scale": abs(d_margin) + 1.0, "tau": tau,
+                             "relative": {k: g.as_dict() for k, g in gates.items()},
+                             "pass": all(g.ok for g in gates.values())}
+
+
+def pair_conservation(chk: dict, chk_c: dict) -> dict:
+    """Canonical pair conservation block with four live relative checks."""
+    checks = {
+        "d_attr_gap": chk["relative"]["gap_f64"],
+        "d_attr_gap_float32": chk["relative"]["gap_f32"],
+        "d_attr_gap_clamped": chk_c["relative"]["gap_f64"],
+        "d_attr_gap_float32_clamped": chk_c["relative"]["gap_f32"],
+    }
+    passed = all(g["pass"] for g in checks.values())
+    return {
+        "d_attr_gap": chk["gap_f64"],
+        "d_attr_gap_float32": chk["gap_f32"],
+        "d_attr_gap_clamped": chk_c["gap_f64"],
+        "d_attr_gap_float32_clamped": chk_c["gap_f32"],
+        "thresholds": PAIR_THRESHOLDS,
+        "relative": {"taus": {"pair_attribution": PAIR_THRESHOLDS["d_attr_gap"]},
+                     "checks": checks, "pass": passed},
+        "pass": passed,
+    }
 
 
 def export_pair(key_a: str, key_b: str, item_ids: list) -> list:
@@ -322,9 +375,7 @@ def export_pair(key_a: str, key_b: str, item_ids: list) -> list:
         b.add("d_attn_attr", d_arr["attn_attr"], "attn_attr(B) - attn_attr(A) = sum_h d_head_attr. Not an extra term in the gate. (L,)")
         b.add("d_head_attr_clamped", d_arr_c["head_attr"], "head_attr_clamped(B) - head_attr_clamped(A). (L, H)")
         b.add("d_mlp_attr_clamped", d_arr_c["mlp_attr"], "mlp_attr_clamped(B) - mlp_attr_clamped(A). (L,)")
-        attr_gate = {"d_attr_gap": chk["gap_f64"], "d_attr_gap_float32": chk["gap_f32"],
-                     "d_attr_gap_clamped": chk_c["gap_f64"], "d_attr_gap_float32_clamped": chk_c["gap_f32"],
-                     "thresholds": PAIR_THRESHOLDS, "pass": bool(chk["pass"] and chk_c["pass"])}
+        attr_gate = pair_conservation(chk, chk_c)
         if not attr_gate["pass"]:
             raise AssertionError(f"{key_a} -> {key_b} {item_id}: B-A attributions do not sum to d_margin: {attr_gate}")
         pa, pb = ra["probs"], rb["probs"]
@@ -350,11 +401,16 @@ def export_pair(key_a: str, key_b: str, item_ids: list) -> list:
 
 def rebuild_index():
     runs, pairs = [], []
+    models = dict(MODELS)        # plus models exported by other paths (the streamed 8B runs)
     for path in sorted(EXPORTS.glob("*.json")):
         if path.name == "index.json":
             continue
         m = json.loads(path.read_text())
         if m.get("kind") == "run":
+            ad = m["model"].get("adapter")
+            models.setdefault(m["model"]["key"], {"model_id": m["model"]["model_id"],
+                                                  "adapter": ad.get("dir") if ad else None,
+                                                  "label": m["model"]["label"]})
             runs.append({"file": path.name, "model": m["model"]["key"], "label": m["model"]["label"],
                          "item_id": m["item"]["item_id"], "T": len(m["tokens"]),
                          "pass": m["conservation"]["pass"], "margin": m["readout"]["margin"],
@@ -363,7 +419,7 @@ def rebuild_index():
             pairs.append({"file": path.name, "a": m["a"], "b": m["b"], "item_id": m["item_id"],
                           "d_margin": m["d_margin"]})
     (EXPORTS / "index.json").write_text(json.dumps(
-        {"schema": SCHEMA, "models": MODELS, "runs": runs, "pairs": pairs}, indent=1))
+        {"schema": SCHEMA, "models": models, "runs": runs, "pairs": pairs}, indent=1))
 
 
 def main():

@@ -1,0 +1,56 @@
+{
+ "cases": [
+  {
+   "name": "f64 frame",
+   "ok": true,
+   "detail": "{\"status\":\"status ok\",\"chk\":\"✓ 7\",\"failbar\":false}"
+  },
+  {
+   "name": "f64 checks = legacy table",
+   "ok": true,
+   "detail": "len=1808"
+  },
+  {
+   "name": "f64 no console errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "f32 frame = pass",
+   "ok": true,
+   "detail": "{\"status\":\"status ok\",\"chk\":\"✓ 20\",\"failbar\":false}"
+  },
+  {
+   "name": "f32 checks = relative rows, all ✓",
+   "ok": true,
+   "detail": "relRows=13 crosses=0"
+  },
+  {
+   "name": "f32 no console errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "f32 fail frame = banner",
+   "ok": true,
+   "detail": "{\"status\":\"status bad\",\"chk\":\"✗ 1 of 20\",\"hasBar\":true}"
+  },
+  {
+   "name": "f32 fail checks show a ✗ row",
+   "ok": true,
+   "detail": "crosses=1"
+  },
+  {
+   "name": "sweep 0 console errors",
+   "ok": true,
+   "detail": "0 over 80 loads"
+  }
+ ],
+ "sweep": {
+  "loads": 80,
+  "console_errors": 0,
+  "bad": []
+ },
+ "fails": [],
+ "pass": true
+}

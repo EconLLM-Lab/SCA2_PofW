@@ -148,15 +148,20 @@ def bank_forced_choice(country: str, triplet_id: str) -> Item:
     )
 
 
-def readout_ids(tokenizer, item: Item) -> dict:
+def readout_ids(tokenizer, item: Item, chat_kwargs: dict | None = None) -> dict:
     """Token ids for the Eq. 6 readout of one item.
 
     Returns ``prompt_ids`` (chat-templated prompt plus the shared completion prefix),
     ``code_token`` (code -> the single distinct token id), and ``prefix_ids``.
     Raises when the codes do not split as shared prefix + one token (e.g. " 1" vs " 10").
+
+    ``chat_kwargs`` go to ``apply_chat_template``. Llama-3.1's template writes a date into its
+    system block unless one is passed, so Paper B's capture passes
+    ``{"date_string": eval_config.ARCHIVE_CHAT_DATE}``; the SmolLM2 path passes nothing.
     """
     formatted = tokenizer.apply_chat_template(
-        [{"role": "user", "content": item.user_prompt}], tokenize=False, add_generation_prompt=True)
+        [{"role": "user", "content": item.user_prompt}], tokenize=False,
+        add_generation_prompt=True, **(chat_kwargs or {}))
     base = tokenizer(formatted, add_special_tokens=False).input_ids
     comps = {c: tokenizer(" " + c, add_special_tokens=False).input_ids for c in item.codes}
     lengths = {len(v) for v in comps.values()}
@@ -209,7 +214,11 @@ def prompt_segments(tokenizer, item: Item, ro: dict) -> list:
 
     # character spans (c0, c1, kind, label), contiguous over the formatted prompt
     spans = []
-    system = re.search(r"<\|im_start\|>system\n(.*?)<\|im_end\|>", f[:u0], re.S)
+    # ChatML (SmolLM2) writes the system turn as ``<|im_start|>system\n...<|im_end|>``; Llama-3 as
+    # ``<|start_header_id|>system<|end_header_id|>\n\n...<|eot_id|>`` (its date block lives here).
+    system = (re.search(r"<\|im_start\|>system\n(.*?)<\|im_end\|>", f[:u0], re.S)
+              or re.search(r"<\|start_header_id\|>system<\|end_header_id\|>\n\n(.*?)<\|eot_id\|>",
+                          f[:u0], re.S))
     if system:
         spans += [(0, system.start(1), "template", "system turn opens"),
                   (system.start(1), system.end(1), "system", "system prompt"),

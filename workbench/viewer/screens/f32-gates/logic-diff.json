@@ -1,0 +1,32 @@
+{
+ "results": [
+  {
+   "name": "f64 export (no relative) — unchanged",
+   "identical": true,
+   "ok": true,
+   "old_table": "legacy",
+   "new_table": "legacy",
+   "old_failing_rows": 0,
+   "new_failing_rows": 0
+  },
+  {
+   "name": "f32 fixture (relative, passes) — new reader",
+   "identical": false,
+   "ok": true,
+   "old_table": "legacy",
+   "new_table": "relative",
+   "old_failing_rows": 4,
+   "new_failing_rows": 0
+  },
+  {
+   "name": "f32 fixture (one relative check fails)",
+   "identical": false,
+   "ok": true,
+   "old_table": "legacy",
+   "new_table": "relative",
+   "old_failing_rows": 4,
+   "new_failing_rows": 1
+  }
+ ],
+ "pass": true
+}

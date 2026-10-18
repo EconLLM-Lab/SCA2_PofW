@@ -376,3 +376,29 @@ Reading it: all 22 runs and 16 pairs were rewritten, with the same file set. Eve
 - **One PM issue refuted:** the ladder inspector does separate ‖B−A‖ (gold, with a footnote) from signed B−A. The PM accepts this; an in-cell "‖Δ‖" prefix is optional polish.
 - **Fix-later items** go to polish card `t_20471cca`. The verifier's findings are in `plans/verify/FINDINGS.md`.
 - **Routing:** `agent.max_turns` for the verifier was raised from 60 to 120 after a run exhausted its budget. The backup is in `~/.hermes/config-backups/2026-10-16-viz-reroute/`.
+
+## 14. float32 relative gates: the global closure gate is blind to small corruptions (2026-10-17, PM)
+
+`t_1547e1a8` added `gates.py` (|error|/scale <= tau, tau = 10x the measured f32-vs-f64 maximum)
+and a drop-one-head demo, which the gates catch (218x over tau in float32). The PM's independent
+test was different: an in-memory copy of `run()` stores `m*1.001` for a single layer while the
+stream keeps `m`. On SmolLM2-135M-Instruct (Q57, Q81) the float32 residual-closure gate catches it
+only at the largest-write layer (L11, 58.6x tau). It passes at the median (L21, 0.1x) and smallest
+(L5, 0.0x) layers. Float64 catches every case (1e7x tau or more). The readout gate never moves,
+because DLA uses the in-loop write.
+
+Cause: the scale is the global inf-norm of h^L (4429). One massive-activation feature on
+position 0 sets it, so tau_f32 = 1e-4 allows 0.44 in absolute terms. Fix, routed to
+`t_7d7ad93e`: a per-layer, per-position step-closure gate,
+||h^l_t - h^{l-1}_t - a^l_t - m^l_t||_inf / max(||h^l_t||_inf, 1) <= tau_step, plus a pinned test
+in which a 0.1% corruption at the median layer fails it by more than 10x. The verifier
+(`t_7bb9787f`) re-tests with its own corruption and may block.
+
+## 15. streamed Llama-3.1-8B capture and first Paper B adapter pair (2026-10-17)
+
+- **Artifacts:** `stream_capture.py` streams one decoder layer at a time; `offload_hf.py` provides an independent HF reference with one resident block; `stream_export.py` writes capture@1.1. The official bf16 weights are upcast to float32/64. The USA LoRA stays unmerged and is applied as `(alpha/r) B(Ax)`.
+- **Exactness:** on SmolLM2-135M, streamed vs in-memory float64 is bit-identical for the residual and at most 2.3e-14 relative for every other exported array. On real 8B layers 0 and 15, unmerged vs explicitly merged LoRA is at most 1.7e-14.
+- **Relative gates:** the step-closure fix from §14 catches an independent 0.1% attention-write corruption at a nonzero token position by 13.7x tau in float32. On 8B, 0.1% MLP corruptions at L15/L21 fail by 72x/113x; a clean pass uses 0.033x tau.
+- **Paper B parity:** the streamed USA pair matches the current `score_cohort.sequence_logprob` path to 4.33e-6 in probability (tau 1e-4). The archived 2026-10-11 Q81 scores do **not** reproduce: the USA max probability gap is 0.305 and the base row also differs, while adapter bytes match. This is escalated as a Paper B pipeline-provenance issue; it is not resolved or hidden by the workbench.
+- **Verifier `t_7bb9787f`: ACCEPT, no block.** DeepSeek independently re-derived RoPE, gate calibration, streamed exactness, unmerged LoRA parity, Paper B parity, export shapes and two independent corruptions. Evidence: `plans/verify/FINDINGS_stage1.md`.
+- **Final PM review:** 105 tests pass, 3 gated Llama-3.2 fixture checks skip; TypeScript passes; the browser sweep loads 90 views with zero errors; the WebGL check stays flat at 10 geometries / 76 textures over 80 steps. `SafetensorsSource.drop_handles()` runs after embedding lookup, each streamed layer and chunked unembedding, with a regression test, reducing the demonstrated reference-path RSS from 16.6 GB to 4.14 GB and bounding the main capture's mapped pages too. A fresh code/security review found no tensor or gate errors; its stale-index credential warning was resolved by confirming the staged downloader accepts only an environment-provided token. Its valid pair-manifest finding was fixed by giving all four pair-attribution gates the canonical `conservation.relative.checks` shape, which the viewer now renders rather than silently falling back to one legacy absolute row.

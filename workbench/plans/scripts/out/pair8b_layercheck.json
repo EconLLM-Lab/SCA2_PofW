@@ -1,0 +1,70 @@
+{
+ "adapter": {
+  "dir": "hf://datasets/Bonorinoa/SCA2-paper-b-adapters@c4b0f36eae0c15e508f72b606861798c8359131f/adapters/USA",
+  "sha256": "7329c4a1e621d86fdc32c55b47b5fda047830404dc0d697ec468febe19717eef",
+  "r": 16,
+  "lora_alpha": 32.0,
+  "scale": 2.0,
+  "target_modules": [
+   "k_proj",
+   "v_proj",
+   "q_proj",
+   "o_proj"
+  ],
+  "base_model_name_or_path": "meta-llama/Llama-3.1-8B-Instruct",
+  "applied": "unmerged: x W^T + (alpha/r) (x A^T) B^T, A/B read from the file"
+ },
+ "item": "wvs_Q81",
+ "gate": 1e-12,
+ "layers": {
+  "0": {
+   "gaps": {
+    "h_out": 9.63973949740824e-16,
+    "attn_write a": 4.996003610813204e-16,
+    "mlp_write m": 1.0195481557533463e-15,
+    "head_writes o": 3.400058012914542e-16,
+    "attn_norm": 1.3322676295501878e-15,
+    "mlp_norm": 1.2157568478939094e-15,
+    "head_norm": 2.4702462297909733e-15,
+    "topk_val": 7.549516567451064e-15,
+    "q3_write_norm": 7.771561172376096e-16,
+    "g_last": 2.154638312978003e-15,
+    "u_last": 1.942890293094024e-15,
+    "c_last": 5.412337245047638e-16,
+    "head_t_dot": 1.734723475976807e-17,
+    "down_w_unit": 0.0,
+    "q3_count (exact: 0 or 1)": 0.0
+   },
+   "worst": "topk_val",
+   "worst_gap": 7.549516567451064e-15,
+   "pass": true,
+   "h_out_rel_change_vs_base": 0.004017853995030748,
+   "wall_s": 0.9
+  },
+  "15": {
+   "gaps": {
+    "h_out": 2.1910361515019924e-17,
+    "attn_write a": 6.925229303202193e-15,
+    "mlp_write m": 2.4935406857271587e-15,
+    "head_writes o": 7.271960811294775e-15,
+    "attn_norm": 5.9809653948660545e-15,
+    "mlp_norm": 1.4912251608876662e-15,
+    "head_norm": 1.0257250249102863e-14,
+    "topk_val": 1.687538997430238e-14,
+    "q3_write_norm": 1.355467206244922e-15,
+    "g_last": 2.314889362347745e-15,
+    "u_last": 3.497279582146221e-15,
+    "c_last": 4.773959005888173e-15,
+    "head_t_dot": 6.678685382510707e-16,
+    "down_w_unit": 0.0,
+    "q3_count (exact: 0 or 1)": 0.0
+   },
+   "worst": "topk_val",
+   "worst_gap": 1.687538997430238e-14,
+   "pass": true,
+   "h_out_rel_change_vs_base": 6.417133929843897e-05,
+   "wall_s": 9.9
+  }
+ },
+ "peak_rss_gb": 11.07
+}
