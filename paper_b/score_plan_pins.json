@@ -15,5 +15,6 @@
   "nearzero_bank_bundle": {
     "hub_path": "banks/near_zero_gps_sign_relabel_bank2_20261015_062543Z/near_zero_banks.tgz",
     "sha256": "816fe88de9e349643adcbd28945e287f3ac0e57a5f3294b90a771fa9b24bae68"
-  }
+  },
+  "nearzero_adapter_revision": "c4b0f36eae0c15e508f72b606861798c8359131f"
 }
