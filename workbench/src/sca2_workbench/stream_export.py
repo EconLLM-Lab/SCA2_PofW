@@ -129,7 +129,7 @@ def run_manifest(*, key: str, label: str, model_id: str, src, tok, item: I.Item,
 
 
 def pair_manifest(*, key_a: str, key_b: str, item_id: str, man_a: dict, man_b: dict, res: dict,
-                  d_weight_head, d_weight_mlp, run_files: dict) -> tuple:
+                  d_weight_head, d_weight_mlp, run_files: dict, retain_failed: bool = False) -> tuple:
     """capture@1.1 ``pair`` file from ``stream_capture.run_streamed_pair``.
 
     Same arrays and gate as ``export.export_pair``: the B - A norms come from the loop
@@ -162,7 +162,7 @@ def pair_manifest(*, key_a: str, key_b: str, item_id: str, man_a: dict, man_b: d
     b.add("d_head_attr_clamped", d_arr_c["head_attr"], "head_attr_clamped(B) - head_attr_clamped(A). (L, H)")
     b.add("d_mlp_attr_clamped", d_arr_c["mlp_attr"], "mlp_attr_clamped(B) - mlp_attr_clamped(A). (L,)")
     attr_gate = EX.pair_conservation(chk, chk_c)
-    if not attr_gate["pass"]:
+    if not attr_gate["pass"] and not retain_failed:
         raise AssertionError(f"{key_a} -> {key_b} {item_id}: B-A attributions do not sum to d_margin: {attr_gate}")
     pa, pb = ra["probs"], rb["probs"]
     pair = {

@@ -57,12 +57,13 @@ class SafetensorsSource:
     float32; upcasting either to float32/float64 is exact. Nothing is cached.
     """
 
-    def __init__(self, snapshot: str | Path, dtype: torch.dtype = torch.float64):
+    def __init__(self, snapshot: str | Path, dtype: torch.dtype = torch.float64, device="cpu"):
         from transformers import AutoConfig  # noqa: PLC0415
 
         if dtype not in (torch.float32, torch.float64):
             raise ValueError(f"only float32 and float64 passes are supported; got {dtype}")
         self.dir, self.dtype = Path(snapshot), dtype
+        self.device = torch.device(device)
         cfg = AutoConfig.from_pretrained(self.dir)
         if getattr(cfg, "attention_bias", False) or getattr(cfg, "mlp_bias", False):
             raise ValueError("biases are not supported (DLA closure assumes bias-free projections)")
@@ -100,12 +101,12 @@ class SafetensorsSource:
         self._handles.clear()
 
     def _get(self, name: str) -> torch.Tensor:
-        return self._handle(name).get_tensor(name).to(self.dtype)
+        return self._handle(name).get_tensor(name).to(device=self.device, dtype=self.dtype)
 
     def _rows(self, name: str, ids) -> torch.Tensor:
         """Rows ``ids`` of a (V, d) matrix, read one row at a time."""
         sl = self._handle(name).get_slice(name)
-        return torch.cat([sl[i:i + 1] for i in ids]).to(self.dtype)
+        return torch.cat([sl[i:i + 1] for i in ids]).to(device=self.device, dtype=self.dtype)
 
     def embed_rows(self, ids) -> torch.Tensor:
         return self._rows("model.embed_tokens.weight", [int(i) for i in ids])
@@ -118,7 +119,7 @@ class SafetensorsSource:
         sl = self._handle(self._unembed_name).get_slice(self._unembed_name)
         V = sl.get_shape()[0]
         for a in range(0, V, chunk):
-            yield a, sl[a:min(a + chunk, V)].to(self.dtype)
+            yield a, sl[a:min(a + chunk, V)].to(device=self.device, dtype=self.dtype)
 
     def final_norm(self) -> torch.Tensor:
         return self._get("model.norm.weight")
@@ -284,9 +285,9 @@ def _layer(st: _State, lw: dict, cfg: "SafetensorsSource", cos, sin, causal, w_u
     k_["topk_idx"].append(idx)
     k_["q3_count"].append(q3.sum(-1))
     k_["q3_write_norm"].append(lin(c_raw * q3, "down").norm(dim=-1))
-    k_["g_last"].append(g[t])
-    k_["u_last"].append(u[t])
-    k_["c_last"].append(c[t])
+    k_["g_last"].append(g[t].clone())
+    k_["u_last"].append(u[t].clone())
+    k_["c_last"].append(c[t].clone())
     k_["head_t_dot"].append(o[:, t, :] @ w_unit)                               # (H,)  x . w_unit
     down_w = lw["down"].T @ w_unit                                             # (F,)
     if "down" in lo:                  # neuron i's write direction: W_down[:, i] + scale B A[:, i]
@@ -326,7 +327,7 @@ def run_streamed(src: SafetensorsSource, ids, *, j_plus: int, j_minus: int,
 
 def run_streamed_pair(src: SafetensorsSource, ids, lora: LoraAdapter, *, j_plus: int, j_minus: int,
                       eps_q3: float = LC.EPS_Q3, topk: int = TOPK, full_logits: bool = False,
-                      keep_resid: bool = False, log=None) -> dict:
+                      keep_resid: bool = False, log=None, scale_mlp_write=None) -> dict:
     """A = the checkpoint, B = checkpoint + ``lora`` (unmerged), off ONE read of each layer.
 
     Four passes share every layer read: A, A clamped, B, B clamped. Returns
@@ -337,7 +338,7 @@ def run_streamed_pair(src: SafetensorsSource, ids, lora: LoraAdapter, *, j_plus:
     specs = [(None, False), (None, True), (lora, False), (lora, True)]
     outs, diffs = _stream(src, ids, specs, j_plus=j_plus, j_minus=j_minus, eps_q3=eps_q3,
                           topk=topk, full_logits=full_logits, keep_resid=keep_resid, log=log,
-                          pair=(0, 2))
+                          pair=(0, 2), scale_mlp_write=scale_mlp_write)
     return {"a": outs[0], "a_clamped": outs[1], "b": outs[2], "b_clamped": outs[3], "diffs": diffs}
 
 
@@ -348,7 +349,8 @@ def _stream(src, ids, specs, *, j_plus, j_minus, eps_q3, topk, full_logits, keep
     ids = torch.as_tensor(ids, dtype=torch.long)
     dtype, T = src.dtype, int(ids.shape[0])
     cos, sin = LC._rope(T, src.head_dim, src.rope_theta, src.rope_scaling, dtype=dtype)
-    causal = torch.triu(torch.ones(T, T, dtype=torch.bool), diagonal=1)
+    cos, sin = cos.to(src.device), sin.to(src.device)
+    causal = torch.triu(torch.ones(T, T, dtype=torch.bool, device=src.device), diagonal=1)
     final_norm = src.final_norm()
     codes = src.unembed_rows([j_plus, j_minus])                    # (2, d): the only rows needed
     w_unit = final_norm * (codes[0] - codes[1])                    # (d,)
@@ -379,7 +381,8 @@ def _stream(src, ids, specs, *, j_plus, j_minus, eps_q3, topk, full_logits, keep
     t0 = time.time()
     for l in range(src.n_layers):
         lw = src.layer(l)
-        los = {k: lo.layer(l, dtype) for k, lo in loras.items()}
+        los = {k: {name: tuple(t.to(src.device) for t in ab) for name, ab in lo.layer(l, dtype).items()}
+               for k, lo in loras.items()}
         for st in states:
             lo = st.lora
             _layer(st, lw, src, cos, sin, causal, w_unit, topk, eps_q3, keep_resid, l,
@@ -547,5 +550,13 @@ def _finish(src, st, ids, final_norm, codes, w_unit, j_plus, j_minus, full_logit
     if keep_resid:
         out["_resid"] = torch.stack(k["_resid"])                               # (L+1, T, d)
     if full_logits:
-        out["logits_last"] = torch.cat([final_t @ rows.T for _, rows in src.unembed_chunks()])
+        # The shared completion prefix's own logprob is needed for archive comparisons.
+        # Causality makes h[t-1] identical to a separate pass without the final prefix token.
+        before_t = final_norm * (h[t - 1] / torch.sqrt((h[t - 1] * h[t - 1]).mean() + eps))
+        last_chunks, before_chunks = [], []
+        for _, rows in src.unembed_chunks():
+            last_chunks.append(final_t @ rows.T)
+            before_chunks.append(before_t @ rows.T)
+        out["logits_last"] = torch.cat(last_chunks)
+        out["logits_before_readout"] = torch.cat(before_chunks)
     return out

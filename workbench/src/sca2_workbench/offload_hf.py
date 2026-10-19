@@ -27,7 +27,8 @@ from sca2_workbench.stream_capture import SafetensorsSource
 
 
 def build_offloaded_hf(snapshot: str | Path, dtype: torch.dtype = torch.float32,
-                       adapter_dir: str | Path | None = None, model_id: str | None = None):
+                       adapter_dir: str | Path | None = None, model_id: str | None = None,
+                       source=None):
     """Return a HF ``LlamaForCausalLM`` (eval mode, eager attention) that loads blocks on demand.
 
     ``adapter_dir`` (with ``model_id``, the base the adapter must name) returns the peft-wrapped
@@ -36,11 +37,11 @@ def build_offloaded_hf(snapshot: str | Path, dtype: torch.dtype = torch.float32,
     from transformers import AutoConfig, AutoModelForCausalLM  # noqa: PLC0415
     from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding  # noqa: PLC0415
 
-    src = SafetensorsSource(snapshot, dtype)         # reuse its file index and config checks
+    src = source if source is not None else SafetensorsSource(snapshot, dtype)
     cfg = AutoConfig.from_pretrained(snapshot)
     with torch.device("meta"):
         model = AutoModelForCausalLM.from_config(cfg, dtype=dtype, attn_implementation="eager")
-    model.model.rotary_emb = LlamaRotaryEmbedding(config=cfg)   # a buffer, so rebuilt for real
+    model.model.rotary_emb = LlamaRotaryEmbedding(config=cfg).to(src.device)
     inner = model
     file_sd = {}
     if adapter_dir is not None:
@@ -62,16 +63,16 @@ def build_offloaded_hf(snapshot: str | Path, dtype: torch.dtype = torch.float32,
                 key = full.replace(".default.weight", ".weight")
                 if key not in file_sd:
                     raise ValueError(f"adapter file has no tensor for {full}")
-                module._parameters[name] = torch.nn.Parameter(file_sd[key].to(dtype).clone(),
+                module._parameters[name] = torch.nn.Parameter(file_sd[key].to(src.device).clone(),
                                                               requires_grad=False)
                 n_lora += 1
             else:
                 module._parameters[name] = torch.nn.Parameter(
-                    torch.empty(0, dtype=dtype), requires_grad=False)
+                    torch.empty(0, dtype=dtype, device=src.device), requires_grad=False)
     if n_lora != len(file_sd):
         raise ValueError(f"set {n_lora} LoRA tensors, the adapter file has {len(file_sd)}")
     for n, p in model.named_parameters():            # what is in the module IS the file
-        if "lora_" in n and not torch.equal(p.detach(), file_sd[n.replace(".default.weight", ".weight")].to(dtype)):
+        if "lora_" in n and not torch.equal(p.detach().cpu(), file_sd[n.replace(".default.weight", ".weight")]):
             raise ValueError(f"adapter tensor {n} did not load (module != file)")
     model.eval()
 
@@ -91,7 +92,7 @@ def build_offloaded_hf(snapshot: str | Path, dtype: torch.dtype = torch.float32,
         def post(module, args, output=None, *rest):
             for pname, p in module.named_parameters():
                 if "lora_" not in pname:
-                    p.data = torch.empty(0, dtype=dtype)
+                    p.data = torch.empty(0, dtype=dtype, device=src.device)
             src.drop_handles()     # else the mmap'd shard pages stay resident (RSS +0.25 GB/layer)
         return pre, post
 
