@@ -1,0 +1,223 @@
+% Online supplement for the Paper B manuscript (anonymized). Rendered from supplement.tmpl.tex by
+% tools/render_supplement.py: every statistic is a \cl / \ci macro filled from NUMBERS_TABLE.csv and then
+% re-checked by tools/audit_numbers.py. Edit the template, never this file.
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{lmodern,microtype,amsmath,amssymb,booktabs,tabularx,array,xcolor}
+\usepackage{setspace}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage[labelfont=bf]{caption}
+\setlength{\emergencystretch}{2em}
+\input{macros}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\title{Online Supplement\\[0.6em]\large Synthetic Cultural Agents as Scoring Instruments: A Preregistered Held-Out Evaluation of Survey Item Screening}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\noindent This supplement reports the two registered descriptives that the article sends here, the full tables behind several sentences of the article, the items the probe selected, and the provenance of the scoring runs. Every statistic is read from the same numbers table as the article and keeps the article's surface labels (S1 and S2 for the first and second cohorts on the strict battery, H for the retrospective held-out screen, R for the unseeded retrain, and N for the near-zero refits). Sections and tables numbered with an S belong to this supplement. As in the article, every result on surface H is retrospective, because the WVS Wave~7 file existed before the probe and is the only human source.
+
+\section{Registered descriptives}\label{sec:s-desc}
+
+\paragraph{Item-level agreement without the smallest items (H).} Section~8 of the registration lists one item-level descriptive beside the primary statistic: the selected items whose signed agreement satisfies $|a_i|\geq \dc{0.15}{abs_a_cut}$. The registration excludes this cut from the inference, because it conditions on the human criterion. Of the \cl{56}{SCR_absA_n_kept:n} items selected under the primary rule, \cl{26}{SCR_absA_n_kept} reach the cut. Their mean signed agreement is \cl{0.115}{SCR_absA_A_kept}, and \cl{69.2}{SCR_absA_share_pos_kept:pct}\% of them have $a_i>0$, against \cl{60.7}{SCR_share_a_pos:pct}\% over all \cl{56}{SCR_share_a_pos:n} selected items. That is, the selected items whose human country differences correlate clearly with the GPS coordinate of their assigned dimension run in the assigned direction about two times in three. The figure describes where the agreement in $A$ comes from and carries no interval. It is no evidence for the screen beyond the registered test reported in the article.
+
+\paragraph{The face-valid reader on all of its items (H).} Section~6 of the registration reports the face-valid reader's statistic on all of its assigned items, negative reciprocity included, beside the registered contrast on the imprint set. The registration counted \dc{30}{face_valid_registered} assigned items. Amendment~2 removed the one repaired item the reader had assigned (Q82), which leaves \cl{29}{CMP_face_valid_A_all:n}. Over these items the reader's $A$ is \cl{0.055}{CMP_face_valid_A_all}, against \cl{0.095}{CMP_face_valid_A_imprint} on its \cl{25}{CMP_face_valid_A_imprint:n} imprint-set items. The difference comes from its \cl{4}{CMP_face_valid_all_negrecip_A:n} negative-reciprocity items, whose $A$ is \cl{-0.192}{CMP_face_valid_all_negrecip_A}: the human country differences on the items the reader linked to negative reciprocity by their wording run, on average, against the direction it read from their response labels. These items lie outside the imprint set and enter none of the registered contrasts.
+
+\section{Per-dimension readings of the questionnaire readers}\label{sec:s-readers}
+
+The registration asks for per-dimension $A_d$ of both questionnaire readers beside the coverage-matched contrast (Table~\ref{tab:s-readers}). The intervals come from the same registered country bootstrap as the adapters' per-dimension readings in the article, and the repaired items are removed as Amendment~2 requires. Every interval covers zero, and most cells hold a handful of items, so the table shows mainly where each reader concentrates. Both readers assign most of their imprint-set items to trust, which is why their own-item $A$ in the article is close to their trust reading.
+
+\begin{table}[htbp]
+\centering
+\caption{Per-dimension readings of the two questionnaire readers on their own imprint-set items (H, retrospective).}\label{tab:s-readers}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l l r l r@{}}
+\toprule
+ & \multicolumn{2}{c}{Face-valid reader} & \multicolumn{2}{c}{Typed decision model} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Dimension & $A_d$ [\dc{95}{ci_level}\% interval] & Items & $A_d$ [\dc{95}{ci_level}\% interval] & Items \\
+\midrule
+Trust & \cl{0.110}{PD_face_valid_trust_A} \ci{-0.154}{0.379}{PD_face_valid_trust_A} & \cl{19}{PD_face_valid_trust_A:n} & \cl{0.151}{PD_jev_majority_trust_A} \ci{-0.076}{0.370}{PD_jev_majority_trust_A} & \cl{32}{PD_jev_majority_trust_A:n} \\
+Risk taking & \cl{0.044}{PD_face_valid_risktaking_A} \ci{-0.170}{0.243}{PD_face_valid_risktaking_A} & \cl{4}{PD_face_valid_risktaking_A:n} & \cl{-0.074}{PD_jev_majority_risktaking_A} \ci{-0.398}{0.239}{PD_jev_majority_risktaking_A} & \cl{1}{PD_jev_majority_risktaking_A:n} \\
+Altruism & \cl{0.055}{PD_face_valid_altruism_A} \ci{-0.163}{0.265}{PD_face_valid_altruism_A} & \cl{2}{PD_face_valid_altruism_A:n} & \cl{0.049}{PD_jev_majority_altruism_A} \ci{-0.078}{0.165}{PD_jev_majority_altruism_A} & \cl{7}{PD_jev_majority_altruism_A:n} \\
+\bottomrule
+\end{tabular*}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} The typed decision model's assignment is the majority over \dc{5}{jev_runs} runs. Neither reader assigned an item to positive reciprocity. Intervals are percentile limits from \dc{2,000}{boot_draws} resamples of the \dc{42}{countries} countries (seed \dc{20261015}{seed_screen}), unadjusted for the number of dimensions.
+\end{minipage}
+\end{table}
+
+\section{The second scenario bank in full}\label{sec:s-bank}
+
+The article reports the adapter--GPS correlations of all seven strict-battery surfaces on the second bank, and those of the four imprint surfaces on the first. Table~\ref{tab:s-bank-gps} adds the first-cohort values of the three flat surfaces, so that both cohorts are shown on every surface. Both cohorts use the same statistic, the same profile-block bootstrap and the same seed. Patience and negative reciprocity are flat on both banks, and their intervals are wide on both.
+
+\begin{table}[htbp]
+\centering
+\caption{Adapter--GPS Spearman correlation over the \dc{42}{countries} countries, by surface and cohort (S1 and S2, model side only).}\label{tab:s-bank-gps}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l@{}}
+\toprule
+Surface & First cohort, original bank (S1) & Second cohort, second bank (S2) \\
+\midrule
+Trust & \cl{0.744}{B2_cohort1_trust_rho} \ci{0.500}{0.865}{B2_cohort1_trust_rho} & \cl{0.803}{B2_bank2_trust_rho} \ci{0.615}{0.876}{B2_bank2_trust_rho} \\
+Risk taking & \cl{0.435}{B2_cohort1_risktaking_rho} \ci{0.085}{0.686}{B2_cohort1_risktaking_rho} & \cl{0.210}{B2_bank2_risktaking_rho} \ci{-0.199}{0.584}{B2_bank2_risktaking_rho} \\
+Positive reciprocity & \cl{0.488}{B2_cohort1_posrecip_rho} \ci{0.120}{0.695}{B2_cohort1_posrecip_rho} & \cl{0.366}{B2_bank2_posrecip_rho} \ci{-0.068}{0.652}{B2_bank2_posrecip_rho} \\
+Altruism & \cl{0.406}{B2_cohort1_altruism_rho} \ci{0.020}{0.676}{B2_cohort1_altruism_rho} & \cl{0.364}{B2_bank2_altruism_rho} \ci{-0.057}{0.653}{B2_bank2_altruism_rho} \\
+Negative reciprocity & \cl{-0.028}{B2_cohort1_negrecip_rho} \ci{-0.418}{0.406}{B2_cohort1_negrecip_rho} & \cl{0.239}{B2_bank2_negrecip_rho} \ci{-0.237}{0.604}{B2_bank2_negrecip_rho} \\
+Patience (Q43) & \cl{-0.019}{B2_cohort1_patience:Q43_rho} \ci{-0.414}{0.452}{B2_cohort1_patience:Q43_rho} & \cl{0.005}{B2_bank2_patience:Q43_rho} \ci{-0.403}{0.470}{B2_bank2_patience:Q43_rho} \\
+Patience (Q50) & \cl{0.177}{B2_cohort1_patience:Q50_rho} \ci{-0.313}{0.580}{B2_cohort1_patience:Q50_rho} & \cl{0.161}{B2_bank2_patience:Q50_rho} \ci{-0.343}{0.557}{B2_bank2_patience:Q50_rho} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Percentile intervals from a profile-block bootstrap over the \dc{26}{profiles_realized} sign profiles the countries realize (\dc{2,000}{boot_draws} draws, seed \dc{20261011}{seed_c3}). In the second cohort each country takes the adapter of its sign profile.
+\end{minipage}
+\end{table}
+
+The article reports the bank-to-bank Pearson correlation for five surfaces. Table~\ref{tab:s-bank-bank} gives both the Pearson and the Spearman coefficient for all seven, over the \dc{26}{profiles_realized} profiles the two banks share. The two coefficients tell the same story. Risk taking is the least stable surface across banks on either coefficient, and the two patience items, flat against the GPS, are nevertheless stable across banks. That is, a surface can be a stable property of the instrument and still carry no agreement with its anchor.
+
+\begin{table}[htbp]
+\centering
+\caption{Agreement between first-bank and second-bank surface composites over the shared sign profiles (model side only).}\label{tab:s-bank-bank}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l@{}}
+\toprule
+Surface & Pearson [\dc{95}{ci_level}\% interval] & Spearman [\dc{95}{ci_level}\% interval] \\
+\midrule
+Trust & \cl{0.909}{B2_bank_to_bank_trust_pearson} \ci{0.797}{0.965}{B2_bank_to_bank_trust_pearson} & \cl{0.907}{B2_bank_to_bank_trust_spearman} \ci{0.774}{0.957}{B2_bank_to_bank_trust_spearman} \\
+Risk taking & \cl{0.598}{B2_bank_to_bank_risktaking_pearson} \ci{0.229}{0.819}{B2_bank_to_bank_risktaking_pearson} & \cl{0.544}{B2_bank_to_bank_risktaking_spearman} \ci{0.187}{0.772}{B2_bank_to_bank_risktaking_spearman} \\
+Positive reciprocity & \cl{0.898}{B2_bank_to_bank_posrecip_pearson} \ci{0.775}{0.960}{B2_bank_to_bank_posrecip_pearson} & \cl{0.937}{B2_bank_to_bank_posrecip_spearman} \ci{0.818}{0.983}{B2_bank_to_bank_posrecip_spearman} \\
+Altruism & \cl{0.949}{B2_bank_to_bank_altruism_pearson} \ci{0.859}{0.989}{B2_bank_to_bank_altruism_pearson} & \cl{0.944}{B2_bank_to_bank_altruism_spearman} \ci{0.832}{0.985}{B2_bank_to_bank_altruism_spearman} \\
+Negative reciprocity & \cl{0.708}{B2_bank_to_bank_negrecip_pearson} \ci{0.488}{0.861}{B2_bank_to_bank_negrecip_pearson} & \cl{0.600}{B2_bank_to_bank_negrecip_spearman} \ci{0.230}{0.838}{B2_bank_to_bank_negrecip_spearman} \\
+Patience (Q43) & \cl{0.812}{B2_bank_to_bank_patience:Q43_pearson} \ci{0.699}{0.945}{B2_bank_to_bank_patience:Q43_pearson} & \cl{0.889}{B2_bank_to_bank_patience:Q43_spearman} \ci{0.682}{0.971}{B2_bank_to_bank_patience:Q43_spearman} \\
+Patience (Q50) & \cl{0.940}{B2_bank_to_bank_patience:Q50_pearson} \ci{0.890}{0.975}{B2_bank_to_bank_patience:Q50_pearson} & \cl{0.953}{B2_bank_to_bank_patience:Q50_spearman} \ci{0.856}{0.982}{B2_bank_to_bank_patience:Q50_spearman} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} First-bank values are the means of the first-cohort country adapters within each profile, and second-bank values are the profile adapters' composites. Percentile intervals from a \dc{2,000}{boot_draws}-draw bootstrap over profiles. No human data enter.
+\end{minipage}
+\end{table}
+
+\section{Retraining noise by surface}\label{sec:s-noise}
+
+The article bounds the strict-surface shifts of the unseeded retrain by their maximum. Table~\ref{tab:s-retrain} gives the shift on each surface, in standard deviations of that surface over the \dc{64}{cells} profiles. These shifts are the noise floor that the near-zero reading in Section~\ref{sec:s-nz} uses. On the recoded scale of the readout, the Pearson correlation between the retrain and the original over the \dc{23}{strict_items} strict items is \cl{0.9999}{RP_strict_pearson_recoded}.
+
+\begin{table}[htbp]
+\centering
+\caption{Unseeded retrain minus original, strict-battery surfaces, in profile standard deviations (R, model side only).}\label{tab:s-retrain}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}l r@{}}
+\toprule
+Surface & Shift \\
+\midrule
+Trust & \cl{-0.025}{RP_surface_diff_sd_trust} \\
+Risk taking & \cl{-0.030}{RP_surface_diff_sd_risktaking} \\
+Positive reciprocity & \cl{-0.011}{RP_surface_diff_sd_posrecip} \\
+Altruism & \cl{-0.008}{RP_surface_diff_sd_altruism} \\
+Negative reciprocity & \cl{0.033}{RP_surface_diff_sd_negrecip} \\
+Patience (Q43) & \cl{0.006}{RP_surface_diff_sd_patience_Q43} \\
+Patience (Q50) & \cl{-0.112}{RP_surface_diff_sd_patience_Q50} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{The near-zero margin in full}\label{sec:s-nz}
+
+The near-zero check refits two predeclared countries without the training pairs of every dimension whose GPS coordinate lies within \dc{0.10}{near_zero_cut} of zero, each beside a size-matched control trained on the same number of pairs drawn at random. For Great Britain (profile \texttt{P\_1\_1\_1\_1\_0\_1}) the rule removed altruism, negative reciprocity, positive reciprocity and risk taking, so trust and the two patience items stayed in training. For Colombia (profile \texttt{P\_1\_0\_0\_1\_1\_0}) it removed altruism, risk taking and trust. Table~\ref{tab:s-nz} gives every contrast. The predeclared reading uses only the retained imprint surfaces, which are Great Britain's trust and Colombia's positive reciprocity. The dropped dimensions are a loss-of-signal check: with no training pairs left on a dimension, its surface is expected to move away from its declared sign, so a move there bears on neither side.
+
+The floor in the last column is the unseeded retrain's shift on the same surface (Table~\ref{tab:s-retrain}), and almost every contrast exceeds it. That floor comes from one retrain on the full training data, and it is too small for refits trained on a fraction of the data. The size-matched controls show why: a control differs from the full-data baseline by up to \cl{1.222}{NZ_GBR_max_abs_control_minus_baseline_sd} standard deviations for Great Britain and \cl{1.499}{NZ_COL_max_abs_control_minus_baseline_sd} for Colombia. Against that variation, neither retained imprint contrast stands out. We therefore claim no reversal, and the margin stays a footnote in the article.
+
+\begin{table}[htbp]
+\centering
+\caption{Near-zero refit minus its size-matched control, in profile standard deviations (N, model side only).}\label{tab:s-nz}
+\small
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X l l r r@{}}
+\toprule
+Country & Surface & In training & Intended & Refit $-$ control & Floor \\
+\midrule
+Great Britain & Trust$^{*}$ & retained & up & \cl{0.448}{NZ_GBR_trust_refit_minus_control_sd} & \cl{0.025}{NZ_GBR_trust_noise_floor_sd} \\
+ & Patience (Q43) & retained & up & \cl{0.078}{NZ_GBR_patience_Q43_refit_minus_control_sd} & \cl{0.006}{NZ_GBR_patience_Q43_noise_floor_sd} \\
+ & Patience (Q50) & retained & up & \cl{0.389}{NZ_GBR_patience_Q50_refit_minus_control_sd} & \cl{0.112}{NZ_GBR_patience_Q50_noise_floor_sd} \\
+ & Risk taking & dropped & up & \cl{-0.018}{NZ_GBR_risktaking_refit_minus_control_sd} & \cl{0.030}{NZ_GBR_risktaking_noise_floor_sd} \\
+ & Positive reciprocity & dropped & down & \cl{0.219}{NZ_GBR_posrecip_refit_minus_control_sd} & \cl{0.011}{NZ_GBR_posrecip_noise_floor_sd} \\
+ & Negative reciprocity & dropped & up & \cl{-0.751}{NZ_GBR_negrecip_refit_minus_control_sd} & \cl{0.033}{NZ_GBR_negrecip_noise_floor_sd} \\
+ & Altruism & dropped & up & \cl{0.242}{NZ_GBR_altruism_refit_minus_control_sd} & \cl{0.008}{NZ_GBR_altruism_noise_floor_sd} \\
+\midrule
+Colombia & Positive reciprocity$^{*}$ & retained & up & \cl{-0.092}{NZ_COL_posrecip_refit_minus_control_sd} & \cl{0.011}{NZ_COL_posrecip_noise_floor_sd} \\
+ & Negative reciprocity & retained & down & \cl{-0.931}{NZ_COL_negrecip_refit_minus_control_sd} & \cl{0.033}{NZ_COL_negrecip_noise_floor_sd} \\
+ & Patience (Q43) & retained & down & \cl{-0.223}{NZ_COL_patience_Q43_refit_minus_control_sd} & \cl{0.006}{NZ_COL_patience_Q43_noise_floor_sd} \\
+ & Patience (Q50) & retained & down & \cl{-0.559}{NZ_COL_patience_Q50_refit_minus_control_sd} & \cl{0.112}{NZ_COL_patience_Q50_noise_floor_sd} \\
+ & Trust & dropped & up & \cl{-0.480}{NZ_COL_trust_refit_minus_control_sd} & \cl{0.025}{NZ_COL_trust_noise_floor_sd} \\
+ & Risk taking & dropped & down & \cl{0.086}{NZ_COL_risktaking_refit_minus_control_sd} & \cl{0.030}{NZ_COL_risktaking_noise_floor_sd} \\
+ & Altruism & dropped & up & \cl{0.062}{NZ_COL_altruism_refit_minus_control_sd} & \cl{0.008}{NZ_COL_altruism_noise_floor_sd} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Rows marked $^{*}$ are the retained imprint surfaces that the predeclared reading uses. ``Intended'' is the direction of the unit's own sign bit. Composites are frozen-recode item means, scaled by the standard deviation of the \dc{64}{cells} second-cohort profile composites on the same surface. The floor is the unseeded retrain's absolute shift on that surface.
+\end{minipage}
+\end{table}
+
+\section{Items selected by the probe}\label{sec:s-items}
+
+Table~\ref{tab:s-items} lists the \cl{56}{SCR_A_primary:n} items the probe selected under the primary rule, by assigned dimension and sign. A plus sign means that profiles with the dimension's bit set have a higher expected response code on the item. A minus sign means a lower one. Codes follow the WVS Wave~7 questionnaire, so the substantive meaning of a direction depends on each item's response scale. The list is model-side output, frozen before any held-out human value was read. As the article reports, item-level assignments are more stable under readout variants than membership in this particular list.
+
+\begin{table}[htbp]
+\centering
+\caption{The frozen primary selection: WVS Wave~7 items by assigned dimension and sign.}\label{tab:s-items}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}l r>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+Dimension & Items & Sign $+$ & Sign $-$ \\
+\midrule
+Trust & \cl{12}{PD_adapter_primary_trust_A:n} & Q49 & Q45, Q118, Q120, Q130, Q170, Q197, Q224, Q228, Q229, Q236, Q253 \\
+Risk taking & \cl{13}{PD_adapter_primary_risktaking_A:n} & Q97, Q102, Q163, Q194 & Q5, Q79, Q136, Q141, Q151, Q166, Q168, Q212, Q215 \\
+Positive reciprocity & \cl{11}{PD_adapter_primary_posrecip_A:n} & Q95, Q105 & Q6, Q15, Q17, Q51, Q52, Q53, Q54, Q55, Q205 \\
+Altruism & \cl{20}{PD_adapter_primary_altruism_A:n} & Q96, Q122, Q125, Q135, Q138, Q198, Q227, Q231, Q241 & Q27, Q124, Q128, Q150, Q160, Q161, Q162, Q209, Q213, Q216, Q242 \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} The selection file's SHA-256 hash is in Section~\ref{sec:s-prov}. Amendment~1 repaired the wording of \dc{12}{repaired_items} items after a first probe pass had been computed and read, and two of them, Q153 and Q157, were in that pass's top quartile by $|t|$. Neither is in this selection, which was made on the repaired wording. Q253 is the only repaired item selected.
+\end{minipage}
+\end{table}
+
+\section{Provenance of the scoring runs}\label{sec:s-prov}
+
+\paragraph{Specifications.} Each scoring condition has a pinned specification hash that fixes the prompt template, the option order, the leading space before each code and the recode. Every run reproduced its pin before a model was loaded. The strict battery's pin begins \texttt{ed3bb964b606}, and the amended held-out pool's pin begins \texttt{46447de63f7c}. The pre-amendment held-out pin, which Amendment~1 superseded, began \texttt{4d799b02}.
+
+\paragraph{Code revisions.} All manifests of the held-out runs (the primary readout, the three readout variants and the prompted profiles) record the checkout revision \texttt{2126045}. During a recovery, three launcher files around that checkout were patched in place on the virtual machine to fix how a child environment was built. The scoring modules are byte-identical between the patched setup and the recorded revision, which the command \texttt{git diff --quiet 2126045 HEAD -- paper\_b/score\_runtime.py paper\_b/score\_plan.py paper\_b/score\_cohort.py} confirmed at the time. The strict-battery run of the second cohort spans two recorded revisions. All but three of its manifests record \texttt{5133387}, and the remaining three (profiles \texttt{P\_0\_1\_1\_1\_1\_1}, \texttt{P\_1\_1\_1\_1\_1\_0} and \texttt{P\_1\_1\_1\_1\_1\_1}) record \texttt{f34a79f}. The unseeded retrain and the strict scoring of the prompted profiles ran at \texttt{b2dbbfb}, and the near-zero refits at \texttt{d1ab226}. Between these revisions the readout path changed in four ways, none of which touches prompt construction, option parsing, the forward pass or the frozen readout constants. A unit-name resolution replaced upper-casing, and it is the identity for every country and profile unit. A check on the number of training pairs reads a per-unit expectation that equals \dc{526}{train_rows} for every unit outside the near-zero refits. Some functions gained annotations and parameters with backward-compatible defaults. The scoring loop gained a guard that stops with a named error when a scoring function is missing. The readout path is therefore not byte-identical across revisions, and what is verified is that every pin reproduces at the current revision and that the changes leave every scored unit's arithmetic unchanged.
+
+\paragraph{The first-cohort scoring run.} The first cohort's scores (surface S1) were persisted by a run whose manifest records a digest of the code bundle rather than a git commit, and none of the tracked source snapshots matches that digest. The commit that produced the run therefore cannot be named. Two properties of the run were verified directly. Its specification hash, which fixes the prompts, equals the strict pin, and the weights of the one adapter checked match the archived manifest byte for byte. A later replay of five selected items on the base model and that adapter, using the same four-bit quantized base model, lands within three units of half-precision rounding of the stored option log probabilities, which is the precision at which they were stored. The same replay on the unquantized model departs by far more. Quantization is therefore the source of the dominant difference between the two configurations, and the stored first-cohort scores are consistent with the quantized model that the adapters were trained on. The full panel was not replayed.
+
+\paragraph{The archive of the earlier study.} Before every scoring run, a gate compared the base model's scores on the frozen software stack with the archived scores of the earlier study, whose software environment was not pinned. The comparison is report-only by design. The formatted prompts matched the archive exactly, while the log probabilities differed by more than the earlier study's tolerance. A replay with the same four-bit quantization moved the scores toward the archive without reproducing it, so the remaining cause of that gap is not established. The gap enters no statistic in the article, which uses only scores produced on the frozen stack.
+
+\paragraph{Configuration.} The configuration file \texttt{paper\_b/config.py} serves both cohorts. Its first-cohort defaults are unchanged when the environment variable \texttt{SCA2\_PB\_UNITS} is unset, and the file is byte-identical to its version at the registration tag.
+
+\paragraph{File hashes.} Hashes of text files are given for the working-tree bytes. The item pool \texttt{pool\_skeleton.csv} is written with Windows line endings by the pool-building script, while the repository stores text with Unix line endings, so the hash of the stored file differs from the hash of the file on disk. Both are given below. A reader who checks the freeze guard on a fresh checkout must regenerate the pool with \texttt{python paper\_b/heldout/build\_pool.py}, which reproduces the hashed bytes from the overrides file, because the guard compares raw bytes and refuses to run on the converted copy.
+
+{\small
+\begin{itemize}
+\item Amended item pool, as written:\newline \clh{19241f6f103c51d64e295045162bb370920223b7ffad7c5f3c8991f5c101bd44}{HASH_pool_worktree}
+\item Amended item pool, as stored in the repository:\newline \clh{a1dbceea1a33da05f0432e14e0ff174ba239916b1a5beb9944e9aa0910cd40a5}{HASH_pool_git_blob_lf}
+\item Overrides file:\newline \clh{0f5cd2bbd88ef6eaca9cca9ded24e8a5e056276be055b21c1d92b941dd7d3849}{HASH_overrides}
+\item Frozen primary and secondary selection:\newline \clh{782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21}{HASH_selection_amended_20261016}
+\end{itemize}}
+
+\end{document}

@@ -1,0 +1,301 @@
+Paper B number audit (card T10). Table: planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv
+Table sha256 20ea003b5fe12e396d7e706787f84c353c24034b642f8ce1a50646e560e8f08e, 225 rows. Rule: a printed number passes only if it equals the
+table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).
+
+== supplement.tex: 167 statistics, 22 design constants
+  PASS        -0.154  PD_face_valid_trust_A:lo                                full -0.15432651431830105 -> -0.154
+  PASS         0.379  PD_face_valid_trust_A:hi                                full 0.37924414129987694 -> 0.379
+  PASS        -0.076  PD_jev_majority_trust_A:lo                              full -0.0759579012610154 -> -0.076
+  PASS         0.370  PD_jev_majority_trust_A:hi                              full 0.369616204271492 -> 0.370
+  PASS        -0.170  PD_face_valid_risktaking_A:lo                           full -0.1700900736417934 -> -0.170
+  PASS         0.243  PD_face_valid_risktaking_A:hi                           full 0.24258129342395002 -> 0.243
+  PASS        -0.398  PD_jev_majority_risktaking_A:lo                         full -0.3981830288572681 -> -0.398
+  PASS         0.239  PD_jev_majority_risktaking_A:hi                         full 0.23876601189020136 -> 0.239
+  PASS        -0.163  PD_face_valid_altruism_A:lo                             full -0.16282660368637566 -> -0.163
+  PASS         0.265  PD_face_valid_altruism_A:hi                             full 0.2651761922969634 -> 0.265
+  PASS        -0.078  PD_jev_majority_altruism_A:lo                           full -0.07839369730716798 -> -0.078
+  PASS         0.165  PD_jev_majority_altruism_A:hi                           full 0.16462682002227502 -> 0.165
+  PASS         0.500  B2_cohort1_trust_rho:lo                                 full 0.5002088786337604 -> 0.500
+  PASS         0.865  B2_cohort1_trust_rho:hi                                 full 0.8647856310906544 -> 0.865
+  PASS         0.615  B2_bank2_trust_rho:lo                                   full 0.6145971882846217 -> 0.615
+  PASS         0.876  B2_bank2_trust_rho:hi                                   full 0.8764662126321977 -> 0.876
+  PASS         0.085  B2_cohort1_risktaking_rho:lo                            full 0.08459211972226777 -> 0.085
+  PASS         0.686  B2_cohort1_risktaking_rho:hi                            full 0.6855238217593994 -> 0.686
+  PASS        -0.199  B2_bank2_risktaking_rho:lo                              full -0.19894637503666981 -> -0.199
+  PASS         0.584  B2_bank2_risktaking_rho:hi                              full 0.5841897694068418 -> 0.584
+  PASS         0.120  B2_cohort1_posrecip_rho:lo                              full 0.12011003554792006 -> 0.120
+  PASS         0.695  B2_cohort1_posrecip_rho:hi                              full 0.694575712077336 -> 0.695
+  PASS        -0.068  B2_bank2_posrecip_rho:lo                                full -0.06790870044573029 -> -0.068
+  PASS         0.652  B2_bank2_posrecip_rho:hi                                full 0.6519695648305968 -> 0.652
+  PASS         0.020  B2_cohort1_altruism_rho:lo                              full 0.019705177182032498 -> 0.020
+  PASS         0.676  B2_cohort1_altruism_rho:hi                              full 0.6763677356156965 -> 0.676
+  PASS        -0.057  B2_bank2_altruism_rho:lo                                full -0.057258124000831793 -> -0.057
+  PASS         0.653  B2_bank2_altruism_rho:hi                                full 0.6526523339615622 -> 0.653
+  PASS        -0.418  B2_cohort1_negrecip_rho:lo                              full -0.41794182001214747 -> -0.418
+  PASS         0.406  B2_cohort1_negrecip_rho:hi                              full 0.4062285961335365 -> 0.406
+  PASS        -0.237  B2_bank2_negrecip_rho:lo                                full -0.23661759522156556 -> -0.237
+  PASS         0.604  B2_bank2_negrecip_rho:hi                                full 0.6035792348206974 -> 0.604
+  PASS        -0.414  B2_cohort1_patience:Q43_rho:lo                          full -0.4137061784151323 -> -0.414
+  PASS         0.452  B2_cohort1_patience:Q43_rho:hi                          full 0.45208283122682635 -> 0.452
+  PASS        -0.403  B2_bank2_patience:Q43_rho:lo                            full -0.40296284758533274 -> -0.403
+  PASS         0.470  B2_bank2_patience:Q43_rho:hi                            full 0.4703697004725019 -> 0.470
+  PASS        -0.313  B2_cohort1_patience:Q50_rho:lo                          full -0.3130980978178783 -> -0.313
+  PASS         0.580  B2_cohort1_patience:Q50_rho:hi                          full 0.5799151500605274 -> 0.580
+  PASS        -0.343  B2_bank2_patience:Q50_rho:lo                            full -0.3431572421382079 -> -0.343
+  PASS         0.557  B2_bank2_patience:Q50_rho:hi                            full 0.5568731230966979 -> 0.557
+  PASS         0.797  B2_bank_to_bank_trust_pearson:lo                        full 0.7965924666417422 -> 0.797
+  PASS         0.965  B2_bank_to_bank_trust_pearson:hi                        full 0.9654169281924576 -> 0.965
+  PASS         0.774  B2_bank_to_bank_trust_spearman:lo                       full 0.774163282409449 -> 0.774
+  PASS         0.957  B2_bank_to_bank_trust_spearman:hi                       full 0.957361901902584 -> 0.957
+  PASS         0.229  B2_bank_to_bank_risktaking_pearson:lo                   full 0.22895893796148822 -> 0.229
+  PASS         0.819  B2_bank_to_bank_risktaking_pearson:hi                   full 0.8194416180571575 -> 0.819
+  PASS         0.187  B2_bank_to_bank_risktaking_spearman:lo                  full 0.18659831243534505 -> 0.187
+  PASS         0.772  B2_bank_to_bank_risktaking_spearman:hi                  full 0.7716277210434477 -> 0.772
+  PASS         0.775  B2_bank_to_bank_posrecip_pearson:lo                     full 0.7749893587186875 -> 0.775
+  PASS         0.960  B2_bank_to_bank_posrecip_pearson:hi                     full 0.9604750565131557 -> 0.960
+  PASS         0.818  B2_bank_to_bank_posrecip_spearman:lo                    full 0.8179828488128906 -> 0.818
+  PASS         0.983  B2_bank_to_bank_posrecip_spearman:hi                    full 0.9828001375988992 -> 0.983
+  PASS         0.859  B2_bank_to_bank_altruism_pearson:lo                     full 0.859138984058649 -> 0.859
+  PASS         0.989  B2_bank_to_bank_altruism_pearson:hi                     full 0.9893966860148004 -> 0.989
+  PASS         0.832  B2_bank_to_bank_altruism_spearman:lo                    full 0.8316586894201866 -> 0.832
+  PASS         0.985  B2_bank_to_bank_altruism_spearman:hi                    full 0.9849223180778179 -> 0.985
+  PASS         0.488  B2_bank_to_bank_negrecip_pearson:lo                     full 0.4880200356628524 -> 0.488
+  PASS         0.861  B2_bank_to_bank_negrecip_pearson:hi                     full 0.8613120685546286 -> 0.861
+  PASS         0.230  B2_bank_to_bank_negrecip_spearman:lo                    full 0.2301328653931208 -> 0.230
+  PASS         0.838  B2_bank_to_bank_negrecip_spearman:hi                    full 0.8379478078564072 -> 0.838
+  PASS         0.699  B2_bank_to_bank_patience:Q43_pearson:lo                 full 0.6991562843578307 -> 0.699
+  PASS         0.945  B2_bank_to_bank_patience:Q43_pearson:hi                 full 0.9448071194490927 -> 0.945
+  PASS         0.682  B2_bank_to_bank_patience:Q43_spearman:lo                full 0.6820894369161743 -> 0.682
+  PASS         0.971  B2_bank_to_bank_patience:Q43_spearman:hi                full 0.9711666378714581 -> 0.971
+  PASS         0.890  B2_bank_to_bank_patience:Q50_pearson:lo                 full 0.8904018954235561 -> 0.890
+  PASS         0.975  B2_bank_to_bank_patience:Q50_pearson:hi                 full 0.9753475800888668 -> 0.975
+  PASS         0.856  B2_bank_to_bank_patience:Q50_spearman:lo                full 0.8563995612308707 -> 0.856
+  PASS         0.982  B2_bank_to_bank_patience:Q50_spearman:hi                full 0.9821514573430072 -> 0.982
+  PASS            56  SCR_absA_n_kept:n                                       full 56 -> 56
+  PASS            26  SCR_absA_n_kept                                         full 26 -> 26
+  PASS         0.115  SCR_absA_A_kept                                         full 0.11507311463352304 -> 0.115
+  PASS          69.2  SCR_absA_share_pos_kept:pct                             full 0.6923076923076923 x100 -> 69.2
+  PASS          60.7  SCR_share_a_pos:pct                                     full 0.6071428571428571 x100 -> 60.7
+  PASS            56  SCR_share_a_pos:n                                       full 56 -> 56
+  PASS            29  CMP_face_valid_A_all:n                                  full 29 -> 29
+  PASS         0.055  CMP_face_valid_A_all                                    full 0.05523060605522958 -> 0.055
+  PASS         0.095  CMP_face_valid_A_imprint                                full 0.0947147763406533 -> 0.095
+  PASS            25  CMP_face_valid_A_imprint:n                              full 25 -> 25
+  PASS             4  CMP_face_valid_all_negrecip_A:n                         full 4 -> 4
+  PASS        -0.192  CMP_face_valid_all_negrecip_A                           full -0.1915454582286687 -> -0.192
+  PASS         0.110  PD_face_valid_trust_A                                   full 0.10955028939773843 -> 0.110
+  PASS            19  PD_face_valid_trust_A:n                                 full 19 -> 19
+  PASS         0.151  PD_jev_majority_trust_A                                 full 0.15103818650153025 -> 0.151
+  PASS            32  PD_jev_majority_trust_A:n                               full 32 -> 32
+  PASS         0.044  PD_face_valid_risktaking_A                              full 0.04417458193841153 -> 0.044
+  PASS             4  PD_face_valid_risktaking_A:n                            full 4 -> 4
+  PASS        -0.074  PD_jev_majority_risktaking_A                            full -0.07392120075046905 -> -0.074
+  PASS             1  PD_jev_majority_risktaking_A:n                          full 1 -> 1
+  PASS         0.055  PD_face_valid_altruism_A                                full 0.05485779110282797 -> 0.055
+  PASS             2  PD_face_valid_altruism_A:n                              full 2 -> 2
+  PASS         0.049  PD_jev_majority_altruism_A                              full 0.04902878905390857 -> 0.049
+  PASS             7  PD_jev_majority_altruism_A:n                            full 7 -> 7
+  PASS         0.744  B2_cohort1_trust_rho                                    full 0.7441050158009886 -> 0.744
+  PASS         0.803  B2_bank2_trust_rho                                      full 0.8032452595902299 -> 0.803
+  PASS         0.435  B2_cohort1_risktaking_rho                               full 0.4345677011587392 -> 0.435
+  PASS         0.210  B2_bank2_risktaking_rho                                 full 0.21009949730748287 -> 0.210
+  PASS         0.488  B2_cohort1_posrecip_rho                                 full 0.4875617859168625 -> 0.488
+  PASS         0.366  B2_bank2_posrecip_rho                                   full 0.3656055731138321 -> 0.366
+  PASS         0.406  B2_cohort1_altruism_rho                                 full 0.40620695243497285 -> 0.406
+  PASS         0.364  B2_bank2_altruism_rho                                   full 0.3636587051851141 -> 0.364
+  PASS        -0.028  B2_cohort1_negrecip_rho                                 full -0.02811765659184831 -> -0.028
+  PASS         0.239  B2_bank2_negrecip_rho                                   full 0.238978038250133 -> 0.239
+  PASS        -0.019  B2_cohort1_patience:Q43_rho                             full -0.01912557249027031 -> -0.019
+  PASS         0.005  B2_bank2_patience:Q43_rho                               full 0.005353886803974467 -> 0.005
+  PASS         0.177  B2_cohort1_patience:Q50_rho                             full 0.1768900413256624 -> 0.177
+  PASS         0.161  B2_bank2_patience:Q50_rho                               full 0.160616604119234 -> 0.161
+  PASS         0.909  B2_bank_to_bank_trust_pearson                           full 0.9090290133640151 -> 0.909
+  PASS         0.907  B2_bank_to_bank_trust_spearman                          full 0.9070085470085469 -> 0.907
+  PASS         0.598  B2_bank_to_bank_risktaking_pearson                      full 0.597757128274079 -> 0.598
+  PASS         0.544  B2_bank_to_bank_risktaking_spearman                     full 0.5439316239316239 -> 0.544
+  PASS         0.898  B2_bank_to_bank_posrecip_pearson                        full 0.897638626467169 -> 0.898
+  PASS         0.937  B2_bank_to_bank_posrecip_spearman                       full 0.937094017094017 -> 0.937
+  PASS         0.949  B2_bank_to_bank_altruism_pearson                        full 0.949051928421145 -> 0.949
+  PASS         0.944  B2_bank_to_bank_altruism_spearman                       full 0.9439316239316239 -> 0.944
+  PASS         0.708  B2_bank_to_bank_negrecip_pearson                        full 0.7081916581321159 -> 0.708
+  PASS         0.600  B2_bank_to_bank_negrecip_spearman                       full 0.5999999999999999 -> 0.600
+  PASS         0.812  B2_bank_to_bank_patience:Q43_pearson                    full 0.8118359628736878 -> 0.812
+  PASS         0.889  B2_bank_to_bank_patience:Q43_spearman                   full 0.8885470085470085 -> 0.889
+  PASS         0.940  B2_bank_to_bank_patience:Q50_pearson                    full 0.9398300934035531 -> 0.940
+  PASS         0.953  B2_bank_to_bank_patience:Q50_spearman                   full 0.9528205128205127 -> 0.953
+  PASS        0.9999  RP_strict_pearson_recoded                               full 0.9998926000416745 -> 0.9999
+  PASS        -0.025  RP_surface_diff_sd_trust                                full -0.024871266929983354 -> -0.025
+  PASS        -0.030  RP_surface_diff_sd_risktaking                           full -0.029738125242725993 -> -0.030
+  PASS        -0.011  RP_surface_diff_sd_posrecip                             full -0.011362428399593035 -> -0.011
+  PASS        -0.008  RP_surface_diff_sd_altruism                             full -0.007854862504265352 -> -0.008
+  PASS         0.033  RP_surface_diff_sd_negrecip                             full 0.033464239133209235 -> 0.033
+  PASS         0.006  RP_surface_diff_sd_patience_Q43                         full 0.0064335886073853005 -> 0.006
+  PASS        -0.112  RP_surface_diff_sd_patience_Q50                         full -0.11174374255398495 -> -0.112
+  PASS         1.222  NZ_GBR_max_abs_control_minus_baseline_sd                full 1.2216275687128269 -> 1.222
+  PASS         1.499  NZ_COL_max_abs_control_minus_baseline_sd                full 1.4993339667817338 -> 1.499
+  PASS         0.448  NZ_GBR_trust_refit_minus_control_sd                     full 0.4477279738153208 -> 0.448
+  PASS         0.025  NZ_GBR_trust_noise_floor_sd                             full 0.0248712669299833 -> 0.025
+  PASS         0.078  NZ_GBR_patience_Q43_refit_minus_control_sd              full 0.07839407093898117 -> 0.078
+  PASS         0.006  NZ_GBR_patience_Q43_noise_floor_sd                      full 0.0064335886073853 -> 0.006
+  PASS         0.389  NZ_GBR_patience_Q50_refit_minus_control_sd              full 0.3892375045379833 -> 0.389
+  PASS         0.112  NZ_GBR_patience_Q50_noise_floor_sd                      full 0.1117437425539849 -> 0.112
+  PASS        -0.018  NZ_GBR_risktaking_refit_minus_control_sd                full -0.017838266866725683 -> -0.018
+  PASS         0.030  NZ_GBR_risktaking_noise_floor_sd                        full 0.0297381252427259 -> 0.030
+  PASS         0.219  NZ_GBR_posrecip_refit_minus_control_sd                  full 0.21920430344447286 -> 0.219
+  PASS         0.011  NZ_GBR_posrecip_noise_floor_sd                          full 0.011362428399593 -> 0.011
+  PASS        -0.751  NZ_GBR_negrecip_refit_minus_control_sd                  full -0.7513918810137052 -> -0.751
+  PASS         0.033  NZ_GBR_negrecip_noise_floor_sd                          full 0.0334642391332092 -> 0.033
+  PASS         0.242  NZ_GBR_altruism_refit_minus_control_sd                  full 0.24173258935409905 -> 0.242
+  PASS         0.008  NZ_GBR_altruism_noise_floor_sd                          full 0.0078548625042653 -> 0.008
+  PASS        -0.092  NZ_COL_posrecip_refit_minus_control_sd                  full -0.09228011167580277 -> -0.092
+  PASS         0.011  NZ_COL_posrecip_noise_floor_sd                          full 0.011362428399593 -> 0.011
+  PASS        -0.931  NZ_COL_negrecip_refit_minus_control_sd                  full -0.9310493136540552 -> -0.931
+  PASS         0.033  NZ_COL_negrecip_noise_floor_sd                          full 0.0334642391332092 -> 0.033
+  PASS        -0.223  NZ_COL_patience_Q43_refit_minus_control_sd              full -0.22290735322748853 -> -0.223
+  PASS         0.006  NZ_COL_patience_Q43_noise_floor_sd                      full 0.0064335886073853 -> 0.006
+  PASS        -0.559  NZ_COL_patience_Q50_refit_minus_control_sd              full -0.5592289492173399 -> -0.559
+  PASS         0.112  NZ_COL_patience_Q50_noise_floor_sd                      full 0.1117437425539849 -> 0.112
+  PASS        -0.480  NZ_COL_trust_refit_minus_control_sd                     full -0.4804580154019543 -> -0.480
+  PASS         0.025  NZ_COL_trust_noise_floor_sd                             full 0.0248712669299833 -> 0.025
+  PASS         0.086  NZ_COL_risktaking_refit_minus_control_sd                full 0.08592164778549415 -> 0.086
+  PASS         0.030  NZ_COL_risktaking_noise_floor_sd                        full 0.0297381252427259 -> 0.030
+  PASS         0.062  NZ_COL_altruism_refit_minus_control_sd                  full 0.061839172602860586 -> 0.062
+  PASS         0.008  NZ_COL_altruism_noise_floor_sd                          full 0.0078548625042653 -> 0.008
+  PASS            56  SCR_A_primary:n                                         full 56 -> 56
+  PASS            12  PD_adapter_primary_trust_A:n                            full 12 -> 12
+  PASS            13  PD_adapter_primary_risktaking_A:n                       full 13 -> 13
+  PASS            11  PD_adapter_primary_posrecip_A:n                         full 11 -> 11
+  PASS            20  PD_adapter_primary_altruism_A:n                         full 20 -> 20
+  PASS  19241f6f103c51d64e295045162bb370920223b7ffad7c5f3c8991f5c101bd44  HASH_pool_worktree                                      string value 19241f6f103c51d64e295045162bb370920223b7ffad7c5f3c8991f5c101bd44
+  PASS  a1dbceea1a33da05f0432e14e0ff174ba239916b1a5beb9944e9aa0910cd40a5  HASH_pool_git_blob_lf                                   string value a1dbceea1a33da05f0432e14e0ff174ba239916b1a5beb9944e9aa0910cd40a5
+  PASS  0f5cd2bbd88ef6eaca9cca9ded24e8a5e056276be055b21c1d92b941dd7d3849  HASH_overrides                                          string value 0f5cd2bbd88ef6eaca9cca9ded24e8a5e056276be055b21c1d92b941dd7d3849
+  PASS  782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21  HASH_selection_amended_20261016                         string value 782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21
+  PASS          0.15  design:abs_a_cut                                        PREREGISTRATION.md s8 (item-level descriptive drops |a_i| < 0.15)
+  PASS            30  design:face_valid_registered                            PREREGISTRATION.md s6 (face-valid route: 30 assigned items)
+  PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
+  PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
+  PASS             5  design:jev_runs                                         PREREGISTRATION.md s6 (five runs)
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS      20261015  design:seed_screen                                      paper_b/heldout/screen_test.py PERM_SEED
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS      20261011  design:seed_c3                                          paper_b/analyze_surface.py BOOT_SEED
+  PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
+  PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
+  PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
+  PASS            23  design:strict_items                                     TWO_PAPER_CLAIM_LOCK.md (23-item strict battery)
+  PASS          0.10  design:near_zero_cut                                    paper_b/factorial.py NEAR_ZERO
+  PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
+  PASS            12  design:repaired_items                                   PREREGISTRATION.md s11 (12 repaired items)
+  PASS           526  design:train_rows                                       paper_b/config.py TRAIN_ROWS (526 training pairs)
+  note  explained (cross-reference or citation command): \documentclass[12pt]{article}
+  note  explained (cross-reference or citation command): \usepackage[margin=1.25in]{geometry}
+  note  explained (LaTeX length or layout argument): 2em
+  note  explained (LaTeX length or layout argument): \\[0.6em]
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.2}
+  note  explained (LaTeX length or layout argument): \multicolumn{2}
+  note  explained (LaTeX length or layout argument): \multicolumn{2}
+  note  explained (LaTeX length or layout argument): \cmidrule(lr){2-3}
+  note  explained (LaTeX length or layout argument): \cmidrule(l){4-5}
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.12}
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.2}
+  note  explained (WVS item code): Q82
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q49
+  note  explained (WVS item code): Q45
+  note  explained (WVS item code): Q118
+  note  explained (WVS item code): Q120
+  note  explained (WVS item code): Q130
+  note  explained (WVS item code): Q170
+  note  explained (WVS item code): Q197
+  note  explained (WVS item code): Q224
+  note  explained (WVS item code): Q228
+  note  explained (WVS item code): Q229
+  note  explained (WVS item code): Q236
+  note  explained (WVS item code): Q253
+  note  explained (WVS item code): Q97
+  note  explained (WVS item code): Q102
+  note  explained (WVS item code): Q163
+  note  explained (WVS item code): Q194
+  note  explained (WVS item code): Q79
+  note  explained (WVS item code): Q136
+  note  explained (WVS item code): Q141
+  note  explained (WVS item code): Q151
+  note  explained (WVS item code): Q166
+  note  explained (WVS item code): Q168
+  note  explained (WVS item code): Q212
+  note  explained (WVS item code): Q215
+  note  explained (WVS item code): Q95
+  note  explained (WVS item code): Q105
+  note  explained (WVS item code): Q15
+  note  explained (WVS item code): Q17
+  note  explained (WVS item code): Q51
+  note  explained (WVS item code): Q52
+  note  explained (WVS item code): Q53
+  note  explained (WVS item code): Q54
+  note  explained (WVS item code): Q55
+  note  explained (WVS item code): Q205
+  note  explained (WVS item code): Q96
+  note  explained (WVS item code): Q122
+  note  explained (WVS item code): Q125
+  note  explained (WVS item code): Q135
+  note  explained (WVS item code): Q138
+  note  explained (WVS item code): Q198
+  note  explained (WVS item code): Q227
+  note  explained (WVS item code): Q231
+  note  explained (WVS item code): Q241
+  note  explained (WVS item code): Q27
+  note  explained (WVS item code): Q124
+  note  explained (WVS item code): Q128
+  note  explained (WVS item code): Q150
+  note  explained (WVS item code): Q160
+  note  explained (WVS item code): Q161
+  note  explained (WVS item code): Q162
+  note  explained (WVS item code): Q209
+  note  explained (WVS item code): Q213
+  note  explained (WVS item code): Q216
+  note  explained (WVS item code): Q242
+  note  explained (WVS item code): Q153
+  note  explained (WVS item code): Q157
+  note  explained (WVS item code): Q253
+  note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): SHA-256
+  note  explained (named instrument or model version): \texttt{ed3bb964b606}
+  note  explained (named instrument or model version): \texttt{46447de63f7c}
+  note  explained (named instrument or model version): \texttt{4d799b02}
+  note  explained (named instrument or model version): \texttt{2126045}
+  note  explained (named instrument or model version): \texttt{git diff --quiet 2126045 HEAD -- paper\_b/score\_runtime.py pa
+  note  explained (named instrument or model version): \texttt{5133387}
+  note  explained (named instrument or model version): \texttt{f34a79f}
+  note  explained (named instrument or model version): \texttt{d1ab226}
+  note  explained (section or amendment number of a cited document): Section~8
+  note  explained (section or amendment number of a cited document): Section~6
+  note  explained (section or amendment number of a cited document): Amendment~2
+  note  explained (section or amendment number of a cited document): Amendment~2
+  note  explained (section or amendment number of a cited document): Amendment~1
+  note  explained (section or amendment number of a cited document): Amendment~1
+  note  explained (formula constant in math mode): $a_i>0$
+
+Statistics: 167 printed, 167 PASS, 0 FAIL.
+Design constants: 0 FAIL.
+Unexplained numerals: 0.
+Distinct claim_ids used: 88.
+RESULT: PASS

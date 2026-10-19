@@ -12,7 +12,7 @@ Fields: v (value, default), lo (ci_low), hi (ci_high), n, pct (100 x value), abs
 Printed forms: decimals (rounded to the printed precision), integers, ``<0.001`` (value below 0.001),
 hash prefixes (non-numeric table values; printed string must be a prefix of at least 8 characters).
 
-Usage:  python audit_numbers.py [--table PATH] [--root DIR] [--out FILE]
+Usage:  python audit_numbers.py [--table PATH] [--root DIR] [--out FILE] [--files F ...]
 Exit status 0 when every printed number passes and no residual numeral is unexplained, 1 otherwise.
 """
 from __future__ import annotations
@@ -63,6 +63,8 @@ DESIGN: dict[str, tuple[set[str], str]] = {
     "sign_bits": ({"6"}, "PREREGISTRATION.md s1 (six GPS dimensions)"),
     "bonf_level": ({"98.75"}, "paper_b/heldout/per_dimension.py CI_BONF (0.625 and 99.375 percentiles)"),
     "surfaces": ({"7"}, "factorial_report.py (seven surfaces; patience kept as two)"),
+    "abs_a_cut": ({"0.15"}, "PREREGISTRATION.md s8 (item-level descriptive drops |a_i| < 0.15)"),
+    "face_valid_registered": ({"30"}, "PREREGISTRATION.md s6 (face-valid route: 30 assigned items)"),
 }
 
 CL_RE = re.compile(r"\\clh?\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}\{([^{}]*)\}")
@@ -203,15 +205,18 @@ def main(argv=None) -> int:
     ap.add_argument("--table", type=Path, default=TABLE_DEFAULT)
     ap.add_argument("--root", type=Path, default=PAPER)
     ap.add_argument("--out", type=Path, default=PAPER / "NUMBER_AUDIT.txt")
+    ap.add_argument("--files", nargs="+", help="audit only these files, relative to --root (e.g. supplement.tex)")
     a = ap.parse_args(argv)
     table = load_table(a.table)
     sha = hashlib.sha256(a.table.read_bytes()).hexdigest()
-    lines = [f"Paper B number audit (card T10). Table: {a.table.relative_to(REPO)}",
+    shown = a.table.relative_to(REPO) if a.table.resolve().is_relative_to(REPO) else a.table
+    lines = [f"Paper B number audit (card T10). Table: {shown}",
              f"Table sha256 {sha}, {len(table)} rows. Rule: a printed number passes only if it equals the",
              "table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).", ""]
     n_pass = n_fail = n_dc_fail = n_resid = 0
     used: set[str] = set()
-    for f in tex_files(a.root):
+    files = [a.root / f for f in a.files] if a.files else tex_files(a.root)
+    for f in files:
         tex = f.read_text()
         cls, dcs, residual = extract(tex)
         lines.append(f"== {f.relative_to(a.root)}: {len(cls)} statistics, {len(dcs)} design constants")

@@ -77,3 +77,17 @@ def test_claim_id_containing_colon_resolves_with_and_without_field():
     assert AN.check("-0.403", "B2_bank2_patience:Q43_rho:lo", table)[0] == "PASS"
     assert AN.check("0.470", "B2_bank2_patience:Q43_rho:hi", table)[0] == "PASS"
     assert AN.split_ref("B2_bank2_patience:Q43_rho:lo", table) == ("B2_bank2_patience:Q43_rho", "lo")
+
+
+def test_files_argument_audits_only_the_named_files(tmp_path):
+    (tmp_path / "abstract.tex").write_text("unexplained 99")
+    (tmp_path / "supp.tex").write_text("ok")
+    table = tmp_path / "t.csv"
+    table.write_text("claim_id,value,ci_low,ci_high,n\n")
+    out = tmp_path / "audit.txt"
+    rc = AN.main(["--table", str(table), "--root", str(tmp_path), "--out", str(out), "--files", "supp.tex"])
+    assert rc == 0 and "supp.tex" in out.read_text() and "abstract.tex" not in out.read_text()
+
+
+def test_supplement_design_constants_are_registered():
+    assert AN.DESIGN["abs_a_cut"][0] == {"0.15"} and AN.DESIGN["face_valid_registered"][0] == {"30"}
