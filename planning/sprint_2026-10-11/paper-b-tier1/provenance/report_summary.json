@@ -1,0 +1,473 @@
+{
+  "verdict": "NOT REPRODUCED",
+  "rows": 10,
+  "failed_nf4_rows": 6,
+  "fence_exception_bytecode_paths": [
+    "paper_b/__pycache__/eval_config.cpython-312.pyc",
+    "paper_b/__pycache__/config.cpython-312.pyc",
+    "paper_b/__pycache__/eval_lib.cpython-312.pyc",
+    "paper_b/__pycache__/score_cohort.cpython-312.pyc"
+  ],
+  "mode_summary": [
+    {
+      "mode": "f32",
+      "arm": "base",
+      "reduction": "float32",
+      "worst_item": "Q57",
+      "max_probability_gap": 0.21308782053744013,
+      "passing_items_at_1e_3": 0
+    },
+    {
+      "mode": "f32",
+      "arm": "base",
+      "reduction": "float16",
+      "worst_item": "Q57",
+      "max_probability_gap": 0.21326151975210328,
+      "passing_items_at_1e_3": 0
+    },
+    {
+      "mode": "f32",
+      "arm": "USA_adapter",
+      "reduction": "float32",
+      "worst_item": "Q106",
+      "max_probability_gap": 0.4205636828606882,
+      "passing_items_at_1e_3": 2
+    },
+    {
+      "mode": "f32",
+      "arm": "USA_adapter",
+      "reduction": "float16",
+      "worst_item": "Q106",
+      "max_probability_gap": 0.42106607133547536,
+      "passing_items_at_1e_3": 2
+    },
+    {
+      "mode": "f16",
+      "arm": "base",
+      "reduction": "float32",
+      "worst_item": "Q57",
+      "max_probability_gap": 0.21326151975210328,
+      "passing_items_at_1e_3": 0
+    },
+    {
+      "mode": "f16",
+      "arm": "base",
+      "reduction": "float16",
+      "worst_item": "Q57",
+      "max_probability_gap": 0.21287070108396156,
+      "passing_items_at_1e_3": 0
+    },
+    {
+      "mode": "f16",
+      "arm": "USA_adapter",
+      "reduction": "float32",
+      "worst_item": "Q106",
+      "max_probability_gap": 0.4210674991664002,
+      "passing_items_at_1e_3": 2
+    },
+    {
+      "mode": "f16",
+      "arm": "USA_adapter",
+      "reduction": "float16",
+      "worst_item": "Q106",
+      "max_probability_gap": 0.42106453925104576,
+      "passing_items_at_1e_3": 2
+    },
+    {
+      "mode": "nf4",
+      "arm": "base",
+      "reduction": "float32",
+      "worst_item": "Q107",
+      "max_probability_gap": 0.003464976338931114,
+      "passing_items_at_1e_3": 1
+    },
+    {
+      "mode": "nf4",
+      "arm": "base",
+      "reduction": "float16",
+      "worst_item": "Q107",
+      "max_probability_gap": 0.0034654792272464374,
+      "passing_items_at_1e_3": 1
+    },
+    {
+      "mode": "nf4",
+      "arm": "USA_adapter",
+      "reduction": "float32",
+      "worst_item": "Q107",
+      "max_probability_gap": 0.011411074867888338,
+      "passing_items_at_1e_3": 3
+    },
+    {
+      "mode": "nf4",
+      "arm": "USA_adapter",
+      "reduction": "float16",
+      "worst_item": "Q107",
+      "max_probability_gap": 0.011411149669899812,
+      "passing_items_at_1e_3": 3
+    }
+  ],
+  "parameter_swaps": [
+    {
+      "swap": "no_double_quant",
+      "arm": "base",
+      "item": "Q57",
+      "reduction": "float32",
+      "max_probability_gap": 0.0
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "base",
+      "item": "Q57",
+      "reduction": "float16",
+      "max_probability_gap": 0.0
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "base",
+      "item": "Q81",
+      "reduction": "float32",
+      "max_probability_gap": 0.0024907372829607866
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "base",
+      "item": "Q81",
+      "reduction": "float16",
+      "max_probability_gap": 0.0024907372829607866
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "USA_adapter",
+      "item": "Q57",
+      "reduction": "float32",
+      "max_probability_gap": 6.348493769582862e-12
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "USA_adapter",
+      "item": "Q57",
+      "reduction": "float16",
+      "max_probability_gap": 6.348598536306267e-12
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "USA_adapter",
+      "item": "Q81",
+      "reduction": "float32",
+      "max_probability_gap": 8.027609010863301e-08
+    },
+    {
+      "swap": "no_double_quant",
+      "arm": "USA_adapter",
+      "item": "Q81",
+      "reduction": "float16",
+      "max_probability_gap": 8.027745912464468e-08
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "base",
+      "item": "Q57",
+      "reduction": "float32",
+      "max_probability_gap": 0.0
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "base",
+      "item": "Q57",
+      "reduction": "float16",
+      "max_probability_gap": 0.0
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "base",
+      "item": "Q81",
+      "reduction": "float32",
+      "max_probability_gap": 0.0017584614736575466
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "base",
+      "item": "Q81",
+      "reduction": "float16",
+      "max_probability_gap": 0.001760782603421912
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "USA_adapter",
+      "item": "Q57",
+      "reduction": "float32",
+      "max_probability_gap": 1.1687572569954333e-16
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "USA_adapter",
+      "item": "Q57",
+      "reduction": "float16",
+      "max_probability_gap": 9.500178421717465e-13
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "USA_adapter",
+      "item": "Q81",
+      "reduction": "float32",
+      "max_probability_gap": 8.020697606081484e-08
+    },
+    {
+      "swap": "compute_f32",
+      "arm": "USA_adapter",
+      "item": "Q81",
+      "reduction": "float16",
+      "max_probability_gap": 8.02269065625083e-08
+    },
+    {
+      "swap": "fp4",
+      "arm": "base",
+      "item": "Q57",
+      "reduction": "float32",
+      "max_probability_gap": 0.18351216136494275
+    },
+    {
+      "swap": "fp4",
+      "arm": "base",
+      "item": "Q57",
+      "reduction": "float16",
+      "max_probability_gap": 0.18351216136494275
+    },
+    {
+      "swap": "fp4",
+      "arm": "base",
+      "item": "Q81",
+      "reduction": "float32",
+      "max_probability_gap": 0.1397661056973194
+    },
+    {
+      "swap": "fp4",
+      "arm": "base",
+      "item": "Q81",
+      "reduction": "float16",
+      "max_probability_gap": 0.1397661056973194
+    },
+    {
+      "swap": "fp4",
+      "arm": "USA_adapter",
+      "item": "Q57",
+      "reduction": "float32",
+      "max_probability_gap": 3.320418351382415e-08
+    },
+    {
+      "swap": "fp4",
+      "arm": "USA_adapter",
+      "item": "Q57",
+      "reduction": "float16",
+      "max_probability_gap": 3.320405651848151e-08
+    },
+    {
+      "swap": "fp4",
+      "arm": "USA_adapter",
+      "item": "Q81",
+      "reduction": "float32",
+      "max_probability_gap": 0.02228122107281938
+    },
+    {
+      "swap": "fp4",
+      "arm": "USA_adapter",
+      "item": "Q81",
+      "reduction": "float16",
+      "max_probability_gap": 0.02194328867605433
+    }
+  ],
+  "q262": [
+    {
+      "mode": "f32",
+      "reduction": "float32",
+      "options": 80,
+      "max_abs_dlogprob": 4.4462738037109375,
+      "max_abs_dprob": 0.03769250820139225
+    },
+    {
+      "mode": "f32",
+      "reduction": "float16",
+      "options": 80,
+      "max_abs_dlogprob": 4.453125,
+      "max_abs_dprob": 0.037778623205710404
+    },
+    {
+      "mode": "f16",
+      "reduction": "float32",
+      "options": 80,
+      "max_abs_dlogprob": 4.43025016784668,
+      "max_abs_dprob": 0.03665172245238457
+    },
+    {
+      "mode": "f16",
+      "reduction": "float16",
+      "options": 80,
+      "max_abs_dlogprob": 4.421875,
+      "max_abs_dprob": 0.03665166590764918
+    },
+    {
+      "mode": "nf4",
+      "reduction": "float32",
+      "options": 80,
+      "max_abs_dlogprob": 0.39350128173828125,
+      "max_abs_dprob": 0.009887496730043771
+    },
+    {
+      "mode": "nf4",
+      "reduction": "float16",
+      "options": 80,
+      "max_abs_dlogprob": 0.375,
+      "max_abs_dprob": 0.009887335641097617
+    }
+  ],
+  "run_groups": [
+    {
+      "run_id": "bank2-heldout-para-a-20261016",
+      "rows": 3,
+      "scoring_pipeline": "paper_b/colab/vm_score_units.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "sca scratch readout_robustness.py (build_probe_input.py + probe_select.py); counts recomputed by paper_b/build_numbers_table.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-heldout-para-b-20261016",
+      "rows": 3,
+      "scoring_pipeline": "paper_b/colab/vm_score_units.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "sca scratch readout_robustness.py (build_probe_input.py + probe_select.py); counts recomputed by paper_b/build_numbers_table.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-heldout-reverse-20261016",
+      "rows": 3,
+      "scoring_pipeline": "paper_b/colab/vm_score_units.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "sca scratch readout_robustness.py (build_probe_input.py + probe_select.py); counts recomputed by paper_b/build_numbers_table.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-heldout-v1-20261016",
+      "rows": 57,
+      "scoring_pipeline": "paper_b/colab/vm_score_units.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/heldout/analyze_heldout.py",
+        "paper_b/heldout/per_dimension.py",
+        "paper_b/heldout/run_screen.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-nearzero-strict-v1-20261018",
+      "rows": 32,
+      "scoring_pipeline": "paper_b/colab/vm_score_t4.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/analyze_near_zero.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-replicate-r1-strict-v1-20261018; bank2-replicate-r1-heldout-v1-20261018",
+      "rows": 17,
+      "scoring_pipeline": "paper_b/colab/vm_score_t4.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob; paper_b/colab/vm_score_t4.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/analyze_replicate.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-signprompt-heldout-v1-20261016",
+      "rows": 7,
+      "scoring_pipeline": "paper_b/colab/vm_score_units.py -> paper_b/score_sign_profiles.py -> score_cohort.load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/heldout/analyze_heldout.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-signprompt-strict-v1-20261018",
+      "rows": 32,
+      "scoring_pipeline": "paper_b/colab/vm_score_t4.py -> paper_b/score_sign_profiles.py -> score_cohort.load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/analyze_factorial.py + paper_b/factorial_report.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "bank2-strict-v1-20261016",
+      "rows": 39,
+      "scoring_pipeline": "paper_b/colab/vm_score_units.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/analyze_factorial.py + paper_b/factorial_report.py",
+        "paper_b/bank2_transport.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "n/a (file hash)",
+      "rows": 6,
+      "scoring_pipeline": "paper_b/build_numbers_table.py (hashlib/git show; no model)",
+      "producing_scripts": [
+        "paper_b/build_numbers_table.py (hashlib, git show)"
+      ],
+      "could_move": "NO: content hash is model-independent; unchanged input bytes imply unchanged hash"
+    },
+    {
+      "run_id": "paper-b-20261011",
+      "rows": 7,
+      "scoring_pipeline": "paper_b/colab/vm_cohort.py -> score_cohort.score_model_questions -> sequence_logprob",
+      "producing_scripts": [
+        "paper_b/bank2_transport.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    },
+    {
+      "run_id": "paper-b-20261011; bank2-strict-v1-20261016",
+      "rows": 14,
+      "scoring_pipeline": "paper_b/colab/vm_cohort.py -> score_cohort.score_model_questions -> sequence_logprob; paper_b/colab/vm_score_units.py -> paper_b/score_cohort.py --model-only -> load_base_model_and_tokenizer/sequence_logprob",
+      "producing_scripts": [
+        "paper_b/bank2_transport.py"
+      ],
+      "could_move": "YES/POSSIBLE: model outputs, derived selection, or selection-conditioned criterion; no magnitude estimated"
+    }
+  ],
+  "peak_rss_bytes": 4848041984,
+  "q81_usa_nf4_probability_gap": 8.020551878207272e-08,
+  "memo_sha256": "445d93076d4fd8a9d9582a554fcbbad0b986b34e8d9251fc101a31965f46553d",
+  "evidence_sha256": {
+    "writer_inspection.json": "9b401d1607154721f51cad68fb090c0c7a31b172c25bc2db1337722b44900c31",
+    "writer_followup.json": "5f50b1088452d5441d80be03d41a84fd2f4a671b9b51f9a7b5381d250464e84e",
+    "prompt_comparison.json": "bd33018dfcdd3e4d26ca5f0853f0ad9919a40bec5621604fe59a2fc82ee61525",
+    "prompts_old.json": "b8a2c5110e9a28d8ded0f26f4d09eb7066c784669899ed426dc5aa317b18dfe3",
+    "prompts_new.json": "ad9b6a7531c82666268916ba9abeb1befe130e0557d725854398d57ad113f750",
+    "runtime_evidence.json": "164b9e9ccd5675cf939e7a3bfefd10b7ddb199d646109986d099927832e1d029",
+    "adapter_tensor_dtypes.json": "ff873117598d79ac75c29c25f3efb4776c6f93b54d4a87d90c6f35a48a8685d7",
+    "comparison_panel.csv": "50dfda952e464bd9937be94dbfa5d232ba30d38f9b06feda4354e73b352d62ce",
+    "blast_radius_summary.json": "8058f98cb75e00ddcb48188b5edcfd40d6ca4fee35b5f2690782315fd3b08fd5",
+    "blast_radius_numbers.csv": "f94372b5f05dedafdbcfe16c851c02a02211d553a5a1b78973f8f686bbd79ca0",
+    "blast_radius_locked.csv": "67bb3fc0ba58f84c35cec67bad1c761cd52ebf6372a50cf5a748154b38d548bc",
+    "worktree_cleanup.json": "c9691805315e9bea8d2cc1028ed4fbf072ebd85edc88a0d17e615ad319eb26c9",
+    "replay_commands.json": "546d448f332946cb5e65d6c0f5b961753e3e227a5c38a76fa06bbb3775c51788",
+    "q262_commands.json": "8c3e36d77fc084e8263efa4c9b3f6214ed9bab27c60aaec6615a401483fad96b",
+    "isolation_commands.json": "95c78ae602187ed6c6277fea085eda05b9ead37d7206667a3de3c4bb50bfbf00",
+    "repair_commands.json": "27c1f737d5b65b6a71b50a7fdb52285272bab0797584eeda202eb90334840eb5",
+    "protected_mtime_audit.json": "9e144888a7d625a99e065d6e3c872448f4c744cd174879b73689e58048049aec",
+    "replay_f32_base.json": "68a2b001a6e5e4736d2160fc3a0c34097ed668630565488f4f28b95606071d5c",
+    "replay_f32_USA_adapter.json": "25fcb9dfcfadc308e310c3083dfecae58f7f25c17246bf1974c4a7d6e1a80cec",
+    "replay_f16_base.json": "930e0656ee24b5fd751dbfebe6e47322ddabb11e24536e453479732c33408907",
+    "replay_f16_USA_adapter.json": "9b09432934211b7ed5cafba7e0d265824d9d60f1e0b4ec20ea8ad11454be05c4",
+    "replay_nf4_base.json": "8f924caf483fc7a3a219ad32f4a7d998d7e86f04f46b478ec22d84b899d391b2",
+    "replay_nf4_USA_adapter.json": "15756b724fb14b14f07fbef40af55339a37472474926302ac1ef634c7e86f7a6",
+    "replay_nf4_base_no_double_quant.json": "c73a5903e598e85b69d57cacd063a6257936ca495dab7bd15b0d0b0fb391adc0",
+    "replay_nf4_base_compute_f32.json": "9d952ba3e7f7f06159e36bb78dc405d882c02edc53b72a62a1f79fedac1247de",
+    "replay_nf4_base_fp4.json": "a399bfd26fe0c7f633280219d015e88d5f5af1b65d1375c8ddc3db4c8617fd4d",
+    "replay_nf4_USA_adapter_no_double_quant.json": "38e5ee03a1bcbc68449539f2e03bb6173ba6553055f22b6c24c7d70dbdf4c904",
+    "replay_nf4_USA_adapter_compute_f32.json": "7ffd7f027a4d286f4ff33d1b7d1bd8ba81ff378572fc6b5086fd17d5d05e7913",
+    "replay_nf4_USA_adapter_fp4.json": "754401445acf4018b2c9ad0075fd77089fb787293280a42a15279e72f66b467f",
+    "q262_f32.json": "859258aef4aa32484fda17bab28be4b0e3f11d06270c9a6008412ca957977cf9",
+    "q262_f16.json": "178a8bde0915484cdd9b0535911499f4c8ca5f0c3c3b6c45ee8d908a1d4f7e6c",
+    "q262_nf4.json": "280c6aaec2d6f16a64c1d9411c924eaf567a83fb26001e34d1ac032443f942d0"
+  }
+}

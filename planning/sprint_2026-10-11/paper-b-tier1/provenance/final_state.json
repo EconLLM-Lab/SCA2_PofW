@@ -1,0 +1,40 @@
+{
+  "verdict": "NOT REPRODUCED",
+  "verification_passed": 9,
+  "verification_total": 9,
+  "q81_usa_nf4_probability_gap": 8.020551878207272e-08,
+  "failed_nf4_rows": 6,
+  "fence_status": "INCIDENTAL BYTECODE WRITES DISCLOSED; not a zero-write audit",
+  "fence_exception_bytecode_paths": [
+    "paper_b/__pycache__/eval_config.cpython-312.pyc",
+    "paper_b/__pycache__/config.cpython-312.pyc",
+    "paper_b/__pycache__/eval_lib.cpython-312.pyc",
+    "paper_b/__pycache__/score_cohort.cpython-312.pyc"
+  ],
+  "live_replays": [],
+  "git_checks": [
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": "?? .worktrees/\n?? planning/sprint_2026-10-11/paper-b-tier1/provenance/\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "HEAD",
+        "--",
+        "paper_b",
+        "planning/TWO_PAPER_CLAIM_LOCK.md",
+        "planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv"
+      ],
+      "exit_code": 0,
+      "stdout": ""
+    }
+  ]
+}

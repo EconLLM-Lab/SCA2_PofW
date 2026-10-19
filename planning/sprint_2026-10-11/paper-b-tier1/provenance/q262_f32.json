@@ -1,0 +1,1303 @@
+{
+  "mode": "f32",
+  "archive_file": "data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_base_on_CHN.csv",
+  "archive_run": "legacy August/Paper A base-on-CHN; NOT paper-b-20261011; NOT a re-run of bank2 gate",
+  "prompt_byte_identical_to_archive": true,
+  "n_options": 80,
+  "reductions": {
+    "float32": {
+      "rows": [
+        {
+          "question_id": "Q262",
+          "option_code": "18",
+          "option_logprob": "-37.5",
+          "model_prob": "3.965741728941022e-08",
+          "today_logprob": -33.82435989379883,
+          "today_prob": 4.4425364852002256e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "19",
+          "option_logprob": "-36.5",
+          "model_prob": "1.0780003678142136e-07",
+          "today_logprob": -32.8784065246582,
+          "today_prob": 1.144071933509477e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "20",
+          "option_logprob": "-35.5",
+          "model_prob": "2.9303088109015437e-07",
+          "today_logprob": -31.053726196289062,
+          "today_prob": 7.094175521496341e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "21",
+          "option_logprob": "-32.5",
+          "model_prob": "5.885682581770511e-06",
+          "today_logprob": -29.06639862060547,
+          "today_prob": 5.1759173077600595e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "22",
+          "option_logprob": "-29.25",
+          "model_prob": "0.00015179375442856395",
+          "today_logprob": -26.44192886352539,
+          "today_prob": 0.000714134579344743
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "23",
+          "option_logprob": "-28.75",
+          "model_prob": "0.0002502655916858051",
+          "today_logprob": -26.180522918701172,
+          "today_prob": 0.0009274856993569859
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "24",
+          "option_logprob": "-28.25",
+          "model_prob": "0.00041261820433674003",
+          "today_logprob": -25.846115112304688,
+          "today_prob": 0.0012958021228594583
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "25",
+          "option_logprob": "-24.75",
+          "model_prob": "0.013664038322995203",
+          "today_logprob": -23.036117553710938,
+          "today_prob": 0.021523114741694806
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "26",
+          "option_logprob": "-26.5",
+          "model_prob": "0.0023744538228448837",
+          "today_logprob": -24.184185028076172,
+          "today_prob": 0.006828192433438593
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "27",
+          "option_logprob": "-23.375",
+          "model_prob": "0.05404231991237305",
+          "today_logprob": -22.26565933227539,
+          "today_prob": 0.04650620215252971
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "28",
+          "option_logprob": "-23.25",
+          "model_prob": "0.06123797120884806",
+          "today_logprob": -21.7594051361084,
+          "today_prob": 0.07715681269832975
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "29",
+          "option_logprob": "-24.0",
+          "model_prob": "0.028926769356777068",
+          "today_logprob": -22.515201568603516,
+          "today_prob": 0.03623565022239862
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "30",
+          "option_logprob": "-25.5",
+          "model_prob": "0.00645443467915436",
+          "today_logprob": -22.796951293945312,
+          "today_prob": 0.027338438666961035
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "31",
+          "option_logprob": "-23.0",
+          "model_prob": "0.07863111149855305",
+          "today_logprob": -22.192384719848633,
+          "today_prob": 0.05004188204736695
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "32",
+          "option_logprob": "-21.75",
+          "model_prob": "0.27444954625637147",
+          "today_logprob": -20.555416107177734,
+          "today_prob": 0.2571935484909107
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "33",
+          "option_logprob": "-25.5",
+          "model_prob": "0.00645443467915436",
+          "today_logprob": -23.306163787841797,
+          "today_prob": 0.016429544824783534
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "34",
+          "option_logprob": "-24.75",
+          "model_prob": "0.013664038322995203",
+          "today_logprob": -23.089323043823242,
+          "today_prob": 0.020407897775277347
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "35",
+          "option_logprob": "-22.0",
+          "model_prob": "0.21374152153805384",
+          "today_logprob": -20.93448257446289,
+          "today_prob": 0.1760490133366616
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "36",
+          "option_logprob": "-25.0",
+          "model_prob": "0.01064156374586635",
+          "today_logprob": -22.746658325195312,
+          "today_prob": 0.02874853157835301
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "37",
+          "option_logprob": "-22.75",
+          "model_prob": "0.10096434570654984",
+          "today_logprob": -21.751108169555664,
+          "today_prob": 0.07779964327682584
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "38",
+          "option_logprob": "-23.375",
+          "model_prob": "0.05404231991237305",
+          "today_logprob": -21.88705062866211,
+          "today_prob": 0.0679107529774137
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "39",
+          "option_logprob": "-24.75",
+          "model_prob": "0.013664038322995203",
+          "today_logprob": -23.328411102294922,
+          "today_prob": 0.016068067434432638
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "40",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -24.54224395751953,
+          "today_prob": 0.004773124195340365
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "41",
+          "option_logprob": "-25.25",
+          "model_prob": "0.008287658178384985",
+          "today_logprob": -23.74599838256836,
+          "today_prob": 0.010582975584187592
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "42",
+          "option_logprob": "-24.0",
+          "model_prob": "0.028926769356777068",
+          "today_logprob": -22.79652214050293,
+          "today_prob": 0.02735017356988122
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "43",
+          "option_logprob": "-26.5",
+          "model_prob": "0.0023744538228448837",
+          "today_logprob": -24.81671142578125,
+          "today_prob": 0.0036274633045453083
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "44",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -25.49190902709961,
+          "today_prob": 0.0018465813090729497
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "45",
+          "option_logprob": "-25.5",
+          "model_prob": "0.00645443467915436",
+          "today_logprob": -24.042217254638672,
+          "today_prob": 0.007869761531049931
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "46",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -25.574424743652344,
+          "today_prob": 0.0017003264668463813
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "47",
+          "option_logprob": "-25.75",
+          "model_prob": "0.005026718782408647",
+          "today_logprob": -24.716873168945312,
+          "today_prob": 0.00400831858000702
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "48",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -26.156085968017578,
+          "today_prob": 0.0009504298220762155
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "49",
+          "option_logprob": "-28.25",
+          "model_prob": "0.00041261820433674003",
+          "today_logprob": -26.61908721923828,
+          "today_prob": 0.000598192779259156
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "50",
+          "option_logprob": "-30.0",
+          "model_prob": "7.170229250703687e-05",
+          "today_logprob": -27.29550552368164,
+          "today_prob": 0.00030414202229042957
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "51",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -26.581390380859375,
+          "today_prob": 0.000621173178683092
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "52",
+          "option_logprob": "-26.25",
+          "model_prob": "0.0030488590592842022",
+          "today_logprob": -25.135608673095703,
+          "today_prob": 0.0026369853254835777
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "53",
+          "option_logprob": "-28.75",
+          "model_prob": "0.0002502655916858051",
+          "today_logprob": -27.10726547241211,
+          "today_prob": 0.0003671369070297069
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "54",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -26.843074798583984,
+          "today_prob": 0.0004781504806372555
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "55",
+          "option_logprob": "-27.75",
+          "model_prob": "0.0006802924101680752",
+          "today_logprob": -26.74610137939453,
+          "today_prob": 0.0005268410631934245
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "56",
+          "option_logprob": "-28.25",
+          "model_prob": "0.00041261820433674003",
+          "today_logprob": -27.132274627685547,
+          "today_prob": 0.00035806898626301225
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "57",
+          "option_logprob": "-26.5",
+          "model_prob": "0.0023744538228448837",
+          "today_logprob": -26.166900634765625,
+          "today_prob": 0.0009402066201832464
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "58",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -27.363929748535156,
+          "today_prob": 0.00028402735275631977
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "59",
+          "option_logprob": "-29.5",
+          "model_prob": "0.00011821709481431411",
+          "today_logprob": -28.54735565185547,
+          "today_prob": 8.697708061364631e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "60",
+          "option_logprob": "-31.25",
+          "model_prob": "2.054305074913853e-05",
+          "today_logprob": -29.477375030517578,
+          "today_prob": 3.431646485978318e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "61",
+          "option_logprob": "-28.5",
+          "model_prob": "0.0003213473806469701",
+          "today_logprob": -28.387737274169922,
+          "today_prob": 0.00010202960542256475
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "62",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -27.291744232177734,
+          "today_prob": 0.0003052881431910437
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "63",
+          "option_logprob": "-29.75",
+          "model_prob": "9.206756601381435e-05",
+          "today_logprob": -28.82120132446289,
+          "today_prob": 6.614167088710978e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "64",
+          "option_logprob": "-28.5",
+          "model_prob": "0.0003213473806469701",
+          "today_logprob": -28.319129943847656,
+          "today_prob": 0.00010927529613388399
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "65",
+          "option_logprob": "-29.25",
+          "model_prob": "0.00015179375442856395",
+          "today_logprob": -28.686965942382812,
+          "today_prob": 7.564371465117498e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "66",
+          "option_logprob": "-33.0",
+          "model_prob": "3.5698469391804233e-06",
+          "today_logprob": -31.04528045654297,
+          "today_prob": 7.154344811085832e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "67",
+          "option_logprob": "-29.25",
+          "model_prob": "0.00015179375442856395",
+          "today_logprob": -28.882583618164062,
+          "today_prob": 6.220383640728481e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "68",
+          "option_logprob": "-30.25",
+          "model_prob": "5.5841801552495245e-05",
+          "today_logprob": -29.137100219726562,
+          "today_prob": 4.822608584933886e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "69",
+          "option_logprob": "-31.5",
+          "model_prob": "1.59989440101047e-05",
+          "today_logprob": -30.504148483276367,
+          "today_prob": 1.2290809786836527e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "70",
+          "option_logprob": "-34.75",
+          "model_prob": "6.203463801358835e-07",
+          "today_logprob": -32.7479248046875,
+          "today_prob": 1.303529375357775e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "71",
+          "option_logprob": "-32.75",
+          "model_prob": "4.583774203592602e-06",
+          "today_logprob": -31.577999114990234,
+          "today_prob": 4.199649962652737e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "72",
+          "option_logprob": "-31.0",
+          "model_prob": "2.6377799298200023e-05",
+          "today_logprob": -30.196945190429688,
+          "today_prob": 1.6710798114457537e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "73",
+          "option_logprob": "-32.75",
+          "model_prob": "4.583774203592602e-06",
+          "today_logprob": -31.781875610351562,
+          "today_prob": 3.425079503786992e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "74",
+          "option_logprob": "-33.5",
+          "model_prob": "2.165221619094227e-06",
+          "today_logprob": -32.77373504638672,
+          "today_prob": 1.2703154407769052e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "75",
+          "option_logprob": "-33.5",
+          "model_prob": "2.165221619094227e-06",
+          "today_logprob": -32.843360900878906,
+          "today_prob": 1.1848774999832997e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "76",
+          "option_logprob": "-34.0",
+          "model_prob": "1.313273297053278e-06",
+          "today_logprob": -33.23013687133789,
+          "today_prob": 8.048200420870809e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "77",
+          "option_logprob": "-35.5",
+          "model_prob": "2.9303088109015437e-07",
+          "today_logprob": -34.36540222167969,
+          "today_prob": 2.5861833165179726e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "78",
+          "option_logprob": "-34.0",
+          "model_prob": "1.313273297053278e-06",
+          "today_logprob": -33.663143157958984,
+          "today_prob": 5.219712008650225e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "79",
+          "option_logprob": "-36.5",
+          "model_prob": "1.0780003678142136e-07",
+          "today_logprob": -35.563690185546875,
+          "today_prob": 7.802781674236208e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "80",
+          "option_logprob": "-38.5",
+          "model_prob": "1.4589148510730927e-08",
+          "today_logprob": -36.243587493896484,
+          "today_prob": 3.9534277470620625e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "81",
+          "option_logprob": "-36.25",
+          "model_prob": "1.384179871472184e-07",
+          "today_logprob": -35.178382873535156,
+          "today_prob": 1.1470604208400647e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "82",
+          "option_logprob": "-33.5",
+          "model_prob": "2.165221619094227e-06",
+          "today_logprob": -33.156490325927734,
+          "today_prob": 8.663294362818439e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "83",
+          "option_logprob": "-35.75",
+          "model_prob": "2.2821267965711596e-07",
+          "today_logprob": -35.111793518066406,
+          "today_prob": 1.2260429499775419e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "84",
+          "option_logprob": "-37.25",
+          "model_prob": "5.0921131759794604e-08",
+          "today_logprob": -36.302162170410156,
+          "today_prob": 3.72850858360257e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "85",
+          "option_logprob": "-35.5",
+          "model_prob": "2.9303088109015437e-07",
+          "today_logprob": -35.091331481933594,
+          "today_prob": 1.2513887137483627e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "86",
+          "option_logprob": "-38.0",
+          "model_prob": "2.4053439471045174e-08",
+          "today_logprob": -36.45135498046875,
+          "today_prob": 3.2117485231433325e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "87",
+          "option_logprob": "-35.0",
+          "model_prob": "4.831262466253375e-07",
+          "today_logprob": -35.643035888671875,
+          "today_prob": 7.207589671708005e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "88",
+          "option_logprob": "-37.5",
+          "model_prob": "3.965741728941022e-08",
+          "today_logprob": -36.801292419433594,
+          "today_prob": 2.2634225290578946e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "89",
+          "option_logprob": "-39.0",
+          "model_prob": "8.848765870859213e-09",
+          "today_logprob": -38.022438049316406,
+          "today_prob": 6.674655044648595e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "90",
+          "option_logprob": "-41.0",
+          "model_prob": "1.1975502354272032e-09",
+          "today_logprob": -39.304908752441406,
+          "today_prob": 1.8512235912217036e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "91",
+          "option_logprob": "-39.5",
+          "model_prob": "5.367047801294873e-09",
+          "today_logprob": -38.99592208862305,
+          "today_prob": 2.5214483662736558e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "92",
+          "option_logprob": "-37.75",
+          "model_prob": "3.088522763958215e-08",
+          "today_logprob": -37.92240905761719,
+          "today_prob": 7.376848507805502e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "93",
+          "option_logprob": "-41.0",
+          "model_prob": "1.1975502354272032e-09",
+          "today_logprob": -39.97072982788086,
+          "today_prob": 9.512539148663782e-10
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "94",
+          "option_logprob": "-39.5",
+          "model_prob": "5.367047801294873e-09",
+          "today_logprob": -38.915130615234375,
+          "today_prob": 2.7336151346447547e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "95",
+          "option_logprob": "-39.0",
+          "model_prob": "8.848765870859213e-09",
+          "today_logprob": -38.7703857421875,
+          "today_prob": 3.1593611245255835e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "96",
+          "option_logprob": "-40.5",
+          "model_prob": "1.974426545880776e-09",
+          "today_logprob": -39.55493927001953,
+          "today_prob": 1.4416903849134212e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "99",
+          "option_logprob": "-42.5",
+          "model_prob": "2.672095758166617e-10",
+          "today_logprob": -41.08396911621094,
+          "today_prob": 3.1248039660168935e-10
+        }
+      ],
+      "max_abs_dlogprob": 4.4462738037109375,
+      "max_abs_dprob": 0.03769250820139225
+    },
+    "float16": {
+      "rows": [
+        {
+          "question_id": "Q262",
+          "option_code": "18",
+          "option_logprob": "-37.5",
+          "model_prob": "3.965741728941022e-08",
+          "today_logprob": -33.8125,
+          "today_prob": 4.506917956010468e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "19",
+          "option_logprob": "-36.5",
+          "model_prob": "1.0780003678142136e-07",
+          "today_logprob": -32.875,
+          "today_prob": 1.1508818180822846e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "20",
+          "option_logprob": "-35.5",
+          "model_prob": "2.9303088109015437e-07",
+          "today_logprob": -31.046875,
+          "today_prob": 7.161027289499701e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "21",
+          "option_logprob": "-32.5",
+          "model_prob": "5.885682581770511e-06",
+          "today_logprob": -29.0625,
+          "today_prob": 5.2092888736820494e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "22",
+          "option_logprob": "-29.25",
+          "model_prob": "0.00015179375442856395",
+          "today_logprob": -26.4375,
+          "today_prob": 0.0007191201471339776
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "23",
+          "option_logprob": "-28.75",
+          "model_prob": "0.0002502655916858051",
+          "today_logprob": -26.1875,
+          "today_prob": 0.0009233685465722554
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "24",
+          "option_logprob": "-28.25",
+          "model_prob": "0.00041261820433674003",
+          "today_logprob": -25.84375,
+          "today_prob": 0.0013021583642077081
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "25",
+          "option_logprob": "-24.75",
+          "model_prob": "0.013664038322995203",
+          "today_logprob": -23.03125,
+          "today_prob": 0.02168288344342748
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "26",
+          "option_logprob": "-26.5",
+          "model_prob": "0.0023744538228448837",
+          "today_logprob": -24.1875,
+          "today_prob": 0.006822821990610454
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "27",
+          "option_logprob": "-23.375",
+          "model_prob": "0.05404231991237305",
+          "today_logprob": -22.265625,
+          "today_prob": 0.046625526395576475
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "28",
+          "option_logprob": "-23.25",
+          "model_prob": "0.06123797120884806",
+          "today_logprob": -21.765625,
+          "today_prob": 0.07687249712597721
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "29",
+          "option_logprob": "-24.0",
+          "model_prob": "0.028926769356777068",
+          "today_logprob": -22.515625,
+          "today_prob": 0.036311996467991416
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "30",
+          "option_logprob": "-25.5",
+          "model_prob": "0.00645443467915436",
+          "today_logprob": -22.796875,
+          "today_prob": 0.02740973296132488
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "31",
+          "option_logprob": "-23.0",
+          "model_prob": "0.07863111149855305",
+          "today_logprob": -22.1875,
+          "today_prob": 0.050414214441638336
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "32",
+          "option_logprob": "-21.75",
+          "model_prob": "0.27444954625637147",
+          "today_logprob": -20.5625,
+          "today_prob": 0.2560245063648951
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "33",
+          "option_logprob": "-25.5",
+          "model_prob": "0.00645443467915436",
+          "today_logprob": -23.3125,
+          "today_prob": 0.016367099108410832
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "34",
+          "option_logprob": "-24.75",
+          "model_prob": "0.013664038322995203",
+          "today_logprob": -23.09375,
+          "today_prob": 0.02036918394621781
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "35",
+          "option_logprob": "-22.0",
+          "model_prob": "0.21374152153805384",
+          "today_logprob": -20.9375,
+          "today_prob": 0.17596289833234344
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "36",
+          "option_logprob": "-25.0",
+          "model_prob": "0.01064156374586635",
+          "today_logprob": -22.75,
+          "today_prob": 0.028725153511147183
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "37",
+          "option_logprob": "-22.75",
+          "model_prob": "0.10096434570654984",
+          "today_logprob": -21.75,
+          "today_prob": 0.07808306280904792
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "38",
+          "option_logprob": "-23.375",
+          "model_prob": "0.05404231991237305",
+          "today_logprob": -21.890625,
+          "today_prob": 0.06783974060761809
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "39",
+          "option_logprob": "-24.75",
+          "model_prob": "0.013664038322995203",
+          "today_logprob": -23.3125,
+          "today_prob": 0.016367099108410832
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "40",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -24.53125,
+          "today_prob": 0.00483810525521171
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "41",
+          "option_logprob": "-25.25",
+          "model_prob": "0.008287658178384985",
+          "today_logprob": -23.75,
+          "today_prob": 0.010567393421244721
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "42",
+          "option_logprob": "-24.0",
+          "model_prob": "0.028926769356777068",
+          "today_logprob": -22.796875,
+          "today_prob": 0.02740973296132488
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "43",
+          "option_logprob": "-26.5",
+          "model_prob": "0.0023744538228448837",
+          "today_logprob": -24.8125,
+          "today_prob": 0.0036519934452249325
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "44",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -25.5,
+          "today_prob": 0.001836337626801986
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "45",
+          "option_logprob": "-25.5",
+          "model_prob": "0.00645443467915436",
+          "today_logprob": -24.03125,
+          "today_prob": 0.00797668704415362
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "46",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -25.5625,
+          "today_prob": 0.001725079554353683
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "47",
+          "option_logprob": "-25.75",
+          "model_prob": "0.005026718782408647",
+          "today_logprob": -24.71875,
+          "today_prob": 0.004010930133392126
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "48",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -26.15625,
+          "today_prob": 0.0009526794106179527
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "49",
+          "option_logprob": "-28.25",
+          "model_prob": "0.00041261820433674003",
+          "today_logprob": -26.625,
+          "today_prob": 0.0005961715414442412
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "50",
+          "option_logprob": "-30.0",
+          "model_prob": "7.170229250703687e-05",
+          "today_logprob": -27.28125,
+          "today_prob": 0.00030928972125861677
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "51",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -26.5625,
+          "today_prob": 0.0006346213024319136
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "52",
+          "option_logprob": "-26.25",
+          "model_prob": "0.0030488590592842022",
+          "today_logprob": -25.125,
+          "today_prob": 0.002671855481337252
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "53",
+          "option_logprob": "-28.75",
+          "model_prob": "0.0002502655916858051",
+          "today_logprob": -27.09375,
+          "today_prob": 0.00037307461761712686
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "54",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -26.84375,
+          "today_prob": 0.00047903729134145116
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "55",
+          "option_logprob": "-27.75",
+          "model_prob": "0.0006802924101680752",
+          "today_logprob": -26.75,
+          "today_prob": 0.0005261195387336265
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "56",
+          "option_logprob": "-28.25",
+          "model_prob": "0.00041261820433674003",
+          "today_logprob": -27.125,
+          "today_prob": 0.00036159631833407313
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "57",
+          "option_logprob": "-26.5",
+          "model_prob": "0.0023744538228448837",
+          "today_logprob": -26.15625,
+          "today_prob": 0.0009526794106179527
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "58",
+          "option_logprob": "-28.0",
+          "model_prob": "0.0005298122617564303",
+          "today_logprob": -27.34375,
+          "today_prob": 0.00029055080434428333
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "59",
+          "option_logprob": "-29.5",
+          "model_prob": "0.00011821709481431411",
+          "today_logprob": -28.53125,
+          "today_prob": 8.86129887601448e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "60",
+          "option_logprob": "-31.25",
+          "model_prob": "2.054305074913853e-05",
+          "today_logprob": -29.46875,
+          "today_prob": 3.470134499512065e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "61",
+          "option_logprob": "-28.5",
+          "model_prob": "0.0003213473806469701",
+          "today_logprob": -28.375,
+          "today_prob": 0.00010359907972969627
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "62",
+          "option_logprob": "-27.25",
+          "model_prob": "0.0011216125669399615",
+          "today_logprob": -27.28125,
+          "today_prob": 0.00030928972125861677
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "63",
+          "option_logprob": "-29.75",
+          "model_prob": "9.206756601381435e-05",
+          "today_logprob": -28.8125,
+          "today_prob": 6.68885931667641e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "64",
+          "option_logprob": "-28.5",
+          "model_prob": "0.0003213473806469701",
+          "today_logprob": -28.3125,
+          "today_prob": 0.00011028064632125119
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "65",
+          "option_logprob": "-29.25",
+          "model_prob": "0.00015179375442856395",
+          "today_logprob": -28.6875,
+          "today_prob": 7.579470587473502e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "66",
+          "option_logprob": "-33.0",
+          "model_prob": "3.5698469391804233e-06",
+          "today_logprob": -31.03125,
+          "today_prob": 7.273797060436046e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "67",
+          "option_logprob": "-29.25",
+          "model_prob": "0.00015179375442856395",
+          "today_logprob": -28.875,
+          "today_prob": 6.283601817407438e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "68",
+          "option_logprob": "-30.25",
+          "model_prob": "5.5841801552495245e-05",
+          "today_logprob": -29.125,
+          "today_prob": 4.8936740159058155e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "69",
+          "option_logprob": "-31.5",
+          "model_prob": "1.59989440101047e-05",
+          "today_logprob": -30.5,
+          "today_prob": 1.237314560181817e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "70",
+          "option_logprob": "-34.75",
+          "model_prob": "6.203463801358835e-07",
+          "today_logprob": -32.75,
+          "today_prob": 1.3041199518226771e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "71",
+          "option_logprob": "-32.75",
+          "model_prob": "4.583774203592602e-06",
+          "today_logprob": -31.5625,
+          "today_prob": 4.276044700276823e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "72",
+          "option_logprob": "-31.0",
+          "model_prob": "2.6377799298200023e-05",
+          "today_logprob": -30.1875,
+          "today_prob": 1.691208486023276e-05
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "73",
+          "option_logprob": "-32.75",
+          "model_prob": "4.583774203592602e-06",
+          "today_logprob": -31.78125,
+          "today_prob": 3.4358984427759013e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "74",
+          "option_logprob": "-33.5",
+          "model_prob": "2.165221619094227e-06",
+          "today_logprob": -32.75,
+          "today_prob": 1.3041199518226771e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "75",
+          "option_logprob": "-33.5",
+          "model_prob": "2.165221619094227e-06",
+          "today_logprob": -32.84375,
+          "today_prob": 1.1874147286169787e-06
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "76",
+          "option_logprob": "-34.0",
+          "model_prob": "1.313273297053278e-06",
+          "today_logprob": -33.21875,
+          "today_prob": 8.160974124569412e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "77",
+          "option_logprob": "-35.5",
+          "model_prob": "2.9303088109015437e-07",
+          "today_logprob": -34.375,
+          "today_prob": 2.567964443806162e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "78",
+          "option_logprob": "-34.0",
+          "model_prob": "1.313273297053278e-06",
+          "today_logprob": -33.65625,
+          "today_prob": 5.269120917744397e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "79",
+          "option_logprob": "-36.5",
+          "model_prob": "1.0780003678142136e-07",
+          "today_logprob": -35.5625,
+          "today_prob": 7.831849060235588e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "80",
+          "option_logprob": "-38.5",
+          "model_prob": "1.4589148510730927e-08",
+          "today_logprob": -36.25,
+          "today_prob": 3.9381010213884915e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "81",
+          "option_logprob": "-36.25",
+          "model_prob": "1.384179871472184e-07",
+          "today_logprob": -35.1875,
+          "today_prob": 1.1395273143228408e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "82",
+          "option_logprob": "-33.5",
+          "model_prob": "2.165221619094227e-06",
+          "today_logprob": -33.15625,
+          "today_prob": 8.687311734976168e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "83",
+          "option_logprob": "-35.75",
+          "model_prob": "2.2821267965711596e-07",
+          "today_logprob": -35.125,
+          "today_prob": 1.213020511882214e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "84",
+          "option_logprob": "-37.25",
+          "model_prob": "5.0921131759794604e-08",
+          "today_logprob": -36.3125,
+          "today_prob": 3.69950354217144e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "85",
+          "option_logprob": "-35.5",
+          "model_prob": "2.9303088109015437e-07",
+          "today_logprob": -35.09375,
+          "today_prob": 1.251525916295661e-07
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "86",
+          "option_logprob": "-38.0",
+          "model_prob": "2.4053439471045174e-08",
+          "today_logprob": -36.4375,
+          "today_prob": 3.2648004170670346e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "87",
+          "option_logprob": "-35.0",
+          "model_prob": "4.831262466253375e-07",
+          "today_logprob": -35.625,
+          "today_prob": 7.357341313168755e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "88",
+          "option_logprob": "-37.5",
+          "model_prob": "3.965741728941022e-08",
+          "today_logprob": -36.8125,
+          "today_prob": 2.2438623240424676e-08
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "89",
+          "option_logprob": "-39.0",
+          "model_prob": "8.848765870859213e-09",
+          "today_logprob": -38.0,
+          "today_prob": 6.843393441929039e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "90",
+          "option_logprob": "-41.0",
+          "model_prob": "1.1975502354272032e-09",
+          "today_logprob": -39.3125,
+          "today_prob": 1.8418743578124433e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "91",
+          "option_logprob": "-39.5",
+          "model_prob": "5.367047801294873e-09",
+          "today_logprob": -39.0,
+          "today_prob": 2.5175437551331685e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "92",
+          "option_logprob": "-37.75",
+          "model_prob": "3.088522763958215e-08",
+          "today_logprob": -37.9375,
+          "today_prob": 7.2847543991282805e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "93",
+          "option_logprob": "-41.0",
+          "model_prob": "1.1975502354272032e-09",
+          "today_logprob": -39.96875,
+          "today_prob": 9.55551828826242e-10
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "94",
+          "option_logprob": "-39.5",
+          "model_prob": "5.367047801294873e-09",
+          "today_logprob": -38.90625,
+          "today_prob": 2.7649808963375226e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "95",
+          "option_logprob": "-39.0",
+          "model_prob": "8.848765870859213e-09",
+          "today_logprob": -38.75,
+          "today_prob": 3.2325901692144874e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "96",
+          "option_logprob": "-40.5",
+          "model_prob": "1.974426545880776e-09",
+          "today_logprob": -39.5625,
+          "today_prob": 1.4344531921834717e-09
+        },
+        {
+          "question_id": "Q262",
+          "option_code": "99",
+          "option_logprob": "-42.5",
+          "model_prob": "2.672095758166617e-10",
+          "today_logprob": -41.0625,
+          "today_prob": 3.200697704973245e-10
+        }
+      ],
+      "max_abs_dlogprob": 4.453125,
+      "max_abs_dprob": 0.037778623205710404
+    }
+  },
+  "peak_rss_bytes": 4185047040,
+  "elapsed_seconds": 15.773656374999973
+}

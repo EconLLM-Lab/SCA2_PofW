@@ -1,0 +1,89 @@
+{
+  "cutoff_mtime": 1792335260.6925755,
+  "newer_protected_files": [
+    {
+      "path": "paper_b/build_numbers_table.py",
+      "mtime": 1792336057.500679,
+      "kind": "other"
+    },
+    {
+      "path": "paper_b/test_build_numbers_table.py",
+      "mtime": 1792336030.5968525,
+      "kind": "other"
+    },
+    {
+      "path": "paper_b/heldout/per_dimension.py",
+      "mtime": 1792336057.1996703,
+      "kind": "other"
+    },
+    {
+      "path": "paper_b/heldout/test_per_dimension.py",
+      "mtime": 1792336030.5952387,
+      "kind": "other"
+    },
+    {
+      "path": "paper_b/heldout/__pycache__/test_per_dimension.cpython-314-pytest-9.1.1.pyc",
+      "mtime": 1792336031.09449,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/heldout/__pycache__/per_dimension.cpython-314.pyc",
+      "mtime": 1792336459.2167602,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/__pycache__/eval_config.cpython-312.pyc",
+      "mtime": 1792335684.1179178,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/__pycache__/config.cpython-312.pyc",
+      "mtime": 1792335684.0780792,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/__pycache__/eval_lib.cpython-312.pyc",
+      "mtime": 1792335684.1206124,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/__pycache__/build_numbers_table.cpython-314.pyc",
+      "mtime": 1792336459.2226713,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/__pycache__/test_build_numbers_table.cpython-314-pytest-9.1.1.pyc",
+      "mtime": 1792336031.5267248,
+      "kind": "bytecode"
+    },
+    {
+      "path": "paper_b/__pycache__/score_cohort.cpython-312.pyc",
+      "mtime": 1792335683.2541404,
+      "kind": "bytecode"
+    }
+  ],
+  "likely_A1_bytecode_paths": [
+    "paper_b/__pycache__/eval_config.cpython-312.pyc",
+    "paper_b/__pycache__/config.cpython-312.pyc",
+    "paper_b/__pycache__/eval_lib.cpython-312.pyc",
+    "paper_b/__pycache__/score_cohort.cpython-312.pyc"
+  ],
+  "concurrent_source_change_evidence": {
+    "command": [
+      "git",
+      "show",
+      "--format=fuller",
+      "--stat",
+      "a1d75aec34837b6a3ba4dbac93786fc5bdb2447d",
+      "--",
+      "paper_b"
+    ],
+    "exit_code": 0,
+    "stdout": "commit a1d75aec34837b6a3ba4dbac93786fc5bdb2447d\nAuthor:     Augusto Gonzalez Bonorino <agonz439@asu.edu>\nAuthorDate: Sun Oct 18 08:16:43 2026 -0700\nCommit:     Augusto Gonzalez Bonorino <agonz439@asu.edu>\nCommitDate: Sun Oct 18 08:16:43 2026 -0700\n\n    lock(paper_b): Amendment C7 2026-10-18 + exploratory Bonferroni per-dimension intervals\n    \n    Claim lock, Paper B (Paper A untouched): neither additional claim is earned. C5 is read strictly (journey plan:\n    \"C5 fails if that file is the only human source\"), so every held-out result is a retrospective screen and\n    \"transport\" is never used for it; the general transport sentence stays unwritten. Paper B is framed as a\n    preregistered evaluation of the sign compiler as a scoring instrument. Draft sections 1-8 apply as modified.\n    \n    Multiplicity (SMR asks for it): per_dimension.py adds a Bonferroni interval over the 4 imprint dimensions,\n    read off the same 2,000 registered draws; marked not registered. Registered fields unchanged (0 diffs);\n    NUMBERS_TABLE: 212 existing rows byte-identical, 8 rows added (220, sha 90f0f467...). Risk taking, primary\n    rule: 95% [0.015, 0.290] -> Bonferroni [-0.026, 0.326]; secondary rule stays above 0 [0.017, 0.253].\n    Tests: 31/31 targeted; full paper_b suite 498 passed, only the 7 known failures. All 15 numbers quoted in the\n    amendment checked against the table by script.\n\n paper_b/build_numbers_table.py        |  6 ++++++\n paper_b/heldout/per_dimension.py      | 23 +++++++++++++++++++++--\n paper_b/heldout/test_per_dimension.py | 12 ++++++++++++\n paper_b/test_build_numbers_table.py   | 12 ++++++++++++\n 4 files changed, 51 insertions(+), 2 deletions(-)\n"
+  },
+  "limits": [
+    "Mtime alone cannot attribute every concurrent write.",
+    "A1 imported the Python 3.12 scorer modules; bytecode is a disclosed incidental fence exception.",
+    "No bytecode or external file was deleted to hide this exception."
+  ]
+}

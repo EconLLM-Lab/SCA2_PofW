@@ -1,0 +1,161 @@
+{
+  "checks": [
+    {
+      "name": "byte-identical prompts/completions and archive spec",
+      "pass": true,
+      "detail": {
+        "items": 5,
+        "spec_sha256": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6"
+      }
+    },
+    {
+      "name": "adapter bytes/config both revisions",
+      "pass": true,
+      "detail": "a35edd11a52d4a5fa49eece7e64b53112123e4a6691f6a87cd2df8611a197d3c"
+    },
+    {
+      "name": "complete serial CPU replays, RSS and probability closure",
+      "pass": true,
+      "detail": [
+        {
+          "mode": "f32",
+          "arm": "base",
+          "items": 5
+        },
+        {
+          "mode": "f32",
+          "arm": "USA_adapter",
+          "items": 5
+        },
+        {
+          "mode": "f16",
+          "arm": "base",
+          "items": 5
+        },
+        {
+          "mode": "f16",
+          "arm": "USA_adapter",
+          "items": 5
+        },
+        {
+          "mode": "nf4",
+          "arm": "base",
+          "items": 5
+        },
+        {
+          "mode": "nf4",
+          "arm": "USA_adapter",
+          "items": 5
+        }
+      ]
+    },
+    {
+      "name": "supplemental Q262 model-only check",
+      "pass": true,
+      "detail": [
+        {
+          "mode": "f32",
+          "n_options": 80
+        },
+        {
+          "mode": "f16",
+          "n_options": 80
+        },
+        {
+          "mode": "nf4",
+          "n_options": 80
+        }
+      ]
+    },
+    {
+      "name": "every numbers-table and claim-lock table row accounted for",
+      "pass": true,
+      "detail": {
+        "numbers_rows": 220,
+        "claim_lock_rows": 23
+      }
+    },
+    {
+      "name": "protected source and claim lock unchanged",
+      "pass": true,
+      "detail": {
+        "command": [
+          "git",
+          "-C",
+          "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW",
+          "diff",
+          "--exit-code",
+          "HEAD",
+          "--",
+          "paper_b",
+          "planning/TWO_PAPER_CLAIM_LOCK.md"
+        ],
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "bounded one-factor CPU parameter swaps complete",
+      "pass": true,
+      "detail": [
+        {
+          "tag": "no_double_quant",
+          "arm": "base",
+          "items": 2
+        },
+        {
+          "tag": "no_double_quant",
+          "arm": "USA_adapter",
+          "items": 2
+        },
+        {
+          "tag": "compute_f32",
+          "arm": "base",
+          "items": 2
+        },
+        {
+          "tag": "compute_f32",
+          "arm": "USA_adapter",
+          "items": 2
+        },
+        {
+          "tag": "fp4",
+          "arm": "base",
+          "items": 2
+        },
+        {
+          "tag": "fp4",
+          "arm": "USA_adapter",
+          "items": 2
+        }
+      ]
+    },
+    {
+      "name": "temporary worktree removed and source evidence current",
+      "pass": true,
+      "detail": {
+        "worktree_removed": true,
+        "runtime_packages": {
+          "torch": "2.14.1",
+          "transformers": "5.20.1",
+          "peft": "0.21.2",
+          "bitsandbytes": "0.50.2",
+          "huggingface-hub": "2.2.0"
+        }
+      }
+    },
+    {
+      "name": "completed evidence-derived memo",
+      "pass": true,
+      "detail": "NOT REPRODUCED"
+    }
+  ],
+  "passed": 9,
+  "total": 9,
+  "fence_status": "INCIDENTAL BYTECODE WRITES DISCLOSED; not a zero-write audit",
+  "fence_exception_bytecode_paths": [
+    "paper_b/__pycache__/eval_config.cpython-312.pyc",
+    "paper_b/__pycache__/config.cpython-312.pyc",
+    "paper_b/__pycache__/eval_lib.cpython-312.pyc",
+    "paper_b/__pycache__/score_cohort.cpython-312.pyc"
+  ]
+}

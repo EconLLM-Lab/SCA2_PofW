@@ -1,0 +1,68 @@
+[
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_q262.py",
+      "--mode",
+      "f32"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_q262.py",
+      "--mode",
+      "f16"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_q262.py",
+      "--mode",
+      "nf4"
+    ],
+    "exit_code": 0
+  }
+]

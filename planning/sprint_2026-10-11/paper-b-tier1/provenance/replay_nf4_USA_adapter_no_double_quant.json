@@ -1,0 +1,116 @@
+{
+  "mode": "nf4",
+  "arm": "USA_adapter",
+  "device": "cpu",
+  "torch": "2.14.1",
+  "dtype": "torch.float16",
+  "lora_dtype": "float32",
+  "quantization": "CPU block64 quantize/dequantize + dense linear; not CUDA BNB matmul",
+  "quant_type": "nf4",
+  "double_quant": false,
+  "linear_compute_dtype": "float16",
+  "lora_tensors_restored_from_file": 256,
+  "items": {
+    "Q57": {
+      "codes": [
+        "1",
+        "2"
+      ],
+      "archive_scores": [
+        -27.609375,
+        -51.125
+      ],
+      "archive_probs": [
+        0.9999999999387236,
+        6.127648204283603e-11
+      ],
+      "reductions": {
+        "float32": {
+          "scores": [
+            -27.710939407348633,
+            -51.3359375
+          ],
+          "probs": [
+            0.9999999999450719,
+            5.492798827325317e-11
+          ],
+          "max_abs_probability_gap_vs_archive": 6.348493769582862e-12,
+          "reproduced_at_1e_3": true
+        },
+        "float16": {
+          "scores": [
+            -27.71875,
+            -51.34375
+          ],
+          "probs": [
+            0.9999999999450722,
+            5.4927883506529765e-11
+          ],
+          "max_abs_probability_gap_vs_archive": 6.348598536306267e-12,
+          "reproduced_at_1e_3": true
+        }
+      },
+      "peak_rss_bytes": 3877617664
+    },
+    "Q81": {
+      "codes": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "archive_scores": [
+        -27.921875,
+        -40.09375,
+        -49.0625,
+        -50.3125
+      ],
+      "archive_probs": [
+        0.9999948252337094,
+        5.17391876584071e-06,
+        6.587808574246541e-10,
+        1.887438757318324e-10
+      ],
+      "reductions": {
+        "float32": {
+          "scores": [
+            -27.867259979248047,
+            -40.05475997924805,
+            -49.08600997924805,
+            -50.32819747924805
+          ],
+          "probs": [
+            0.9999949055097995,
+            5.093704999230403e-06,
+            6.092727430690281e-10,
+            1.7592865111017413e-10
+          ],
+          "max_abs_probability_gap_vs_archive": 8.027609010863301e-08,
+          "reproduced_at_1e_3": true
+        },
+        "float16": {
+          "scores": [
+            -27.875,
+            -40.0625,
+            -49.09375,
+            -50.34375
+          ],
+          "probs": [
+            0.9999949055111685,
+            5.093704999237377e-06,
+            6.092727430698622e-10,
+            1.7455956348568166e-10
+          ],
+          "max_abs_probability_gap_vs_archive": 8.027745912464468e-08,
+          "reproduced_at_1e_3": true
+        }
+      },
+      "peak_rss_bytes": 3883204608
+    }
+  },
+  "limitations": [
+    "New transformers/torch/peft; not the frozen CUDA image."
+  ],
+  "elapsed_seconds": 59.88207149999971,
+  "quantized_weight_count": 224
+}

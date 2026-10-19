@@ -1,0 +1,35 @@
+[
+  {
+    "command": [
+      "git",
+      "-C",
+      "/Users/bonorinoa/.hermes/profiles/engineer/cache/scratch/pb-archive",
+      "status",
+      "--porcelain"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "worktree",
+      "remove",
+      "/Users/bonorinoa/.hermes/profiles/engineer/cache/scratch/pb-archive"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "worktree",
+      "list"
+    ],
+    "exit_code": 0,
+    "stdout": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW                                         a1d75ae [feat/paper-b-cohort]\n/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW-paper-b-draft                           bf3d6c7 [paper/paper-b-draft]\n/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization  0469f80 [Adapter-Brain-Vizualization]\n",
+    "stderr": ""
+  }
+]

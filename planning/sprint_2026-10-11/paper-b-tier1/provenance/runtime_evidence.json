@@ -1,0 +1,108 @@
+{
+  "python": "3.12.12 (main, Feb 12 2026, 00:42:34) [Clang 21.1.4 ]",
+  "packages": {
+    "torch": "2.14.1",
+    "transformers": "5.20.1",
+    "peft": "0.21.2",
+    "bitsandbytes": "0.50.2",
+    "huggingface-hub": "2.2.0"
+  },
+  "HF_TOKEN_present": false,
+  "sources": {
+    "paper_b/score_cohort.py": {
+      "sha256": "33812fb76b4ec5fe15253dadf0b7f0c38335746e95b2c12db6c53d12080c3d4a",
+      "relevant_lines": [
+        "19:   python paper_b/score_cohort.py --gate            # reproduce archived base-on-CHN",
+        "20:   python paper_b/score_cohort.py --countries CHN   # one adapter, end to end",
+        "21:   python paper_b/score_cohort.py                   # all arms, full cohort",
+        "22:   python paper_b/score_cohort.py --arms base,adapter --pairs matched",
+        "25:   python paper_b/score_cohort.py --gate-cpu",
+        "348: def load_base_model_and_tokenizer():",
+        "354:     bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type=\"nf4\",",
+        "355:                              bnb_4bit_compute_dtype=torch.float16, bnb_4bit_use_double_quant=True)",
+        "458:     base, tok = load_base_model_and_tokenizer()",
+        "484:                 source=\"score_cohort.py\",",
+        "593:     base_model, tok = load_base_model_and_tokenizer()"
+      ]
+    },
+    "paper_b/score_sign_profiles.py": {
+      "sha256": "e2142d868cbb223d97dcbc6dbafec41ad591b4198e2a0f544c28ebff47cc9d30",
+      "relevant_lines": [
+        "5: GPU: loads the frozen 4-bit notebook loader and writes one CSV per profile.",
+        "155:     model, tok = S.load_base_model_and_tokenizer()"
+      ]
+    },
+    "paper_b/colab/vm_cohort.py": {
+      "sha256": "1e436330bee819e7e477836a2ca5cf2a2d77d4c3daee9ab404a2c05f95b6956d",
+      "relevant_lines": [
+        "1: \"\"\"Score the Paper B cohort on the frozen stack.",
+        "133:     base, tok = S.load_base_model_and_tokenizer()",
+        "157:     base, tok = S.load_base_model_and_tokenizer()"
+      ]
+    },
+    "paper_b/colab/vm_score_units.py": {
+      "sha256": "db584522f6ad237963cb5f09a9716473c98a398028f8bacd55b94382cda714ce",
+      "relevant_lines": [
+        "49:     rc = subprocess.run([sys.executable, \"paper_b/score_sign_profiles.py\", \"--prepare-only\", \"--units\", \"all64\",",
+        "53:     rc = subprocess.run([sys.executable, \"paper_b/score_sign_profiles.py\", \"--profiles\", f\"{ROOT}/signprompt/sign_profiles.json\",",
+        "65:         rc = subprocess.run([sys.executable, \"paper_b/score_cohort.py\", *args], cwd=REPO, env=env).returncode"
+      ]
+    },
+    "paper_b/colab/vm_score_t4.py": {
+      "sha256": "afccd5854be053ab971f6169b18d4fcb1521439a651fe8204b7b4e8df52420ca",
+      "relevant_lines": [
+        "90:     rc = subprocess.run([sys.executable, \"paper_b/score_sign_profiles.py\", \"--prepare-only\", \"--units\", \"all64\",",
+        "93:         rc = subprocess.run([sys.executable, \"paper_b/score_sign_profiles.py\", \"--profiles\", f\"{ROOT}/signprompt/sign_profiles.json\",",
+        "98:     rc = subprocess.run([sys.executable, \"paper_b/score_cohort.py\", *args], cwd=REPO, env=env).returncode"
+      ]
+    },
+    "paper_b/score_plan.py": {
+      "sha256": "dfc97a227a16f4daecea2f17a3038b89a0976acef0140070e23fcc5cda478f79",
+      "relevant_lines": []
+    },
+    "planning/sprint_2026-10-11/PAPER_B_STACK_FREEZE.md": {
+      "sha256": "93ccc6499c33f6858e713564c60313da3be746582fcf8e753ce5a712e1966001",
+      "relevant_lines": [
+        "28: | Loader | notebook form: no forced fast tokenizer, no `torch_dtype`, `device_map=\"auto\"`, 4-bit NF4, fp16 compute, double quant | `score_cohort.load_base_model_and_tokenizer` after the 2026-10-11 patch |",
+        "37: 1. Same frozen adapter weights through the production switch path and an independent loader.",
+        "41: 5. The run record carries the frozen adapter revision, bank id, and the package versions above."
+      ]
+    },
+    ".worktrees/adapter-brain-vizualization/workbench/src/sca2_workbench/offload_hf.py": {
+      "sha256": "6acc832798161725147f92c56e43b4c53763d80f9ded435b3a2e79231851d0b3",
+      "relevant_lines": [
+        "29: def build_offloaded_hf(snapshot: str | Path, dtype: torch.dtype = torch.float32,"
+      ]
+    },
+    ".worktrees/adapter-brain-vizualization/workbench/plans/scripts/pair8b.py": {
+      "sha256": "575b216b7a36ee3dba769ed860a1af2f57ec4499286d68b80826ac3e4738a9a4",
+      "relevant_lines": [
+        "63:     src = SC.SafetensorsSource(args.snapshot, torch.float64)",
+        "68:         lw, lo = src.layer(layer), lora.layer(layer, torch.float64)",
+        "104:     src = SC.SafetensorsSource(args.snapshot, torch.float64)",
+        "126:     model = build_offloaded_hf(args.snapshot, torch.float32, adapter_dir=args.adapter, model_id=MODEL_ID)",
+        "175:     src = SC.SafetensorsSource(args.snapshot, torch.float64)"
+      ]
+    }
+  },
+  "root_head": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "a1d75aec34837b6a3ba4dbac93786fc5bdb2447d"
+  },
+  "workbench_head": {
+    "command": [
+      "git",
+      "-C",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "0469f80e3d80803a9bee4873766869c2362a4425"
+  }
+}
