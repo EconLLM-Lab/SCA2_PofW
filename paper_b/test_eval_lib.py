@@ -140,6 +140,16 @@ def test_cohort_numeric_grid_is_country_set_dependent(question_map, archived_gri
 
 
 # ---------------------------------------------------------------- audited join
+# Question metadata ride on BOTH frames in production: build_population_distributions writes them on the
+# population rows, and score_cohort writes them on the model rows.
+_META = {
+    "Q57": {"question_text": "Most people can be trusted?", "response_type": "single_choice_2",
+            "gps_dimension": "trust", "is_ordered": True, "is_numeric_open": False},
+    "Q178": {"question_text": "Avoiding a fare?", "response_type": "single_choice_10",
+             "gps_dimension": "negrecip", "is_ordered": True, "is_numeric_open": False},
+}
+
+
 def _tiny_scores() -> pd.DataFrame:
     """Model rows broadcast to CHN and JOR; JOR/Q178 has no population cell."""
     rows = []
@@ -147,12 +157,12 @@ def _tiny_scores() -> pd.DataFrame:
         for code, idx, val, p in [("1", 0, 1.0, 0.6), ("2", 1, 2.0, 0.4)]:
             rows.append({"model": "base", "eval_country": cc, "question_id": "Q57",
                          "option_index": idx, "option_code": code,
-                         "option_value": val, "model_prob": p})
+                         "option_value": val, "model_prob": p, **_META["Q57"]})
         if cc == "JOR":
             for i in range(10):
                 rows.append({"model": "base", "eval_country": cc, "question_id": "Q178",
                              "option_index": i, "option_code": str(i + 1),
-                             "option_value": float(i + 1), "model_prob": 0.1})
+                             "option_value": float(i + 1), "model_prob": 0.1, **_META["Q178"]})
     return pd.DataFrame(rows)
 
 
@@ -164,7 +174,7 @@ def _tiny_population() -> pd.DataFrame:
                          "option_index": idx, "option_code": code,
                          "option_value": float(code), "population_prob": p,
                          "weighted_count": p * 10, "unweighted_count": 5,
-                         "n_valid": 10, "total_weight": 10.0})
+                         "n_valid": 10, "total_weight": 10.0, **_META["Q57"]})
     return pd.DataFrame(rows)
 
 
@@ -179,6 +189,23 @@ def test_join_drops_only_explicitly_skipped_cells_and_reports():
     assert dropped == [{"eval_country": "JOR", "question_id": "Q178",
                         "reason": "explicitly_recorded_empty_population_cell",
                         "dropped_rows": 10}]
+
+
+def test_join_keeps_unsuffixed_metadata_when_both_frames_carry_it():
+    """Regression: metadata on both sides used to be suffixed _x/_y, and the metrics step then failed."""
+    merged = L.join_option_evaluation(_tiny_scores(), _tiny_population(),
+                                      skipped_cells={("JOR", "Q178")})
+    for col in ("question_text", "response_type", "gps_dimension", "is_ordered", "is_numeric_open"):
+        assert col in merged.columns and f"{col}_x" not in merged.columns and f"{col}_y" not in merged.columns
+    metrics = L.calculate_question_metrics(merged)
+    assert len(metrics) == 2  # CHN and JOR on Q57
+
+
+def test_join_refuses_conflicting_metadata():
+    scores = _tiny_scores()
+    scores.loc[scores.question_id == "Q57", "is_ordered"] = False
+    with pytest.raises(AssertionError, match="metadata"):
+        L.join_option_evaluation(scores, _tiny_population(), skipped_cells={("JOR", "Q178")})
 
 
 def test_join_default_drops_nothing_and_fails_unexpected_missing():

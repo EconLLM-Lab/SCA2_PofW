@@ -396,6 +396,30 @@ JOIN_COLUMNS = ["eval_country", "question_id", "option_code", "option_value",
                 "unweighted_count", "n_valid", "total_weight",
                 "question_text", "response_type", "gps_dimension",
                 "is_ordered", "is_numeric_open"]
+# Question metadata: the population frame is the authority. A model frame that also carries them
+# (score_cohort writes them) must agree per question; the model copy is then dropped before the merge,
+# because a name on both sides would be suffixed _x/_y and calculate_question_metrics could not find it.
+QUESTION_META = ["question_text", "response_type", "gps_dimension", "is_ordered", "is_numeric_open"]
+
+
+def _drop_agreeing_model_metadata(model: pd.DataFrame, population: pd.DataFrame) -> pd.DataFrame:
+    overlap = [c for c in QUESTION_META if c in model.columns]
+    if not overlap:
+        return model
+    pop_meta = population[["question_id", *overlap]].drop_duplicates()
+    mod_meta = model[["question_id", *overlap]].drop_duplicates()
+    if pop_meta.question_id.duplicated().any() or mod_meta.question_id.duplicated().any():
+        raise AssertionError("Question metadata differ within one question_id")
+    both = mod_meta.merge(pop_meta, on="question_id", suffixes=("_model", "_pop"))
+    bad = set()
+    for c in overlap:
+        m, p = both[f"{c}_model"], both[f"{c}_pop"]
+        same = (m.astype(object).astype(str) == p.astype(object).astype(str)) | (m.isna() & p.isna())
+        bad |= set(both.loc[~same, "question_id"])
+    bad = sorted(bad)
+    if bad:
+        raise AssertionError(f"Model and population question metadata disagree for: {bad}")
+    return model.drop(columns=overlap)
 
 
 def _cc_q(value) -> tuple[str, str]:
@@ -448,6 +472,7 @@ def join_option_evaluation(model_scores: pd.DataFrame,
         raise ValueError(f"Bogus skipped_cells — these cells HAVE population rows: {bogus}")
 
     key = ["eval_country", "question_id", "option_code", "option_value", "option_index"]
+    model = _drop_agreeing_model_metadata(model, population)
     merged = model.merge(population[JOIN_COLUMNS], on=key, how="left",
                          validate="many_to_one", indicator=True)
     missing = merged["_merge"].eq("left_only")
