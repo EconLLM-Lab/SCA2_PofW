@@ -1,5 +1,7 @@
 # Paper B analysis design — pre-outcome specification (draft 2026-10-11)
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 **Status:** DRAFT for parent/user sign-off. Written before any adapter outcome was
 inspected; no adapter score has been read. Derived from `TWO_PAPER_CLAIM_LOCK.md`,
 `PAPER_B_PROTOCOL_DRAFT.md` (frozen 2026-10-09), `paper_b/eval_config.py`,

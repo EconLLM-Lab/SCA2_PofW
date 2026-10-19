@@ -1,5 +1,7 @@
 # C7 claim-lock amendment: DRAFT for orchestrator review
 
+> **Record, not status.** Written 2026-10-17. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../../STATUS.md). Applied, with changes, as Amendment C7 in planning/TWO_PAPER_CLAIM_LOCK.md; the lock wins.
+
 Card T9 (checkpoint C7). Draft date 2026-10-17 (MST); the result notes carry the 20261018 UTC tag.
 Status: **draft, not applied.** This file does not edit `planning/TWO_PAPER_CLAIM_LOCK.md`. The orchestrator
 reviews it and applies it. Nothing here is committed.

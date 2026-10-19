@@ -1,5 +1,7 @@
 # Ease of replication — second bank and prompt cell, 2026-10-11
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../../STATUS.md). C2 was completed later: bank `gps_sign_relabel_bank2_20261015_062543Z`, 658 pairs.
+
 Two things were attempted: a new shared scenario bank (C2), and a sign-profile prompt cell (C1). C2 is blocked. C1 ran. Both experiences are recorded here as-is.
 
 ## C1 — sign-profile prompt cell: ran, 29.6 minutes

@@ -1,0 +1,31 @@
+# SCA2 decision log
+
+One row per decision that changed what we build, run or claim. Newest last. Each row names who authorized it and
+where the decision is recorded, so the row can be checked. Add a row in the same commit that acts on a new decision.
+"Chat" sources are Hermes session ids in the `sca` profile's `state.db`.
+
+Paper A's decisions before 2026-10-09 live in the [claim lock](TWO_PAPER_CLAIM_LOCK.md) (frozen 2026-09-16, with
+dated wording amendments) and the [pre-arXiv check lock](PRE_ARXIV_CHECKLIST.md) (2026-09-25).
+
+| Date | Decision | Authorized by | Source |
+|---|---|---|---|
+| 2026-09-16 | Two-paper claim lock: Paper A = compiler + three columns + trust order vs persona; Paper B = anchor transport and pre-piloting, both prospective. | Augusto (after the Duch and Kseniia meeting) | [TWO_PAPER_CLAIM_LOCK.md](TWO_PAPER_CLAIM_LOCK.md) |
+| 2026-09-25 | Pre-arXiv checks; panel noun "purposively selected development panel"; persona contrast leaves the abstract. | Augusto | [PRE_ARXIV_CHECKLIST.md](PRE_ARXIV_CHECKLIST.md), [pre_arxiv_checks/GATE.md](pre_arxiv_checks/GATE.md) |
+| 2026-10-05 | Paper A posted as arXiv:2610.06562 v1 from commit `5664026` (tag `arxiv-2610.06562-v1`). | Augusto | [misc/arxiv-submission-2026-10-05/](../misc/arxiv-submission-2026-10-05/) |
+| 2026-10-09 | Paper B run protocol frozen: the 42 GPS∩WVS-7 countries, the shared bank-1 relabel, QLoRA/DPO settings, decisions (A) and (B). | Augusto | [PAPER_B_PROTOCOL_DRAFT.md](PAPER_B_PROTOCOL_DRAFT.md) |
+| 2026-10-10 | Each adapter is uploaded from the VM to the Hub (`adapters/<CC>`), because the Drive mount lost adapters. | Augusto (chat) | commit `38ed2ee`; [paper_b/RUNBOOK.md](../paper_b/RUNBOOK.md) |
+| 2026-10-11 | Storage: no Drive for future compute; licensed human data stay local; model-only scores go to a private Hub dataset. | Augusto ("i approve", chat `20261011_171805_2d7725`) | [sprint_2026-10-11/PARENT_DECISIONS.md](sprint_2026-10-11/PARENT_DECISIONS.md) §Storage |
+| 2026-10-11 | Scoring stack frozen; the August archive is not a bit-level reproduction target for Paper B. | Augusto | [sprint_2026-10-11/PAPER_B_STACK_FREEZE.md](sprint_2026-10-11/PAPER_B_STACK_FREEZE.md) |
+| 2026-10-11 | C0: no human route in 2026, so both locked Paper B claims stay prospective. Approved: a second bank under the same sign rule, a retrain, and a sign-profile prompt cell. | Augusto | [PARENT_DECISIONS.md](sprint_2026-10-11/PARENT_DECISIONS.md) §C0 |
+| 2026-10-14 | Held-out screen preregistered before item selection; tag `prereg-heldout-2026-10-14`. | Augusto | [paper_b/heldout/PREREGISTRATION.md](../paper_b/heldout/PREREGISTRATION.md) |
+| 2026-10-14 | Tier-1 plan approved: bank 2 needs to be statistically similar, not byte-identical (D1); the retrain becomes 64 sign-profile units instead of 42 countries (D2). | Augusto ("please implement the plan", chat `20261014_232807_08d51e`) | [plans/2026-10-14_204500-paper-b-tier1-factorial-prereg.md](plans/2026-10-14_204500-paper-b-tier1-factorial-prereg.md) §0b |
+| 2026-10-15 | The Hub replaces Drive as the single artifact bus (private datasets); Drive becomes an archive. | Augusto ("private repo only is fine", chat `20261014_232807_08d51e`) | commits `e12caa8`, `b65729b`, `f2e7cf2` |
+| 2026-10-16 | Preregistration Amendment 1: 12 unanswerable item texts repaired before the freeze. | Augusto | [PREREGISTRATION.md](../paper_b/heldout/PREREGISTRATION.md) §11; commit `0248b50` |
+| 2026-10-17 | Item selection frozen (`FREEZE.json`); human held-out data readable only after it. Amendment 2: the 12 repaired items leave the comparator routes. | Augusto | commit `5982544`; [PREREGISTRATION.md](../paper_b/heldout/PREREGISTRATION.md) §12 |
+| 2026-10-18 | Amendment C7: neither additional Paper B claim is earned. Paper B is framed as a preregistered evaluation of the compiler as a scoring instrument. | orchestrator under Augusto's delegation; coauthor sign-off pending | [TWO_PAPER_CLAIM_LOCK.md](TWO_PAPER_CLAIM_LOCK.md), Amendment C7; commit `a1d75ae` |
+| 2026-10-18 | Amendment C7.1: numbers table rebuilt with the two registered descriptives. | as above | Amendment C7.1; commit `92406dd` |
+| 2026-10-18 | Paper B is the journal version of arXiv:2610.06562, not a sequel: no self-citation, and preprint results needed by the paper are re-run on the frozen stack. | Augusto ("2", chat `20261018_220915_7ec562`) | [C8_PERSONA_DESIGN.md](sprint_2026-10-11/paper-b-tier1/C8_PERSONA_DESIGN.md) |
+| 2026-10-18 | C8: the country-named persona arm on 42 countries, design locked before scoring; one primary test (trust, cohort 1 minus persona). | Augusto | [C8_PERSONA_DESIGN.md](sprint_2026-10-11/paper-b-tier1/C8_PERSONA_DESIGN.md); commit `2a6dfcb` |
+| 2026-10-18 | Amendment C8 applied after the persona run; numbers table 271 rows. | orchestrator under Augusto's delegation; coauthor sign-off pending | Amendment C8; commit `1cf9db7` |
+| 2026-10-19 | Overleaf review copy: a new project per manuscript version, so earlier comments are kept. | Augusto (chat `20261018_220915_7ec562`) | [STATUS.md](../STATUS.md) §Manuscript |
+| 2026-10-19 | One status page and one decision log for every SCA2 agent; plans tracked in `planning/plans/`; stale documents bannered, not deleted. | Augusto (chat `20261018_220915_7ec562`) | this commit; [STATUS.md](../STATUS.md) |

@@ -1,5 +1,7 @@
 # Pre-arXiv check lock
 
+> **Record, not status.** Written 2026-09-25. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../STATUS.md). Paper A was posted on 2026-10-05.
+
 Locked 2026-09-25 with Augusto. No new model runs. No manuscript edits until the four checks below are reviewed.
 
 ## Authorized wording (not yet applied to the claim lock)

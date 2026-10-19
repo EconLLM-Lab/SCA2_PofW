@@ -1,5 +1,7 @@
 # Paper B sprint: parent-reviewed decisions
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md). Its C0 section was approved the same day. Dated decisions are indexed in planning/DECISIONS.md.
+
 Status: proposed for Augusto approval; 2026-10-11. Worker audits are advisory, not frozen specifications. No GPU run or external upload has occurred.
 
 ## Storage architecture

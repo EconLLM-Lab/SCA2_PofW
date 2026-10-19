@@ -1,5 +1,7 @@
 # Paper B — next steps: analysis, data generation, and the arXiv→journal transition
 
+> **Record, not status.** Written 2026-10-10. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../STATUS.md). Superseded. Its §0 ("34/42 adapters", "no scoring stage") is long out of date: all 42 cohort-1 adapters, bank 2, 64 bank-2 adapters and 21 scoring runs exist.
+
 Drafted 2026-10-10 by Hermes (SCA profile). Planning document; no claim here
 overrides `TWO_PAPER_CLAIM_LOCK.md` (claims) or `PAPER_B_PROTOCOL_DRAFT.md` (the run).
 

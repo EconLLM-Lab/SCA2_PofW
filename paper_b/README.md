@@ -3,8 +3,14 @@
 Script-driven, resumable replacement for the two Paper A notebooks. Builds the
 42-country GPS∩WVS7 cohort of DPO adapters from the shared relabeled bank.
 
-Protocol of record: `~/Hermes/Projects/SCA2/PAPER_B_PROTOCOL_DRAFT.md` (frozen).
-Claim binding: `~/Hermes/Projects/SCA2/TWO_PAPER_CLAIM_LOCK.md`.
+Protocol of record: [`planning/PAPER_B_PROTOCOL_DRAFT.md`](../planning/PAPER_B_PROTOCOL_DRAFT.md) (frozen).
+Claim binding: [`planning/TWO_PAPER_CLAIM_LOCK.md`](../planning/TWO_PAPER_CLAIM_LOCK.md).
+Status and inventory: [`STATUS.md`](../STATUS.md).
+
+Storage changed on 2026-10-15: the Hugging Face Hub (`hub_io.py`, private datasets
+`Bonorinoa/SCA2-paper-b-adapters` and `Bonorinoa/SCA2-paper-b-artifacts`) is the only artifact store. The
+Drive data root (`SCA2_PB_DATA_ROOT=/content/drive/...`) in the examples below is how the 2026-10-09 cohort-1
+run worked; later runs use the Hub-only launchers in `paper_b/colab/`.
 
 ## Files
 

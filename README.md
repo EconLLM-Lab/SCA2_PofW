@@ -25,6 +25,10 @@ A construct-validity instrument paper lives in a separate lane (`cvprofiles`). I
 
 **Replication entry:** [`replication/README.md`](./replication/README.md).
 
+**Paper B** (the journal version of the preprint, 42 countries) is in progress on branch `feat/paper-b-cohort`.
+Where it stands, what exists and what is open: [`STATUS.md`](./STATUS.md). Decisions:
+[`planning/DECISIONS.md`](./planning/DECISIONS.md).
+
 Headline surface: sixteen countries × twenty-three WVS items, from two saved evaluation jobs. Trust adapter–GPS Spearman is **0.74** [0.44, 0.88]. That is coarse sign transfer, not recovery of within-sign magnitudes. Do not quote 0.80, and do not quote the older 30-item construct table (0.78).
 
 ---

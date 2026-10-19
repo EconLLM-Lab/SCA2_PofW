@@ -1,5 +1,7 @@
 # Paper B artifact destination verification
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 User approved HF-first model-only artifact architecture and scoped scoring repairs in this session.
 
 Created private HF dataset repository: https://huggingface.co/datasets/Bonorinoa/SCA2-paper-b-artifacts

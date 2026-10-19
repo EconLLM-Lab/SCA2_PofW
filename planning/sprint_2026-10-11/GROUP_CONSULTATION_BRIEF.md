@@ -1,5 +1,7 @@
 # Paper B group consultation brief
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 For @data-scientist, @adversarial-tester, @evaluation-strategist. User requested this consultation; this brief contains project work explicitly approved for group discussion.
 
 ## Objective

@@ -1,5 +1,7 @@
 # Paper B analysis module — implementation report (2026-10-11)
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 Worker: Paper B analysis subagent. Scope honored: ONLY new
 `paper_b/analyze_surface.py` + `paper_b/test_analyze_surface.py` created; no
 existing scorer/eval_lib siblings edited; no GPU, no uploads, no commits, no

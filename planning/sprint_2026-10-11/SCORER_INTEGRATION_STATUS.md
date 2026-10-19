@@ -1,5 +1,7 @@
 # Paper B scorer integration status
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md). The scorer has since run 21 times on the Hub.
+
 2026-10-11. Parent-owned integration after the interrupted worker. No GPU session was started and no score file was uploaded.
 
 ## Verified locally
