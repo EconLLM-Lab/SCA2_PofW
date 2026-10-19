@@ -28,8 +28,8 @@ fix this file in the same commit.
 
 | Ref | Head | Note |
 |---|---|---|
-| `feat/paper-b-cohort` | `1cf9db7` + this documentation commit | Paper B code, results, claim lock. In sync with origin at `1cf9db7`. |
-| `paper/paper-b-draft` | `ae1099f` | Manuscript in `misc/paper_b/` (worktree `../SCA2_PofW-paper-b-draft`). Feat merged in. |
+| `paper/paper-b-draft` | merge of everything below, pushed 2026-10-19 | **The single merged branch to pull.** It holds the manuscript in `misc/paper_b/` (worktree `../SCA2_PofW-paper-b-draft`) plus all of `feat/paper-b-cohort`. |
+| `feat/paper-b-cohort` | code branch (this worktree) | Paper B code, results, claim lock. Its commits since `1cf9db7` reach origin only through the merged branch above. |
 | `Adapter-Brain-Vizualization` | `e5fea0b` | Workbench. Not merged anywhere. |
 | `main` | local `2e4989b`, origin `305d820` | Local main is 1 commit ahead (the arXiv upload package), unpushed. Paper B is not merged to main. |
 | tags | `arxiv-2610.06562-v1`, `prereg-heldout-2026-10-14` | |
@@ -106,9 +106,7 @@ the title page and in `submission/COVER_LETTER_DRAFT.md`; the manuscript never c
 Nothing is scheduled. These items wait for the next planning session.
 
 **Augusto only:** coauthor sign-off on C7, C7.1 and C8; author list and order; OSF registration; the anonymous
-mirror; IRB, COI, funding, compute and AI-use statements; SMR's preprint policy; the Overleaf page count; whether
-the data-scientist profile remains "the only profile authorized to use Colab" (its SOUL says so; `sca` and
-`engineer` ran Colab this week).
+mirror; IRB, COI, funding, compute and AI-use statements; SMR's preprint policy; the Overleaf page count.
 
 **Proposed, not approved:** the journal version does not yet carry the preprint's human-agreement and
 distributional results on the 42 countries: adapter–human, human–GPS, trust sign check, label recovery, the TVD
