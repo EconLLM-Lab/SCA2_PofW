@@ -1,0 +1,11 @@
+available = 186.66 - 3.16 = 183.50 CU
+mac   64 unit s (central) adapter 65.3 base 32.5 | wall h 17.74 (upper 21.20) | CU 0.0 / 0.0 
+mac   32 unit s (central) adapter 30.6 base 30.6 | wall h 8.40 (upper 8.90) | CU 0.0 / 0.0 base units charged at the ARG time (not measured)
+a100  64 unit s (central) adapter 80.4 base 59.2 | wall h 21.94 (upper 22.11) | CU 157.0 / 158.2 ; +sync CU 166.8 / 168.0 fits=True 
+a100  32 unit s (central) adapter 77.3 base 77.3 | wall h 21.22 (upper 21.33) | CU 151.8 / 152.6 ; +sync CU 161.6 / 162.4 fits=True base units charged at the ARG time (not measured)
+l4    64 unit s (central) adapter 110.9 base 73.4 | wall h 30.23 (upper 32.43) | CU 49.2 / 52.8 ; +sync CU 51.5 / 55.1 fits=True 
+l4    32 unit s (central) adapter 76.3 base 76.3 | wall h 20.97 (upper 21.07) | CU 34.1 / 34.3 ; +sync CU 36.4 / 36.5 fits=True base units charged at the ARG time (not measured)
+t4    64 unit s (central) adapter 212.7 base 212.7 | wall h 58.43 (upper 58.43) | CU 66.4 / 66.4 ; +sync CU 68.0 / 68.0 fits=True base units charged at the ARG time (not measured)
+t4    32 unit s (central) adapter 133.6 base 133.6 | wall h 36.70 (upper 38.24) | CU 41.7 / 43.4 ; +sync CU 43.2 / 45.0 fits=True base units charged at the ARG time (not measured)
+g4    64 unit s (central) adapter 30.5 base 21.1 | wall h 8.32 (upper 9.27) | CU 78.3 / 87.2 ; +sync CU 91.1 / 100.1 fits=True 
+g4    32 unit s (central) adapter 21.5 base 21.5 | wall h 5.90 (upper 5.93) | CU 55.6 / 55.9 ; +sync CU 68.5 / 68.7 fits=True base units charged at the ARG time (not measured)

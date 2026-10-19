@@ -1,0 +1,203 @@
+{
+ "cuda_device": "NVIDIA A100-SXM4-80GB",
+ "cuda_versions": {
+  "accelerate": "0.34.0",
+  "bitsandbytes": "0.50.2",
+  "huggingface_hub": "0.36.2",
+  "torch": "2.11.0+cu130",
+  "transformers": "4.46.3"
+ },
+ "cpu_instrument": {
+  "base_snapshot": "0e9e39f249a16976918f6564b8830bc894c89659",
+  "bitsandbytes": "0.50.2",
+  "blocksize": 64,
+  "diagnostic": true,
+  "double_quant": true,
+  "non_linear_dtype": "float16",
+  "quant_type": "nf4",
+  "quantization_device": "cpu"
+ },
+ "n_cuda_files": 224,
+ "files_sha256_identical": 0,
+ "files_sha256_different": 224,
+ "files_missing_on_cpu": 0,
+ "different_files_head": [
+  "model.layers.0.mlp.down_proj.weight.safetensors",
+  "model.layers.0.mlp.gate_proj.weight.safetensors",
+  "model.layers.0.mlp.up_proj.weight.safetensors",
+  "model.layers.0.self_attn.k_proj.weight.safetensors",
+  "model.layers.0.self_attn.o_proj.weight.safetensors",
+  "model.layers.0.self_attn.q_proj.weight.safetensors",
+  "model.layers.0.self_attn.v_proj.weight.safetensors",
+  "model.layers.1.mlp.down_proj.weight.safetensors",
+  "model.layers.1.mlp.gate_proj.weight.safetensors",
+  "model.layers.1.mlp.up_proj.weight.safetensors"
+ ],
+ "three_layers": {
+  "model.layers.0.self_attn.q_proj.weight.safetensors": {
+   "tensors": {
+    "absmax": {
+     "dtype": "torch.uint8",
+     "shape": [
+      262144
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 417
+    },
+    "codes": {
+     "dtype": "torch.uint8",
+     "shape": [
+      8388608,
+      1
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "nested_absmax": {
+     "dtype": "torch.float32",
+     "shape": [
+      1024
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 953
+    },
+    "nested_quant_map": {
+     "dtype": "torch.float32",
+     "shape": [
+      256
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "quant_map": {
+     "dtype": "torch.float32",
+     "shape": [
+      16
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "quant_state.bitsandbytes__nf4": {
+     "dtype": "torch.uint8",
+     "shape": [
+      171
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 8
+    }
+   },
+   "dequant_max_abs_delta": 0.00433349609375,
+   "all_bitwise_equal": false
+  },
+  "model.layers.16.mlp.gate_proj.weight.safetensors": {
+   "tensors": {
+    "absmax": {
+     "dtype": "torch.uint8",
+     "shape": [
+      917504
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 1470
+    },
+    "codes": {
+     "dtype": "torch.uint8",
+     "shape": [
+      29360128,
+      1
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "nested_absmax": {
+     "dtype": "torch.float32",
+     "shape": [
+      3584
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "nested_quant_map": {
+     "dtype": "torch.float32",
+     "shape": [
+      256
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "quant_map": {
+     "dtype": "torch.float32",
+     "shape": [
+      16
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "quant_state.bitsandbytes__nf4": {
+     "dtype": "torch.uint8",
+     "shape": [
+      173
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    }
+   },
+   "dequant_max_abs_delta": 0.0015869140625,
+   "all_bitwise_equal": false
+  },
+  "model.layers.31.mlp.down_proj.weight.safetensors": {
+   "tensors": {
+    "absmax": {
+     "dtype": "torch.uint8",
+     "shape": [
+      917504
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 1726
+    },
+    "codes": {
+     "dtype": "torch.uint8",
+     "shape": [
+      29360128,
+      1
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "nested_absmax": {
+     "dtype": "torch.float32",
+     "shape": [
+      3584
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 3575
+    },
+    "nested_quant_map": {
+     "dtype": "torch.float32",
+     "shape": [
+      256
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "quant_map": {
+     "dtype": "torch.float32",
+     "shape": [
+      16
+     ],
+     "bitwise_equal": true,
+     "n_diff_elems": 0
+    },
+    "quant_state.bitsandbytes__nf4": {
+     "dtype": "torch.uint8",
+     "shape": [
+      172
+     ],
+     "bitwise_equal": false,
+     "n_diff_elems": 10
+    }
+   },
+   "dequant_max_abs_delta": 0.002197265625,
+   "all_bitwise_equal": false
+  }
+ }
+}

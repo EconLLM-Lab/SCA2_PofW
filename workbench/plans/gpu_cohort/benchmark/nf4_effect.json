@@ -1,0 +1,63 @@
+{
+ "weights": {
+  "model.layers.0.self_attn.q_proj.weight": {
+   "max_abs_w": 0.74609375,
+   "rms_w": 0.01866932027041912,
+   "frac_elements_differing": 0.0010518431663513184,
+   "max_abs_delta_cuda_vs_cpu": 0.00433349609375,
+   "rms_delta_cuda_vs_cpu": 9.844595297181513e-06,
+   "rms_quant_error_cuda": 0.0019014794379472733,
+   "rms_quant_error_cpu": 0.0019014633726328611,
+   "max_quant_error_cuda": 0.057861328125,
+   "max_quant_error_cpu": 0.057861328125
+  },
+  "model.layers.16.mlp.gate_proj.weight": {
+   "max_abs_w": 0.486328125,
+   "rms_w": 0.014925062656402588,
+   "frac_elements_differing": 0.0014215026749297976,
+   "max_abs_delta_cuda_vs_cpu": 0.0015869140625,
+   "rms_delta_cuda_vs_cpu": 3.265637815275113e-06,
+   "rms_quant_error_cuda": 0.0013849777169525623,
+   "rms_quant_error_cpu": 0.0013849767856299877,
+   "max_quant_error_cuda": 0.031982421875,
+   "max_quant_error_cpu": 0.031982421875
+  },
+  "model.layers.31.mlp.down_proj.weight": {
+   "max_abs_w": 0.546875,
+   "rms_w": 0.012965683825314045,
+   "frac_elements_differing": 0.001693572266958654,
+   "max_abs_delta_cuda_vs_cpu": 0.002197265625,
+   "rms_delta_cuda_vs_cpu": 2.931412382167764e-06,
+   "rms_quant_error_cuda": 0.0012241496006026864,
+   "rms_quant_error_cpu": 0.0012241497170180082,
+   "max_quant_error_cuda": 0.029541015625,
+   "max_quant_error_cpu": 0.029541015625
+  }
+ },
+ "readout": {
+  "wvs_Q57_base": {
+   "max_abs_logprob_diff_nats_mac_vs_a100": 0.021211503068172988,
+   "max_abs_prob_diff": 0.0009595125708830032
+  },
+  "wvs_Q57_arg": {
+   "max_abs_logprob_diff_nats_mac_vs_a100": 0.009373651814794215,
+   "max_abs_prob_diff": 0.00023766838468985974
+  },
+  "wvs_Q81_base": {
+   "max_abs_logprob_diff_nats_mac_vs_a100": 0.018603263465301723,
+   "max_abs_prob_diff": 0.00028569872086778303
+  },
+  "wvs_Q81_arg": {
+   "max_abs_logprob_diff_nats_mac_vs_a100": 0.013055868940806903,
+   "max_abs_prob_diff": 0.0004300452791092535
+  },
+  "wvs_Q107_base": {
+   "max_abs_logprob_diff_nats_mac_vs_a100": 0.01645115133952757,
+   "max_abs_prob_diff": 0.0005734420762004699
+  },
+  "wvs_Q107_arg": {
+   "max_abs_logprob_diff_nats_mac_vs_a100": 0.01722545557395705,
+   "max_abs_prob_diff": 0.0005994767640936094
+  }
+ }
+}

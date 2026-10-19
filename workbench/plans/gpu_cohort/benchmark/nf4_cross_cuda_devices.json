@@ -1,0 +1,22 @@
+{
+ "a100": {
+  "device": "NVIDIA A100-SXM4-80GB",
+  "identical_to_a100": 224,
+  "n": 224
+ },
+ "l4": {
+  "device": "NVIDIA L4",
+  "identical_to_a100": 224,
+  "n": 224
+ },
+ "t4": {
+  "device": "Tesla T4",
+  "identical_to_a100": 208,
+  "n": 224
+ },
+ "g4": {
+  "device": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "identical_to_a100": 224,
+  "n": 224
+ }
+}

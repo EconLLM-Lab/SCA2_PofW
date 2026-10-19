@@ -1,0 +1,299 @@
+{
+ "available_cu": 183.5,
+ "rows": [
+  {
+   "device": "mac",
+   "dtype": "float64",
+   "n_measured_adapter": 3,
+   "n_measured_base": 3,
+   "note": "",
+   "setup_min": null,
+   "cu_per_h": 0.0,
+   "central_unit_s": {
+    "adapter": 65.33052958333246,
+    "base": 32.51574447200013
+   },
+   "central_wall_h": 17.738098250098655,
+   "central_cu": 0.0,
+   "central_fits": true,
+   "upper_unit_s": {
+    "adapter": 78.15507216699916,
+    "base": 35.71044937500119
+   },
+   "upper_wall_h": 21.199761124707283,
+   "upper_cu": 0.0,
+   "upper_fits": true
+  },
+  {
+   "device": "mac",
+   "dtype": "float32",
+   "n_measured_adapter": 2,
+   "n_measured_base": 0,
+   "note": "base units charged at the ARG time (not measured)",
+   "setup_min": null,
+   "cu_per_h": 0.0,
+   "central_unit_s": {
+    "adapter": 30.584245438000835,
+    "base": 30.584245438000835
+   },
+   "central_wall_h": 8.402171871717453,
+   "central_cu": 0.0,
+   "central_fits": true,
+   "upper_unit_s": {
+    "adapter": 32.387100959000236,
+    "base": 32.387100959000236
+   },
+   "upper_wall_h": 8.897456346792008,
+   "upper_cu": 0.0,
+   "upper_fits": true
+  },
+  {
+   "device": "a100",
+   "dtype": "float64",
+   "n_measured_adapter": 3,
+   "n_measured_base": 3,
+   "note": "",
+   "setup_min": 2.6199999999999997,
+   "cu_per_h": 6.77,
+   "central_unit_s": {
+    "adapter": 80.36553423500004,
+    "base": 59.19769385133335
+   },
+   "central_wall_h": 21.942959174886308,
+   "central_cu": 157.00117078835584,
+   "central_fits": true,
+   "central_arith": "6.77 CU/h x (21.94 h + 0.044 h setup + 5.49 reclaims x 0.219 h)",
+   "central_cu_with_sync": 166.79840510305112,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "6.77 CU/h x (23.31 h + 0.044 h setup + 5.83 reclaims x 0.219 h)",
+   "upper_unit_s": {
+    "adapter": 80.97554306300003,
+    "base": 59.39165465700012
+   },
+   "upper_wall_h": 22.10788407110251,
+   "upper_cu": 158.18215136452997,
+   "upper_fits": true,
+   "upper_arith": "6.77 CU/h x (22.11 h + 0.044 h setup + 5.53 reclaims x 0.220 h)",
+   "upper_cu_with_sync": 167.9795823983666,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "6.77 CU/h x (23.48 h + 0.044 h setup + 5.87 reclaims x 0.220 h)"
+  },
+  {
+   "device": "a100",
+   "dtype": "float32",
+   "n_measured_adapter": 2,
+   "n_measured_base": 0,
+   "note": "base units charged at the ARG time (not measured)",
+   "setup_min": 2.6199999999999997,
+   "cu_per_h": 6.77,
+   "central_unit_s": {
+    "adapter": 77.25287863000005,
+    "base": 77.25287863000005
+   },
+   "central_wall_h": 21.223082490297234,
+   "central_cu": 151.84464585617968,
+   "central_fits": true,
+   "central_arith": "6.77 CU/h x (21.22 h + 0.044 h setup + 5.31 reclaims x 0.219 h)",
+   "central_cu_with_sync": 161.64087638386425,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "6.77 CU/h x (22.59 h + 0.044 h setup + 5.65 reclaims x 0.219 h)",
+   "upper_unit_s": {
+    "adapter": 77.64956326900005,
+    "base": 77.64956326900005
+   },
+   "upper_wall_h": 21.33206057584474,
+   "upper_cu": 152.6248218229831,
+   "upper_fits": true,
+   "upper_arith": "6.77 CU/h x (21.33 h + 0.044 h setup + 5.33 reclaims x 0.219 h)",
+   "upper_cu_with_sync": 162.42118027580256,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "6.77 CU/h x (22.70 h + 0.044 h setup + 5.68 reclaims x 0.219 h)"
+  },
+  {
+   "device": "l4",
+   "dtype": "float64",
+   "n_measured_adapter": 3,
+   "n_measured_base": 3,
+   "note": "",
+   "setup_min": 2.691666666666667,
+   "cu_per_h": 1.54,
+   "central_unit_s": {
+    "adapter": 110.90217557700002,
+    "base": 73.39956449666666
+   },
+   "central_wall_h": 30.22769210855704,
+   "central_cu": 49.22350059265469,
+   "central_fits": true,
+   "central_arith": "1.54 CU/h x (30.23 h + 0.045 h setup + 7.56 reclaims x 0.224 h)",
+   "central_cu_with_sync": 51.45435822875818,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "1.54 CU/h x (31.60 h + 0.045 h setup + 7.90 reclaims x 0.224 h)",
+   "upper_unit_s": {
+    "adapter": 119.02008528700003,
+    "base": 77.813092343
+   },
+   "upper_wall_h": 32.434195419758616,
+   "upper_cu": 52.82565974175666,
+   "upper_fits": true,
+   "upper_arith": "1.54 CU/h x (32.43 h + 0.045 h setup + 8.11 reclaims x 0.225 h)",
+   "upper_cu_with_sync": 55.05711288472021,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "1.54 CU/h x (33.81 h + 0.045 h setup + 8.45 reclaims x 0.225 h)"
+  },
+  {
+   "device": "l4",
+   "dtype": "float32",
+   "n_measured_adapter": 2,
+   "n_measured_base": 0,
+   "note": "base units charged at the ARG time (not measured)",
+   "setup_min": 2.691666666666667,
+   "cu_per_h": 1.54,
+   "central_unit_s": {
+    "adapter": 76.31697226500012,
+    "base": 76.31697226500012
+   },
+   "central_wall_h": 20.965968213912532,
+   "central_cu": 34.123881249590596,
+   "central_fits": true,
+   "central_arith": "1.54 CU/h x (20.97 h + 0.045 h setup + 5.24 reclaims x 0.219 h)",
+   "central_cu_with_sync": 36.35220181315152,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "1.54 CU/h x (22.34 h + 0.045 h setup + 5.58 reclaims x 0.219 h)",
+   "upper_unit_s": {
+    "adapter": 76.7128500230001,
+    "base": 76.7128500230001
+   },
+   "upper_wall_h": 21.07472463131864,
+   "upper_cu": 34.300979240245304,
+   "upper_fits": true,
+   "upper_arith": "1.54 CU/h x (21.07 h + 0.045 h setup + 5.27 reclaims x 0.219 h)",
+   "upper_cu_with_sync": 36.52932884427711,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "1.54 CU/h x (22.45 h + 0.045 h setup + 5.61 reclaims x 0.219 h)"
+  },
+  {
+   "device": "t4",
+   "dtype": "float64",
+   "n_measured_adapter": 1,
+   "n_measured_base": 0,
+   "note": "base units charged at the ARG time (not measured)",
+   "setup_min": 9.828333333333335,
+   "cu_per_h": 1.07,
+   "central_unit_s": {
+    "adapter": 212.68104986499998,
+    "base": 212.68104986499998
+   },
+   "central_wall_h": 58.42821064346805,
+   "central_cu": 66.41129453388753,
+   "central_fits": true,
+   "central_arith": "1.07 CU/h x (58.43 h + 0.164 h setup + 14.61 reclaims x 0.238 h)",
+   "central_cu_with_sync": 67.96649356974729,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "1.07 CU/h x (59.80 h + 0.164 h setup + 14.95 reclaims x 0.238 h)",
+   "upper_unit_s": {
+    "adapter": 212.68104986499998,
+    "base": 212.68104986499998
+   },
+   "upper_wall_h": 58.42821064346805,
+   "upper_cu": 66.41129453388753,
+   "upper_fits": true,
+   "upper_arith": "1.07 CU/h x (58.43 h + 0.164 h setup + 14.61 reclaims x 0.238 h)",
+   "upper_cu_with_sync": 67.96649356974729,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "1.07 CU/h x (59.80 h + 0.164 h setup + 14.95 reclaims x 0.238 h)"
+  },
+  {
+   "device": "t4",
+   "dtype": "float32",
+   "n_measured_adapter": 2,
+   "n_measured_base": 0,
+   "note": "base units charged at the ARG time (not measured)",
+   "setup_min": 9.828333333333335,
+   "cu_per_h": 1.07,
+   "central_unit_s": {
+    "adapter": 133.60716581149995,
+    "base": 133.60716581149995
+   },
+   "central_wall_h": 36.704857496548186,
+   "central_cu": 41.67719899708096,
+   "central_fits": true,
+   "central_arith": "1.07 CU/h x (36.70 h + 0.164 h setup + 9.18 reclaims x 0.227 h)",
+   "central_cu_with_sync": 43.228367720820955,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "1.07 CU/h x (38.08 h + 0.164 h setup + 9.52 reclaims x 0.227 h)",
+   "upper_unit_s": {
+    "adapter": 139.1847655219999,
+    "base": 139.1847655219999
+   },
+   "upper_wall_h": 38.237148083682754,
+   "upper_cu": 43.41767293422409,
+   "upper_fits": true,
+   "upper_arith": "1.07 CU/h x (38.24 h + 0.164 h setup + 9.56 reclaims x 0.228 h)",
+   "upper_cu_with_sync": 44.96912594231387,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "1.07 CU/h x (39.61 h + 0.164 h setup + 9.90 reclaims x 0.228 h)"
+  },
+  {
+   "device": "g4",
+   "dtype": "float64",
+   "n_measured_adapter": 3,
+   "n_measured_base": 3,
+   "note": "",
+   "setup_min": 2.01,
+   "cu_per_h": 8.9,
+   "central_unit_s": {
+    "adapter": 30.502590138666694,
+    "base": 21.085911313666656
+   },
+   "central_wall_h": 8.319577231712877,
+   "central_cu": 78.27727962154175,
+   "central_fits": true,
+   "central_arith": "8.90 CU/h x (8.32 h + 0.033 h setup + 2.08 reclaims x 0.213 h)",
+   "central_cu_with_sync": 91.13581324323398,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "8.90 CU/h x (9.69 h + 0.033 h setup + 2.42 reclaims x 0.213 h)",
+   "upper_unit_s": {
+    "adapter": 34.00587100300004,
+    "base": 22.796404848000066
+   },
+   "upper_wall_h": 9.270552416778346,
+   "upper_cu": 87.20077582632497,
+   "upper_fits": true,
+   "upper_arith": "8.90 CU/h x (9.27 h + 0.033 h setup + 2.32 reclaims x 0.213 h)",
+   "upper_cu_with_sync": 100.06079465435847,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "8.90 CU/h x (10.64 h + 0.033 h setup + 2.66 reclaims x 0.213 h)"
+  },
+  {
+   "device": "g4",
+   "dtype": "float32",
+   "n_measured_adapter": 2,
+   "n_measured_base": 0,
+   "note": "base units charged at the ARG time (not measured)",
+   "setup_min": 2.01,
+   "cu_per_h": 8.9,
+   "central_unit_s": {
+    "adapter": 21.489668546000075,
+    "base": 21.489668546000075
+   },
+   "central_wall_h": 5.903689497776132,
+   "central_cu": 55.61679843773578,
+   "central_fits": true,
+   "central_arith": "8.90 CU/h x (5.90 h + 0.033 h setup + 1.48 reclaims x 0.211 h)",
+   "central_cu_with_sync": 68.4715110559684,
+   "central_fits_with_sync": true,
+   "central_arith_with_sync": "8.90 CU/h x (7.28 h + 0.033 h setup + 1.82 reclaims x 0.211 h)",
+   "upper_unit_s": {
+    "adapter": 21.589039370000137,
+    "base": 21.589039370000137
+   },
+   "upper_wall_h": 5.9309888713694825,
+   "upper_cu": 55.87278068323635,
+   "upper_fits": true,
+   "upper_arith": "8.90 CU/h x (5.93 h + 0.033 h setup + 1.48 reclaims x 0.211 h)",
+   "upper_cu_with_sync": 68.72753542945804,
+   "upper_fits_with_sync": true,
+   "upper_arith_with_sync": "8.90 CU/h x (7.30 h + 0.033 h setup + 1.83 reclaims x 0.211 h)"
+  }
+ ]
+}
