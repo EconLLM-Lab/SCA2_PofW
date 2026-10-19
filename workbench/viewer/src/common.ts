@@ -411,10 +411,15 @@ export function answerStrip(D: Bundle, clamp = false): string {
   const dsrc = dd.marginExported ? `pair export (${clamp ? "d_margin_clamped" : "d_margin"})` : "computed in this browser from A and B";
   const n = it.codes.length;
   const pTip = `Probability of answer “${it.j_plus}”, A → B.\nP is over all ${n} codes; the margin compares only “${it.j_plus}” vs “${it.j_minus}”, so P is not sigmoid(margin).`;
+  const archiveA = D.A.m.archive_parity, archiveB = D.B.m.archive_parity;
+  const hasUlp = archiveA?.max_fp16_ulp != null && archiveB?.max_fp16_ulp != null;
+  const parityText = hasUlp ? ` · archive ${fmt(Math.max(archiveA!.max_fp16_ulp!, archiveB!.max_fp16_ulp!), 2)} ulp (≤4; report-only)` : archiveA && archiveB ? ` · legacy archive Δp ${fmt(Math.max(archiveA.max_abs_prob_gap, archiveB.max_abs_prob_gap), 2)} (descriptive only)` : "";
+  const parityTip = hasUlp ? `Archive parity per A2 F5: full completion logprobs, ≤4 archived-fp16 ulp, report-only. Probability gaps are descriptive only.\nA: ${Object.entries(archiveA!.options ?? {}).map(([c, v]) => `${c}: |Δlogp|=${v.abs_logprob_gap_nats} nats, ${v.fp16_ulp} ulp`).join("; ")}\nB: ${Object.entries(archiveB!.options ?? {}).map(([c, v]) => `${c}: |Δlogp|=${v.abs_logprob_gap_nats} nats, ${v.fp16_ulp} ulp`).join("; ")}` : "Legacy probability-gap metadata; no ulp result was exported.";
   return `<span class="say" title="Margin = log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}” = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Change ${dsrc}.&#10;P is over all ${n} codes; the margin compares only “${esc(it.j_plus)}” vs “${esc(it.j_minus)}”.">B leans further toward <b>${esc(d >= 0 ? jp : jm)}</b> than A: margin <span class="num ${dd.marginExported ? "" : "calc"}">${sgn(d, 3)}</span> log-odds${clamp ? ` <span class="clampw">clamped run</span>` : ""}</span>
     <span class="minis"><span class="mini" title="A's margin (log-odds), ${esc(D.A.m.model.label)}"><span style="color:${A_COL}">A</span>${bar(a, A_COL)}<span class="num">${a.toFixed(2)}</span></span>
     <span class="mini" title="B's margin (log-odds), ${esc(D.B.m.model.label)}"><span style="color:${B_COL}">B</span>${bar(b, B_COL)}<span class="num">${b.toFixed(2)}</span></span>
     <span class="mini" title="${esc(pTip)}">P(“${esc(it.j_plus)}”) <span class="num">${pA.toFixed(2)} → ${pB.toFixed(2)}</span></span></span>
+    ${D.A.m.weights ? `<span class="mini" title="${esc(parityTip)}">${esc(D.A.m.weights)}${esc(parityText)}</span>` : ""}
     <span class="sp"></span><button class="details" data-learn="answer" title="The full answer card: codes, four probabilities, the clamped run (key A)">details</button>`;
 }
 

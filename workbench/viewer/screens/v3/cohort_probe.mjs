@@ -1,0 +1,21 @@
+// Cohort-specific visible provenance and conservation smoke check.
+import puppeteer from "puppeteer-core";
+const base = process.argv[2];
+const adapter = process.argv[3];
+const shot = process.argv[4];
+const expectFailure = process.argv.includes("--expect-failure");
+const browser = await puppeteer.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: "new", args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const page = await browser.newPage();
+await page.setViewport({ width: 1600, height: 1000 });
+const errors = [];
+page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
+page.on("pageerror", (e) => errors.push(e.message));
+await page.goto(`http://127.0.0.1:5178/?tab=c&a=${base}&b=${adapter}&item=wvs_Q57`, { waitUntil: "networkidle0" });
+await page.waitForFunction("window.__ready === true");
+const text = await page.evaluate(() => document.body.innerText);
+const bad = await page.$eval("#status", (e) => e.classList.contains("bad"));
+await page.screenshot({ path: shot, fullPage: true });
+const pass = text.includes("nf4_dequant") && text.includes("report-only") && text.includes("ulp") && bad === expectFailure && errors.length === 0;
+console.log(JSON.stringify({ pass, weightsLabel: text.includes("nf4_dequant"), archiveReportOnly: text.includes("report-only"), archiveUlp: text.includes("ulp"), bad, expectFailure, errors, screenshot: shot }, null, 1));
+await browser.close();
+process.exit(pass ? 0 : 1);

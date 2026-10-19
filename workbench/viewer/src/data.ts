@@ -37,6 +37,10 @@ export interface Segment { a: number; b: number; kind: "template" | "system" | "
 
 export interface RunManifest {
   kind: "run";
+  weights?: "nf4_dequant" | "unquantized";
+  archive_parity?: { fatal: false; tau: number; max_abs_prob_gap: number; pass: boolean; source: string;
+    max_fp16_ulp?: number; max_abs_logprob_gap_nats?: number;
+    options?: Record<string, { abs_logprob_gap_nats: number; fp16_ulp: number }> };
   schema?: string;
   segments?: Segment[] | null;   // @1.1; absent in @1 files
   model: { key: string; label: string; model_id: string; adapter: { dir: string; sha256: string } | null;
