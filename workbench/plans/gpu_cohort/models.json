@@ -1,0 +1,815 @@
+{
+  "base": {
+    "key": "base",
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "revision": "0e9e39f249a16976918f6564b8830bc894c89659"
+  },
+  "adapter_revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+  "hub_listing_cohort_count": 42,
+  "models": [
+    {
+      "key": "base",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "revision": "0e9e39f249a16976918f6564b8830bc894c89659"
+    },
+    {
+      "key": "ARG",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/ARG",
+      "sha256": "b39cd5d0ec7ed00f4c328b83af82e104ed1343d25b21436ca4d456b29a20499a",
+      "bytes": 54560368,
+      "config_sha256": "c53e5f14cd4bff4f135630d80955751501b1c77fefc4a4ee09292f0b9a601fe0",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "AUS",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/AUS",
+      "sha256": "7132d8c0f2c6ab2b17675ac90552aa6ddf621d67313fa47e4166a7563e6cb428",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "BGD",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/BGD",
+      "sha256": "b0327617fe5441ba85d45756b31bebd0e20912a22b0f3dcb2c82f261c5a13f04",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "BOL",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/BOL",
+      "sha256": "39374d00d5a5565786aac774f0ce5c3ce0c76d216d889b63d6c2edef3cc265a3",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "BRA",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/BRA",
+      "sha256": "91dc150347041a7c7823bdc2fd362ff4491943e41841235fa1f1cd199037c672",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "CAN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/CAN",
+      "sha256": "18d9fdae6036c182a1a32cd2a791f381f5dc98c573fcb18b4e4a5dffe6aca6e0",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "CHL",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/CHL",
+      "sha256": "b68aa82942294b5e014bb34dfe465bdfe347c5c6849c82cc9db27054ecfb88ca",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "CHN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/CHN",
+      "sha256": "85be63a990ef4ed1f3c470a7678c0b74d1c3f62ef84cc246e36bb359fa1479d2",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "COL",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/COL",
+      "sha256": "e85892a73782933fd5df33be3ffbd25f545a28e6e9c70f9a33eb1f0193bcb63d",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "CZE",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/CZE",
+      "sha256": "c7237617a1b0212a210815fb19383c2d3ad04c2a2e8d28ad45b6cc8e39532129",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "DEU",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/DEU",
+      "sha256": "a5aaf89aad057d9d25ad966036f5a8289681c6c2534894288fe16d043bb2b7df",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "EGY",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/EGY",
+      "sha256": "b8022b85b87b011fa63c5f2dd34b08502b39978a0233767d8fab0902c5f8d963",
+      "bytes": 54560368,
+      "config_sha256": "cf22061c48e8bff24190b5958c37755196b3bc51914861ff267ff567108a9e5a",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "GBR",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/GBR",
+      "sha256": "12abca2280c45635d1a9e7b4363b24701a036282330393980cc5e29f01f08304",
+      "bytes": 54560368,
+      "config_sha256": "448ef65347d16a8539d1eb6d503a21359d195f013299ca69d79dcf4b7e76e3bc",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "GRC",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/GRC",
+      "sha256": "8a61d3b1baf70cc1cb44fcfe3a0445457621163dc1b5f8f4cd3a005f732a1626",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "GTM",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/GTM",
+      "sha256": "df85d559a0d98fc136d37edcf76940a9739bf6f708cc19acf15b2b47ba36db18",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "IDN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/IDN",
+      "sha256": "a4586a29e3c68c545974ab3a0e85b567a6b718dd2574de3e85010718dc339a2d",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "IND",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/IND",
+      "sha256": "3c2eb3545c89b0c8f29489f0e2070126bdd118a0508491afe5b3ee8bc36de354",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "IRN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/IRN",
+      "sha256": "13ae2ba6d580a62e2fec126ae015f82578ace64c078b1a931b058405481eee32",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "IRQ",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/IRQ",
+      "sha256": "3d9b1fae57a26fbeb24aa6453378865829a12aeb2f002a9e8857b036e1ba7e12",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "JOR",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/JOR",
+      "sha256": "42b55a35ed9ca583fa5b57571e51d23c24640c0d0a6d830332162ea8026ad390",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "JPN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/JPN",
+      "sha256": "6da199b2b256261fd6f538a9b0de88710b985c07328af34e4be1a8953be70ea8",
+      "bytes": 54560368,
+      "config_sha256": "9c05b386dbb4f58533d65bedec821ee13452d87b8601e763964e141896b003ac",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "KAZ",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/KAZ",
+      "sha256": "4573e669a6fa9597c4523bffb73d6f9de36b28c9987812ce700d1167c566d690",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "KEN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/KEN",
+      "sha256": "e804e0464390af98c53ab4b3a7ae1ad24f8cd20ab492dc23b5638055ceb46721",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "KOR",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/KOR",
+      "sha256": "88d2d94863e1caf1b241d590c4dbcda9d6554e6a0017294bf840eab522c5ff98",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "MAR",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/MAR",
+      "sha256": "f1bcf681c692b8b898fefdf9c6c3ce4dd226e8968f8ff22887866353e047980e",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "MEX",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/MEX",
+      "sha256": "627cf86ed9441fcb24b3ab033063cb7988d73c13f78bf975eca6b76863247c28",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "NGA",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/NGA",
+      "sha256": "fff8a589f7a850bb6c515ae30f9819975f54dd6a0e4a147e9f37f25e2f6facde",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "NIC",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/NIC",
+      "sha256": "2a31ca1554c99ca573ea686e412ba2afae32e241279a046a24f946f47b22ffb0",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "NLD",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/NLD",
+      "sha256": "2b0ad0a1c3ca84a4d3da51cc003f5c91d7a8136c89c9845725a7f2d9097dd4a9",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "PAK",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/PAK",
+      "sha256": "6c362d2397d3a1c66bd90393f456239fd3fa99cf80ec25d220e31b4cba998e3a",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "PER",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/PER",
+      "sha256": "0d4917477f22160041523611fc36b11fb3b649826cb0bef949bc3b5090b5a8a5",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "PHL",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/PHL",
+      "sha256": "3a4d2b45ff76c648a4fbb40856e522d70e1227b8b876576a81751fba501ec666",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "ROU",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/ROU",
+      "sha256": "d6a9501bad6d1310cb6fa2fa567f8c27f81825e934c8805907f50a59a2b98fd5",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "RUS",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/RUS",
+      "sha256": "37a23b9a00d9b98820a511732f9ea01edcce1486d7199fa4789b5f99f10fa0e3",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "SRB",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/SRB",
+      "sha256": "9b09682b6f16889f082d8e1ce83a1e409f15c1cfbe874dc4fa744eca4439a044",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "THA",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/THA",
+      "sha256": "2bbf5ac6dcc39ca6f9bc1d1977b02507be0e7f7a1f7105d4fd61e957b9de2d3d",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "TUR",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/TUR",
+      "sha256": "bc3b08ca16f799bbc3824ff81f7b87b8d46eb779cc4e15320678bbf3b1e3fe6c",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "UKR",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/UKR",
+      "sha256": "762b976d44dffba1fe3e61b0f7e4fcbee773d3aa782727f06275f37905327cd5",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "USA",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/USA",
+      "sha256": "7329c4a1e621d86fdc32c55b47b5fda047830404dc0d697ec468febe19717eef",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "VEN",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/VEN",
+      "sha256": "a382b807ef3ae7a1d5f7012192dec7ba4a7f14d52ab6678dd6f9f83b056d08c9",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "VNM",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/VNM",
+      "sha256": "f329704c65d5024aa6491d19da9175bcfbe6878b7fbcfe27582c861b3921bcea",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    {
+      "key": "ZWE",
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "repo_id": "Bonorinoa/SCA2-paper-b-adapters",
+      "repo_type": "dataset",
+      "revision": "c4b0f36eae0c15e508f72b606861798c8359131f",
+      "path": "adapters/ZWE",
+      "sha256": "c237ac905ee5e53a03c51498fcb5e21df140737cdb27f4f6e285351c654c67dd",
+      "bytes": 54560368,
+      "config_sha256": "411d93eb2cc7f9c7822ad54cbc510e51764526561450bb8b08325011cd1c69a8",
+      "r": 16,
+      "alpha": 32,
+      "target_modules": [
+        "k_proj",
+        "o_proj",
+        "q_proj",
+        "v_proj"
+      ]
+    }
+  ],
+  "exceptions": []
+}

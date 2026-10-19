@@ -174,3 +174,34 @@ The SmolLM adapters are merged only after an explicit state-dict load, and every
 checked against the file. This works around peft 0.21.2, which can silently leave LoRA B at zero in
 a float64 base. The streamed Llama adapter remains unmerged and is applied as
 `W x + (alpha/r) B(Ax)` inside each loaded layer; tests compare it with an explicit merge.
+
+## Cohort weight identity and archive parity (additive @1.1 fields)
+
+The cohort runner writes `weights: nf4_dequant | unquantized` in every run and pair
+manifest. Provenance identifies capture source, dtype, device, exact base/adapter
+revisions and the frozen NF4 codes/state. CPU NF4 diagnostics are labeled as such,
+not presented as historical CUDA quantization.
+
+`readout.option_logprobs` contains full, summed completion-token logprobs in nats,
+not conditional code-only logprobs and not log option probabilities. For the
+current Llama cohort every completion is one shared space token followed by one
+code token. The stream reads full-vocabulary logits at both the position before
+that space and the answer position, then sums the two log-softmax entries. A
+longer shared prefix is explicitly refused by this archive-logprob reporter.
+
+`archive_parity` is separate from `conservation` and always has `fatal: false`.
+**Parity unit per A2 F5:** compare each captured option logprob with its archived
+value, reporting `abs_logprob_gap_nats`, `archived_fp16_ulp_nats` and `fp16_ulp` in
+`options[code]`. One ulp is positive binary16 spacing at the absolute archived
+logprob (`spacing(float16(abs(archived_logprob)))`), including at powers of two;
+archive values must be finite and on that grid. The report-only verdict is
+`max_fp16_ulp <= tau`, with `tau=4`. `max_abs_logprob_gap_nats` and
+`max_abs_prob_gap` are also recorded, but probability gaps are descriptive only
+and have no pass/fail threshold. No centering or removal of a common logprob
+offset is performed.
+
+The viewer shows the maximum ulp across A and B, the ≤4 report-only threshold,
+and per-option nats/ulp details in its parity tooltip. Older probability-only
+records are labeled legacy/descriptive, not reinterpreted as ulp results.
+Conservation/reference gates remain fatal and unchanged; a report-only archive
+failure cannot change their verdict or conceal one of their failures.

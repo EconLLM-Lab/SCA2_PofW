@@ -1,0 +1,19 @@
+# Local weights and iterative exports are not source deliverables.
+local_nf4/
+debug_capture/
+dry_run*/
+*.tar.gz
+.cohort-8b.lock
+test_tmp*/
+
+# Frozen T4 instrument: weights stay local + Hub; README/MANIFEST/instrument.json/records are tracked.
+frozen_nf4_t4/*.safetensors
+
+# Raw device-benchmark and C1 VM working copies (GBs of captures/tarballs).
+# Summaries + scripts are tracked; raw evidence is uploaded to the Hub (workbench_cohort/evidence/).
+benchmark/*/
+c1/run*/
+
+# Iteration screenshots and stray stderr captures (curated shots live in viewer/screens/*/final/).
+*.png
+*.err

@@ -108,6 +108,17 @@ Raised at `workbench/tests/test_conservation.py:18`,
 Model: `deepseek/deepseek-v4.1-flash` on provider `openrouter` (the
 `model_override` / `provider_override` pinned on this card).
 
+## Archive-parity report: distinct from conservation
+
+For cohort captures, archive parity uses full completion logprobs, not a
+probability tolerance. Per A2 F5, report each option's absolute logprob gap in
+nats and in archived-fp16 ulps, with report-only tau ≤4 ulp. One ulp is positive
+binary16 spacing at the absolute archived logprob. Probability gaps are
+descriptive columns only. The `archive_parity` block stays outside the fatal
+`conservation.relative` verdict; internal conservation and independent HF
+reference checks are not relaxed. See `export_contract.md` for exact field names
+and full shared-prefix completion scoring.
+
 ## float32 relative gates
 
 Each conservation check is stated as `|error| / scale <= tau`, with `tau` supplied per model (`gates.py`). An absolute threshold cannot be kept across dtypes: on SmolLM2-135M one float32 ulp of the largest residual entry (about 8.9e2 on the base model) is 1.1e-4, so the original absolute closure bound of 1e-3 is about nine ulps wide and sits at the representation error of the stream it checks.
