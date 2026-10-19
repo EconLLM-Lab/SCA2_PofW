@@ -10,7 +10,8 @@
     "signprompt_strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
     "replicate_strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
     "replicate_heldout_v1": "46447de63f7cc161c016bdc38a3a7c9e8d351be308c44cf1ccd28d9091d13b38",
-    "nearzero_strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6"
+    "nearzero_strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
+    "persona_strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6"
   },
   "nearzero_bank_bundle": {
     "hub_path": "banks/near_zero_gps_sign_relabel_bank2_20261015_062543Z/near_zero_banks.tgz",

@@ -7,7 +7,7 @@ literal or an integer of 10 or more.
 Inputs (all aggregate, no human rows):
     paper_b/heldout/screen_result.json, paper_b/heldout/FREEZE.json
     planning/sprint_2026-10-11/paper-b-tier1/results/{heldout_analysis,heldout_per_dimension,
-        bank2_transport_strict}.json, factorial/*, replicate/*, near_zero/*
+        bank2_transport_strict}.json, factorial/*, replicate/*, near_zero/*, persona/persona_strict.json (C8)
     results/robustness/selection_heldout_{reverse,para_a,para_b}.csv (paper_b/heldout/readout_robustness.py)
 
 usage: python paper_b/build_numbers_table.py [--out PATH] [--readout-dir DIR]
@@ -478,6 +478,58 @@ def hash_rows(t: Table):
               surface=rel_path, out=rel_path, **kw)
 
 
+# ------------------------------------------------------------------ C8 persona arm (strict battery, 42 countries)
+def persona_rows(t: Table):
+    """C8_PERSONA_DESIGN.md: E1 persona-GPS, E2 the one test, E3 descriptive differences, E4 country bootstrap,
+    E5 the 16 development countries, and the G3 base-parity gap. Every value is read from persona_strict.json."""
+    o, f = f"{RES}/persona/persona_strict.json", "paper_b/persona_strict.py"
+    d = _read(o)
+    if not d["replay_checks"]["all_pass"]:
+        raise RuntimeError(f"persona analysis replay checks failed: {d['replay_checks']}")
+    run = f"{d['run_id']}; {RUN_COHORT1}; {RUN_STRICT_B2}; {RUN_SP_STRICT64}"
+    base = "strict 23-item battery; 42 countries"
+    sp_ = f"{base}; country-named persona prompt, base model; persona-GPS Spearman"
+    for s in SURFACES:
+        e = d["E1"][s]
+        t.add(f"PX_persona_{s}_rho", f"Persona-GPS, {s}", "Spearman rho", e["point"], ci=(e["ci_lo"], e["ci_hi"]),
+              n=e["n"], surface=f"{sp_}; profile-block bootstrap (26 clusters)", run_id=d["run_id"], script=f, out=o)
+        e = d["E4"]["persona"][s]
+        t.add(f"PX_persona_{s}_rho_country", f"Persona-GPS, {s}, country bootstrap (sensitivity)", "Spearman rho",
+              e["point"], ci=(e["ci_lo"], e["ci_hi"]), n=e["n"], surface=f"{sp_}; country bootstrap",
+              run_id=d["run_id"], script=f, out=o)
+        e = d["routes_vs_gps"]["SP"][s]
+        t.add(f"PX_signprompt_{s}_rho", f"Sign-prompt-GPS, {s} (64 prompted profiles mapped to countries)",
+              "Spearman rho", e["point"], ci=(e["ci_lo"], e["ci_hi"]), n=e["n"],
+              surface=f"{base}; sign-profile prompt, base model, each country mapped to its profile; profile-block "
+                      "bootstrap (26 clusters)", run_id=RUN_SP_STRICT64, script=f, out=o)
+    dsurf = f"{base}; route-GPS minus persona-GPS Spearman; paired profile-block bootstrap (26 clusters)"
+    e = d["E2"]
+    t.add("PX_D_cohort1_trust", f"Design-locked primary contrast (C8 E2), cohort-1 adapters minus persona, "
+          f"trust: {e['reading']}", "difference of Spearman rho", e["point"], ci=(e["ci_lo"], e["ci_hi"]), n=e["n"],
+          surface=dsurf, run_id=run, script=f, out=o)
+    e = d["E4"]["E2_country_bootstrap"]
+    t.add("PX_D_cohort1_trust_country", f"Primary contrast under the country bootstrap (sensitivity): {e['reading']}",
+          "difference of Spearman rho", e["point"], ci=(e["ci_lo"], e["ci_hi"]), n=e["n"],
+          surface=f"{base}; route-GPS minus persona-GPS Spearman; paired country bootstrap", run_id=run, script=f,
+          out=o)
+    for route, name in (("C1", "cohort1"), ("B2", "bank2"), ("SP", "signprompt")):
+        for s, e in d["E3"][route].items():
+            t.add(f"PX_D_{name}_{s}", f"{name} minus persona, {s}", "difference of Spearman rho", e["point"],
+                  ci=(e["ci_lo"], e["ci_hi"]), n=e["n"], surface=f"{dsurf}; descriptive, not a test", run_id=run,
+                  script=f, out=o)
+    dev = "strict battery; the 16 development-stage countries; Spearman; country bootstrap; descriptive"
+    for key, rid, who in (("C1_trust", "PX_dev16_cohort1_trust_rho", "cohort-1 adapters"),
+                          ("P_trust", "PX_dev16_persona_trust_rho", "persona prompt")):
+        e = d["E5"][key]
+        t.add(rid, f"Trust-GPS on the 16 development countries, {who}", "Spearman rho", e["point"],
+              ci=(e["ci_lo"], e["ci_hi"]), n=e["n"], surface=dev, run_id=run, script=f, out=o)
+    g = d["base_parity"]
+    t.add("PX_G3_base_max_dlogprob", "G3: fresh base model vs the banked strict base, largest option log-probability "
+          "gap", "max |delta log p|", g["max_dlogprob"], n=g["n_rows"],
+          surface=f"strict battery; base model; persona run vs {g['reference_run']}", run_id=d["run_id"], script=f,
+          out=o)
+
+
 # ------------------------------------------------------------------ assemble
 def build_rows(readout_dir: Path = READOUT_DIR) -> list[dict]:
     freeze = json.loads((ROOT / "paper_b/heldout/FREEZE.json").read_text())
@@ -491,6 +543,7 @@ def build_rows(readout_dir: Path = READOUT_DIR) -> list[dict]:
     replicate_rows(t)
     near_zero_rows(t)
     hash_rows(t)
+    persona_rows(t)
     return t.rows
 
 

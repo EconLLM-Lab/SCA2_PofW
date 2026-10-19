@@ -18,12 +18,13 @@ OUT=$SCR/prov_${S}.out
 SKIP="${PSKIP:-}"
 mkdir -p "$SCR"
 
-# Refuse before spending a VM: scratch is pruned after 24h idle, and these helpers are unversioned.
-for f in pb_mkarchive.py pb_checkarchive.py; do
-  [ -f "$SCR/$f" ] || { echo "PROVISION_FAILED missing helper $SCR/$f"; exit 1; }
+# Refuse before spending a VM. The archive helpers used to live in scratch (pruned after 24h idle, which cost a
+# provisioning attempt); since 2026-10-18 they are versioned as paper_b/colab/vm_{mk,check}archive.py.
+ARCH=data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_base_on_CHN.csv
+for f in paper_b/colab/vm_setup.py paper_b/colab/vm_fact_boot.py paper_b/colab/vm_mkarchive.py \
+         paper_b/colab/vm_checkarchive.py "$ARCH"; do
+  [ -f "$f" ] || { echo "PROVISION_FAILED missing $f"; exit 1; }
 done
-[ -f paper_b/colab/vm_setup.py ] && [ -f paper_b/colab/vm_fact_boot.py ] || {
-  echo "PROVISION_FAILED a versioned VM script is missing"; exit 1; }
 grep -q '^HF_TOKEN=' "$ENVF" || { echo "PROVISION_FAILED no HF_TOKEN in $ENVF"; exit 1; }
 
 # The token lives only in .env and in a mode-600 file that exists for the length of this script.
@@ -61,7 +62,7 @@ step new     'Session READY'      env -u PYTHONPATH colab new -s $S --gpu T4
 step setup   'SETUP OK'           env -u PYTHONPATH colab exec -s $S -f paper_b/colab/vm_setup.py --timeout 1800
 step token   'HF_TOKEN set: True' env -u PYTHONPATH colab exec -s $S -f "$TOKF" --timeout 150
 step boot    'BOOT OK'            env -u PYTHONPATH colab exec -s $S -f paper_b/colab/vm_fact_boot.py --timeout 1200
-step mkarch  'archive dir'        env -u PYTHONPATH colab exec -s $S -f "$SCR/pb_mkarchive.py" --timeout 150
+step mkarch  'archive dir'        env -u PYTHONPATH colab exec -s $S -f paper_b/colab/vm_mkarchive.py --timeout 150
 step upload  'Uploaded'           env -u PYTHONPATH colab upload -s $S data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_base_on_CHN.csv /content/SCA2_PofW/data/phase2/raw/wvs/ksenias_base8/model_option_probabilities_base_on_CHN.csv
-step chkarch 'archive sha256 ok'  env -u PYTHONPATH colab exec -s $S -f "$SCR/pb_checkarchive.py" --timeout 150
+step chkarch 'archive sha256 ok'  env -u PYTHONPATH colab exec -s $S -f paper_b/colab/vm_checkarchive.py --timeout 150
 echo PROVISION_DONE $S

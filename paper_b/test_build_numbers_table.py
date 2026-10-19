@@ -219,3 +219,55 @@ def test_every_input_and_producer_lives_in_the_repository(rows):
     for r in rows:
         assert not Path(r["output_file"]).is_absolute(), (r["claim_id"], r["output_file"])
         assert "scratch" not in r["producing_script"] + r["output_file"], r["claim_id"]
+
+
+# ------------------------------------------------------------------ C8 persona arm (C8_PERSONA_DESIGN.md)
+def _close(row, value, lo=None, hi=None):
+    assert float(row["value"]) == value
+    if lo is not None:
+        assert float(row["ci_low"]) == lo and float(row["ci_high"]) == hi
+
+
+def test_persona_rows_match_the_persona_json(by_id):
+    d = _j("persona/persona_strict.json")
+    assert d["replay_checks"]["all_pass"] is True
+    for s in BN.SURFACES:
+        e = d["E1"][s]
+        _close(by_id[f"PX_persona_{s}_rho"], e["point"], e["ci_lo"], e["ci_hi"])
+        assert int(by_id[f"PX_persona_{s}_rho"]["n"]) == 42
+        e = d["E4"]["persona"][s]
+        _close(by_id[f"PX_persona_{s}_rho_country"], e["point"], e["ci_lo"], e["ci_hi"])
+        e = d["routes_vs_gps"]["SP"][s]
+        _close(by_id[f"PX_signprompt_{s}_rho"], e["point"], e["ci_lo"], e["ci_hi"])
+    e2 = d["E2"]
+    r = by_id["PX_D_cohort1_trust"]
+    _close(r, e2["point"], e2["ci_lo"], e2["ci_hi"])
+    assert e2["reading"] in r["sentence_use"] and "primary" in r["sentence_use"]
+    e4 = d["E4"]["E2_country_bootstrap"]
+    _close(by_id["PX_D_cohort1_trust_country"], e4["point"], e4["ci_lo"], e4["ci_hi"])
+    for route, name in (("C1", "cohort1"), ("B2", "bank2"), ("SP", "signprompt")):
+        for s, e in d["E3"][route].items():
+            row = by_id[f"PX_D_{name}_{s}"]
+            _close(row, e["point"], e["ci_lo"], e["ci_hi"])
+            assert "descriptive" in row["surface_label"]
+    assert "PX_D_cohort1_trust" not in {f"PX_D_cohort1_{s}" for s in d["E3"]["C1"]}
+    for key, rid in (("C1_trust", "PX_dev16_cohort1_trust_rho"), ("P_trust", "PX_dev16_persona_trust_rho")):
+        e = d["E5"][key]
+        _close(by_id[rid], e["point"], e["ci_lo"], e["ci_hi"])
+        assert int(by_id[rid]["n"]) == 16
+    g3 = by_id["PX_G3_base_max_dlogprob"]
+    assert float(g3["value"]) == d["base_parity"]["max_dlogprob"] and int(g3["n"]) == d["base_parity"]["n_rows"]
+    assert d["base_parity"]["pass"] is True
+
+
+def test_rows_of_the_c71_table_are_unchanged_by_later_additions(rows):
+    """Amendment C7.1 (commit 92406dd) fixed 225 rows; a later amendment may add rows, never move these."""
+    import subprocess
+    old = subprocess.run(["git", "-C", str(ROOT), "show",
+                          "92406dd:planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv"],
+                         capture_output=True, text=True, check=True).stdout
+    before = {r["claim_id"]: r for r in csv.DictReader(old.splitlines())}
+    now = {r["claim_id"]: r for r in rows}
+    assert len(before) == 225
+    for cid, r in before.items():
+        assert now[cid] == r, cid
