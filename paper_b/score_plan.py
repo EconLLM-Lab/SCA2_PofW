@@ -60,6 +60,27 @@ NEARZERO_STAMP = "20261018"
 CONDITIONS["nearzero_strict_v1"] = {
     "run_id": f"bank2-nearzero-strict-v1-{NEARZERO_STAMP}", "battery": "strict", "variant": "v1", "kind": "adapter",
     "units": list(P2.NEARZERO_UNITS), "nearzero": True}
+# Card C8 (2026-10-18, planning/sprint_2026-10-11/paper-b-tier1/C8_PERSONA_DESIGN.md): the preprint's
+# country-named persona prompt on the base model, one persona per cohort country, strict battery, no adapter.
+# Units are countries, so the scoring step switches SCA2_PB_UNITS back to countries (the VM default is the 64
+# profiles). Literal copy of config.COHORT, whose module value is rebound under SCA2_PB_UNITS=profiles; a test
+# checks it against config.py's own literal.
+PERSONA_COUNTRIES = [
+    "ARG", "AUS", "BGD", "BOL", "BRA", "CAN", "CHL", "CHN", "COL", "CZE",
+    "DEU", "EGY", "GBR", "GRC", "GTM", "IDN", "IND", "IRN", "IRQ", "JOR",
+    "JPN", "KAZ", "KEN", "KOR", "MAR", "MEX", "NGA", "NIC", "NLD", "PAK",
+    "PER", "PHL", "ROU", "RUS", "SRB", "THA", "TUR", "UKR", "USA", "VEN",
+    "VNM", "ZWE",
+]
+PERSONA_STAMP = "20261019"
+PERSONA_GATE_UNIT = REPLICATE_UNIT                 # an original profile unit; the gate certifies the stack
+GATE_RUN_ID_PERSONA = f"gate-persona-{PERSONA_STAMP}"
+PERSONA_BASE_REFERENCE_RUN = CONDITIONS["strict_v1"]["run_id"]   # G3 compares the fresh base with this banked base
+BASE_TOL_LOGPROB = 1e-2                            # the Paper B base tolerances (vm_gate_factorial.py)
+BASE_TOL_PROB = 1e-4
+CONDITIONS["persona_strict_v1"] = {
+    "run_id": f"persona-strict-v1-{PERSONA_STAMP}", "battery": "strict", "variant": "v1", "kind": "persona",
+    "units": PERSONA_COUNTRIES}
 # Launch order of the T4 session: the cheap single-unit replicate scores first, then the 64-cell sign-prompt cell.
 T4_ORDER = ["replicate_strict_v1", "replicate_heldout_v1", "signprompt_strict_v1"]
 # Priority order of a launch: the preregistered primary first, sensitivity arms after it.
@@ -123,9 +144,13 @@ def todo_units(run_id: str, half: str, hub_files, spec_sha: str | None = None,
             "base": bool(scores_base(half) and not _present(run_id, hub_files, "base", spec_sha, read_manifest))}
 
 
-def score_cohort_args(run_id: str, spec_path: str, marker: str, todo: dict, revision: str | None = None) -> list[str]:
-    """Arguments for score_cohort --model-only, or [] when nothing is left to score."""
-    arms = (["base"] if todo["base"] else []) + (["adapter"] if todo["units"] else [])
+def score_cohort_args(run_id: str, spec_path: str, marker: str, todo: dict, revision: str | None = None,
+                      arm: str = "adapter") -> list[str]:
+    """Arguments for score_cohort --model-only, or [] when nothing is left to score. `arm` is the arm the units
+    are scored under: an adapter per unit, or the country-named persona prompt per country."""
+    if arm not in ("adapter", "persona"):
+        raise ValueError(f"arm must be adapter or persona, got {arm!r}")
+    arms = (["base"] if todo["base"] else []) + ([arm] if todo["units"] else [])
     if not arms:
         return []
     args = ["--model-only", "--spec-file", str(spec_path), "--run-id", run_id, "--gate-marker", marker,
@@ -148,6 +173,8 @@ def condition_env(name: str) -> dict:
     the local adapter directory to replicates/<tag>, so the original adapters are never read; the near-zero switch
     points config at the reduced banks and the near_zero/ Hub prefixes."""
     c = CONDITIONS[name]
+    if c["kind"] == "persona":
+        return {"SCA2_PB_UNITS": "countries"}
     if c.get("nearzero"):
         return {"SCA2_PB_NEARZERO": NEARZERO_DIR_VM}
     rep = c.get("replicate")
@@ -233,9 +260,17 @@ def todo_condition(name: str, hub_files, spec_sha: str, read_manifest) -> list[s
     if read_manifest is None:
         raise ValueError("a manifest reader is required: a name-only resume would keep superseded scores")
     c = CONDITIONS[name]
-    suffix = "_adapter" if c["kind"] == "adapter" else ""
     return [u for u in condition_units(name)
-            if not _present(c["run_id"], hub_files, f"{u}{suffix}", spec_sha, read_manifest)]
+            if not _present(c["run_id"], hub_files, model_name_for(c["kind"], u), spec_sha, read_manifest)]
+
+
+def model_name_for(kind: str, unit: str) -> str:
+    """The model name a unit is persisted under: <unit>_adapter, persona_<CC>, or the bare sign-prompt cell."""
+    if kind == "adapter":
+        return f"{unit}_adapter"
+    if kind == "persona":
+        return f"persona_{unit}"
+    return unit
 
 
 def check_marker_for(name: str, marker: dict, replicate_adapter_sha: str | None = None) -> None:
@@ -251,7 +286,10 @@ def check_marker_for(name: str, marker: dict, replicate_adapter_sha: str | None 
         raise RuntimeError("gate marker says gate_pass=false")
     if marker.get("adapter_revision") != ADAPTER_REVISION:
         raise RuntimeError(f"gate marker adapter revision {marker.get('adapter_revision')!r} is not the pinned {ADAPTER_REVISION}")
-    if marker.get("unit") not in condition_units(name) and not (
+    if c["kind"] == "persona":                          # no adapter is scored: the gate must be on a real profile unit
+        if marker.get("unit") not in F.all_units():
+            raise RuntimeError(f"gate marker unit {marker.get('unit')!r} is not a profile unit")
+    elif marker.get("unit") not in condition_units(name) and not (
             c["kind"] == "signprompt" and marker.get("unit") in F.all_units()):
         raise RuntimeError(f"gate marker unit {marker.get('unit')!r} is outside {name}")
     if c.get("replicate"):
@@ -269,6 +307,41 @@ def t4_steps() -> list[tuple[str, list[str], dict]]:
     for name in T4_ORDER:
         steps.append((f"t4_{name}", ["paper_b/colab/vm_score_t4.py", name], condition_env(name)))
     return steps
+
+
+def persona_steps() -> list[tuple[str, list[str], dict]]:
+    """The detached chain for the persona session (C8): gate one original profile unit (G2), then score the
+    persona condition, whose driver runs G1 and G3 before any persona unit."""
+    gate_env = {"GATE_UNIT": PERSONA_GATE_UNIT, "SCA2_PB_ADAPTER_REVISION": ADAPTER_REVISION,
+                "SCORE_RUN_ID": GATE_RUN_ID_PERSONA}
+    return [("persona_gate", ["paper_b/colab/vm_gate_factorial.py"], gate_env),
+            ("persona_score", ["paper_b/colab/vm_score_t4.py", "persona_strict_v1"], condition_env("persona_strict_v1"))]
+
+
+def base_parity(new, banked, tol_logprob: float = BASE_TOL_LOGPROB, tol_prob: float = BASE_TOL_PROB) -> dict:
+    """G3: a fresh base-model strict score file against the banked one, option by option.
+
+    The option grids must be identical (same question/option keys, no duplicates); a different grid is a
+    different readout and raises rather than reporting a gap. The exact maximum gaps are returned whatever they are.
+    """
+    import pandas as pd
+    keys = ["question_id", "option_code"]
+    a = new[keys + ["option_logprob", "model_prob"]].astype({"question_id": str, "option_code": str})
+    b = banked[keys + ["option_logprob", "model_prob"]].astype({"question_id": str, "option_code": str})
+    for label, d in (("new", a), ("banked", b)):
+        if d.duplicated(keys).any():
+            raise ValueError(f"{label} base scores repeat a question/option key")
+    m = a.merge(b, on=keys, how="outer", suffixes=("_new", "_banked"), indicator=True)
+    if not (m["_merge"] == "both").all():
+        raise ValueError(f"option grids differ: {int((m['_merge'] != 'both').sum())} unmatched rows")
+    dl = (m["option_logprob_new"] - m["option_logprob_banked"]).abs()
+    dp = (m["model_prob_new"] - m["model_prob_banked"]).abs()
+    out = {"n_rows": int(len(m)), "max_dlogprob": float(dl.max()), "max_dprob": float(dp.max()),
+           "n_over_tol": int(((dl > tol_logprob) | (dp > tol_prob)).sum()),
+           "n_nan": int((dl.isna() | dp.isna()).sum()),
+           "tol_logprob": tol_logprob, "tol_prob": tol_prob, "reference_run": PERSONA_BASE_REFERENCE_RUN}
+    out["pass"] = bool(out["n_nan"] == 0 and out["n_over_tol"] == 0)
+    return out
 
 
 def heldout_items() -> list[str]:
