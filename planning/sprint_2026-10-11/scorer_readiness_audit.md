@@ -1,5 +1,7 @@
 # Paper B scorer — launch-readiness audit
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md). "Existing scores: none" was true that day only.
+
 Repo `SCA2_PofW` @ `feat/paper-b-cohort` 38ed2ee; scorer files untracked (read-only audit, nothing edited).
 Verified today: `env -u PYTHONPATH .venv/bin/python -m pytest paper_b/test_eval_lib.py -q` → **9 passed**.
 Existing scores: none for the cohort — `data/paper_b/` does not exist locally; only the archived 8-country surface (`data/phase2/raw/wvs/ksenias_base8/`). No duplicate work risk; nothing to reuse except the archive.

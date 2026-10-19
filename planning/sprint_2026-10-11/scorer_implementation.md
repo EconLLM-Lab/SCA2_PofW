@@ -1,5 +1,7 @@
 # Scorer worker implementation report — 2026-10-11
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 Worker scope: `paper_b/score_cohort.py` (read-only context), plus new files below.
 Other worker's files (`eval_lib.py`, `test_eval_lib.py`, local population evaluator)
 untouched. No commits, no GPU, no external uploads, no secrets. Branch

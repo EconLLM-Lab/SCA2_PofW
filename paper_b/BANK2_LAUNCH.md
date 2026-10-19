@@ -1,5 +1,7 @@
 # Bank2 launch note
 
+> **Record, not status.** Written 2026-10-14. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../STATUS.md). Executed: 64 bank-2 profile adapters are on the Hub.
+
 Do not run this until `verify_gates.py --bank-dir <new bank> --scan-text` exits 0 and the manifest has 658 triplets.
 
 Cohort 1 is not this run. Its Hub path is `adapters/<CC>` at revision `7550fd4cfe514470bb8d80918a43c9ae424d26b5`.

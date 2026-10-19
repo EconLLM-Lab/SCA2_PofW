@@ -1,5 +1,7 @@
 # SCA2 Paper B — human data storage-rights audit and proposed HF-first layout
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 **Date:** 2026-10-11 · Hermes (SCA profile) · read-only audit; no uploads, repo edits, deletions, or code changes performed.
 **Scope:** storage/redistribution rights for the human survey data backing Paper B (GPS ∩ WVS7, 42 countries), and a Hub-first data layout that respects them.
 **Companion docs:** `TWO_PAPER_CLAIM_LOCK.md` (claims), `PAPER_B_PROTOCOL_DRAFT.md` (frozen run protocol, 2026-10-09).

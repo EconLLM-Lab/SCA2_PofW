@@ -1,5 +1,7 @@
 # Local eval implementation report — 2026-10-11
 
+> **Record, not status.** Written 2026-10-11. Lines about what is done, blocked or next describe that date, not today. Current status: [STATUS.md](../../STATUS.md).
+
 Scope honored: edits confined to `paper_b/eval_lib.py`, `paper_b/test_eval_lib.py`,
 NEW `paper_b/evaluate_local.py`, NEW `paper_b/test_evaluate_local.py`. No
 commits, no pushes, no GPU, no external upload, no manuscript edits. All work

@@ -1,5 +1,10 @@
 # Paper B — runbook (frozen protocol 2026-10-09)
 
+> **Updated 2026-10-19.** This runbook records how cohort 1 was trained (2026-10-09 to 10-11). Since 2026-10-15
+> the Hugging Face Hub is the only artifact store (`paper_b/hub_io.py`); Drive is an archive. Wherever the steps
+> below say Drive or `drivemount`, later runs use the Hub-only launchers in `paper_b/colab/` instead.
+> What exists now: [STATUS.md](../STATUS.md).
+
 How we take the 42-country cohort from nothing to trained adapters. Everything is
 resumable; any interruption costs at most the in-flight country.
 
