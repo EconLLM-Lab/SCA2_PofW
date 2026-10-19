@@ -1,0 +1,1 @@
+nohup caffeinate -dims env -u PYTHONPATH -u HF_TOKEN uv run --project workbench --with bitsandbytes==0.50.2 --with psutil python workbench/plans/gpu_cohort/runner/mac_queue.py --local --frozen workbench/plans/gpu_cohort/frozen_nf4_t4 --output workbench/exports/phase1_nf4_t4
