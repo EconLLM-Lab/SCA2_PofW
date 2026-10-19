@@ -1,8 +1,8 @@
 Paper B number audit (card T10). Table: planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv
-Table sha256 20ea003b5fe12e396d7e706787f84c353c24034b642f8ce1a50646e560e8f08e, 225 rows. Rule: a printed number passes only if it equals the
+Table sha256 51ddcce1dd205ee29ecf6e3450fd30bf09948399e98adb32abfc0846e1b97855, 271 rows. Rule: a printed number passes only if it equals the
 table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).
 
-== supplement.tex: 167 statistics, 22 design constants
+== supplement.tex: 297 statistics, 32 design constants
   PASS        -0.154  PD_face_valid_trust_A:lo                                full -0.15432651431830105 -> -0.154
   PASS         0.379  PD_face_valid_trust_A:hi                                full 0.37924414129987694 -> 0.379
   PASS        -0.076  PD_jev_majority_trust_A:lo                              full -0.0759579012610154 -> -0.076
@@ -71,6 +71,96 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS         0.975  B2_bank_to_bank_patience:Q50_pearson:hi                 full 0.9753475800888668 -> 0.975
   PASS         0.856  B2_bank_to_bank_patience:Q50_spearman:lo                full 0.8563995612308707 -> 0.856
   PASS         0.982  B2_bank_to_bank_patience:Q50_spearman:hi                full 0.9821514573430072 -> 0.982
+  PASS         0.325  PX_D_cohort1_trust_country:lo                           full 0.3251516262795061 -> 0.325
+  PASS         1.075  PX_D_cohort1_trust_country:hi                           full 1.074806460763694 -> 1.075
+  PASS         0.584  PX_signprompt_trust_rho:lo                              full 0.5836609604950164 -> 0.584
+  PASS         0.844  PX_signprompt_trust_rho:hi                              full 0.8444114505180651 -> 0.844
+  PASS        -0.339  PX_persona_trust_rho:lo                                 full -0.3386574205085119 -> -0.339
+  PASS         0.381  PX_persona_trust_rho:hi                                 full 0.38136686616815824 -> 0.381
+  PASS        -0.273  PX_persona_trust_rho_country:lo                         full -0.27271358125836975 -> -0.273
+  PASS         0.330  PX_persona_trust_rho_country:hi                         full 0.3299520471997192 -> 0.330
+  PASS        -0.722  PX_signprompt_risktaking_rho:lo                         full -0.7223611755697497 -> -0.722
+  PASS        -0.049  PX_signprompt_risktaking_rho:hi                         full -0.04866918239605095 -> -0.049
+  PASS        -0.201  PX_persona_risktaking_rho:lo                            full -0.20074915878405888 -> -0.201
+  PASS         0.545  PX_persona_risktaking_rho:hi                            full 0.5450277580636146 -> 0.545
+  PASS        -0.151  PX_persona_risktaking_rho_country:lo                    full -0.15070106044677306 -> -0.151
+  PASS         0.506  PX_persona_risktaking_rho_country:hi                    full 0.5058217255263554 -> 0.506
+  PASS         0.150  PX_signprompt_posrecip_rho:lo                           full 0.1496240112449059 -> 0.150
+  PASS         0.709  PX_signprompt_posrecip_rho:hi                           full 0.7086041591211192 -> 0.709
+  PASS        -0.342  PX_persona_posrecip_rho:lo                              full -0.3421051455633613 -> -0.342
+  PASS         0.315  PX_persona_posrecip_rho:hi                              full 0.3148826476029181 -> 0.315
+  PASS        -0.245  PX_persona_posrecip_rho_country:lo                      full -0.24481690762503017 -> -0.245
+  PASS         0.320  PX_persona_posrecip_rho_country:hi                      full 0.31974380390363105 -> 0.320
+  PASS         0.199  PX_signprompt_altruism_rho:lo                           full 0.19930840549083195 -> 0.199
+  PASS         0.747  PX_signprompt_altruism_rho:hi                           full 0.7466380216884346 -> 0.747
+  PASS        -0.485  PX_persona_altruism_rho:lo                              full -0.48545881515020495 -> -0.485
+  PASS         0.214  PX_persona_altruism_rho:hi                              full 0.21364295292546315 -> 0.214
+  PASS        -0.427  PX_persona_altruism_rho_country:lo                      full -0.42736518798506606 -> -0.427
+  PASS         0.197  PX_persona_altruism_rho_country:hi                      full 0.19682357445829177 -> 0.197
+  PASS        -0.440  PX_signprompt_negrecip_rho:lo                           full -0.44017034968057794 -> -0.440
+  PASS         0.447  PX_signprompt_negrecip_rho:hi                           full 0.4467161309951275 -> 0.447
+  PASS        -0.140  PX_persona_negrecip_rho:lo                              full -0.140451608559728 -> -0.140
+  PASS         0.449  PX_persona_negrecip_rho:hi                              full 0.4494704906833473 -> 0.449
+  PASS        -0.153  PX_persona_negrecip_rho_country:lo                      full -0.15260026210383704 -> -0.153
+  PASS         0.458  PX_persona_negrecip_rho_country:hi                      full 0.45771447122798453 -> 0.458
+  PASS        -0.546  PX_signprompt_patience:Q43_rho:lo                       full -0.5461520966017978 -> -0.546
+  PASS         0.218  PX_signprompt_patience:Q43_rho:hi                       full 0.21835423996910305 -> 0.218
+  PASS        -0.771  PX_persona_patience:Q43_rho:lo                          full -0.7706725804245006 -> -0.771
+  PASS        -0.124  PX_persona_patience:Q43_rho:hi                          full -0.12397954719569866 -> -0.124
+  PASS        -0.721  PX_persona_patience:Q43_rho_country:lo                  full -0.7214945277834244 -> -0.721
+  PASS        -0.214  PX_persona_patience:Q43_rho_country:hi                  full -0.21362852153492976 -> -0.214
+  PASS        -0.299  PX_signprompt_patience:Q50_rho:lo                       full -0.2991590063239395 -> -0.299
+  PASS         0.573  PX_signprompt_patience:Q50_rho:hi                       full 0.5732793772957763 -> 0.573
+  PASS         0.157  PX_persona_patience:Q50_rho:lo                          full 0.15709648536243528 -> 0.157
+  PASS         0.730  PX_persona_patience:Q50_rho:hi                          full 0.7301770465577195 -> 0.730
+  PASS         0.243  PX_persona_patience:Q50_rho_country:lo                  full 0.24258890846860198 -> 0.243
+  PASS         0.714  PX_persona_patience:Q50_rho_country:hi                  full 0.7143552706321513 -> 0.714
+  PASS         0.191  PX_D_cohort1_trust:lo                                   full 0.19130953883498664 -> 0.191
+  PASS         1.154  PX_D_cohort1_trust:hi                                   full 1.1537633322188234 -> 1.154
+  PASS         0.347  PX_D_bank2_trust:lo                                     full 0.34697149708543557 -> 0.347
+  PASS         1.144  PX_D_bank2_trust:hi                                     full 1.144201733397511 -> 1.144
+  PASS         0.327  PX_D_signprompt_trust:lo                                full 0.3268135866206785 -> 0.327
+  PASS         1.086  PX_D_signprompt_trust:hi                                full 1.0858905044786737 -> 1.086
+  PASS        -0.156  PX_D_cohort1_risktaking:lo                              full -0.1557973115590825 -> -0.156
+  PASS         0.617  PX_D_cohort1_risktaking:hi                              full 0.6170681311608855 -> 0.617
+  PASS        -0.436  PX_D_bank2_risktaking:lo                                full -0.43594922336692854 -> -0.436
+  PASS         0.493  PX_D_bank2_risktaking:hi                                full 0.49290940736207184 -> 0.493
+  PASS        -1.060  PX_D_signprompt_risktaking:lo                           full -1.059802478889966 -> -1.060
+  PASS        -0.118  PX_D_signprompt_risktaking:hi                           full -0.11767049794888537 -> -0.118
+  PASS        -0.036  PX_D_cohort1_posrecip:lo                                full -0.035795056877521804 -> -0.036
+  PASS         0.907  PX_D_cohort1_posrecip:hi                                full 0.9073905122334583 -> 0.907
+  PASS        -0.196  PX_D_bank2_posrecip:lo                                  full -0.19584817316098904 -> -0.196
+  PASS         0.816  PX_D_bank2_posrecip:hi                                  full 0.8155571466496818 -> 0.816
+  PASS         0.052  PX_D_signprompt_posrecip:lo                             full 0.05200802411836938 -> 0.052
+  PASS         0.884  PX_D_signprompt_posrecip:hi                             full 0.8843529808040687 -> 0.884
+  PASS         0.042  PX_D_cohort1_altruism:lo                                full 0.04170256186226687 -> 0.042
+  PASS         0.990  PX_D_cohort1_altruism:hi                                full 0.990366480791332 -> 0.990
+  PASS        -0.026  PX_D_bank2_altruism:lo                                  full -0.026441869550965 -> -0.026
+  PASS         0.965  PX_D_bank2_altruism:hi                                  full 0.9653313482313296 -> 0.965
+  PASS         0.198  PX_D_signprompt_altruism:lo                             full 0.19843857408976487 -> 0.198
+  PASS         1.083  PX_D_signprompt_altruism:hi                             full 1.082920382708041 -> 1.083
+  PASS        -0.612  PX_D_cohort1_negrecip:lo                                full -0.6123374032132143 -> -0.612
+  PASS         0.297  PX_D_cohort1_negrecip:hi                                full 0.2965507819388552 -> 0.297
+  PASS        -0.441  PX_D_bank2_negrecip:lo                                  full -0.4410062531267055 -> -0.441
+  PASS         0.561  PX_D_bank2_negrecip:hi                                  full 0.5610130287337549 -> 0.561
+  PASS        -0.640  PX_D_signprompt_negrecip:lo                             full -0.6401759910029103 -> -0.640
+  PASS         0.374  PX_D_signprompt_negrecip:hi                             full 0.37424382531284595 -> 0.374
+  PASS         0.019  PX_D_cohort1_patience:Q43:lo                            full 0.018611583867510637 -> 0.019
+  PASS         0.986  PX_D_cohort1_patience:Q43:hi                            full 0.986061701635472 -> 0.986
+  PASS         0.031  PX_D_bank2_patience:Q43:lo                              full 0.03114075788318784 -> 0.031
+  PASS         1.013  PX_D_bank2_patience:Q43:hi                              full 1.0128789870251722 -> 1.013
+  PASS        -0.134  PX_D_signprompt_patience:Q43:lo                         full -0.13380968489658826 -> -0.134
+  PASS         0.720  PX_D_signprompt_patience:Q43:hi                         full 0.7203749891150563 -> 0.720
+  PASS        -0.840  PX_D_cohort1_patience:Q50:lo                            full -0.8403341937911114 -> -0.840
+  PASS         0.085  PX_D_cohort1_patience:Q50:hi                            full 0.08536012877635543 -> 0.085
+  PASS        -0.875  PX_D_bank2_patience:Q50:lo                              full -0.875329093964605 -> -0.875
+  PASS         0.084  PX_D_bank2_patience:Q50:hi                              full 0.0836265219357384 -> 0.084
+  PASS        -0.802  PX_D_signprompt_patience:Q50:lo                         full -0.8022817200367792 -> -0.802
+  PASS         0.083  PX_D_signprompt_patience:Q50:hi                         full 0.08291149491927047 -> 0.083
+  PASS         0.554  PX_dev16_cohort1_trust_rho:lo                           full 0.5535714285714286 -> 0.554
+  PASS         0.926  PX_dev16_cohort1_trust_rho:hi                           full 0.9255980020165571 -> 0.926
+  PASS        -0.565  PX_dev16_persona_trust_rho:lo                           full -0.5653724319771486 -> -0.565
+  PASS         0.480  PX_dev16_persona_trust_rho:hi                           full 0.47986482162853844 -> 0.480
   PASS            56  SCR_absA_n_kept:n                                       full 56 -> 56
   PASS            26  SCR_absA_n_kept                                         full 26 -> 26
   PASS         0.115  SCR_absA_A_kept                                         full 0.11507311463352304 -> 0.115
@@ -123,6 +213,46 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS         0.889  B2_bank_to_bank_patience:Q43_spearman                   full 0.8885470085470085 -> 0.889
   PASS         0.940  B2_bank_to_bank_patience:Q50_pearson                    full 0.9398300934035531 -> 0.940
   PASS         0.953  B2_bank_to_bank_patience:Q50_spearman                   full 0.9528205128205127 -> 0.953
+  PASS           0.0  PX_G3_base_max_dlogprob                                 full 0.0 -> 0.0
+  PASS           140  PX_G3_base_max_dlogprob:n                               full 140 -> 140
+  PASS         0.716  PX_D_cohort1_trust_country                              full 0.7163114820516977 -> 0.716
+  PASS         0.773  PX_signprompt_trust_rho                                 full 0.7730688066951009 -> 0.773
+  PASS         0.028  PX_persona_trust_rho                                    full 0.02779353374929098 -> 0.028
+  PASS        -0.448  PX_signprompt_risktaking_rho                            full -0.4477796236051372 -> -0.448
+  PASS         0.195  PX_persona_risktaking_rho                               full 0.1950409205088729 -> 0.195
+  PASS         0.490  PX_signprompt_posrecip_rho                              full 0.4902051205517834 -> 0.490
+  PASS         0.033  PX_persona_posrecip_rho                                 full 0.033141560651486913 -> 0.033
+  PASS         0.540  PX_signprompt_altruism_rho                              full 0.5404992087103314 -> 0.540
+  PASS        -0.136  PX_persona_altruism_rho                                 full -0.13637468600599625 -> -0.136
+  PASS         0.005  PX_signprompt_negrecip_rho                              full 0.004542691833675305 -> 0.005
+  PASS         0.157  PX_persona_negrecip_rho                                 full 0.156794425087108 -> 0.157
+  PASS        -0.195  PX_signprompt_patience:Q43_rho                          full -0.1951735098539783 -> -0.195
+  PASS        -0.491  PX_persona_patience:Q43_rho                             full -0.49064095292115717 -> -0.491
+  PASS         0.184  PX_signprompt_patience:Q50_rho                          full 0.1836545412757302 -> 0.184
+  PASS         0.509  PX_persona_patience:Q50_rho                             full 0.5094400777894823 -> 0.509
+  PASS         0.716  PX_D_cohort1_trust                                      full 0.7163114820516977 -> 0.716
+  PASS         0.775  PX_D_bank2_trust                                        full 0.7754517258409389 -> 0.775
+  PASS         0.745  PX_D_signprompt_trust                                   full 0.74527527294581 -> 0.745
+  PASS         0.240  PX_D_cohort1_risktaking                                 full 0.23952678064986632 -> 0.240
+  PASS         0.015  PX_D_bank2_risktaking                                   full 0.015058576798609974 -> 0.015
+  PASS        -0.643  PX_D_signprompt_risktaking                              full -0.64282054411401 -> -0.643
+  PASS         0.454  PX_D_cohort1_posrecip                                   full 0.45442022526537557 -> 0.454
+  PASS         0.332  PX_D_bank2_posrecip                                     full 0.3324640124623452 -> 0.332
+  PASS         0.457  PX_D_signprompt_posrecip                                full 0.45706355990029646 -> 0.457
+  PASS         0.543  PX_D_cohort1_altruism                                   full 0.5425816384409691 -> 0.543
+  PASS         0.500  PX_D_bank2_altruism                                     full 0.5000333911911103 -> 0.500
+  PASS         0.677  PX_D_signprompt_altruism                                full 0.6768738947163276 -> 0.677
+  PASS        -0.185  PX_D_cohort1_negrecip                                   full -0.1849120816789563 -> -0.185
+  PASS         0.082  PX_D_bank2_negrecip                                     full 0.082183613163025 -> 0.082
+  PASS        -0.152  PX_D_signprompt_negrecip                                full -0.1522517332534327 -> -0.152
+  PASS         0.472  PX_D_cohort1_patience:Q43                               full 0.47151538043088687 -> 0.472
+  PASS         0.496  PX_D_bank2_patience:Q43                                 full 0.49599483972513164 -> 0.496
+  PASS         0.295  PX_D_signprompt_patience:Q43                            full 0.29546744306717887 -> 0.295
+  PASS        -0.333  PX_D_cohort1_patience:Q50                               full -0.33255003646381986 -> -0.333
+  PASS        -0.349  PX_D_bank2_patience:Q50                                 full -0.3488234736702483 -> -0.349
+  PASS        -0.326  PX_D_signprompt_patience:Q50                            full -0.3257855365137521 -> -0.326
+  PASS         0.818  PX_dev16_cohort1_trust_rho                              full 0.8176470588235294 -> 0.818
+  PASS        -0.038  PX_dev16_persona_trust_rho                              full -0.03823529411764706 -> -0.038
   PASS        0.9999  RP_strict_pearson_recoded                               full 0.9998926000416745 -> 0.9999
   PASS        -0.025  RP_surface_diff_sd_trust                                full -0.024871266929983354 -> -0.025
   PASS        -0.030  RP_surface_diff_sd_risktaking                           full -0.029738125242725993 -> -0.030
@@ -186,6 +316,16 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
   PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
   PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS      20260905  design:seed_country                                     paper_b/analyze_surface.py COUNTRY_BOOT_SEED; C8_PERSONA_DESIGN.md E4
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS      20261011  design:seed_c3                                          paper_b/analyze_surface.py BOOT_SEED
+  PASS      20260905  design:seed_country                                     paper_b/analyze_surface.py COUNTRY_BOOT_SEED; C8_PERSONA_DESIGN.md E4
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS      20261011  design:seed_c3                                          paper_b/analyze_surface.py BOOT_SEED
+  PASS            16  design:dev_countries                                    TWO_PAPER_CLAIM_LOCK.md locked panel (base8 + co2_8); C8_PERSONA_DESIGN.md E5
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
   PASS            23  design:strict_items                                     TWO_PAPER_CLAIM_LOCK.md (23-item strict battery)
   PASS          0.10  design:near_zero_cut                                    paper_b/factorial.py NEAR_ZERO
@@ -203,10 +343,18 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (LaTeX length or layout argument): \cmidrule(l){4-5}
   note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
   note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
+  note  explained (LaTeX length or layout argument): 4pt
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
+  note  explained (LaTeX length or layout argument): 4pt
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
   note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
   note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.12}
   note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.2}
   note  explained (WVS item code): Q82
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
   note  explained (WVS item code): Q43
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q43
@@ -294,8 +442,8 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (section or amendment number of a cited document): Amendment~1
   note  explained (formula constant in math mode): $a_i>0$
 
-Statistics: 167 printed, 167 PASS, 0 FAIL.
+Statistics: 297 printed, 297 PASS, 0 FAIL.
 Design constants: 0 FAIL.
 Unexplained numerals: 0.
-Distinct claim_ids used: 88.
+Distinct claim_ids used: 134.
 RESULT: PASS

@@ -91,3 +91,8 @@ def test_files_argument_audits_only_the_named_files(tmp_path):
 
 def test_supplement_design_constants_are_registered():
     assert AN.DESIGN["abs_a_cut"][0] == {"0.15"} and AN.DESIGN["face_valid_registered"][0] == {"30"}
+
+
+def test_c8_design_constants_are_registered():
+    assert AN.DESIGN["seed_country"][0] == {"20260905"}
+    assert AN.DESIGN["dev_countries"][0] == {"16"}

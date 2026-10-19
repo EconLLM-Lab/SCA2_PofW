@@ -65,6 +65,8 @@ DESIGN: dict[str, tuple[set[str], str]] = {
     "surfaces": ({"7"}, "factorial_report.py (seven surfaces; patience kept as two)"),
     "abs_a_cut": ({"0.15"}, "PREREGISTRATION.md s8 (item-level descriptive drops |a_i| < 0.15)"),
     "face_valid_registered": ({"30"}, "PREREGISTRATION.md s6 (face-valid route: 30 assigned items)"),
+    "seed_country": ({"20260905"}, "paper_b/analyze_surface.py COUNTRY_BOOT_SEED; C8_PERSONA_DESIGN.md E4"),
+    "dev_countries": ({"16"}, "TWO_PAPER_CLAIM_LOCK.md locked panel (base8 + co2_8); C8_PERSONA_DESIGN.md E5"),
 }
 
 CL_RE = re.compile(r"\\clh?\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}\{([^{}]*)\}")

@@ -1,5 +1,5 @@
 Paper B number audit (card T10). Table: planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv
-Table sha256 20ea003b5fe12e396d7e706787f84c353c24034b642f8ce1a50646e560e8f08e, 225 rows. Rule: a printed number passes only if it equals the
+Table sha256 51ddcce1dd205ee29ecf6e3450fd30bf09948399e98adb32abfc0846e1b97855, 271 rows. Rule: a printed number passes only if it equals the
 table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).
 
 == title_page.tex: 0 statistics, 0 design constants
@@ -9,6 +9,9 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (LaTeX length or layout argument): \\[1em]
   note  explained (LaTeX length or layout argument): \vspace{2em}
   note  explained (LaTeX length or layout argument): \vspace{1em}
+  note  explained (LaTeX length or layout argument): \vspace{1em}
+  note  explained (named instrument or model version): \texttt{arXiv:2610.06562}
+  note  explained (date or registration tag): 2026
 
 == abstract.tex: 0 statistics, 0 design constants
 
@@ -19,9 +22,9 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (cross-reference or citation command): \citep{bisbee2024,boelaert2025,wang2025}
   note  explained (cross-reference or citation command): \citep{lyman2025}
   note  explained (cross-reference or citation command): \citep{kozlowski2025,broska2025}
-  note  explained (cross-reference or citation command): \citet{gonzalezbonorino2026}
   note  explained (cross-reference or citation command): \citep[GPS;][]{falk2018}
   note  explained (cross-reference or citation command): \citep{rafailov2023}
+  note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
@@ -45,7 +48,7 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (cross-reference or citation command): \citet{bradleyterry1952}
   note  explained (cross-reference or citation command): \citep{rafailov2023}
 
-== instrument.tex: 0 statistics, 12 design constants
+== instrument.tex: 0 statistics, 13 design constants
   PASS           526  design:train_rows                                       paper_b/config.py TRAIN_ROWS (526 training pairs)
   PASS           658  design:bank_pairs                                       paper_b/config.py N_ROWS; VERIFICATION.md V1 (658 triplets)
   PASS            16  design:lora_r                                           paper_b/config.py LORA_R
@@ -57,12 +60,11 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
   PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS            23  design:strict_items                                     TWO_PAPER_CLAIM_LOCK.md (23-item strict battery)
-  note  explained (cross-reference or citation command): \citet{gonzalezbonorino2026}
   note  explained (cross-reference or citation command): \citep{ludwig2026}
   note  explained (cross-reference or citation command): \citep{bradleyterry1952,rafailov2023}
   note  explained (cross-reference or citation command): \citep{hu2022,dettmers2023}
-  note  explained (cross-reference or citation command): \citet{gonzalezbonorino2026}
   note  explained (named instrument or model version): Llama~3.1 8B
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): 2^6
@@ -70,7 +72,7 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (formula constant in display math): \begin{equation} \mathcal{L}_c(\theta)=-\frac{1}{|\mathcal{D}_c|}\sum_
   note  explained (formula constant in math mode): $s_{ck}=1\{z_{ck}\geq 0\}$
 
-== design.tex: 0 statistics, 43 design constants
+== design.tex: 0 statistics, 44 design constants
   PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
   PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
@@ -78,6 +80,7 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS             4  design:imprint_dims                                     PREREGISTRATION.md s3 (four imprint dimensions); lock Amendment C7
   PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
   PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS           223  design:pool_items                                       PREREGISTRATION.md s2 (pool of 223 items)
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
@@ -142,7 +145,7 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (TikZ figure geometry): \begin{tikzpicture}[>=Latex,node distance= ,every node/.style={font=\f
   note  explained (formula constant in math mode): $a_i>0$
 
-== results.tex: 162 statistics, 7 design constants
+== results.tex: 171 statistics, 8 design constants
   PASS         0.500  B2_cohort1_trust_rho:lo                                 full 0.5002088786337604 -> 0.500
   PASS         0.865  B2_cohort1_trust_rho:hi                                 full 0.8647856310906544 -> 0.865
   PASS         0.085  B2_cohort1_risktaking_rho:lo                            full 0.08459211972226777 -> 0.085
@@ -169,6 +172,12 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS         0.861  B2_bank_to_bank_negrecip_pearson:hi                     full 0.8613120685546286 -> 0.861
   PASS         0.229  B2_bank_to_bank_risktaking_pearson:lo                   full 0.22895893796148822 -> 0.229
   PASS         0.819  B2_bank_to_bank_risktaking_pearson:hi                   full 0.8194416180571575 -> 0.819
+  PASS        -0.339  PX_persona_trust_rho:lo                                 full -0.3386574205085119 -> -0.339
+  PASS         0.381  PX_persona_trust_rho:hi                                 full 0.38136686616815824 -> 0.381
+  PASS         0.191  PX_D_cohort1_trust:lo                                   full 0.19130953883498664 -> 0.191
+  PASS         1.154  PX_D_cohort1_trust:hi                                   full 1.1537633322188234 -> 1.154
+  PASS         0.584  PX_signprompt_trust_rho:lo                              full 0.5836609604950164 -> 0.584
+  PASS         0.844  PX_signprompt_trust_rho:hi                              full 0.8444114505180651 -> 0.844
   PASS        -0.007  SCR_A_primary:lo                                        full -0.0067258505657922735 -> -0.007
   PASS         0.126  SCR_A_primary:hi                                        full 0.12648524013553836 -> 0.126
   PASS         0.015  PD_adapter_primary_risktaking_A:lo                      full 0.01489773912721483 -> 0.015
@@ -197,6 +206,9 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS         0.898  B2_bank_to_bank_posrecip_pearson                        full 0.897638626467169 -> 0.898
   PASS         0.708  B2_bank_to_bank_negrecip_pearson                        full 0.7081916581321159 -> 0.708
   PASS         0.598  B2_bank_to_bank_risktaking_pearson                      full 0.597757128274079 -> 0.598
+  PASS         0.028  PX_persona_trust_rho                                    full 0.02779353374929098 -> 0.028
+  PASS         0.716  PX_D_cohort1_trust                                      full 0.7163114820516977 -> 0.716
+  PASS         0.773  PX_signprompt_trust_rho                                 full 0.7730688066951009 -> 0.773
   PASS            56  SCR_A_primary:n                                         full 56 -> 56
   PASS         0.061  SCR_A_primary                                           full 0.06057460871332797 -> 0.061
   PASS         0.012  SCR_null_mean                                           full 0.011939799842343543 -> 0.012
@@ -307,12 +319,12 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS             7  NZ_blockD_against_beyond_floor:n                        full 7 -> 7
   PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS           223  design:pool_items                                       PREREGISTRATION.md s2 (pool of 223 items)
   PASS            28  design:ceiling_countries                                PREREGISTRATION.md s7 (28 countries with both waves)
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
   PASS             4  design:v5_required                                      VERIFICATION.md V5 (at least 4 of 6 dominant)
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
-  note  explained (cross-reference or citation command): \citet{gonzalezbonorino2026}
   note  explained (WVS item code): Q43
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q50
@@ -533,8 +545,8 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q43
 
-Statistics: 302 printed, 302 PASS, 0 FAIL.
+Statistics: 311 printed, 311 PASS, 0 FAIL.
 Design constants: 0 FAIL.
 Unexplained numerals: 0.
-Distinct claim_ids used: 142.
+Distinct claim_ids used: 145.
 RESULT: PASS

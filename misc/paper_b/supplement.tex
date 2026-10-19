@@ -111,6 +111,64 @@ Patience (Q50) & \cl{0.940}{B2_bank_to_bank_patience:Q50_pearson} \ci{0.890}{0.9
 \end{minipage}
 \end{table}
 
+\section{The country-named persona route}\label{sec:s-persona}
+
+The persona route replaces the neutral opening of the evaluation prompt with a sentence that names the country, and it is scored on the base model with no adapter. One run scored all \dc{42}{countries} personas after a fresh base-model pass had reproduced the banked base-model scores of the second cohort's strict run, with a largest log-probability gap of \cl{0.0}{PX_G3_base_max_dlogprob} over \cl{140}{PX_G3_base_max_dlogprob:n} option rows. Table~\ref{tab:s-persona-gps} gives the GPS correlation of the two prompt routes by surface; the adapter columns are those of Table~\ref{tab:s-bank-gps}. Table~\ref{tab:s-persona-diff} gives each route's correlation minus the persona route's. The planned contrast is the first-cohort difference on trust, and every other difference is descriptive. Under a country bootstrap (seed \dc{20260905}{seed_country}) the planned contrast is \cl{0.716}{PX_D_cohort1_trust_country} \ci{0.325}{1.075}{PX_D_cohort1_trust_country}.
+
+The persona route tracks none of the four imprint surfaces. Its two clear correlations are on the two patience items, and they have opposite signs.
+
+\begin{table}[htbp]
+\centering
+\caption{Prompt routes against the GPS: Spearman correlation over the \dc{42}{countries} countries, by surface (model side only).}\label{tab:s-persona-gps}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l l@{}}
+\toprule
+Surface & Sign-profile prompt & Persona (profile blocks) & Persona (country bootstrap) \\
+\midrule
+Trust & \cl{0.773}{PX_signprompt_trust_rho} \ci{0.584}{0.844}{PX_signprompt_trust_rho} & \cl{0.028}{PX_persona_trust_rho} \ci{-0.339}{0.381}{PX_persona_trust_rho} & \ci{-0.273}{0.330}{PX_persona_trust_rho_country} \\
+Risk taking & \cl{-0.448}{PX_signprompt_risktaking_rho} \ci{-0.722}{-0.049}{PX_signprompt_risktaking_rho} & \cl{0.195}{PX_persona_risktaking_rho} \ci{-0.201}{0.545}{PX_persona_risktaking_rho} & \ci{-0.151}{0.506}{PX_persona_risktaking_rho_country} \\
+Positive reciprocity & \cl{0.490}{PX_signprompt_posrecip_rho} \ci{0.150}{0.709}{PX_signprompt_posrecip_rho} & \cl{0.033}{PX_persona_posrecip_rho} \ci{-0.342}{0.315}{PX_persona_posrecip_rho} & \ci{-0.245}{0.320}{PX_persona_posrecip_rho_country} \\
+Altruism & \cl{0.540}{PX_signprompt_altruism_rho} \ci{0.199}{0.747}{PX_signprompt_altruism_rho} & \cl{-0.136}{PX_persona_altruism_rho} \ci{-0.485}{0.214}{PX_persona_altruism_rho} & \ci{-0.427}{0.197}{PX_persona_altruism_rho_country} \\
+Negative reciprocity & \cl{0.005}{PX_signprompt_negrecip_rho} \ci{-0.440}{0.447}{PX_signprompt_negrecip_rho} & \cl{0.157}{PX_persona_negrecip_rho} \ci{-0.140}{0.449}{PX_persona_negrecip_rho} & \ci{-0.153}{0.458}{PX_persona_negrecip_rho_country} \\
+Patience (Q43) & \cl{-0.195}{PX_signprompt_patience:Q43_rho} \ci{-0.546}{0.218}{PX_signprompt_patience:Q43_rho} & \cl{-0.491}{PX_persona_patience:Q43_rho} \ci{-0.771}{-0.124}{PX_persona_patience:Q43_rho} & \ci{-0.721}{-0.214}{PX_persona_patience:Q43_rho_country} \\
+Patience (Q50) & \cl{0.184}{PX_signprompt_patience:Q50_rho} \ci{-0.299}{0.573}{PX_signprompt_patience:Q50_rho} & \cl{0.509}{PX_persona_patience:Q50_rho} \ci{0.157}{0.730}{PX_persona_patience:Q50_rho} & \ci{0.243}{0.714}{PX_persona_patience:Q50_rho_country} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} The sign-profile prompt column maps each country to its prompted profile. Profile-block intervals resample the \dc{26}{profiles_realized} sign profiles (\dc{2,000}{boot_draws} draws, seed \dc{20261011}{seed_c3}); the last column resamples countries (seed \dc{20260905}{seed_country}) and repeats the point estimate of the column before it.
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Each route's GPS correlation minus the persona route's, by surface (model side only).}\label{tab:s-persona-diff}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l l@{}}
+\toprule
+Surface & First cohort $-$ persona & Second cohort $-$ persona & Sign prompt $-$ persona \\
+\midrule
+Trust$^{*}$ & \cl{0.716}{PX_D_cohort1_trust} \ci{0.191}{1.154}{PX_D_cohort1_trust} & \cl{0.775}{PX_D_bank2_trust} \ci{0.347}{1.144}{PX_D_bank2_trust} & \cl{0.745}{PX_D_signprompt_trust} \ci{0.327}{1.086}{PX_D_signprompt_trust} \\
+Risk taking & \cl{0.240}{PX_D_cohort1_risktaking} \ci{-0.156}{0.617}{PX_D_cohort1_risktaking} & \cl{0.015}{PX_D_bank2_risktaking} \ci{-0.436}{0.493}{PX_D_bank2_risktaking} & \cl{-0.643}{PX_D_signprompt_risktaking} \ci{-1.060}{-0.118}{PX_D_signprompt_risktaking} \\
+Positive reciprocity & \cl{0.454}{PX_D_cohort1_posrecip} \ci{-0.036}{0.907}{PX_D_cohort1_posrecip} & \cl{0.332}{PX_D_bank2_posrecip} \ci{-0.196}{0.816}{PX_D_bank2_posrecip} & \cl{0.457}{PX_D_signprompt_posrecip} \ci{0.052}{0.884}{PX_D_signprompt_posrecip} \\
+Altruism & \cl{0.543}{PX_D_cohort1_altruism} \ci{0.042}{0.990}{PX_D_cohort1_altruism} & \cl{0.500}{PX_D_bank2_altruism} \ci{-0.026}{0.965}{PX_D_bank2_altruism} & \cl{0.677}{PX_D_signprompt_altruism} \ci{0.198}{1.083}{PX_D_signprompt_altruism} \\
+Negative reciprocity & \cl{-0.185}{PX_D_cohort1_negrecip} \ci{-0.612}{0.297}{PX_D_cohort1_negrecip} & \cl{0.082}{PX_D_bank2_negrecip} \ci{-0.441}{0.561}{PX_D_bank2_negrecip} & \cl{-0.152}{PX_D_signprompt_negrecip} \ci{-0.640}{0.374}{PX_D_signprompt_negrecip} \\
+Patience (Q43) & \cl{0.472}{PX_D_cohort1_patience:Q43} \ci{0.019}{0.986}{PX_D_cohort1_patience:Q43} & \cl{0.496}{PX_D_bank2_patience:Q43} \ci{0.031}{1.013}{PX_D_bank2_patience:Q43} & \cl{0.295}{PX_D_signprompt_patience:Q43} \ci{-0.134}{0.720}{PX_D_signprompt_patience:Q43} \\
+Patience (Q50) & \cl{-0.333}{PX_D_cohort1_patience:Q50} \ci{-0.840}{0.085}{PX_D_cohort1_patience:Q50} & \cl{-0.349}{PX_D_bank2_patience:Q50} \ci{-0.875}{0.084}{PX_D_bank2_patience:Q50} & \cl{-0.326}{PX_D_signprompt_patience:Q50} \ci{-0.802}{0.083}{PX_D_signprompt_patience:Q50} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} $^{*}$The planned contrast, fixed before any persona was scored; every other cell is descriptive. Both correlations of a difference are recomputed on every draw of one profile-block bootstrap (\dc{2,000}{boot_draws} draws, seed \dc{20261011}{seed_c3}).
+\end{minipage}
+\end{table}
+
+On the \dc{16}{dev_countries} countries of the development stage, rescored on the frozen stack with the first-cohort adapters, the trust correlation is \cl{0.818}{PX_dev16_cohort1_trust_rho} \ci{0.554}{0.926}{PX_dev16_cohort1_trust_rho} for the adapters and \cl{-0.038}{PX_dev16_persona_trust_rho} \ci{-0.565}{0.480}{PX_dev16_persona_trust_rho} for the persona route, with a country bootstrap. These values are descriptive. The development stage used other adapters on an earlier software stack, and its own scores enter no statistic in the article.
+
 \section{Retraining noise by surface}\label{sec:s-noise}
 
 The article bounds the strict-surface shifts of the unseeded retrain by their maximum. Table~\ref{tab:s-retrain} gives the shift on each surface, in standard deviations of that surface over the \dc{64}{cells} profiles. These shifts are the noise floor that the near-zero reading in Section~\ref{sec:s-nz} uses. On the recoded scale of the readout, the Pearson correlation between the retrain and the original over the \dc{23}{strict_items} strict items is \cl{0.9999}{RP_strict_pearson_recoded}.
@@ -206,7 +264,7 @@ Altruism & \cl{20}{PD_adapter_primary_altruism_A:n} & Q96, Q122, Q125, Q135, Q13
 
 \paragraph{The first-cohort scoring run.} The first cohort's scores (surface S1) were persisted by a run whose manifest records a digest of the code bundle rather than a git commit, and none of the tracked source snapshots matches that digest. The commit that produced the run therefore cannot be named. Two properties of the run were verified directly. Its specification hash, which fixes the prompts, equals the strict pin, and the weights of the one adapter checked match the archived manifest byte for byte. A later replay of five selected items on the base model and that adapter, using the same four-bit quantized base model, lands within three units of half-precision rounding of the stored option log probabilities, which is the precision at which they were stored. The same replay on the unquantized model departs by far more. Quantization is therefore the source of the dominant difference between the two configurations, and the stored first-cohort scores are consistent with the quantized model that the adapters were trained on. The full panel was not replayed.
 
-\paragraph{The archive of the earlier study.} Before every scoring run, a gate compared the base model's scores on the frozen software stack with the archived scores of the earlier study, whose software environment was not pinned. The comparison is report-only by design. The formatted prompts matched the archive exactly, while the log probabilities differed by more than the earlier study's tolerance. A replay with the same four-bit quantization moved the scores toward the archive without reproducing it, so the remaining cause of that gap is not established. The gap enters no statistic in the article, which uses only scores produced on the frozen stack.
+\paragraph{The archive of the development stage.} Before every scoring run, a gate compared the base model's scores on the frozen software stack with the archived scores of the development stage, whose software environment was not pinned. The comparison is report-only by design. The formatted prompts matched the archive exactly, while the log probabilities differed by more than the tolerance used at the development stage. A replay with the same four-bit quantization moved the scores toward the archive without reproducing it, so the remaining cause of that gap is not established. The gap enters no statistic in the article, which uses only scores produced on the frozen stack.
 
 \paragraph{Configuration.} The configuration file \texttt{paper\_b/config.py} serves both cohorts. Its first-cohort defaults are unchanged when the environment variable \texttt{SCA2\_PB\_UNITS} is unset, and the file is byte-identical to its version at the registration tag.
 

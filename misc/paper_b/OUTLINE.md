@@ -2,8 +2,8 @@
 
 Card T10, writer profile, 2026-10-18. Route: anthropic / claude-opus-5-5 (ASU seat).
 
-Claim source: `planning/TWO_PAPER_CLAIM_LOCK.md`, "Amendment C7 2026-10-18", with
-`planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv` (sha256 20ea003b...8f08e, 225 rows). Wording follows
+Claim source: `planning/TWO_PAPER_CLAIM_LOCK.md`, "Amendment C7 2026-10-18" plus Amendments C7.1 and C8, with
+`planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv` (sha256 51ddcce1...97855, 271 rows). Wording follows
 `C7_CLAIM_LOCK_AMENDMENT_DRAFT.md` sections 1 to 8 as modified by the amendment (C5 strict reading: every surface-H
 result is a retrospective screen and the word "transport" is never used for it; the general transport sentence stays
 unwritten). Methods source: `paper_b/heldout/PREREGISTRATION.md` (sections 1 to 12), `results/TIER1_ANALYSIS_20261017.md`,
@@ -140,8 +140,17 @@ Contents: the two registered descriptives (SCR_absA_*, CMP_face_valid_A_all and 
 the 56 selected items by dimension and sign, the archive-provenance replay (cohort-1 commit unresolved; NF4 explains the
 gap), hash convention (F7), config sentence (F11), bank-2 archive gate gap, VM plumbing sentence, comparator per-dimension cells
 (PD_face_valid_*, PD_jev_majority_*), full bank-to-bank table (Spearman), cohort-1 non-imprint surfaces, replicate
-per-surface shifts (RP_surface_diff_sd_*), full near-zero block (NZ_*). The 26-cell factorial (FX26_*) is superseded and not
+per-surface shifts (RP_surface_diff_sd_*), full near-zero block (NZ_*), and the country-named persona route (PX_*; lock
+Amendment C8): both prompt routes against the GPS by surface, every route minus persona, the country bootstrap, the 16
+development-stage countries and the G3 base-parity gap. The 26-cell factorial (FX26_*) is superseded and not
 cited.
+
+## Journal version of the preprint (decision 2026-10-18)
+
+This manuscript is the journal version of arXiv:2610.06562. It does not cite the preprint (double-anonymized review);
+the title page and the cover letter disclose it. The preprint's adapter-vs-persona comparison is re-run inside the
+paper on all 42 countries on the frozen stack (design C8_PERSONA_DESIGN.md, run persona-strict-v1-20261019), and the
+16-country panel is described as this study's development stage.
 
 ## Not claimed anywhere (draft amendment section 7)
 
