@@ -29,7 +29,7 @@ fix this file in the same commit.
 | Ref | Head | Note |
 |---|---|---|
 | `paper/paper-b-draft` | merge of everything below, pushed 2026-10-19 | **The single merged branch to pull.** It holds the manuscript in `misc/paper_b/` (worktree `../SCA2_PofW-paper-b-draft`) plus all of `feat/paper-b-cohort`. |
-| `feat/paper-b-cohort` | code branch (this worktree) | Paper B code, results, claim lock. Its commits since `1cf9db7` reach origin only through the merged branch above. |
+| `feat/paper-b-cohort` | code branch (this worktree), pushed 2026-10-19 | Paper B code, results, claim lock. Merged into the branch above after every commit. |
 | `Adapter-Brain-Vizualization` | `e5fea0b` | Workbench. Not merged anywhere. |
 | `main` | local `2e4989b`, origin `305d820` | Local main is 1 commit ahead (the arXiv upload package), unpushed. Paper B is not merged to main. |
 | tags | `arxiv-2610.06562-v1`, `prereg-heldout-2026-10-14` | |
@@ -108,7 +108,7 @@ Nothing is scheduled. These items wait for the next planning session.
 **Augusto only:** coauthor sign-off on C7, C7.1 and C8; author list and order; OSF registration; the anonymous
 mirror; IRB, COI, funding, compute and AI-use statements; SMR's preprint policy; the Overleaf page count.
 
-**Proposed, not approved:** the journal version does not yet carry the preprint's human-agreement and
+**First item on the next planning session (Augusto, 2026-10-19):** the journal version does not yet carry the preprint's human-agreement and
 distributional results on the 42 countries: adapter–human, human–GPS, trust sign check, label recovery, the TVD
 2×2, and the between-profile share. Most of these are already computed in
 [paper-b-20261011/](planning/sprint_2026-10-11/paper-b-20261011/) but have no numbers-table rows. The proposal is
