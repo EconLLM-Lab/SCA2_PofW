@@ -1,0 +1,69 @@
+{
+  "copies": {
+    "base": {
+      "source": "planning/sprint_2026-10-11/paper-b-20261011/hub/runs/paper-b-20261011/synthetic/base_option_probabilities.csv",
+      "copy": "planning/sprint_2026-10-11/paper-b-20261011/scores_for_join/base_option_probabilities.csv",
+      "n_rows": 140,
+      "max_numeric_gaps": {
+        "option_logprob": 0.0,
+        "model_prob": 1.1102230246251565e-16,
+        "option_token_count": 0.0
+      },
+      "copy_added_columns": [
+        "option_value"
+      ],
+      "origin_of_local_copy_script": "not found in tracked Python source; numeric transformation verified, original copier identity unresolved"
+    },
+    "USA_adapter": {
+      "source": "planning/sprint_2026-10-11/paper-b-20261011/hub/runs/paper-b-20261011/synthetic/USA_adapter_option_probabilities.csv",
+      "copy": "planning/sprint_2026-10-11/paper-b-20261011/scores_for_join/USA_adapter_option_probabilities.csv",
+      "n_rows": 140,
+      "max_numeric_gaps": {
+        "option_logprob": 0.0,
+        "model_prob": 1.1102230246251565e-16,
+        "option_token_count": 0.0
+      },
+      "copy_added_columns": [
+        "option_value"
+      ],
+      "origin_of_local_copy_script": "not found in tracked Python source; numeric transformation verified, original copier identity unresolved"
+    }
+  },
+  "download_metadata": {
+    "planning/sprint_2026-10-11/paper-b-20261011/hub/.cache/huggingface/download/runs/paper-b-20261011/manifests/base_manifest.json.metadata": [
+      "34dfeba3396b76602ae7065a2a144b7d394d6943",
+      "65ec01850df5f8d1bdcd5b3c3a707e8a6ae66555",
+      "1791781385.736886"
+    ],
+    "planning/sprint_2026-10-11/paper-b-20261011/hub/.cache/huggingface/download/runs/paper-b-20261011/manifests/USA_adapter_manifest.json.metadata": [
+      "34dfeba3396b76602ae7065a2a144b7d394d6943",
+      "f8496e42d73691f5780003b8687417e5ce29c8e9",
+      "1791781385.4199831"
+    ]
+  },
+  "score_upload_records": [
+    {
+      "created_at": "2026-10-12 04:57:52+00:00",
+      "title": "paper-b-20261011: USA_adapter option probabilities"
+    },
+    {
+      "created_at": "2026-10-12 04:19:56+00:00",
+      "title": "paper-b-20261011: base option probabilities"
+    }
+  ],
+  "git_writer_history": [
+    "86fbf1030db9d126b6b354d2d424f3da1f130d37 2026-10-14T18:04:52-07:00 Snapshot working tree: paper_b cohort/scorer WIP + planning docs (2026-10-14)"
+  ],
+  "frozen_stack_text": "# Paper B scoring-stack freeze\n\nFrozen 2026-10-11 by Augusto, after two T4 runs failed to reproduce the August base-on-CHN option probabilities. This file governs the scoring stack. It does not amend Paper A numbers in `TWO_PAPER_CLAIM_LOCK.md`.\n\n## Decision\n\nThe August archive is not a bit-level reproduction target for Paper B. Paper A's published numbers stay the result of that run. Paper B is a new surface on the stack below. A later software image that does not match the August CSV within 0.01 log probability is a recorded stack difference, not a failed cohort.\n\nDo not widen the old 0.01 / 0.0001 tolerance and call the archive check passed. Do not spend another session hunting the unpinned August environment.\n\n## Frozen stack (verified on pb-gate2, 2026-10-11)\n\n| Piece | Value | How known |\n|---|---|---|\n| Base model | `meta-llama/Llama-3.1-8B-Instruct` | Hub name used by the gate |\n| Base revision | `0e9e39f249a16976918f6564b8830bc894c89659` | Hub `model_info` the same day; last weight-side commit 2024-09-25 |\n| Adapter repo | `Bonorinoa/SCA2-paper-b-adapters` | Existing cohort |\n| Adapter revision | `7550fd4cfe514470bb8d80918a43c9ae424d26b5` | Parent read of 42 run records |\n| Python | 3.13.15 | Printed by the 2026-10-11 scoring launch |\n| transformers | 4.46.3 | Printed by the install cell |\n| peft | 0.14.0 | Printed by the install cell |\n| huggingface_hub | 0.36.2 | Install pin; not re-printed |\n| datasets / accelerate / trl | 2.21.0 / 0.34.0 / 0.14.0 | Install pin; not re-printed |\n| bitsandbytes | 0.50.2 | Printed by the 2026-10-11 scoring launch |\n| torch | 2.11.0+cu130 | Printed by the 2026-10-11 scoring launch |\n| CUDA | 13.0, driver 580.82.07, Tesla T4 | Printed by the 2026-10-11 scoring launch |\n| Chat date pin | `26 Jul 2024` | `eval_config.ARCHIVE_CHAT_DATE`; formatted prompts matched the archive |\n| Loader | notebook form: no forced fast tokenizer, no `torch_dtype`, `device_map=\"auto\"`, 4-bit NF4, fp16 compute, double quant | `score_cohort.load_base_model_and_tokenizer` after the 2026-10-11 patch |\n| Readout | leading-space option code, temperature 1, no length normalization, no country name in the primary prompt | `eval_config.py` |\n\nThose versions were printed by the scoring launch on 2026-10-11 and are now closed. Do not substitute a later image without a new freeze.\n\n## What the gate is now\n\nBefore any cohort score:\n\n1. Same frozen adapter weights through the production switch path and an independent loader.\n2. Disable the adapter and recover the base readout on the same process.\n3. Primary prompt contains no country name.\n4. Option probabilities are finite and sum to one.\n5. The run record carries the frozen adapter revision, bank id, and the package versions above.\n\nAn archive log-probability mismatch is reported, not a stop condition.\n\n## What this freeze does not allow\n\n- Quoting a new 42-country correlation as a bit-level extension of the locked 0.74.\n- Scoring until the same-weights adapter check has passed.\n- Uploading respondent files or model\u2013human tables to Hugging Face.\n",
+  "bank2_report_only_text": " The bank-2 gate archive check (report-only)\n\nPer `PAPER_B_STACK_FREEZE.md`, the base-versus-archive comparison is report-only: 343 rows,\n`max |dlogprob| 0.46875`, `max |dprob| 0.0558`, worst rows on Q262. The adapter-path and\nswitch-back checks are fatal and passed.\n- **Write:** the gap and its magnitude, attributed to stack drift between the archive and this run.\n- **Do not write:** that the archive check passed, or imply the tolerance was met.\n\n",
+  "source_hashes": {
+    "paper_b/colab/vm_cohort.py": "1e436330bee819e7e477836a2ca5cf2a2d77d4c3daee9ab404a2c05f95b6956d",
+    "paper_b/score_cohort.py": "33812fb76b4ec5fe15253dadf0b7f0c38335746e95b2c12db6c53d12080c3d4a",
+    "paper_b/eval_config.py": "6c22f14a9b8a6407f0d99fe1bf56510b2f699fe34c068fd7e41a11595bc8eeb3",
+    "paper_b/colab/vm_score_units.py": "db584522f6ad237963cb5f09a9716473c98a398028f8bacd55b94382cda714ce",
+    "paper_b/colab/vm_score_t4.py": "afccd5854be053ab971f6169b18d4fcb1521439a651fe8204b7b4e8df52420ca",
+    "paper_b/score_sign_profiles.py": "e2142d868cbb223d97dcbc6dbafec41ad591b4198e2a0f544c28ebff47cc9d30",
+    "paper_b/score_plan.py": "dfc97a227a16f4daecea2f17a3038b89a0976acef0140070e23fcc5cda478f79",
+    "paper_b/colab/vm_gate_factorial.py": "c8a979373456550a3fa45d9b371ba797e56ce99adad89df14aa89f898482dbbe"
+  }
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/test_diagnostic_cli.py"
+    ],
+    "exit_code": 0,
+    "output_file": "cli_final.log"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/test_restore_lora.py"
+    ],
+    "exit_code": 0,
+    "output_file": "lora_final.log"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.venv/bin/python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/test_trace.py"
+    ],
+    "exit_code": 0,
+    "output_file": "trace_final.log"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/inspect_runtime.py"
+    ],
+    "exit_code": 0,
+    "output_file": "runtime_evidence.log"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.venv/bin/python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/audit_fence.py"
+    ],
+    "exit_code": 0,
+    "output_file": "protected_mtime_audit.log"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.venv/bin/python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/build_report.py"
+    ],
+    "exit_code": 0,
+    "output_file": "build_report.log"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.venv/bin/python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/verify_provenance.py"
+    ],
+    "exit_code": 0,
+    "output_file": "verification.log"
+  }
+]

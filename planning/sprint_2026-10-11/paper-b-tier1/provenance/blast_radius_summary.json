@@ -1,0 +1,27 @@
+{
+  "numbers_rows": 220,
+  "claim_lock_table_rows": 23,
+  "source_table_sha256": "90f0f467ccd9f92e762d906d434059f4105c7c5e5522eaa731a42a8aeff0ec1f",
+  "source_lock_sha256": "5fb0fff001c8c81d59ada41e675e487cd37619231f691b9616341ce2444af1c3",
+  "run_groups": {
+    "bank2-heldout-para-a-20261016": 3,
+    "bank2-heldout-para-b-20261016": 3,
+    "bank2-heldout-reverse-20261016": 3,
+    "bank2-heldout-v1-20261016": 57,
+    "bank2-nearzero-strict-v1-20261018": 32,
+    "bank2-replicate-r1-strict-v1-20261018; bank2-replicate-r1-heldout-v1-20261018": 17,
+    "bank2-signprompt-heldout-v1-20261016": 7,
+    "bank2-signprompt-strict-v1-20261018": 32,
+    "bank2-strict-v1-20261016": 39,
+    "n/a (file hash)": 6,
+    "paper-b-20261011": 7,
+    "paper-b-20261011; bank2-strict-v1-20261016": 14
+  },
+  "frozen_scoring_code_revision": "2126045d6a85482584a4be5972111023a04e0115",
+  "head": "a1d75aec34837b6a3ba4dbac93786fc5bdb2447d",
+  "limits": [
+    "No human inputs, human means, or model-human joins opened.",
+    "Pipeline paths verified from source dispatch; missing private Hub manifests are not filled in by inference.",
+    "Every non-hash numbers-table value conservatively marked potentially sensitive; no claim its magnitude actually changes."
+  ]
+}

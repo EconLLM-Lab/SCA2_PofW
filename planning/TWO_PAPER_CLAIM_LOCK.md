@@ -189,6 +189,37 @@ one more: the primary-rule risk-taking interval does not survive adjustment for 
 drift, the table is rebuilt with the same claim_ids. A rebuilt table needs a new dated amendment of this
 file.
 
+### Amendment C7.1 2026-10-18 (Paper B numbers table rebuilt; orchestrator, under Augusto's delegation)
+
+This amendment changes the claim source only. The C7 wording, the claim status and the "Holds / Fails /
+Untested" reading stay as written above.
+
+**New claim source.** `NUMBERS_TABLE.csv` now has 225 rows, sha256 `20ea003b…0f08e`
+(`20ea003b5fe12e396d7e706787f84c353c24034b642f8ce1a50646e560e8f08e`). It replaces the 220-row table
+`90f0f467…0ec1f`. Each of the 220 earlier rows keeps its value, interval and n.
+
+**Five added rows.** These are the two registered descriptives that the C7 table did not carry.
+Preregistration sections 6 and 8 register them, and `paper_b/heldout/analyze_heldout.py` computes them:
+
+| claim_id | What it is |
+|---|---|
+| `SCR_absA_n_kept`, `SCR_absA_A_kept`, `SCR_absA_share_pos_kept` | Section 8: the selected items with \|a_i\| ≥ 0.15. Descriptive only, and never the primary. The cut conditions on the criterion, so the kept-item A is not an inference. |
+| `CMP_face_valid_A_all`, `CMP_face_valid_all_negrecip_A` | Section 6: the face-valid reader's A on all of its items, with negative reciprocity included. After Amendment 2 the reader has 29 items, one fewer than the registered 30. |
+
+The re-run of `analyze_heldout.py` read the human surface through `require_freeze()` against the same
+frozen selection. Every earlier key of `heldout_analysis.json` came back identical, and `heldout_items.csv`
+came back byte-identical. The only change is the new `s8_abs_a_descriptive` block.
+
+**Provenance fix.** The nine `RO_*` rows were built from a scratch folder that is pruned after a day without
+use. They now read the byte-identical copies in `results/robustness/`, and the new in-repo driver
+`paper_b/heldout/readout_robustness.py` produces them. Only their `producing_script` and `output_file`
+fields changed.
+
+**Provenance card closed.** Card `t_ef474f3c` (`paper-b-tier1/provenance/ARCHIVE_PROVENANCE_20261018.md`)
+returned NOT REPRODUCED and says no table rebuild is needed. NF4 quantization explains the main archive
+gap. The commit that produced the cohort-1 archive cannot be identified, because the archive records only
+a code-bundle digest. The "Pending" note above is therefore resolved without a rebuild.
+
 ---
 
 ## Never quote as current

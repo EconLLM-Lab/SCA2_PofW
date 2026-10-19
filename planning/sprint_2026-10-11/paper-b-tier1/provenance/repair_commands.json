@@ -1,0 +1,202 @@
+[
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_stream.py",
+      "--mode",
+      "f16",
+      "--arm",
+      "USA_adapter"
+    ],
+    "exit_code": 0,
+    "superseded_raw_outputs": [
+      {
+        "file": "rounded_lora_replay_f16_USA_adapter.json",
+        "sha256": "10b6cbff41bd5ab7ba9be6e4efb574bf28f2ba02551fc2baf9303d0e8ab2df54"
+      },
+      {
+        "file": "rounded_lora_replay_f16_USA_adapter.log",
+        "sha256": "3bb3fce537f384654aaa065ecb98569941eed2c864d0882ab518f394d5b5308f"
+      }
+    ],
+    "script_sha256": "616139566ad5eacaeb139a9f2f901a6f856df8273c9de2f2e417afddcf0ad56b",
+    "restore_script_sha256": "6a59a0e985bf93018ba3984c441c4d86acb6b18f53afd1ae59660fcffb1f5f8c"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_stream.py",
+      "--mode",
+      "nf4",
+      "--arm",
+      "USA_adapter"
+    ],
+    "exit_code": 0,
+    "superseded_raw_outputs": [
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter.json",
+        "sha256": "2fac0c9c85c5292b259ad5d236673e186c57f9df6624c0d59cd0b16886be5ccd"
+      },
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter.log",
+        "sha256": "b5a7d63478ee24749478a5eb4ce05c01f2530b463284b48b68154affb05a796f"
+      }
+    ],
+    "script_sha256": "616139566ad5eacaeb139a9f2f901a6f856df8273c9de2f2e417afddcf0ad56b",
+    "restore_script_sha256": "6a59a0e985bf93018ba3984c441c4d86acb6b18f53afd1ae59660fcffb1f5f8c"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_stream.py",
+      "--mode",
+      "nf4",
+      "--arm",
+      "USA_adapter",
+      "--no-double-quant",
+      "--items",
+      "Q57",
+      "Q81",
+      "--tag",
+      "no_double_quant"
+    ],
+    "exit_code": 0,
+    "superseded_raw_outputs": [
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter_no_double_quant.json",
+        "sha256": "a3df486508a0a903edd6e29b053454e3be9cb9b53dfdecfb4bedfd2524c06089"
+      },
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter_no_double_quant.log",
+        "sha256": "c1190aff2173a1ca0f185f86ceaf9912827879e6a987285f8b1fdc2b5bdf4d05"
+      }
+    ],
+    "script_sha256": "616139566ad5eacaeb139a9f2f901a6f856df8273c9de2f2e417afddcf0ad56b",
+    "restore_script_sha256": "6a59a0e985bf93018ba3984c441c4d86acb6b18f53afd1ae59660fcffb1f5f8c"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_stream.py",
+      "--mode",
+      "nf4",
+      "--arm",
+      "USA_adapter",
+      "--compute-dtype",
+      "float32",
+      "--items",
+      "Q57",
+      "Q81",
+      "--tag",
+      "compute_f32"
+    ],
+    "exit_code": 0,
+    "superseded_raw_outputs": [
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter_compute_f32.json",
+        "sha256": "95246837b566294ad9d42a8a034f5d216e48ff7877ce829d367fe960259fd66a"
+      },
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter_compute_f32.log",
+        "sha256": "d94b5f5fdccb6a941207f98c505095b7bbc49c78192be7c7a591bec0427f7191"
+      }
+    ],
+    "script_sha256": "616139566ad5eacaeb139a9f2f901a6f856df8273c9de2f2e417afddcf0ad56b",
+    "restore_script_sha256": "6a59a0e985bf93018ba3984c441c4d86acb6b18f53afd1ae59660fcffb1f5f8c"
+  },
+  {
+    "command": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "--project",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/.worktrees/adapter-brain-vizualization/workbench",
+      "--with",
+      "pandas",
+      "--with",
+      "bitsandbytes",
+      "python",
+      "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/planning/sprint_2026-10-11/paper-b-tier1/provenance/evaluate_stream.py",
+      "--mode",
+      "nf4",
+      "--arm",
+      "USA_adapter",
+      "--quant-type",
+      "fp4",
+      "--items",
+      "Q57",
+      "Q81",
+      "--tag",
+      "fp4"
+    ],
+    "exit_code": 0,
+    "superseded_raw_outputs": [
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter_fp4.json",
+        "sha256": "8319525e23c574bbf2a7740320330cf88a3a687bea51957a1fd5eb7fe5d5f0d0"
+      },
+      {
+        "file": "rounded_lora_replay_nf4_USA_adapter_fp4.log",
+        "sha256": "ed3953634cf70547bf0e0621c478d106971e0d7c6b3598224a5716e7df85039a"
+      }
+    ],
+    "script_sha256": "616139566ad5eacaeb139a9f2f901a6f856df8273c9de2f2e417afddcf0ad56b",
+    "restore_script_sha256": "6a59a0e985bf93018ba3984c441c4d86acb6b18f53afd1ae59660fcffb1f5f8c"
+  }
+]
