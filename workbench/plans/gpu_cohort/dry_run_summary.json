@@ -1,0 +1,86 @@
+{
+ "nf4": {
+  "capture_seconds": 36.96490979199916,
+  "total_seconds": 56.94410862500081,
+  "baseline_wall_seconds": 63.85310174999904,
+  "resume_wall_seconds": 54.07510454200019,
+  "byte_identical_files": 8,
+  "model_keys": [
+   "llama31_8b_nf4_dequant_float64_cpu_05f4dd6f_a4e96956_arg",
+   "llama31_8b_nf4_dequant_float64_cpu_05f4dd6f_a4e96956"
+  ],
+  "all_gates_pass": true,
+  "archive": [
+   {
+    "fatal": false,
+    "max_abs_prob_gap": 0.00016150858384700317,
+    "note": "Report-only; high precision NF4 algebra is not historical fp16 CUDA execution. A2: 1e-3 is below the archive fp16 resolution floor on unsaturated items.",
+    "pass": true,
+    "source": "paper-b-20261011/scores_for_join/ARG_adapter_option_probabilities.csv",
+    "tau": 0.001,
+    "unit": "absolute option probability"
+   },
+   {
+    "fatal": false,
+    "max_abs_prob_gap": 0.0014449538807423945,
+    "note": "Report-only; high precision NF4 algebra is not historical fp16 CUDA execution. A2: 1e-3 is below the archive fp16 resolution floor on unsaturated items.",
+    "pass": false,
+    "source": "paper-b-20261011/scores_for_join/base_option_probabilities.csv",
+    "tau": 0.001,
+    "unit": "absolute option probability"
+   }
+  ],
+  "peak_rss_bytes": 8282439680,
+  "gate_checks": 24,
+  "taus": {
+   "head_closure": 1e-15,
+   "logits_reference": 0.0001,
+   "pair_attribution": 1e-06,
+   "readout": 1e-13,
+   "residual_closure": 1e-13,
+   "step_closure": 1e-14
+  }
+ },
+ "unquantized": {
+  "capture_seconds": 39.86762829200052,
+  "total_seconds": 81.30121875000077,
+  "baseline_wall_seconds": 88.49997724999957,
+  "resume_wall_seconds": 84.38249924999946,
+  "byte_identical_files": 8,
+  "model_keys": [
+   "llama31_8b_unquantized_float64_cpu_05f4dd6f_b3b14503_arg",
+   "llama31_8b_unquantized_float64_cpu_05f4dd6f_b3b14503"
+  ],
+  "all_gates_pass": true,
+  "archive": [
+   {
+    "fatal": false,
+    "max_abs_prob_gap": 0.04540360054234116,
+    "note": "Report-only; high precision NF4 algebra is not historical fp16 CUDA execution. A2: 1e-3 is below the archive fp16 resolution floor on unsaturated items.",
+    "pass": false,
+    "source": "paper-b-20261011/scores_for_join/ARG_adapter_option_probabilities.csv",
+    "tau": 0.001,
+    "unit": "absolute option probability"
+   },
+   {
+    "fatal": false,
+    "max_abs_prob_gap": 0.21309162083159305,
+    "note": "Report-only; high precision NF4 algebra is not historical fp16 CUDA execution. A2: 1e-3 is below the archive fp16 resolution floor on unsaturated items.",
+    "pass": false,
+    "source": "paper-b-20261011/scores_for_join/base_option_probabilities.csv",
+    "tau": 0.001,
+    "unit": "absolute option probability"
+   }
+  ],
+  "peak_rss_bytes": 7631290368,
+  "gate_checks": 24,
+  "taus": {
+   "head_closure": 1e-15,
+   "logits_reference": 0.0001,
+   "pair_attribution": 1e-06,
+   "readout": 1e-13,
+   "residual_closure": 1e-13,
+   "step_closure": 1e-14
+  }
+ }
+}

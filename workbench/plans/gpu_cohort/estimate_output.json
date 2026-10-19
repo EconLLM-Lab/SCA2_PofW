@@ -1,0 +1,168 @@
+{
+ "items": 23,
+ "models": 43,
+ "adapters": 42,
+ "adapter_item_units": 966,
+ "base_item_units": 23,
+ "a100_unit_seconds": 103.51942253408936,
+ "a100_base_seconds": 103.51942253408936,
+ "unquantized_unit_seconds": 143.47723584469628,
+ "max_T": 214,
+ "pilot_T": 132,
+ "a100_benchmark_performed": false,
+ "assumed_cu_per_hour": 13.08,
+ "phase1_gpu_hours": 30.31096009772622,
+ "phase1_compute_units": 396.46735807825894,
+ "phase2_gpu_hours": 41.28825936555684,
+ "phase2_compute_units": 540.0504325014834,
+ "phase1_plus_unquantized_base_hours": 31.258367027178448,
+ "binary_export_bytes": 24498237328,
+ "manifest_allowance_bytes": 195500000,
+ "export_bytes": 24693737328,
+ "export_GB": 24.693737328,
+ "frozen_nf4_bytes_cpu_diagnostic": 3600804413,
+ "setup_hours_assumption": 0.5,
+ "sync_hours_assumption": 1.371874296,
+ "timing_evidence": "workbench/plans/gpu_cohort/dry_run_nf4_release/verification.json",
+ "unquantized_timing_evidence": "workbench/plans/gpu_cohort/dry_run_unquantized_release/verification.json",
+ "sizes": [
+  {
+   "item": "wvs_Q43",
+   "T": 140,
+   "run_bytes": 22348480,
+   "pair_bytes": 653104
+  },
+  {
+   "item": "wvs_Q50",
+   "T": 163,
+   "run_bytes": 24812704,
+   "pair_bytes": 756240
+  },
+  {
+   "item": "wvs_Q57",
+   "T": 132,
+   "run_bytes": 21491360,
+   "pair_bytes": 617232
+  },
+  {
+   "item": "wvs_Q58",
+   "T": 137,
+   "run_bytes": 22027064,
+   "pair_bytes": 639656
+  },
+  {
+   "item": "wvs_Q59",
+   "T": 137,
+   "run_bytes": 22027064,
+   "pair_bytes": 639656
+  },
+  {
+   "item": "wvs_Q60",
+   "T": 139,
+   "run_bytes": 22241344,
+   "pair_bytes": 648624
+  },
+  {
+   "item": "wvs_Q61",
+   "T": 142,
+   "run_bytes": 22562760,
+   "pair_bytes": 662072
+  },
+  {
+   "item": "wvs_Q62",
+   "T": 139,
+   "run_bytes": 22241344,
+   "pair_bytes": 648624
+  },
+  {
+   "item": "wvs_Q63",
+   "T": 140,
+   "run_bytes": 22348480,
+   "pair_bytes": 653104
+  },
+  {
+   "item": "wvs_Q64",
+   "T": 146,
+   "run_bytes": 22991320,
+   "pair_bytes": 680008
+  },
+  {
+   "item": "wvs_Q73",
+   "T": 145,
+   "run_bytes": 22884184,
+   "pair_bytes": 675528
+  },
+  {
+   "item": "wvs_Q81",
+   "T": 148,
+   "run_bytes": 23205600,
+   "pair_bytes": 688976
+  },
+  {
+   "item": "wvs_Q99",
+   "T": 127,
+   "run_bytes": 20955664,
+   "pair_bytes": 594816
+  },
+  {
+   "item": "wvs_Q101",
+   "T": 129,
+   "run_bytes": 21169944,
+   "pair_bytes": 603784
+  },
+  {
+   "item": "wvs_Q103",
+   "T": 133,
+   "run_bytes": 21598504,
+   "pair_bytes": 621720
+  },
+  {
+   "item": "wvs_Q106",
+   "T": 211,
+   "run_bytes": 29955424,
+   "pair_bytes": 971472
+  },
+  {
+   "item": "wvs_Q107",
+   "T": 214,
+   "run_bytes": 30276840,
+   "pair_bytes": 984920
+  },
+  {
+   "item": "wvs_Q109",
+   "T": 203,
+   "run_bytes": 29098304,
+   "pair_bytes": 935600
+  },
+  {
+   "item": "wvs_Q176",
+   "T": 172,
+   "run_bytes": 25776960,
+   "pair_bytes": 796592
+  },
+  {
+   "item": "wvs_Q177",
+   "T": 177,
+   "run_bytes": 26312664,
+   "pair_bytes": 819016
+  },
+  {
+   "item": "wvs_Q178",
+   "T": 174,
+   "run_bytes": 25991240,
+   "pair_bytes": 805560
+  },
+  {
+   "item": "wvs_Q179",
+   "T": 170,
+   "run_bytes": 25562680,
+   "pair_bytes": 787624
+  },
+  {
+   "item": "wvs_Q195",
+   "T": 170,
+   "run_bytes": 25562680,
+   "pair_bytes": 787624
+  }
+ ]
+}
