@@ -8,7 +8,7 @@ Inputs (all aggregate, no human rows):
     paper_b/heldout/screen_result.json, paper_b/heldout/FREEZE.json
     planning/sprint_2026-10-11/paper-b-tier1/results/{heldout_analysis,heldout_per_dimension,
         bank2_transport_strict}.json, factorial/*, replicate/*, near_zero/*
-    readout-variant selections (scratch of the sca profile; see READOUT_DIR): the only inputs not in the tree
+    results/robustness/selection_heldout_{reverse,para_a,para_b}.csv (paper_b/heldout/readout_robustness.py)
 
 usage: python paper_b/build_numbers_table.py [--out PATH] [--readout-dir DIR]
 """
@@ -26,7 +26,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 RES = "planning/sprint_2026-10-11/paper-b-tier1/results"
 OUT = ROOT / "planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv"
-READOUT_DIR = Path("/Users/bonorinoa/.hermes/profiles/sca/cache/scratch/robustness")
+READOUT_DIR = ROOT / RES / "robustness"  # written by paper_b/heldout/readout_robustness.py
 COLUMNS = ["claim_id", "sentence_use", "statistic", "value", "ci_low", "ci_high", "n", "surface_label",
            "run_id", "producing_script", "output_file"]
 
@@ -118,6 +118,17 @@ def screen_rows(t: Table, freeze: dict):
           n=lo["n_dropped_one_at_a_time"], surface=surf, run_id=run, script=f_a, out=o_a)
     t.add("SCR_loco_max", f"Leave-one-country-out maximum of A (drop {lo['argmax']})", "max A", lo["max"],
           n=lo["n_dropped_one_at_a_time"], surface=surf, run_id=run, script=f_a, out=o_a)
+    ab = ha["s8_abs_a_descriptive"]
+    asurf = (f"held-out pool v1; adapter primary selection; items with |a_i| >= {ab['cut']} kept (registered "
+             f"section-8 descriptive, never the primary); retrospective WVS-7 criterion; 42 countries")
+    t.add("SCR_absA_n_kept", f"Registered item-level descriptive: selected items with |a_i| >= {ab['cut']}",
+          "count of items kept", ab["n_kept"], n=ab["n_scored"], surface=asurf, run_id=run, script=f_a, out=o_a)
+    t.add("SCR_absA_A_kept", "Registered item-level descriptive: A over the items kept after dropping small |a_i|; "
+          "not an inference (the cut conditions on the criterion)", "A over kept items", ab["A_kept"],
+          n=ab["n_kept"], surface=asurf, run_id=run, script=f_a, out=o_a)
+    t.add("SCR_absA_share_pos_kept", "Registered item-level descriptive: share of kept items with a_i > 0",
+          "share of kept items with a_i > 0", ab["share_pos_kept"], n=ab["n_kept"], surface=asurf, run_id=run,
+          script=f_a, out=o_a)
     w = ha["exploratory_wave_replication"]
     wsurf = "exploratory: items fielded in both WVS waves; country means per wave; 28 countries"
     t.add("SCR_A_wave6", "Exploratory: A on wave-6 country means", "A", w["A_wave6"], n=w["items"], surface=wsurf,
@@ -190,6 +201,16 @@ def comparator_rows(t: Table, freeze: dict):
         t.add(f"CMP_{key}_common_same_dim_sign", f"Items both routes assign on which they agree on dimension and "
               f"sign ({name})", "count agreeing", blk["common_same_dim_and_sign"], n=len(blk["common_items"]),
               surface=surf, run_id=run, script=f, out=o)
+    fa = ha["s6_comparators"]["face_valid"]["describe_all"]
+    fsurf = ("held-out pool v1; face-valid reader on all items it assigns, negative reciprocity included; "
+             "Amendment 2 applied (Q82 removed, so 29 of the registered 30); retrospective")
+    t.add("CMP_face_valid_A_all", "Registered descriptive (section 6): A of the face-valid reader on all of its "
+          "items, reported beside the imprint-set contrast", "A (comparator's own items, all dimensions)", fa["A"],
+          n=fa["n_items"], surface=fsurf, run_id=run, script=f, out=o)
+    neg = fa["per_dimension"]["negrecip"]
+    t.add("CMP_face_valid_all_negrecip_A", "Registered descriptive (section 6): the face-valid reader's A on its "
+          "negative-reciprocity items", "A (negrecip items)", neg["A"], n=neg["n"], surface=fsurf, run_id=run,
+          script=f, out=o)
     sp = ha["s8_signprompt"]
     surf = "held-out pool v1; sign-prompt arm (64 prompted profiles, same probe); retrospective; 42 countries"
     rid = freeze["run_ids"]["signprompt_heldout_v1"]
@@ -218,13 +239,18 @@ def _sign(x):
     return (x > 0) - (x < 0)
 
 
+def _rel(path: Path) -> str:
+    """Repository-relative path for the output_file column (an absolute path is not replicable)."""
+    return str(Path(path).resolve().relative_to(ROOT))
+
+
 def readout_rows(t: Table, freeze: dict, readout_dir: Path):
     sel = ROOT / "paper_b/heldout/selection_amended_20261016.csv"
     base = pd.read_csv(sel)
     if hashlib.sha256(sel.read_bytes()).hexdigest() != freeze["selection_sha256"]:
         raise SystemExit("selection_amended_20261016.csv does not match FREEZE.json; refusing to compare")
-    script = ("sca scratch readout_robustness.py (build_probe_input.py + probe_select.py); counts recomputed by "
-              "paper_b/build_numbers_table.py")
+    script = ("paper_b/heldout/readout_robustness.py (build_probe_input.py + probe_select.py); counts recomputed "
+              "by paper_b/build_numbers_table.py")
     for variant in ("heldout_reverse", "heldout_para_a", "heldout_para_b"):
         path = readout_dir / f"selection_{variant}.csv"
         if not path.is_file():
@@ -234,7 +260,7 @@ def readout_rows(t: Table, freeze: dict, readout_dir: Path):
         bp, vp = m.primary_selected_b.astype(bool), m.primary_selected_v.astype(bool)
         same = (m.top_dimension_b == m.top_dimension_v) & (m.t_top_b.map(_sign) == m.t_top_v.map(_sign))
         kw = dict(surface=f"held-out pool v1 re-read under the {variant} variant; probe re-estimated; model-side "
-                          f"only", run_id=freeze["run_ids"][variant], script=script, out=str(path))
+                          f"only", run_id=freeze["run_ids"][variant], script=script, out=_rel(path))
         t.add(f"RO_{variant}_ds_unchanged", "Registered statistic: selected items whose (dimension, sign) is "
               "unchanged under the variant; adverse only if more than half changed", "count unchanged",
               int((same & bp).sum()), n=int(bp.sum()), **kw)

@@ -75,6 +75,37 @@
     "argmax": "CHN",
     "n_dropped_one_at_a_time": 42
   },
+  "s8_abs_a_descriptive": {
+    "cut": 0.15,
+    "n_items": 56,
+    "n_scored": 56,
+    "n_kept": 26,
+    "n_dropped": 30,
+    "A_kept": 0.11507311463352304,
+    "share_pos_kept": 0.6923076923076923,
+    "per_dimension_kept": {
+      "altruism": {
+        "A": 0.08530305485779112,
+        "n": 10,
+        "share_pos": 0.6
+      },
+      "posrecip": {
+        "A": -0.17356778218944982,
+        "n": 2,
+        "share_pos": 0.0
+      },
+      "risktaking": {
+        "A": 0.23769895933415913,
+        "n": 7,
+        "share_pos": 1.0
+      },
+      "trust": {
+        "A": 0.1174447544190677,
+        "n": 7,
+        "share_pos": 0.7142857142857143
+      }
+    }
+  },
   "amendment2": {
     "excluded_from_face": [
       "Q82"

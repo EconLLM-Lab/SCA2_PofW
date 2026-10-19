@@ -187,3 +187,35 @@ def test_near_zero_subsample_variation_rows_are_the_max_of_control_minus_baselin
         row = by_id[f"NZ_{cc}_max_abs_control_minus_baseline_sd"]
         assert float(row["value"]) == mx
         assert float(row["value"]) > 1  # larger than every declared noise floor, the point of the footnote
+
+
+def test_registered_abs_a_descriptive_rows_match_the_analysis(by_id):
+    """Preregistration section 8: item-level descriptive after dropping |a_i| < 0.15 (never the primary)."""
+    d = _j("heldout_analysis.json")["s8_abs_a_descriptive"]
+    assert d["cut"] == 0.15
+    assert int(float(by_id["SCR_absA_n_kept"]["value"])) == d["n_kept"]
+    assert int(by_id["SCR_absA_n_kept"]["n"]) == d["n_scored"]
+    assert float(by_id["SCR_absA_A_kept"]["value"]) == d["A_kept"]
+    assert int(by_id["SCR_absA_A_kept"]["n"]) == d["n_kept"]
+    assert float(by_id["SCR_absA_share_pos_kept"]["value"]) == d["share_pos_kept"]
+    for k in ("SCR_absA_n_kept", "SCR_absA_A_kept", "SCR_absA_share_pos_kept"):
+        assert "descriptive" in by_id[k]["sentence_use"].lower()
+
+
+def test_registered_face_valid_all_items_rows_match_the_analysis(by_id):
+    """Preregistration section 6: A_face on all its items (negrecip included), Amendment 2 applied."""
+    d = _j("heldout_analysis.json")["s6_comparators"]["face_valid"]["describe_all"]
+    assert float(by_id["CMP_face_valid_A_all"]["value"]) == d["A"]
+    assert int(by_id["CMP_face_valid_A_all"]["n"]) == d["n_items"]
+    neg = d["per_dimension"]["negrecip"]
+    assert float(by_id["CMP_face_valid_all_negrecip_A"]["value"]) == neg["A"]
+    assert int(by_id["CMP_face_valid_all_negrecip_A"]["n"]) == neg["n"]
+    assert "Amendment 2" in by_id["CMP_face_valid_A_all"]["surface_label"]
+
+
+def test_every_input_and_producer_lives_in_the_repository(rows):
+    """A number whose input sits in a pruned scratch folder is not replicable."""
+    assert BN.READOUT_DIR.is_relative_to(BN.ROOT)
+    for r in rows:
+        assert not Path(r["output_file"]).is_absolute(), (r["claim_id"], r["output_file"])
+        assert "scratch" not in r["producing_script"] + r["output_file"], r["claim_id"]

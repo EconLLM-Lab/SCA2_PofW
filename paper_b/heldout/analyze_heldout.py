@@ -8,7 +8,8 @@ Registered (each labelled with its section in the output):
       bootstrap; D over each route's own imprint-set items; A over all assigned items; per-dimension
       A and coverage. Amendment 2: the repaired items are excluded from both comparator files.
   s7  ceiling: wave-6/7 country-mean Spearman per selected item (ceiling.py output), averaged
-  s8  secondary rule (reliability check); leave-one-country-out range of A; sign-prompt arm
+  s8  secondary rule (reliability check); leave-one-country-out range of A; sign-prompt arm;
+      item-level descriptive after dropping items with |a_i| < 0.15 (never the primary)
 
 Exploratory, labelled as such: effect magnitudes |b_top| per route; A on the 28 countries with both
 waves, computed on wave-6 and on wave-7 time-series means (does A replicate in another human wave?).
@@ -40,6 +41,9 @@ IMPRINT = ["trust", "risktaking", "posrecip", "altruism"]
 # whose wording Amendment 1 repaired are excluded from both comparator routes, because the comparators
 # assigned them on the pre-amendment wording. Of the 12, only Q82 is assigned by either comparator.
 REPAIRED = ["Q46", "Q82", "Q121", "Q153", "Q155", "Q157", "Q175", "Q199", "Q253", "Q254", "Q255", "Q256"]
+# Section 8: "dropping items whose |a_i| < 0.15 is NOT used for the primary; reported only as item-level
+# descriptives". A test reads the cut back from PREREGISTRATION.md.
+ABS_A_CUT = 0.15
 
 
 def route(df: pd.DataFrame, *, dim_col: str, sign_col: str) -> pd.DataFrame:
@@ -64,6 +68,16 @@ def describe(name: str, ia: pd.DataFrame) -> dict:
     return {"route": name, "n_items": int(len(ia)), "n_scored": int(ia.a_i.notna().sum()),
             "A": float(ia.a_i.mean()), "share_a_pos": float((ia.a_i.dropna() > 0).mean()),
             "per_dimension": per_dim(ia)}
+
+
+def abs_a_descriptive(ia: pd.DataFrame, cut: float | None = None) -> dict:
+    """Section 8 item-level descriptive: drop items whose |a_i| < cut (kept: |a_i| >= cut). Never the primary."""
+    cut = ABS_A_CUT if cut is None else cut
+    scored = ia[ia.a_i.notna()]
+    kept = scored[scored.a_i.abs() >= cut]
+    return {"cut": float(cut), "n_items": int(len(ia)), "n_scored": int(len(scored)), "n_kept": int(len(kept)),
+            "n_dropped": int(len(scored) - len(kept)), "A_kept": float(kept.a_i.mean()),
+            "share_pos_kept": float((kept.a_i > 0).mean()), "per_dimension_kept": per_dim(kept)}
 
 
 def contrast(a: pd.DataFrame, b: pd.DataFrame, human, gps, label: str) -> dict:
@@ -170,6 +184,7 @@ def main() -> int:
     r2 = ST.screen(sec.assign(sign=np.sign(sec.t_top.astype(float))), human, gps, boot=0)
     res["s8_secondary_rule"] = {k: r2[k] for k in ("A", "n_selected", "p_perm", "null_q95")}
     res["s8_loco"] = loco(prim, human, gps)
+    res["s8_abs_a_descriptive"] = abs_a_descriptive(ia)
 
     # s6 comparators with Amendment 2
     face_all = route(pd.read_csv(HERE / "face_valid.csv"), dim_col="dimension", sign_col="sign")

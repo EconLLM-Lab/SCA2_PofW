@@ -49,3 +49,25 @@ def test_adapter_route_signs_come_from_t_top():
                         "t_top": [3.0, -4.0, 9.0], "primary_selected": [True, True, False]})
     out = AH.adapter_route(sel)
     assert list(out.question_id) == ["Q1", "Q2"] and list(out.sign) == [1.0, -1.0]
+
+
+def test_abs_a_cut_is_the_registered_value():
+    """Section 8 registers 'dropping items whose |a_i| < 0.15'; the code must carry that cut, not a hand copy."""
+    text = (HERE / "PREREGISTRATION.md").read_text()
+    m = re.search(r"dropping items whose \|a_i\| < ([0-9.]+)", text)
+    assert m is not None
+    assert AH.ABS_A_CUT == float(m.group(1))
+
+
+def test_abs_a_descriptive_keeps_items_at_or_above_the_cut():
+    ia = pd.DataFrame({"question_id": ["Q1", "Q2", "Q3", "Q4", "Q5"],
+                       "top_dimension": ["trust", "trust", "altruism", "altruism", "trust"],
+                       "a_i": [0.30, -0.15, 0.149, -0.40, float("nan")]})
+    out = AH.abs_a_descriptive(ia, cut=0.15)
+    assert out["cut"] == 0.15
+    assert out["n_items"] == 5 and out["n_scored"] == 4
+    assert out["n_kept"] == 3 and out["n_dropped"] == 1, "|a_i| = 0.15 is kept; 0.149 is dropped; NaN is neither"
+    assert abs(out["A_kept"] - (0.30 - 0.15 - 0.40) / 3) < 1e-12
+    assert abs(out["share_pos_kept"] - 1 / 3) < 1e-12
+    assert out["per_dimension_kept"]["trust"]["n"] == 2
+    assert out["per_dimension_kept"]["altruism"]["n"] == 1
