@@ -246,3 +246,13 @@ synthetic_generation/AGENTS.md
 *.sav
 *.rds
 # --- end model weights & raw data ---
+
+# --- human-derived tables (WVS-7 distributions and model-human joins) ---
+# Local only, per the 2026-10-11 storage decision; untracked 2026-10-19 (planning/DECISIONS.md).
+# Revisit before Paper B is shared. Local copies are kept and still feed the analysis scripts.
+planning/sprint_2026-10-11/paper-b-20261011/local_eval/population_response_distributions.csv
+planning/sprint_2026-10-11/paper-b-20261011/local_eval/survey_option_evaluation_all_models.csv
+planning/sprint_2026-10-11/paper-b-20261011/local_eval/survey_question_metrics_all_models.csv
+analysis/phase2/outputs/readout_question_metrics.csv
+analysis/phase2/outputs/wvs_question_metrics_long.csv
+# --- end human-derived tables ---

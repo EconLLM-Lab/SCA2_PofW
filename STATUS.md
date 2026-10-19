@@ -108,6 +108,12 @@ Nothing is scheduled. These items wait for the next planning session.
 **Augusto only:** coauthor sign-off on C7, C7.1 and C8; author list and order; OSF registration; the anonymous
 mirror; IRB, COI, funding, compute and AI-use statements; SMR's preprint policy; the Overleaf page count.
 
+**Human-derived tables, untracked 2026-10-19:** five CSVs (WVS-7 per-option distributions, model–human joins
+and per-item metrics in `paper-b-20261011/local_eval/` and `analysis/phase2/outputs/`) were in the public repo. They
+are now gitignored and stay local, so the scripts still read them. They remain in the git history of the pushed
+branches, and two of them (`analysis/phase2/outputs/`) are still on `main`. Revisit before Paper B is shared:
+whether to purge the history (needs a force-push), the `main` copies, and the tracked bank-1 `D_syn_*.jsonl`.
+
 **First item on the next planning session (Augusto, 2026-10-19):** the journal version does not yet carry the preprint's human-agreement and
 distributional results on the 42 countries: adapter–human, human–GPS, trust sign check, label recovery, the TVD
 2×2, and the between-profile share. Most of these are already computed in
