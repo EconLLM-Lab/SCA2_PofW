@@ -3,7 +3,7 @@
 Card T10, writer profile, 2026-10-18. Route: anthropic / claude-opus-5-5 (ASU seat).
 
 Claim source: `planning/TWO_PAPER_CLAIM_LOCK.md`, "Amendment C7 2026-10-18", with
-`planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv` (sha256 90f0f467...0ec1f, 220 rows). Wording follows
+`planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv` (sha256 20ea003b...8f08e, 225 rows). Wording follows
 `C7_CLAIM_LOCK_AMENDMENT_DRAFT.md` sections 1 to 8 as modified by the amendment (C5 strict reading: every surface-H
 result is a retrospective screen and the word "transport" is never used for it; the general transport sentence stays
 unwritten). Methods source: `paper_b/heldout/PREREGISTRATION.md` (sections 1 to 12), `results/TIER1_ANALYSIS_20261017.md`,
@@ -132,9 +132,13 @@ HASH_pool_worktree, HASH_pool_git_blob_lf, HASH_overrides, HASH_selection_amende
 redistributed). Institutional review (public secondary data; TODO confirm). Conflicts and funding (lock: no funding, no
 competing interest). Generative AI declaration (TODO confirm wording).
 
-## Online supplement (separate PDF, later card)
+## Online supplement (supplement.pdf)
 
-Hash convention (F7), config sentence (F11), bank-2 archive gate gap, VM plumbing sentence, comparator per-dimension cells
+Rendered from `supplement.tmpl.tex` by `tools/render_supplement.py` (every statistic a table macro) and audited by
+`tools/audit_numbers.py --files supplement.tex` (`SUPPLEMENT_NUMBER_AUDIT.txt`). Edit the template, never `supplement.tex`.
+Contents: the two registered descriptives (SCR_absA_*, CMP_face_valid_A_all and _all_negrecip_A; lock Amendment C7.1),
+the 56 selected items by dimension and sign, the archive-provenance replay (cohort-1 commit unresolved; NF4 explains the
+gap), hash convention (F7), config sentence (F11), bank-2 archive gate gap, VM plumbing sentence, comparator per-dimension cells
 (PD_face_valid_*, PD_jev_majority_*), full bank-to-bank table (Spearman), cohort-1 non-imprint surfaces, replicate
 per-surface shifts (RP_surface_diff_sd_*), full near-zero block (NZ_*). The 26-cell factorial (FX26_*) is superseded and not
 cited.

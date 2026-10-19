@@ -1,5 +1,5 @@
 Paper B number audit (card T10). Table: planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv
-Table sha256 90f0f467ccd9f92e762d906d434059f4105c7c5e5522eaa731a42a8aeff0ec1f, 220 rows. Rule: a printed number passes only if it equals the
+Table sha256 20ea003b5fe12e396d7e706787f84c353c24034b642f8ce1a50646e560e8f08e, 225 rows. Rule: a printed number passes only if it equals the
 table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).
 
 == title_page.tex: 0 statistics, 0 design constants
