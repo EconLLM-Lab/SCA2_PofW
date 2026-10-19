@@ -220,6 +220,47 @@ returned NOT REPRODUCED and says no table rebuild is needed. NF4 quantization ex
 gap. The commit that produced the cohort-1 archive cannot be identified, because the archive records only
 a code-bundle digest. The "Pending" note above is therefore resolved without a rebuild.
 
+### Amendment C8 2026-10-18 (Paper B; the country-named persona arm; orchestrator, under Augusto's delegation)
+
+**Why.** Augusto decided on 2026-10-18 that the SMR manuscript is the journal version of arXiv:2610.06562 and not a
+sequel. The manuscript therefore stops citing the preprint as prior work, and the preprint's main comparison,
+country adapters against a prompt that names the country, is re-run inside Paper B on all 42 countries and on the
+Paper B frozen stack. The design was locked before scoring (`paper-b-tier1/C8_PERSONA_DESIGN.md`, commit 2a6dfcb).
+The code is in commit f33a2a7, and the run is `persona-strict-v1-20261019` (Hub, 42 personas plus the base model,
+spec pin `ed3bb964…`, 0.98 Colab units).
+
+**Gates.** G2: the adapter-path gate passed on `P_1_0_1_1_0_1`, with adapter parity and switch-back both 0.0.
+G3: the fresh base model equals the banked strict base of `bank2-strict-v1-20261016` on all
+140 option rows (max |Δ log p| = 0.0). The persona column is therefore on the same
+stack as every adapter column. An exhaustive audit of the 42 units found 0 problems in rows, grids or probability
+sums. No persona equals the base model, and no two personas are equal.
+
+**New claim source.** `NUMBERS_TABLE.csv` now has 271 rows, sha256 `51ddcce1…97855` (`51ddcce1dd205ee29ecf6e3450fd30bf09948399e98adb32abfc0846e1b97855`). It
+replaces the 225-row table `20ea003b…8f08e`. All 225 earlier rows are unchanged, and a test pins them against
+commit 92406dd. The 46 added rows are `PX_*`, built by `paper_b/persona_strict.py`. The replay checks pass:
+the script reproduces the banked cohort-1 and bank-2 GPS rows exactly, and the sign-prompt trust effect.
+
+**Readings.**
+
+| Estimand (design §3) | Value | Reading |
+|---|---|---|
+| E2, the one test: trust, cohort-1 adapters minus persona, paired profile-block | 0.716 [0.191, 1.154] | interval above 0: the adapters track the GPS trust order more closely than the named-country prompt |
+| E1, persona–GPS on trust | 0.028 [−0.339, 0.381] | the named-country prompt does not track the GPS trust order |
+| E4, E2 under the country bootstrap | 0.716 [0.325, 1.075] | same reading |
+| E5, the 16 development countries (descriptive) | cohort-1 0.818 [0.554, 0.926]; persona −0.038 [−0.565, 0.480] | Paper B stack; not compared with the preprint's own numbers |
+| Sign prompt–GPS, trust (descriptive) | 0.773 [0.584, 0.844] | the sign prompt states the same signs and tracks trust as well as the adapters |
+| Persona–GPS, patience Q50 and Q43 (descriptive) | 0.509 [0.157, 0.730]; −0.491 [−0.771, −0.124] | the country name carries some patience ordering, with opposite signs on the two items |
+
+**What may be written.** On trust, the country adapters track the GPS order more closely than a prompt that names
+the country. The interval excludes zero under both resampling models. This is a comparator result on one
+dimension. The prompt that states the same six signs tracks trust as closely as the adapters do, so the contrast
+separates declared signs from a country name. It does not separate weights from prompts. All other differences
+(E3) are descriptive and none of them is a test.
+
+**What does not change.** Neither additional Paper B claim (transport, pre-piloting) is earned. No registered
+held-out number moves. The held-out screen keeps its registered comparators, because the probe is defined on the
+64 profile cells and the persona route has no profile structure. The C7 and C7.1 readings stand.
+
 ---
 
 ## Never quote as current

@@ -43,6 +43,7 @@ SURFACES = list(BT.SURFACES)
 GPS_DIMS = ["trust", "risktaking", "patience", "altruism", "posrecip", "negrecip"]
 SIGNPROMPT_STRICT_64 = BT.INPUT_DIR / "signprompt_strict_64.csv"
 PERSONA_STRICT = BT.INPUT_DIR / "persona_strict.csv"
+PARITY_SUFFIX = "_base_parity.json"             # fetch() writes the G3 record beside the persona CSV
 OUT_DIR = BT.OUT_DIR / "persona"
 JSON_NAME = "persona_strict.json"
 MD_NAME = "PERSONA_STRICT.md"
@@ -205,7 +206,10 @@ def run(cohort1_path=None, bank2_path=None, signprompt_path=None, persona_path=N
               "SP": pd.DataFrame({s: BT.unit_series(comp_sp, s, units) for s in SURFACES}).loc[countries],
               "P": _wide(comp_p).loc[countries]}
     est = estimates(routes, gps, clusters, draws=draws, seed=seed)
+    parity_path = paths["persona_strict"].with_name(paths["persona_strict"].stem + PARITY_SUFFIX)
+    parity = json.loads(parity_path.read_text()) if parity_path.is_file() else None
     return {
+        "base_parity": parity,
         "generated_by": "paper_b/persona_strict.py", "checkpoint": "C8",
         "design": "planning/sprint_2026-10-11/paper-b-tier1/C8_PERSONA_DESIGN.md",
         "run_id": SPL.CONDITIONS["persona_strict_v1"]["run_id"],
@@ -274,6 +278,7 @@ def fetch(out_path: Path = PERSONA_STRICT) -> dict:
     persona_frame(df)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out_path, index=False)
+    out_path.with_name(out_path.stem + PARITY_SUFFIX).write_text(json.dumps(parity, indent=2) + "\n")
     return {"path": str(out_path), "rows": int(len(df)), "sha256": AS.sha256_file(out_path), "base_parity": parity}
 
 
