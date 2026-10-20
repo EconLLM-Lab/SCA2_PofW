@@ -14,7 +14,7 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
   const nameB = roleOf(D, "B") ? "B · fine-tuned" : `B · ${short(D.B.m.model.label, 18)}`;
   const lp = labelPlus(D.A);
   app.innerHTML = `<div class="wrap">
-<nav class="lnav" data-obj="nav"><span class="brand" title="SCA2 = Synthetic Cultural Agents from Aggregate Anchors">SCA2 workbench</span><span class="sp"></span><a href="#s1">How it works</a><a href="#s4">Limits</a><a href="#" data-learn="terms">Terms</a><a class="open" href="#" data-go="c">Open the workbench →</a></nav>
+<nav class="lnav" data-obj="nav"><span class="brand" title="SCA2 = Synthetic Cultural Agents from Aggregate Anchors">SCA2 workbench</span><span class="sp"></span><a href="/sca2/index.html">SCA2 story</a><a href="#s1">How it works</a><a href="#s4">Limits</a><a href="#" data-learn="terms">Terms</a><a class="open" href="#" data-go="c">Open the workbench →</a></nav>
 <div class="hero3">
   <div class="hl">
     <h1 data-obj="h1">Where does a language model's <em>survey answer</em> come from?</h1>
