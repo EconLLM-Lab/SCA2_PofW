@@ -7,7 +7,8 @@ literal or an integer of 10 or more.
 Inputs (all aggregate, no human rows):
     paper_b/heldout/screen_result.json, paper_b/heldout/FREEZE.json
     planning/sprint_2026-10-11/paper-b-tier1/results/{heldout_analysis,heldout_per_dimension,
-        bank2_transport_strict}.json, factorial/*, replicate/*, near_zero/*, persona/persona_strict.json (C8)
+        bank2_transport_strict}.json, factorial/*, replicate/*, near_zero/*, persona/persona_strict.json (C8),
+        c9/{c9_human_agreement,c9_tvd,w1_why_trust}.json (C9; descriptive, not preregistered)
     results/robustness/selection_heldout_{reverse,para_a,para_b}.csv (paper_b/heldout/readout_robustness.py)
 
 usage: python paper_b/build_numbers_table.py [--out PATH] [--readout-dir DIR]
@@ -530,6 +531,134 @@ def persona_rows(t: Table):
           out=o)
 
 
+# ------------------------------------------------------------------ C9 descriptive rows (Amendment C9)
+C9_LABEL = "DESCRIPTIVE / NOT PREREGISTERED"
+C9_PARTS = {
+    "a_cohort1_three_column": "cohort-1 adapters, three columns (adapter-GPS, adapter-human, human-GPS)",
+    "b_bank2": "bank-2 adapters, same three columns (robustness)",
+    "c_between_profile": "between-profile share of variance and one-sided permutation p, shared sign profiles",
+    "c_power": "power of the grouping test (simulation over the realized 12 groups)",
+    "d_sign_mate": "agreement among countries that share a sign profile (leave-one-out); not a ceiling",
+    "e_gps_sign_reference": "reference scorers built from the GPS signs; mechanical, not success tests",
+    "f_preprint_items": "item-level and complete-case variants of the preprint's human-agreement readouts",
+}
+
+
+def c9_human_agreement_rows(t: Table):
+    """C9-1: every row of c9_human_agreement.json becomes one row (value, interval, n as the producer stored them)."""
+    o, f = f"{RES}/c9/c9_human_agreement.json", "paper_b/c9_human_agreement.py"
+    d = _read(o)
+    run = f"{RUN_COHORT1}; {RUN_STRICT_B2}"
+    for r in d["rows"]:
+        ci = (r["ci_low"], r["ci_high"]) if r["ci_low"] is not None else None
+        surf = (f"{r['surface_label_short']}; {C9_PARTS[r['part']]}; strict 23-item battery; {r['interval_type']}; "
+                f"{C9_LABEL}")
+        note = f"; {r['note']}" if r["note"] else ""
+        if r["interval_type"].startswith("permutation null"):
+            note += "; the interval is the percentile band of the permutation null, not a confidence interval"
+        t.add(r["claim_id"], f"C9-1 ({r['part']}): {r['column']}, {r['surface_label_short']}{note}. Descriptive, "
+              "not preregistered; the held-out and human-agreement readouts stay retrospective", r["statistic"],
+              r["value"], ci=ci, n=r["n"], surface=surf, run_id=run, script=f, out=o)
+
+
+def c9_tvd_rows(t: Table):
+    """C9-2: TVD to the survey distribution for the base, adapter and persona cells. The adapter+persona cell is
+    pending (its run is not on the Hub), so it has no row."""
+    o, f = f"{RES}/c9/c9_tvd.json", "paper_b/c9_tvd.py"
+    d = _read(o)
+    run = f"{RUN_COHORT1}; persona-strict-v1-20261019"
+    base = f"strict 23-item battery; 42 countries; total variation distance to the survey-weighted answer shares; {C9_LABEL}"
+    for cell, c in d["cells"].items():
+        if c["status"] != "ok":
+            continue
+        who = {"base": "base model", "adapter": "country adapters (cohort 1)", "persona": "country-named persona prompt"}[cell]
+        kw = dict(run_id=run, script=f, out=o)
+        t.add(f"C9_TVD_{cell}_mean_tvd_country_equal", f"C9-2 descriptive: mean TVD to humans, {who}; country-equal "
+              "(mean of country means); lower is closer", "mean TVD, country-equal", c["mean_tvd_country_equal"],
+              n=c["n_countries"], surface=f"{base}; cell {cell}", **kw)
+        t.add(f"C9_TVD_{cell}_mean_tvd_pooled", f"C9-2 descriptive: mean TVD to humans, {who}; pooled over "
+              "country-item cells (the preprint's aggregation)", "mean TVD, pooled", c["mean_tvd_pooled"],
+              n=c["n_cells"], surface=f"{base}; cell {cell}; one cell lost to the JOR/Q178 complete case", **kw)
+        for dim, v in c["per_dimension"].items():
+            t.add(f"C9_TVD_{cell}_{dim}_mean_tvd_country_equal", f"C9-2 descriptive: mean TVD, {who}, {dim} items; "
+                  "country-equal", "mean TVD, country-equal", v, n=d["cells"][cell]["n_countries"],
+                  surface=f"{base}; cell {cell}; {dim} items", **kw)
+        g = c["trust_gps"]
+        if g["status"] != "ok":
+            continue
+        for unit, name in (("profile_block", "profile-block"), ("country", "country")):
+            u = g[unit]
+            t.add(f"C9_TVD_{cell}_trust_gps_{unit}", f"C9-2 descriptive: trust-GPS Spearman of the {who}; {name} "
+                  "bootstrap", "Spearman rho", u["point"], ci=(u["ci_lo"], u["ci_hi"]), n=u["n"],
+                  surface=f"strict 23-item battery; 42 countries; trust composite; {name} bootstrap; {C9_LABEL}", **kw)
+    for name, c in d["contrasts"].items():
+        a, b = name.split("_minus_")
+        for unit, uname in (("profile_block", "profile-block"), ("country", "country")):
+            u = c[unit]
+            t.add(f"C9_TVD_{name}_{unit}", f"C9-2 descriptive: mean TVD of {a} minus {b} (negative = {a} closer to "
+                  f"humans); paired {uname} bootstrap", "difference of mean TVD", u["point"],
+                  ci=(u["ci_lo"], u["ci_hi"]), n=u["n"], surface=f"{base}; paired {uname} bootstrap", run_id=run,
+                  script=f, out=o)
+
+
+def c9_w1_rows(t: Table):
+    """W1: behavioral factorial decomposition of the bank-2 adapter main effects. A decomposition of a linear model
+    of model outputs, not a neural mechanism; Var(cross)/Var(full) is a ratio that can exceed one."""
+    o, f = f"{RES}/c9/w1_why_trust.json", "paper_b/w1_crosstalk.py"
+    w = _read(o)
+    run = f"{RUN_COHORT1}; {RUN_STRICT_B2}"
+    base = (f"bank-2 adapter main effects over the full 2^6 factorial (64 cells) decomposed into own-bit and "
+            f"cross-bit terms; GPS z; 42 countries; model quantities only; {C9_LABEL}")
+    kw = dict(run_id=run, script=f, out=o)
+    use = "W1 behavioral decomposition (not a neural mechanism)"
+    ncell = _read(f"{RES}/factorial/factorial_report.json")["route_contrast_64_cells"]["n_cells"]
+    for blk in w["adapter"]["cohort1_observed"]:
+        s, key = blk["surface"], blk["surface"].replace(":", "_")
+        n = blk["n"]
+        t.add(f"C9_W1_{key}_spearman_full_vs_gps", f"{use}: Spearman of the main-effects prediction (own + cross) "
+              f"with GPS, {s}", "Spearman rho", blk["spearman_full_vs_gps"], n=n, surface=f"{base}; {s}", **kw)
+        t.add(f"C9_W1_{key}_spearman_own_vs_gps", f"{use}: Spearman of the own-bit-only prediction with GPS, {s}; "
+              "mechanical for a positive own coefficient (it is proportional to sign(z)), not an independent test",
+              "Spearman rho", blk["spearman_own_vs_gps"], n=n, surface=f"{base}; {s}", **kw)
+        t.add(f"C9_W1_{key}_spearman_cross_vs_gps", f"{use}: Spearman of the cross-bit-only prediction with GPS, {s}",
+              "Spearman rho", blk["spearman_cross_vs_gps"], n=n, surface=f"{base}; {s}", **kw)
+        t.add(f"C9_W1_{key}_cross_var_share", f"{use}: Var(cross)/Var(full), {s}; a ratio, not a share of "
+              "variance explained, and it can exceed 1 through covariance", "Var(cross)/Var(full)",
+              blk["cross_var_share"], n=n, surface=f"{base}; {s}", **kw)
+        t.add(f"C9_W1_{key}_cross_cov_share", f"{use}: covariance share of the cross term in Var(full), {s}; "
+              "bounded and additive", "Cov(cross, full)/Var(full)", blk["cross_cov_share"], n=n,
+              surface=f"{base}; {s}", **kw)
+        t.add(f"C9_W1_cohort1_{key}_spearman_full_vs_observed", f"{use}: Spearman of the main-effects prediction "
+              f"with the observed cohort-1 composite, {s}", "Spearman rho", blk["spearman_full_vs_observed"], n=n,
+              surface=f"{base}; {s}; against cohort-1 adapter composites", **kw)
+    for blk in w["adapter"]["bank2_observed"]:
+        s, key = blk["surface"], blk["surface"].replace(":", "_")
+        t.add(f"C9_W1_{key}_main_effect_share_64", f"{use}: share of the 64-cell variance carried by the six main "
+              f"effects, {s}", "main-effect share of variance", blk["main_effect_share_64"],
+              n=ncell, surface=f"{base}; {s}", **kw)
+        t.add(f"C9_W1_bank2_{key}_spearman_full_vs_observed", f"{use}: Spearman of the main-effects prediction with "
+              f"the observed bank-2 composite, {s}", "Spearman rho", blk["spearman_full_vs_observed"], n=blk["n"],
+              surface=f"{base}; {s}; against bank-2 adapter composites", **kw)
+        if "spearman_main_plus_2way_vs_gps" in blk:
+            t.add(f"C9_W1_{key}_spearman_main_plus_2way_vs_gps", f"{use}: Spearman of the main-plus-two-way "
+                  f"prediction with GPS, {s} (interactions needed here: main effects carry too little variance)",
+                  "Spearman rho", blk["spearman_main_plus_2way_vs_gps"], n=blk["n"], surface=f"{base}; {s}", **kw)
+    for bank, name in (("bank2", "bank-2 composites"), ("cohort1", "cohort-1 composites")):
+        r = w["adapter"][f"rank_{bank}_observed"]
+        t.add(f"C9_W1_rank_cross_var_share_vs_failure_{bank}", f"{use}: rank correlation across the surfaces between "
+              f"Var(cross)/Var(full) and (1 - adapter-GPS), against {name}; seven points, driven by one surface "
+              "(trust) against six, not a graded relation", "Spearman rho over surfaces",
+              r["spearman_share_vs_failure"], n=r["n"], surface=f"{base}; across surfaces; against {name}", **kw)
+    for bank in ("bank1", "bank2"):
+        lc = w["bank_composition"][bank]["label_check"]
+        t.add(f"C9_W1_{bank}_label_rows_checked", f"{use}: country-pair rows checked against the sign of the pair's "
+              f"own dimension, {bank}", "count of rows", lc["rows_checked"], n=lc["countries"],
+              surface=f"{bank} training pairs; 42 countries; {C9_LABEL}", **kw)
+        t.add(f"C9_W1_{bank}_label_mismatches", f"{use}: rows whose label departs from the pair's own-dimension "
+              f"sign, {bank}", "count of rows", lc["label_mismatches_vs_own_dimension_sign"], n=lc["rows_checked"],
+              surface=f"{bank} training pairs; 42 countries; {C9_LABEL}", **kw)
+
+
 # ------------------------------------------------------------------ assemble
 def build_rows(readout_dir: Path = READOUT_DIR) -> list[dict]:
     freeze = json.loads((ROOT / "paper_b/heldout/FREEZE.json").read_text())
@@ -544,6 +673,9 @@ def build_rows(readout_dir: Path = READOUT_DIR) -> list[dict]:
     near_zero_rows(t)
     hash_rows(t)
     persona_rows(t)
+    c9_human_agreement_rows(t)
+    c9_tvd_rows(t)
+    c9_w1_rows(t)
     return t.rows
 
 

@@ -1,0 +1,178 @@
+{
+  "cells": {
+    "adapter": {
+      "mean_tvd_country_equal": 0.5154766417741424,
+      "mean_tvd_pooled": 0.515450205963973,
+      "n_cells": 965,
+      "n_countries": 42,
+      "per_dimension": {
+        "altruism": 0.43885701137352423,
+        "negrecip": 0.5075252020672567,
+        "patience": 0.6546431793465745,
+        "posrecip": 0.43629362671981686,
+        "risktaking": 0.6142803131161126,
+        "trust": 0.4790707413569897
+      },
+      "skipped_cells": [
+        "JOR/Q178"
+      ],
+      "status": "ok",
+      "trust_gps": {
+        "country": {
+          "ci_hi": 0.847264946640257,
+          "ci_lo": 0.5766167212333961,
+          "degenerate_draws": 0,
+          "draws": 2000,
+          "n": 42,
+          "point": 0.7441050158009886
+        },
+        "profile_block": {
+          "ci_hi": 0.8647856310906544,
+          "ci_lo": 0.5002088786337604,
+          "degenerate_draws": 0,
+          "draws": 2000,
+          "n": 42,
+          "point": 0.7441050158009886
+        },
+        "status": "ok"
+      }
+    },
+    "adapter_persona": {
+      "reason": "scores for this cell are not available yet",
+      "status": "pending"
+    },
+    "base": {
+      "mean_tvd_country_equal": 0.470046650620059,
+      "mean_tvd_pooled": 0.4700225484479618,
+      "n_cells": 965,
+      "n_countries": 42,
+      "per_dimension": {
+        "altruism": 0.4942399476962534,
+        "negrecip": 0.4107592780225369,
+        "patience": 0.6643170503516979,
+        "posrecip": 0.38439291370208284,
+        "risktaking": 0.5646721745380302,
+        "trust": 0.4130706898424394
+      },
+      "skipped_cells": [
+        "JOR/Q178"
+      ],
+      "status": "ok",
+      "trust_gps": {
+        "n": 42,
+        "reason": "trust composite is constant across countries",
+        "status": "undefined"
+      }
+    },
+    "persona": {
+      "mean_tvd_country_equal": 0.3649046586151852,
+      "mean_tvd_pooled": 0.3649026504675533,
+      "n_cells": 965,
+      "n_countries": 42,
+      "per_dimension": {
+        "altruism": 0.24423993970837882,
+        "negrecip": 0.3523175156957444,
+        "patience": 0.5414273182865598,
+        "posrecip": 0.24426735466990648,
+        "risktaking": 0.5240252852678049,
+        "trust": 0.3148334272410377
+      },
+      "skipped_cells": [
+        "JOR/Q178"
+      ],
+      "status": "ok",
+      "trust_gps": {
+        "country": {
+          "ci_hi": 0.3299520471997192,
+          "ci_lo": -0.27271358125836975,
+          "degenerate_draws": 0,
+          "draws": 2000,
+          "n": 42,
+          "point": 0.02779353374929098
+        },
+        "profile_block": {
+          "ci_hi": 0.38136686616815824,
+          "ci_lo": -0.3386574205085119,
+          "degenerate_draws": 0,
+          "draws": 2000,
+          "n": 42,
+          "point": 0.02779353374929098
+        },
+        "status": "ok"
+      }
+    }
+  },
+  "contrasts": {
+    "adapter_minus_base": {
+      "country": {
+        "ci_hi": 0.07888155514304301,
+        "ci_lo": 0.017346041653487285,
+        "draws": 2000,
+        "n": 42,
+        "point": 0.04542999115408338,
+        "seed": 20260905,
+        "unit": "country"
+      },
+      "label": "DESCRIPTIVE / NOT PREREGISTERED: TVD(adapter) - TVD(base); negative = adapter closer",
+      "n_countries": 42,
+      "profile_block": {
+        "ci_hi": 0.09272260519372265,
+        "ci_lo": 0.006169716953512208,
+        "draws": 2000,
+        "n": 42,
+        "point": 0.04542999115408338,
+        "seed": 20261011,
+        "unit": "profile_block"
+      }
+    },
+    "persona_minus_base": {
+      "country": {
+        "ci_hi": -0.09075109980078375,
+        "ci_lo": -0.11863062380201614,
+        "draws": 2000,
+        "n": 42,
+        "point": -0.10514199200487398,
+        "seed": 20260905,
+        "unit": "country"
+      },
+      "label": "DESCRIPTIVE / NOT PREREGISTERED: TVD(persona) - TVD(base); negative = persona closer",
+      "n_countries": 42,
+      "profile_block": {
+        "ci_hi": -0.08606035054516069,
+        "ci_lo": -0.12158126165639337,
+        "draws": 2000,
+        "n": 42,
+        "point": -0.10514199200487398,
+        "seed": 20261011,
+        "unit": "profile_block"
+      }
+    }
+  },
+  "draws": 2000,
+  "inputs": {
+    "adapter_persona_run": {
+      "path": "adapter-persona-strict-v1-20261019",
+      "reason": "no files under Bonorinoa/SCA2-paper-b-artifacts/runs/adapter-persona-strict-v1-20261019/synthetic/ on the Hub",
+      "source": null
+    },
+    "cohort1_model_probs": {
+      "path": "planning/sprint_2026-10-11/paper-b-20261011/model_probs.csv",
+      "sha256": "02390efff0369f7fccfd4073679204cb5b204a8084e090dbc291dac71fe304c2"
+    },
+    "gps_z": {
+      "path": "synthetic_generation/outputs/gps_sign_relabel_all/gps_z_vectors.json",
+      "sha256": "02972f0ec4a8b702fa84e73cc5760264b44a62f80900279cd00881009fe5ee0d"
+    },
+    "human_distributions": {
+      "path": "planning/sprint_2026-10-11/paper-b-20261011/local_eval/population_response_distributions.csv (local-only, not committed)",
+      "sha256": "ec88fe9f1c4d21b584ca7676cc7a71a64cdfad3344a71eb2488195d2aff5c4c0"
+    },
+    "persona_run": {
+      "path": "persona-strict-v1-20261019 via persona_strict.csv",
+      "sha256": "efd663a50af3e80c236a49374529a99e24a7c8853a55d202e737940467c85d46"
+    }
+  },
+  "label": "DESCRIPTIVE / NOT PREREGISTERED",
+  "seed_country": 20260905,
+  "seed_profile_block": 20261011
+}
