@@ -261,6 +261,124 @@ separates declared signs from a country name. It does not separate weights from 
 held-out number moves. The held-out screen keeps its registered comparators, because the probe is defined on the
 64 profile cells and the persona route has no profile structure. The C7 and C7.1 readings stand.
 
+### Amendment C9 2026-10-20 (Paper B; descriptive human-agreement, distributional and cross-talk rows; orchestrator under Augusto's delegation; coauthor sign-off pending)
+
+**Why.** Paper B is the journal version of arXiv:2610.06562, not a sequel. It re-runs the preprint's human-agreement
+and distributional results on the frozen Paper B stack (42 countries, strict 23-item battery) and carries no preprint
+number over. Augusto approved the C9 analyses on 2026-10-19 (`planning/DECISIONS.md`). This amendment banks what
+those runs returned, and says what they do not show. It changes the claim source only.
+
+**New claim source.** `NUMBERS_TABLE.csv` now has 536 rows, sha256 `9d56145d…642df`
+(`9d56145d2cf94c3719f77ba596b6c6d6b34666b6b42b563c7cfa54809eb642df`). It replaces the 271-row table
+`51ddcce1…97855`. All 271 earlier rows are unchanged, byte for byte and in order. A test pins them against commit
+`1cf9db7`, next to the older pin against `92406dd`. The 265 added rows carry the prefix `C9_`.
+
+**Label.** Every added row is DESCRIPTIVE / NOT PREREGISTERED. The 2026-10-11 surface had already been seen when
+these were computed. None of them is a test, none enters a preregistered family, and none earns a claim.
+
+**Verification.** Card `t_b95d3240`, a verifier on a different model family from the producers (route openrouter
+`deepseek/deepseek-v4.1-flash`; report `paper-b-tier1/results/c9/VERIFICATION_C9.md`). It recomputed 96 headline
+values with its own code and found every one equal at printed precision. The full `paper_b` suite passed (599
+tests). Labels, interval types, n and the JOR complete case checked out. The two untracked outputs of C9-4 were
+not part of that acceptance.
+
+**What was added, and the estimand of each row.**
+
+| Rows | Producer | Estimand |
+|---|---|---|
+| `C9_a_*`, `C9_b_*` (cohort-1 and bank-2 adapters) | `paper_b/c9_human_agreement.py` | Spearman across the 42 countries, per surface, of: adapter composite against GPS; adapter composite against the WVS-7 human item-mean composite; human composite against GPS. Adapter-side intervals: profile-block bootstrap (26 clusters). Human-GPS intervals: country bootstrap. Risk-taking has n = 41, because JOR has no valid Q178 answers. |
+| `C9_c_*` | same | Between-profile share of variance among the 28 countries in the 12 multi-member sign profiles, with a one-sided permutation p against a label shuffle that keeps group sizes, and a simulated power curve for that design. |
+| `C9_d_*` | same | Agreement of each country's human composite with the mean of its sign-mates (leave one out). A measure of sign-mate agreement, not a ceiling. |
+| `C9_e_*` | same | Reference scorers built from the GPS signs, for scale. Mechanical, not success tests. |
+| `C9_f_*` | same | Item-level and complete-case variants of the preprint's human-agreement readouts. |
+| `C9_TVD_*` | `paper_b/c9_tvd.py` | Mean total variation distance between the model's option probabilities and the survey-weighted human answer shares, per country-item cell, for three cells: base model, cohort-1 country adapters, country-named persona prompt. The headline is country-equal (mean of country means), with the preprint's pooled mean beside it. n = 42 countries and 965 cells (42 × 23, less the JOR/Q178 cell). |
+| `C9_W1_*` | `paper_b/w1_crosstalk.py` | W1, a behavioral factorial decomposition: the six bank-2 main effects on each surface, split into an own-bit term and a cross-bit term, and the Spearman of each prediction with GPS across the 42 countries. Model quantities and published GPS z only, no human rows. |
+
+The adapter+persona TVD cell has no row. Run `adapter-persona-strict-v1-20261019` is not on the Hub (checked
+2026-10-20 against `Bonorinoa/SCA2-paper-b-artifacts` and `Bonorinoa/SCA2-paper-b-adapters`), so `c9_tvd.py` leaves
+the cell pending. No number was invented for it.
+
+**C9-4 did not run.** The GPU job (the adapter+persona cell and held-out label recovery on 42 adapters) never
+started: the Colab account shows 0 units spent and no session. The only C9-4 output is a 16-country fixture
+summary. It is not a result, and the table holds no row from it. `results/c9/c9_gpu_run.md` says the run used real
+adapter weights, but its own code says the call is a planning script and not the adapter loader. That file and the
+fixture stay out of the commit until a separate C9-4 audit settles them.
+
+**Readings (all descriptive).**
+
+*C9-1, three columns.*
+
+- Cohort-1 adapters track GPS on trust: 0.744 [0.500, 0.865]. Against the human composite on trust they reach
+  0.295 [−0.044, 0.547]. All seven adapter-human intervals include 0.
+- Human-GPS on trust is 0.351 [0.088, 0.564], on patience Q50 0.388 [0.095, 0.628] and on negative reciprocity
+  0.416 [0.173, 0.586]. On patience Q43 it is −0.533 [−0.741, −0.266]. The other three intervals include 0.
+- The bank-2 adapters give the same picture: trust adapter-GPS 0.803 [0.615, 0.876], trust adapter-human
+  0.340 [−0.025, 0.586]. Positive reciprocity is the only adapter-human interval that excludes 0 (0.366
+  [0.007, 0.636]), and only just.
+
+*I1 (the verifier's ruling: WEAK, not SUPPORTED).* The candidate insight was that countries sharing a sign profile
+are no more alike than random groups, so the anchor and not the language model limits human prediction. The
+verifier's ruling, with its caveats:
+
+- The non-rejection reproduces. Human multi-member between-profile shares run from 0.318 to 0.626, against chance
+  means of 0.402 to 0.408 and one-sided permutation p from 0.059 (negative reciprocity) to 0.738.
+- It is power-limited. With the realized 12 groups (sizes 2 to 4), 80% power needs a true between-share of about
+  0.568 (0.60 on the simulation grid). Only negative reciprocity's observed share (0.626) is in that region. Read
+  the human grouping as **inconclusive**: the design cannot detect an excess unless it is large, and none was
+  detected. It does not show that profiles carry no human signal.
+- Population and sample quantities differ. The power curve's "true between-share" is a parameter of the simulation
+  (Gaussian group effects, equal noise). The table's shares are realized sample ratios, and with no group effect at
+  all the simulated sample share still averages 0.411. Do not set the two on one axis.
+- Adapter composites are almost entirely between-profile: 0.957 to 0.9999 on the same 28 countries. Sign-mate
+  agreement among human composites runs from −0.350 to 0.332, every interval spanning 0.
+- **Not allowed:** "the anchor, not the language model, is the main bottleneck". No test in C9 locates the
+  bottleneck. A null result with this power does not identify one. Neither the sign-mate agreement nor the
+  human-GPS correlation bounds an arbitrary profile-constant or nonlinear scorer.
+
+*I2 (the verifier's ruling: WEAK, not SUPPORTED).* The candidate insight was that cross-talk between sign bits
+explains why the adapters keep each bit's direction and lose the GPS country order on most dimensions. The
+descriptive core reproduces; the word "explains" overreaches.
+
+- Every own effect of the adapter factorial is right-signed (`FX_adapter64_own_effects_wrong_signed`, 0 of 7).
+- The own-bit-only prediction orders countries like GPS on all seven surfaces (0.817 to 0.866). This is mechanical.
+  It is proportional to sign(z) for a positive coefficient, so it restates the sign-GPS correlation and is not a
+  separate test of learning.
+- The full main-effects prediction keeps the GPS order on trust only (0.834). On the other six it gives 0.104
+  (risk-taking), −0.020 (patience Q43), 0.176 (patience Q50), 0.422 (altruism), 0.378 (positive reciprocity) and
+  0.386 (negative reciprocity).
+- Quote the covariance share. The cross term's share of Var(full) in covariance terms is 0.287 on trust and 0.727
+  to 0.985 elsewhere. Var(cross)/Var(full) is a ratio, not a percentage of variance explained: it is 0.147 on trust,
+  0.830 to 1.049 on the rest, and it exceeds 1 on patience Q43 (1.049) through covariance.
+- The main effects carry 0.483 to 0.925 of the 64-cell variance. Interactions are needed on four surfaces, and they
+  do not restore the GPS order (main plus two-way, 0.331, −0.066, 0.287 and 0.210).
+- Across the seven surfaces, the rank correlation between Var(cross)/Var(full) and adapter-GPS failure is 0.821
+  against bank-2 composites and 0.286 against cohort-1 composites. It rests on one surface (trust) against six, so it
+  is not a graded relation and no dose-response is claimed.
+- In both banks, all 27636 country-pair training rows follow the sign of the pair's own dimension (0 mismatches).
+- **Allowed wording:** a behavioral decomposition of the adapters' main effects. **Not allowed:** a neural
+  mechanism, a cause of the failure on every dimension, or a statement about human preferences. Component-level
+  analysis, and interventions for any causal claim, have not been done.
+
+*C9-2, distribution to humans.* Mean TVD, country-equal, lower is closer: base 0.470, cohort-1 adapters 0.515,
+country-named persona 0.365 (pooled means equal these at three decimals). Adapters minus base: +0.045 [0.006, 0.093]
+(profile-block) and [0.017, 0.079] (country). Persona minus base: −0.105 [−0.122, −0.086] (profile-block) and
+[−0.119, −0.091] (country). On this measure the adapters sit farther from the survey distributions than the base
+model, and the country-named prompt sits closer. This is a different quantity from the rank agreement above. The
+persona prompt has the lowest TVD and a trust-GPS of 0.028 [−0.339, 0.381]; the adapters have the highest TVD and a
+trust-GPS of 0.744. The base model's trust-GPS is undefined, since its trust composite is the same for every country.
+The preprint's own TVD figures are not compared with these.
+
+**What C9 does not change.**
+
+- No claim is earned. Transport and pre-piloting stay unearned, exactly as in C7, C7.1 and C8.
+- The held-out screen stays a retrospective screen. No registered held-out number moves, and C5 stays not passed:
+  the WVS-7 composites used here are the same single human source.
+- Pre-piloting stays untested.
+- The C8 wording stays: declared signs against a country name, not weights against prompts.
+- No human row and no country-level human mean or distribution enters git or the Hub. The human inputs stay local.
+- C9 adds no preregistered test and no new decision rule. C9-4, if it is run, needs its own dated amendment.
+- Both pending items stay pending: the adapter+persona TVD cell and held-out label recovery on 42 adapters.
+
 ---
 
 ## Never quote as current

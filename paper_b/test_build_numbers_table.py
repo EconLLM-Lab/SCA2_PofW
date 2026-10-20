@@ -271,3 +271,121 @@ def test_rows_of_the_c71_table_are_unchanged_by_later_additions(rows):
     assert len(before) == 225
     for cid, r in before.items():
         assert now[cid] == r, cid
+
+
+# ------------------------------------------------------------------ C9 descriptive rows (Amendment C9)
+C9 = RES / "c9"
+LABEL = "DESCRIPTIVE / NOT PREREGISTERED"
+
+
+def _num(x):
+    return "" if x is None else repr(float(x))
+
+
+def test_rows_of_the_c8_table_are_unchanged_by_c9_additions(rows):
+    """Amendment C8 (commit 1cf9db7) fixed 271 rows (sha 51ddcce1...97855); Amendment C9 adds rows, never moves these."""
+    import hashlib
+    import subprocess
+    rel = "planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv"
+    old = subprocess.run(["git", "-C", str(ROOT), "show", f"1cf9db7:{rel}"], capture_output=True, check=True).stdout
+    assert hashlib.sha256(old).hexdigest() == "51ddcce1dd205ee29ecf6e3450fd30bf09948399e98adb32abfc0846e1b97855"
+    before = {r["claim_id"]: r for r in csv.DictReader(old.decode().splitlines())}
+    now = {r["claim_id"]: r for r in rows}
+    assert len(before) == 271
+    for cid, r in before.items():
+        assert now[cid] == r, cid
+    # a rebuilt row order must not move them either: the first 271 rows are the old rows, in order
+    assert [r["claim_id"] for r in rows[:271]] == list(before)
+
+
+def test_c9_rows_exist_and_are_all_labelled_descriptive(rows):
+    c9 = [r for r in rows if r["claim_id"].startswith("C9_")]
+    assert len(c9) == len(rows) - 271
+    assert len(c9) > 200
+    for r in c9:
+        assert LABEL in r["surface_label"], r["claim_id"]
+        assert "C9-" in r["sentence_use"] or "W1" in r["sentence_use"], r["claim_id"]
+
+
+def test_c9_1_rows_match_the_human_agreement_json(by_id):
+    d = json.loads((C9 / "c9_human_agreement.json").read_text())
+    assert len(d["rows"]) == 167
+    for src in d["rows"]:
+        r = by_id[src["claim_id"]]
+        assert float(r["value"]) == src["value"], src["claim_id"]
+        assert r["ci_low"] == _num(src["ci_low"]) and r["ci_high"] == _num(src["ci_high"]), src["claim_id"]
+        assert int(r["n"]) == src["n"], src["claim_id"]
+        assert src["interval_type"] in r["surface_label"], src["claim_id"]
+        assert r["output_file"].endswith("results/c9/c9_human_agreement.json")
+
+
+def test_c9_1_interval_types_follow_the_sprint_rule(by_id):
+    """Human-GPS uses the country bootstrap; every adapter-side interval is profile-block."""
+    d = json.loads((C9 / "c9_human_agreement.json").read_text())
+    for src in d["rows"]:
+        if src["ci_low"] is None:
+            continue
+        if src["interval_type"].startswith("permutation null"):
+            assert "not a confidence interval" in by_id[src["claim_id"]]["sentence_use"], src["claim_id"]
+            continue
+        want = "country bootstrap" if src["column"] == "human-GPS" else "profile-block bootstrap"
+        assert src["interval_type"].startswith(want), src["claim_id"]
+
+
+def test_c9_2_rows_match_the_tvd_json_and_the_pending_cell_has_none(rows, by_id):
+    d = json.loads((C9 / "c9_tvd.json").read_text())
+    assert d["cells"]["adapter_persona"]["status"] == "pending"
+    assert not [r for r in rows if "adapter_persona" in r["claim_id"] or "label_recovery" in r["claim_id"]]
+    for cell in ("base", "adapter", "persona"):
+        c = d["cells"][cell]
+        r = by_id[f"C9_TVD_{cell}_mean_tvd_country_equal"]
+        assert float(r["value"]) == c["mean_tvd_country_equal"] and int(r["n"]) == c["n_countries"]
+        r = by_id[f"C9_TVD_{cell}_mean_tvd_pooled"]
+        assert float(r["value"]) == c["mean_tvd_pooled"] and int(r["n"]) == c["n_cells"]
+        for dim, v in c["per_dimension"].items():
+            assert float(by_id[f"C9_TVD_{cell}_{dim}_mean_tvd_country_equal"]["value"]) == v
+    for cell in ("adapter", "persona"):
+        for unit in ("profile_block", "country"):
+            g = d["cells"][cell]["trust_gps"][unit]
+            r = by_id[f"C9_TVD_{cell}_trust_gps_{unit}"]
+            assert (float(r["value"]), float(r["ci_low"]), float(r["ci_high"])) == (g["point"], g["ci_lo"], g["ci_hi"])
+    assert "C9_TVD_base_trust_gps_profile_block" not in by_id  # undefined: the base trust composite is constant
+    for name, c in d["contrasts"].items():
+        for unit in ("profile_block", "country"):
+            g = c[unit]
+            r = by_id[f"C9_TVD_{name}_{unit}"]
+            assert (float(r["value"]), float(r["ci_low"]), float(r["ci_high"])) == (g["point"], g["ci_lo"], g["ci_hi"])
+            assert int(r["n"]) == g["n"]
+
+
+def test_c9_w1_rows_match_the_decomposition_json(by_id):
+    w = json.loads((C9 / "w1_why_trust.json").read_text())
+    for blk in w["adapter"]["cohort1_observed"]:
+        s = blk["surface"].replace(":", "_")
+        for key in ("spearman_full_vs_gps", "spearman_own_vs_gps", "spearman_cross_vs_gps", "cross_var_share",
+                    "cross_cov_share"):
+            r = by_id[f"C9_W1_{s}_{key}"]
+            assert float(r["value"]) == blk[key] and int(r["n"]) == blk["n"]
+        assert float(by_id[f"C9_W1_cohort1_{s}_spearman_full_vs_observed"]["value"]) == blk["spearman_full_vs_observed"]
+    for blk in w["adapter"]["bank2_observed"]:
+        s = blk["surface"].replace(":", "_")
+        assert float(by_id[f"C9_W1_{s}_main_effect_share_64"]["value"]) == blk["main_effect_share_64"]
+        assert float(by_id[f"C9_W1_bank2_{s}_spearman_full_vs_observed"]["value"]) == blk["spearman_full_vs_observed"]
+        if "spearman_main_plus_2way_vs_gps" in blk:
+            assert float(by_id[f"C9_W1_{s}_spearman_main_plus_2way_vs_gps"]["value"]) == blk["spearman_main_plus_2way_vs_gps"]
+    assert float(by_id["C9_W1_rank_cross_var_share_vs_failure_bank2"]["value"]) == \
+        w["adapter"]["rank_bank2_observed"]["spearman_share_vs_failure"]
+    assert float(by_id["C9_W1_rank_cross_var_share_vs_failure_cohort1"]["value"]) == \
+        w["adapter"]["rank_cohort1_observed"]["spearman_share_vs_failure"]
+    for bank in ("bank1", "bank2"):
+        lc = w["bank_composition"][bank]["label_check"]
+        assert float(by_id[f"C9_W1_{bank}_label_rows_checked"]["value"]) == lc["rows_checked"]
+        assert float(by_id[f"C9_W1_{bank}_label_mismatches"]["value"]) == lc["label_mismatches_vs_own_dimension_sign"]
+
+
+def test_c9_w1_uses_the_covariance_share_beside_the_variance_ratio(by_id):
+    """cross_var_share is a ratio that can exceed 1 (covariance); the row text must say so."""
+    r = by_id["C9_W1_patience_Q43_cross_var_share"]
+    assert float(r["value"]) > 1
+    assert "not a share" in r["sentence_use"] or "ratio" in r["sentence_use"]
+    assert "behavioral" in r["sentence_use"].lower()
