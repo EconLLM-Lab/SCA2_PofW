@@ -29,6 +29,10 @@ Headline surface: sixteen countries × twenty-three WVS items, from two saved ev
 
 ---
 
+## Companion branch: Paper B
+
+The Paper B code, results and claim lock live on `feat/paper-b-cohort` (merged into `paper/paper-b-draft` with the manuscript); start at [STATUS.md](https://github.com/EconLLM-Lab/SCA2_PofW/blob/feat/paper-b-cohort/STATUS.md). This branch holds the SCA2 workbench ([workbench/README.md](workbench/README.md)). The workbench reads Paper B artifacts one way; Paper B claims never depend on workbench results. The text below this section is inherited from the Paper A era.
+
 ## What is public vs local
 
 | Object | Where | Public? |

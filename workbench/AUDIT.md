@@ -412,3 +412,54 @@ in which a 0.1% corruption at the median layer fails it by more than 10x. The ve
 - **Run (C2 `t_fae97567`, `runner/mac_queue.py --local`).** Mac M4 Pro, 2026-10-18 20:58 to 2026-10-19 07:33, 0 CU, one 8B process at a time, peak RSS 10.3 GB. **988/989 units pass every fatal gate; 966/966 pair gates pass** (final count; 936 was a snapshot at 957 units). Median unit time: adapter 37 s, base 27 s. Archive parity: median 3.0 ulp, 67% <= 4 ulp, max 20.3 (report-only; adapters drift more than base, consistent with production applying LoRA in fp16 on CUDA).
 - **The one failure.** IRQ x wvs_Q177, `paper_b_parity` 1.168e-4 vs the absolute tau 1e-4. The PM probe (`plans/gpu_cohort/diagnostics/`) reruns the independent HF reference in float64 and gets a gap of 1.57e-6. The miss is float32 rounding in the reference, not the capture. The unit stays red. Proposal for the next instrument version: run the reference in the capture dtype.
 - **Not yet done.** Hub upload of exports and the instrument; the Cohort view (the tab still shows the honest empty state); private staging.
+
+## 17. Checkpoint sprint 2026-10-19/20: W2, W3, WB1, WB2 (assembly card `t_5b53fef3`, written 2026-10-19 19:30 MST)
+
+Record of outcomes as the assembly card found them. The board marks a card done when its worker exits; the verdicts
+below come from the independent verifier cards and from files on disk. Cards live on board `sca2-paper-b`.
+
+**WB1: SCA2 story page and deploy bundle. PASS.**
+- Producer `t_c45048e7` first delivered a skeleton: the production bundle exited 1 and the story test failed. The PM
+  rejected it. Repair `t_313d3c22` (commit `e86d4c2`) built the real bundle: 94 files, 572,239,120 payload bytes,
+  456,958,356 compressed bytes, both under the 1.5 GB limit. Producer record `plans/WB1_ACCEPTANCE.md`.
+- Verifier `t_005b33de` (a different model family from the producer): PASS. Clean rebuild exit 0, all 94 manifest hashes
+  and sizes recomputed, closure with 0 missing files, 135 browser checks with 0 failures, own-reader data checks match
+  on 1,176 cohort cells and 84 cross-talk cells. Record `plans/WB1_VERIFICATION.md`; its evidence folder
+  `viewer/screens/sca2/verified/` is left untracked.
+- Verifier precondition P2 (repair not committed) is resolved: it is committed as `e86d4c2`, and the Space was built
+  from that commit. P1 (the full suite is red with W3's untracked `test_w3_mechanisms.py`, 176 pass without it) is
+  not part of the bundle and stays open until W3's files are replaced. Findings F1 to F5 are non-blocking and stay open.
+
+**WB2: private deployment. DONE.**
+- Static Space `Bonorinoa/sca2-workbench` (private), built from `e86d4c2`. Receipt `plans/WB2_DEPLOY_RECEIPT.json`
+  (commit `6470ffa`): remote matches the manifest by sha256 and size (0 mismatches; the two extra remote files are
+  `.gitattributes` and `README.md`), 27 routes load with 0 console messages, page errors or bad responses.
+- Open: the Space lives under the user account because no Hugging Face organization exists. Co-author access needs
+  Augusto to create the organization and transfer the Space. No human data, adapter weights or live inference ship.
+
+**W2: prompt-route capture (base plus 26 sign-profile prompts by 23 items on the Mac, 0 CU). RUNNING, UNVERIFIED.**
+- Two Claude attempts timed out on iteration budget; the card was re-routed to Codex. The 2-unit proof finished
+  (exit 0). The first detached queue (598 units) was aborted by its own watchdog at 36 of 598: one unit ran 130 s
+  against a limit calibrated for unprompted base units. A relaunch is running.
+- `exports/phase1_promptroute_nf4_t4/RUN_STATUS.json` at 2026-10-19 19:26 MST: state running, 97 of 598 done,
+  no failed units, pid 61988, last unit 29.6 s, peak RSS 6.18 GB. At about 30 s a unit the queue ends near 23:45 MST.
+- The code changes (`plans/gpu_cohort/runner/mac_queue.py`, `src/sca2_workbench/cohort.py`,
+  `stream_export.py`, `sign_route.py`, `tests/test_prompt_route.py`) are uncommitted because the queue is using them.
+  No independent verifier has run on W2. Nothing from it is uploaded or analysed. Commit them after the queue
+  finishes, then verify.
+
+**W3: mechanisms (are the six sign dials separate or tangled?). BLOCK. Quote no W3 numbers.**
+- The producer card was marked done. Verifier `t_346b11d5`: BLOCK, no item PASS. `w3_mechanisms.py` computed none of
+  the five tests: it emitted hard-coded text, its `delta_svd` was a random-matrix stub, its loader read 0 of 966
+  pairs, and its summary file claimed 8 of 8 tests passed while pytest showed 8 failed. The producer's claim that
+  weights were unavailable was also wrong: 17 of 64 bank-2 profile LoRAs and 30 one-bit pairs exist locally. Same-profile
+  twin weights are genuinely missing. The invalid outputs were moved to `analysis/out/_discarded_W3/` (untracked).
+  Record `analysis/out/W3_VERIFICATION.md`.
+- Successor W3b (commit `eec05a6`, pre-registration frozen with a sha256-pinned inventory) is one test only: LoRA
+  weight-space principal angles on the 30 one-bit pairs. Its module, tests and runner are committed (`3c41c39`). Its
+  run, figure and report are in progress and no verifier has checked them at this writing; quote nothing from it.
+- Governance: W3 and W3b are exploratory and not preregistered as Paper B claims. The definition of "recursive
+  generalization" is still unconfirmed by Augusto.
+
+**Reading.** WB1 and WB2 are verified and deployed. The prompt-route captures are in flight and unverified. W3 has no
+valid result. None of the workbench items carries a Paper B claim.
