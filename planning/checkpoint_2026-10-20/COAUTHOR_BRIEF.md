@@ -44,9 +44,10 @@ extra claim (transport, pre-piloting) is earned.
   0.470 [C9_TVD_base_mean_tvd_country_equal], adapters 0.515 [C9_TVD_adapter_mean_tvd_country_equal], country-named
   persona 0.365 [C9_TVD_persona_mean_tvd_country_equal]. This differs from rank agreement.
 
-**Untested.** Pre-piloting. The adapter-plus-persona TVD cell and held-out label recovery on 42 adapters (C9-4): no
-GPU run happened, so there are no rows. A weights-level mechanism analysis (W3) has no accepted result; it belongs to
-SCA3, not Paper B.
+**Untested.** Pre-piloting. C9-4 experiment A ran on all 42 countries and filled the adapter-plus-persona TVD cell,
+but its rows are not quotable until an independent cross-family audit accepts the genuine run. Held-out label recovery
+(experiment B) has no banked row. A weights-level mechanism analysis (W3) has no accepted result; it belongs to SCA3,
+not Paper B.
 
 ## 3. One methodological insight: not yet
 
@@ -66,10 +67,10 @@ The verifier ruled both candidate insights WEAK. What we learned:
 
 ## 4. How to explore the workbench
 
-Private Space: https://huggingface.co/spaces/Bonorinoa/sca2-workbench. Access is pending: Augusto must create the
-Hugging Face organisation, invite you and move the Space, so the address may change. It holds saved scores and GPS
-signs only: no survey data, no weights, no live model. It is descriptive, not Paper B evidence. Its landing footer
-still calls Paper B an extension of the preprint; that wording is out of date.
+Private Space: https://huggingface.co/spaces/EconLLM/sca2-workbench. It has moved to the EconLLM organization;
+Augusto still needs to invite co-authors and grant access. It holds saved scores and GPS signs only: no survey data,
+no weights, no live model. It is descriptive, not Paper B evidence. Its landing footer still calls Paper B an extension
+of the preprint; that wording is out of date.
 
 1. Open the Space and click "SCA2 story" in the top bar. Section 1 maps signs to profiles to countries.
 2. Section 2, "Country scores, by route": pick cohort-1, bank-2, sign prompt or persona. A country-by-surface
@@ -91,8 +92,10 @@ Targets are proposals for Augusto; the final list is `STATUS.md`, "Open after th
 
 - 2026-10-23: C9 section in the manuscript, after sign-off; novelty audit on LM evaluation for social-science
   measurement.
-- Prompt-route capture queue (stopped early), weights-versus-prompt analysis and W3 repeat: dates to be reset by the
-  PM. SCA3, not Paper B.
+- C9-4: independent cross-family audit of experiment A; finish experiment B and use a new dated amendment before
+  banking any accepted B row.
+- Prompt-route capture queue (running and unverified at assembly), weights-versus-prompt analysis and prompt-route W3
+  repeat: dates in `STATUS.md`. SCA3, not Paper B.
 - 2026-10-26: live adapter chat card, with a cost and data-rights check.
 - Early November: Paper C candidate (magnitude-graded compiler), after the sign-profile evaluation concludes.
 - Augusto only: author list and order, OSF registration, anonymous mirror, ethics, funding and AI-use statements, SMR

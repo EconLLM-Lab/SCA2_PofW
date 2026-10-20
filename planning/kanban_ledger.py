@@ -4,7 +4,7 @@ The kanban database lives in ~/.hermes, outside this repo, so a fresh agent (or 
 it. This ledger puts the card list on disk. It is generated, never hand-edited: rerun it after an SCA2
 card closes.
 
-    python3 planning/kanban_ledger.py            # reads the boards through the `hermes` CLI
+    python3 planning/kanban_ledger.py            # reads the board SQLite databases read-only
 
 Cards that belong to other projects (Silicus TA, ProjectOS, editor setup) are left out by rule: a card
 is SCA2 when it runs inside an SCA2 worktree, sits on the sca2-paper-b board, or names SCA2 work in its
@@ -13,9 +13,9 @@ from Paper B cards, so their compute and results are never read as Paper B's.
 """
 from __future__ import annotations
 
-import json
+import os
 import re
-import subprocess
+import sqlite3
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -24,14 +24,30 @@ OUT = Path(__file__).resolve().parent / "KANBAN_LEDGER.md"
 BOARDS = ("sca2-paper-b", "default")
 SCA2_TITLE = re.compile(r"(?i)\bsca2\b|paper b|workbench|capture@")
 WORKBENCH = re.compile(r"(?i)workbench|mac cohort|device benchmark|nf4 instrument|phase-1 cohort|capture@"
-                       r"|llama-3 (rope|tokenizer)|float32|stage 1 claims")
+                       r"|llama-3 (rope|tokenizer)|float32|stage 1 claims"
+                       r"|(?:^|\s)(?:W2|W3b?|WB[12])(?:\b|-)")
+
+
+def board_db(board: str) -> Path:
+    """Return the live database for *board* without invoking the Hermes CLI."""
+    env_board = os.environ.get("HERMES_KANBAN_BOARD")
+    env_db = os.environ.get("HERMES_KANBAN_DB")
+    if env_db and board == env_board:
+        return Path(env_db).expanduser()
+    root = Path.home() / ".hermes"
+    if board == "default":
+        return root / "kanban.db"
+    return root / "kanban" / "boards" / board / "kanban.db"
 
 
 def cards(board: str) -> list[dict]:
-    raw = subprocess.run(["hermes", "kanban", "--board", board, "list", "--archived", "--json"],
-                         check=True, capture_output=True, text=True).stdout
-    data = json.loads(raw)
-    return data if isinstance(data, list) else data.get("tasks", [])
+    path = board_db(board)
+    if not path.is_file():
+        raise FileNotFoundError(f"kanban board database not found: {path}")
+    uri = f"file:{path.resolve()}?mode=ro"
+    with sqlite3.connect(uri, uri=True) as conn:
+        conn.row_factory = sqlite3.Row
+        return [dict(row) for row in conn.execute("SELECT * FROM tasks")]
 
 
 def stream(card: dict) -> str | None:

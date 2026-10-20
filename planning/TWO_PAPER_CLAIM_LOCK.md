@@ -385,6 +385,12 @@ The preprint's own TVD figures are not compared with these.
 - C9 adds no preregistered test and no new decision rule. C9-4, if it is run, needs its own dated amendment.
 - Both pending items stay pending: the adapter+persona TVD cell and held-out label recovery on 42 adapters.
 
+**Append-only correction for the checkpoint assembly.** The two preceding bullets describe the state before the genuine
+C9-4 run. Experiment A has now run, and its adapter+persona TVD rows are included in the 554-row table described at
+the start of this amendment; they still owe a cross-family audit and remain unquotable until it passes. Experiment B
+still has no banked row. Finishing B, or changing any number or reading after either audit, requires a new dated
+amendment. This correction changes no value, interval, label or claim.
+
 ---
 
 ## Never quote as current
