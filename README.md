@@ -33,6 +33,10 @@ Headline surface: sixteen countries × twenty-three WVS items, from two saved ev
 
 ---
 
+## Companion branch: the SCA2 workbench
+
+The viewer and capture toolchain for SCA2 lives on the separate branch `Adapter-Brain-Vizualization` ([workbench/README.md](https://github.com/EconLLM-Lab/SCA2_PofW/blob/Adapter-Brain-Vizualization/workbench/README.md)). It reads Paper B artifacts one way: Paper B claims never depend on workbench results. This branch (`feat/paper-b-cohort`, merged into `paper/paper-b-draft`) holds the Paper B code, results and claim lock. Start at [STATUS.md](STATUS.md).
+
 ## What is public vs local
 
 | Object | Where | Public? |
