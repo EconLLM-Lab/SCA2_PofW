@@ -1,0 +1,1056 @@
+{
+ "task": "t_53621092 (W3b)",
+ "generated_utc": "2026-10-20T02:05:45+00:00",
+ "inventory_sha256_not_self_referential_note": "inventory file is hashed in W3b_PREREG.md",
+ "discrepancies": [],
+ "n_profiles": 17,
+ "profiles": [
+  "P_0_0_0_0_0_0",
+  "P_0_0_0_0_0_1",
+  "P_0_0_0_0_1_0",
+  "P_0_0_0_0_1_1",
+  "P_0_0_0_1_0_0",
+  "P_0_0_0_1_0_1",
+  "P_0_0_0_1_1_0",
+  "P_0_0_0_1_1_1",
+  "P_0_0_1_0_0_0",
+  "P_1_0_0_0_0_0",
+  "P_1_0_0_0_0_1",
+  "P_1_0_0_0_1_0",
+  "P_1_0_0_0_1_1",
+  "P_1_0_0_1_0_0",
+  "P_1_0_0_1_0_1",
+  "P_1_0_0_1_1_0",
+  "P_1_0_1_1_0_1"
+ ],
+ "n_pairs_total": 136,
+ "n_one_bit": 30,
+ "n_non_one_bit": 106,
+ "hamming_histogram": {
+  "1": 30,
+  "2": 49,
+  "3": 41,
+  "4": 15,
+  "5": 1
+ },
+ "one_bit_by_differing_bit": {
+  "0": 7,
+  "2": 2,
+  "3": 7,
+  "4": 7,
+  "5": 7
+ },
+ "one_bit_reuse_per_profile": {
+  "P_0_0_0_0_0_0": 5,
+  "P_0_0_0_0_0_1": 4,
+  "P_0_0_0_0_1_0": 4,
+  "P_0_0_0_0_1_1": 4,
+  "P_0_0_0_1_0_0": 4,
+  "P_0_0_0_1_0_1": 4,
+  "P_0_0_0_1_1_0": 4,
+  "P_0_0_0_1_1_1": 3,
+  "P_0_0_1_0_0_0": 1,
+  "P_1_0_0_0_0_0": 4,
+  "P_1_0_0_0_0_1": 4,
+  "P_1_0_0_0_1_0": 4,
+  "P_1_0_0_0_1_1": 3,
+  "P_1_0_0_1_0_0": 4,
+  "P_1_0_0_1_0_1": 4,
+  "P_1_0_0_1_1_0": 3,
+  "P_1_0_1_1_0_1": 1
+ },
+ "non_one_bit_reuse_per_profile": {
+  "P_0_0_0_0_0_0": 11,
+  "P_0_0_0_0_0_1": 12,
+  "P_0_0_0_0_1_0": 12,
+  "P_0_0_0_0_1_1": 12,
+  "P_0_0_0_1_0_0": 12,
+  "P_0_0_0_1_0_1": 12,
+  "P_0_0_0_1_1_0": 12,
+  "P_0_0_0_1_1_1": 13,
+  "P_0_0_1_0_0_0": 15,
+  "P_1_0_0_0_0_0": 12,
+  "P_1_0_0_0_0_1": 12,
+  "P_1_0_0_0_1_0": 12,
+  "P_1_0_0_0_1_1": 13,
+  "P_1_0_0_1_0_0": 12,
+  "P_1_0_0_1_0_1": 12,
+  "P_1_0_0_1_1_0": 13,
+  "P_1_0_1_1_0_1": 15
+ },
+ "one_bit_degree_sequence_sorted": [
+  5,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  4,
+  3,
+  3,
+  3,
+  1,
+  1
+ ],
+ "degree_matched_null_feasible_exact_search": true,
+ "degree_matched_null_note": "exact backtracking over the non-one-bit pair pool for an edge subset with exactly the one-bit degree sequence",
+ "pairs": [
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_0_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_0_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_0_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_1_0_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 2
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_0_0_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_0_0_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_0_1_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_0_1_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_0_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_0_0_0_0_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_0_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_0_0_0_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_0_0_0_1_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 5,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_0_0_0_1_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_0_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_0_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_0_1_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_0_0_0_1_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_0_0_0_1_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_0_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_0_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_0_0_0_1_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 0
+  },
+  {
+   "a": "P_0_0_0_1_1_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_0_0_1_0_0_0",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_0_1_1_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_0_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_0_0_1_0_0_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_0_0_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_1",
+   "b": "P_1_0_0_0_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_1",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_1_0_0_0_0_1",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_1",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_1_0_0_0_0_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_0_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_0",
+   "b": "P_1_0_0_0_1_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_1_0_0_0_1_0",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 3
+  },
+  {
+   "a": "P_1_0_0_0_1_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 4,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_1",
+   "b": "P_1_0_0_1_0_0",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_1",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_0_1_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_1_0_0",
+   "b": "P_1_0_0_1_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 5
+  },
+  {
+   "a": "P_1_0_0_1_0_0",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 4
+  },
+  {
+   "a": "P_1_0_0_1_0_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_1_0_1",
+   "b": "P_1_0_0_1_1_0",
+   "hamming": 2,
+   "label": "non_one_bit",
+   "differing_bit": null
+  },
+  {
+   "a": "P_1_0_0_1_0_1",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 1,
+   "label": "one_bit",
+   "differing_bit": 2
+  },
+  {
+   "a": "P_1_0_0_1_1_0",
+   "b": "P_1_0_1_1_0_1",
+   "hamming": 3,
+   "label": "non_one_bit",
+   "differing_bit": null
+  }
+ ]
+}
