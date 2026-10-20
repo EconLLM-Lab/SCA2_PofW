@@ -51,12 +51,12 @@ payload bytes, built from `e86d4c2`.
 
 ## Deployment
 
-Private static Hugging Face Space `Bonorinoa/sca2-workbench`
-(https://huggingface.co/spaces/Bonorinoa/sca2-workbench), deployed 2026-10-19 from `e86d4c2`. The receipt is
+Private static Hugging Face Space `EconLLM/sca2-workbench`
+(https://huggingface.co/spaces/EconLLM/sca2-workbench), deployed 2026-10-19 from `e86d4c2`. The receipt is
 `plans/WB2_DEPLOY_RECEIPT.json`: remote files match the manifest by sha256 and size (0 mismatches), and 27 routes load
-with 0 console errors (`viewer/screens/sca2/deployed/deployed-report.json`). The Space sits under the user account
-`Bonorinoa` because no Hugging Face organization exists yet. Co-authors need an account in an organization that owns the
-Space; creating the organization and inviting co-authors is Augusto's step. A static Space has no live inference.
+with 0 console errors (`viewer/screens/sca2/deployed/deployed-report.json`). The Space was transferred from the
+`Bonorinoa` account to the EconLLM organization and re-verified file by file. Augusto still needs to invite co-authors
+and grant access. A static Space has no live inference.
 
 ## Data policy
 

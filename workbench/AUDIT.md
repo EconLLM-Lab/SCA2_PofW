@@ -431,18 +431,19 @@ below come from the independent verifier cards and from files on disk. Cards liv
   not part of the bundle and stays open until W3's files are replaced. Findings F1 to F5 are non-blocking and stay open.
 
 **WB2: private deployment. DONE.**
-- Static Space `Bonorinoa/sca2-workbench` (private), built from `e86d4c2`. Receipt `plans/WB2_DEPLOY_RECEIPT.json`
+- Static Space `EconLLM/sca2-workbench` (private), built from `e86d4c2`. Receipt `plans/WB2_DEPLOY_RECEIPT.json`
   (commit `6470ffa`): remote matches the manifest by sha256 and size (0 mismatches; the two extra remote files are
   `.gitattributes` and `README.md`), 27 routes load with 0 console messages, page errors or bad responses.
-- Open: the Space lives under the user account because no Hugging Face organization exists. Co-author access needs
-  Augusto to create the organization and transfer the Space. No human data, adapter weights or live inference ship.
+- The Space was transferred from the `Bonorinoa` account to the EconLLM organization and re-verified file by file.
+  Augusto still needs to invite co-authors and grant access. No human data, adapter weights or live inference ship.
 
 **W2: prompt-route capture (base plus 26 sign-profile prompts by 23 items on the Mac, 0 CU). RUNNING, UNVERIFIED.**
 - Two Claude attempts timed out on iteration budget; the card was re-routed to Codex. The 2-unit proof finished
   (exit 0). The first detached queue (598 units) was aborted by its own watchdog at 36 of 598: one unit ran 130 s
   against a limit calibrated for unprompted base units. A relaunch is running.
-- `exports/phase1_promptroute_nf4_t4/RUN_STATUS.json` at 2026-10-19 19:26 MST: state running, 97 of 598 done,
-  no failed units, pid 61988, last unit 29.6 s, peak RSS 6.18 GB. At about 30 s a unit the queue ends near 23:45 MST.
+- `exports/phase1_promptroute_nf4_t4/RUN_STATUS.json` at the 2026-10-19 21:33 MST assembly snapshot: state
+  running, 343 of 598 done, no failed units, pid 61988, last unit 31.7 s, peak RSS 6.6 GB. Read the live file for
+  current progress; this line is a dated snapshot, not a completion claim.
 - The code changes (`plans/gpu_cohort/runner/mac_queue.py`, `src/sca2_workbench/cohort.py`,
   `stream_export.py`, `sign_route.py`, `tests/test_prompt_route.py`) are uncommitted because the queue is using them.
   No independent verifier has run on W2. Nothing from it is uploaded or analysed. Commit them after the queue
@@ -456,8 +457,11 @@ below come from the independent verifier cards and from files on disk. Cards liv
   twin weights are genuinely missing. The invalid outputs were moved to `analysis/out/_discarded_W3/` (untracked).
   Record `analysis/out/W3_VERIFICATION.md`.
 - Successor W3b (commit `eec05a6`, pre-registration frozen with a sha256-pinned inventory) is one test only: LoRA
-  weight-space principal angles on the 30 one-bit pairs. Its module, tests and runner are committed (`3c41c39`). Its
-  run, figure and report are in progress and no verifier has checked them at this writing; quote nothing from it.
+  weight-space principal angles on the 30 one-bit pairs. Its module, tests and runner are committed (`3c41c39`), and
+  a run, figure and report exist locally. Independent audit `t_c78a64b1` reproduced the registered numbers but ruled
+  BLOCK because the result and report add an unregistered p<0.05 agreement classifier. The owner must authorize its
+  removal (recommended) or dated exploratory treatment; the renderer/report bundle is also uncommitted. Quote nothing
+  from W3b.
 - Governance: W3 and W3b are exploratory and not preregistered as Paper B claims. The definition of "recursive
   generalization" is still unconfirmed by Augusto.
 
