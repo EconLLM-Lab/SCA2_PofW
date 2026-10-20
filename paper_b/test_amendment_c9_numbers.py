@@ -149,7 +149,8 @@ def test_interval_and_range_sentences_are_true_of_the_table():
 def test_amendment_forbids_the_overreaches():
     text = _amendment()
     for phrase in ("inconclusive", "WEAK", "behavioral decomposition", "not a percentage of variance explained",
-                   "C9-4 did not run", "No claim is earned", "retrospective screen", "Pre-piloting stays untested"):
+                   "C9-4 ran twice, and only the second run counts", "No claim is earned", "retrospective screen",
+                   "Pre-piloting stays untested", "still owe a cross-family audit"):
         assert phrase in text, phrase
     assert "transport" not in text.replace("Transport and pre-piloting stay unearned", "").lower()
 

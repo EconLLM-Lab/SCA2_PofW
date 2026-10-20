@@ -33,14 +33,37 @@ the checkpoint commit and its merge sit on top (`git log -3` on each branch).
 | Item | State |
 |---|---|
 | Git heads before the checkpoint commit | `feat/paper-b-cohort` `096e27b` (Amendment C9); `paper/paper-b-draft` `f7afd21` (merge of `096e27b`); `Adapter-Brain-Vizualization` `2135a3c` (W3b pre-registration) |
-| Numbers table | 536 rows, sha256 `9d56145d2cf94c3719f77ba596b6c6d6b34666b6b42b563c7cfa54809eb642df`; the 271 earlier rows are unchanged and pinned by a test |
-| Amendment C9 (2026-10-20) | 265 descriptive, not preregistered rows: C9-1 human agreement, C9-2 TVD (three of four cells), W1 cross-talk decomposition. No claim earned. Coauthor sign-off pending. In [the claim lock](planning/TWO_PAPER_CLAIM_LOCK.md) |
+| Numbers table | 554 rows, sha256 `02c5d0cf9281f2927b8222386160412f1276437bf9dca8f70eafdc042dda9dd1`; the 271 earlier rows are unchanged and pinned by a test |
+| Amendment C9 (2026-10-20) | 283 descriptive, not preregistered rows: C9-1 human agreement, C9-2 TVD (all four cells, the adapter+persona cell filled by the 2026-10-19 C9-4 run), W1 cross-talk decomposition. No claim earned. Coauthor sign-off pending. In [the claim lock](planning/TWO_PAPER_CLAIM_LOCK.md) |
 | Verifier record | [VERIFICATION_C9.md](planning/sprint_2026-10-11/paper-b-tier1/results/c9/VERIFICATION_C9.md) (cross-family): C9-1 ACCEPT, C9-2 ACCEPT, W1 ACCEPT as descriptive, 96 headline values recomputed with 0 mismatches; insights I1 and I2 both WEAK. [C9_GPU_VERIFICATION.md](planning/sprint_2026-10-11/paper-b-tier1/results/c9/C9_GPU_VERIFICATION.md): C9-4 BLOCK, no experiment executed |
-| Private Space | https://huggingface.co/spaces/Bonorinoa/sca2-workbench (static, private, built from workbench commit `e86d4c2`, remote equals manifest, 27 routes load with 0 errors). Under the user account; co-author access needs a Hugging Face organization (Augusto) |
-| Hub runs added | **None.** The adapter+persona run `adapter-persona-strict-v1-20261019` and the held-out label-recovery run were not executed (C9-4: no Colab session, 0 units spent, balance 181.82 on 2026-10-19). Its 16-country fixture is not a 42-country result |
+| Private Space | https://huggingface.co/spaces/EconLLM/sca2-workbench (static, private, built from workbench commit `e86d4c2`; 94 of 94 bundle files present with 0 sha256 mismatches against the WB1 manifest, stage RUNNING, 27 routes load with 0 errors). Moved to the EconLLM organization on 2026-10-19 and re-verified file by file; a temporary duplicate under the user account was deleted. Co-author access still needs invites from EconLLM (Augusto) |
+| Hub runs added | `adapter-persona-strict-v1-20261019`: 42 of 42 countries, gates G1/G2/G3 passed before any scoring, about one compute unit (balance 181.82 → 180.75). `label-recovery-cohort1-v1-20261019`: experiment B, scoring the 42 cohort-1 adapters on the 132 held-out pairs, gates passed (base reproduces the banked cohort-1 reference log-probs with max gap 0, ARG adapter effect 71 nats, switchback exact); no rows banked yet |
 | Workbench cards | WB1 PASS (independent verifier), WB2 deployed and verified. W2 prompt-route queue: RUNNING, 97 of 598 units at 2026-10-19 19:26 MST (the first queue was aborted by its watchdog at 36 of 598); unverified, nothing uploaded. W3: verifier BLOCK, no W3 number is quotable; successor W3b is one pre-registered test and not finished |
 | Brief | [COAUTHOR_BRIEF.md](planning/checkpoint_2026-10-20/COAUTHOR_BRIEF.md): two pages, every number by claim id (25 ids, 49 values, 0 mismatches against the table) |
-| Gate | Producer, verifier (V) and amendment (A) cards are done and neither blocked, so the paper branch is pushed. Not done: C9-4 (blocked by its audit), W3 (blocked, replaced by W3b); W2 and W3b are still running |
+| Gate | V and A are done; the checkpoint was pushed as code `981759b`, manuscript merge `baf19e3`, workbench `e27e279` (remote equality rechecked 2026-10-19 evening MST). The C9-4 and W3 audit BLOCK verdicts still govern the checkpoint. W2 remains running and unverified. W3b run, figure and report cards are done, with independent verification still running; orchestration cards remain todo. See the assembly recheck below |
+
+### Assembly recheck, 2026-10-19 evening
+
+The resumed assembly found concurrent, uncommitted `c9_tvd.{json,csv,md}` outputs containing an adapter+persona cell.
+These are outside the verified C9 checkpoint and have not been admitted to the frozen numbers table; the checkpoint's
+"not run" statement above describes its accepted evidence, not the later producer activity. A separate audit and dated
+amendment are required before any new result becomes quotable. No new result is adopted here.
+
+On the shared main worktree the full `paper_b` suite returned 1 failed, 583 passed, 27 errors after C9-4 experiment A
+finished and rewrote the C9-2 TVD outputs: `build_numbers_table.py:574` raised `KeyError('adapter_persona')`, because
+the builder only knew three cells. The orchestrator filled the gap instead of discarding the outputs: the builder now
+carries the fourth cell and the interaction contrast (which has no `a_minus_b` form), the one test that asserted the
+cell was pending now asserts it is filled, the table was rebuilt to 554 rows with a new hash, and the claim lock and
+this file were updated to match. `paper_b` is green again. The workbench tree still carries the W2/W3b changes.
+
+W2's `RUN_STATUS.json` at this recheck says running, 199 of 598 done, no failed units, PID 61988 (a dated progress
+snapshot, not a completion claim). Final assembly is pending resolution of the input/version boundary and cleanup by
+the producing owners. No further push was made by the resumed assembly.
+
+An alternative full-suite run from the clean manuscript worktree also failed: 16 failed, 573 passed, 13 skipped,
+9 errors. That worktree lacks local-only data and its own `.venv`; it also exposes LF/CRLF pool-hash differences
+and a `.git`-directory assumption in `score_runtime.code_revision`. It is not an equivalent validation environment.
+The documented full-suite command remains main-worktree-only; this alternative run does not establish a green gate.
 
 ## Git
 
@@ -83,9 +106,9 @@ preregistered evaluation of the sign compiler as a scoring instrument: what hold
 The held-out result is a *retrospective* screen against WVS-7, never "transport". Pre-piloting is untested, and no
 human route exists in 2026.
 
-[NUMBERS_TABLE.csv](planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv): 536 rows, sha256
-`9d56145d2cf94c3719f77ba596b6c6d6b34666b6b42b563c7cfa54809eb642df`. It replaces the 271-row table `51ddcce1…97855`;
-those 271 rows are unchanged and a test pins them. The 265 `C9_` rows are all descriptive and not preregistered.
+[NUMBERS_TABLE.csv](planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv): 554 rows, sha256
+`02c5d0cf9281f2927b8222386160412f1276437bf9dca8f70eafdc042dda9dd1`. It replaces the 271-row table `51ddcce1…97855`;
+those 271 rows are unchanged and a test pins it. The 283 `C9_` rows are all descriptive and not preregistered.
 A rebuilt table needs a new dated amendment and an update here; `paper_b/test_status_doc.py` fails until both match.
 
 ## Headline numbers
