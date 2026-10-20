@@ -1,7 +1,6 @@
 # SCA2 status
 
-**Last verified: 2026-10-20 (MST) by the `engineer` profile**: git, the claim lock, the numbers table, and the Hub for the
-C9-4 run id. The Hub inventory below dates from 2026-10-19 and was not recounted. Commands are in
+**Last verified: 2026-10-19 evening (MST) by the `sca` profile (checkpoint assembly card `t_5b53fef3`)**: git, the claim lock, the numbers table, the board cards and the W2 run status. The Hub inventory below dates from 2026-10-19 and was not recounted. Commands are in
 [How to re-verify](#how-to-re-verify). This file is the single status page for every person and agent working on
 SCA2. It indexes the evidence; it is not the evidence. When it disagrees with git or the Hub, git and the Hub win:
 fix this file in the same commit.
@@ -21,18 +20,36 @@ fix this file in the same commit.
 | Stream | State | Where |
 |---|---|---|
 | **Paper A** (preprint) | Posted: arXiv:2610.06562 v1, 2026-10-05. Frozen. | tag `arxiv-2610.06562-v1` (`5664026`); [misc/arxiv-submission-2026-10-05/](misc/arxiv-submission-2026-10-05/) |
-| **Paper B** (the journal version of the preprint, for SMR) | Compute and analysis done through Amendment C9 (C9-4 not run). Manuscript drafted without the C9 rows. Waiting on the decisions listed under [Open](#open). | code `feat/paper-b-cohort`; manuscript `paper/paper-b-draft` |
-| **Workbench** (Adapter-Brain-Vizualization) | SCA2-specific viewer integrating Paper B artifacts, with its own audit (`workbench/AUDIT.md` on its branch). Integration is one-way: the viewer reads Paper B results; workbench analyses are not automatically Paper B evidence. Compute remains separate. Private precomputed deployment approved for the checkpoint. | worktree `.worktrees/adapter-brain-vizualization`, branch `Adapter-Brain-Vizualization` |
+| **Paper B** (the journal version of the preprint, for SMR) | Compute and analysis done through Amendment C9 (C9-4 not run). Manuscript drafted without the C9 rows. Waiting on the decisions listed under [Open after the checkpoint](#open-after-the-checkpoint). | code `feat/paper-b-cohort`; manuscript `paper/paper-b-draft` |
+| **Workbench** (Adapter-Brain-Vizualization) | SCA2-specific viewer that reads Paper B artifacts, one way only: Paper B claims never depend on workbench results, and its compute stays separate. Private precomputed Space deployed 2026-10-19 (verified bundle; no human data, no weights, no inference). Its analyses (W2 prompt route, W3 mechanisms) are not Paper B evidence; see `workbench/AUDIT.md` §17 on its branch. | worktree `.worktrees/adapter-brain-vizualization`, branch `Adapter-Brain-Vizualization`; [workbench README](https://github.com/EconLLM-Lab/SCA2_PofW/blob/Adapter-Brain-Vizualization/workbench/README.md) |
 | **Phase 3** (activation engineering, latent space) | Not started. | — |
+
+## Checkpoint 2026-10-20 (co-author review)
+
+Assembled by card `t_5b53fef3` on 2026-10-19 evening for the 08:00 MST 2026-10-20 co-author meeting. The sections below
+name what exists and what does not. Git decides the heads: the commits listed are the ones this section builds on, and
+the checkpoint commit and its merge sit on top (`git log -3` on each branch).
+
+| Item | State |
+|---|---|
+| Git heads before the checkpoint commit | `feat/paper-b-cohort` `096e27b` (Amendment C9); `paper/paper-b-draft` `f7afd21` (merge of `096e27b`); `Adapter-Brain-Vizualization` `2135a3c` (W3b pre-registration) |
+| Numbers table | 536 rows, sha256 `9d56145d2cf94c3719f77ba596b6c6d6b34666b6b42b563c7cfa54809eb642df`; the 271 earlier rows are unchanged and pinned by a test |
+| Amendment C9 (2026-10-20) | 265 descriptive, not preregistered rows: C9-1 human agreement, C9-2 TVD (three of four cells), W1 cross-talk decomposition. No claim earned. Coauthor sign-off pending. In [the claim lock](planning/TWO_PAPER_CLAIM_LOCK.md) |
+| Verifier record | [VERIFICATION_C9.md](planning/sprint_2026-10-11/paper-b-tier1/results/c9/VERIFICATION_C9.md) (cross-family): C9-1 ACCEPT, C9-2 ACCEPT, W1 ACCEPT as descriptive, 96 headline values recomputed with 0 mismatches; insights I1 and I2 both WEAK. [C9_GPU_VERIFICATION.md](planning/sprint_2026-10-11/paper-b-tier1/results/c9/C9_GPU_VERIFICATION.md): C9-4 BLOCK, no experiment executed |
+| Private Space | https://huggingface.co/spaces/Bonorinoa/sca2-workbench (static, private, built from workbench commit `e86d4c2`, remote equals manifest, 27 routes load with 0 errors). Under the user account; co-author access needs a Hugging Face organization (Augusto) |
+| Hub runs added | **None.** The adapter+persona run `adapter-persona-strict-v1-20261019` and the held-out label-recovery run were not executed (C9-4: no Colab session, 0 units spent, balance 181.82 on 2026-10-19). Its 16-country fixture is not a 42-country result |
+| Workbench cards | WB1 PASS (independent verifier), WB2 deployed and verified. W2 prompt-route queue: RUNNING, 97 of 598 units at 2026-10-19 19:26 MST (the first queue was aborted by its watchdog at 36 of 598); unverified, nothing uploaded. W3: verifier BLOCK, no W3 number is quotable; successor W3b is one pre-registered test and not finished |
+| Brief | [COAUTHOR_BRIEF.md](planning/checkpoint_2026-10-20/COAUTHOR_BRIEF.md): two pages, every number by claim id (25 ids, 49 values, 0 mismatches against the table) |
+| Gate | Producer, verifier (V) and amendment (A) cards are done and neither blocked, so the paper branch is pushed. Not done: C9-4 (blocked by its audit), W3 (blocked, replaced by W3b); W2 and W3b are still running |
 
 ## Git
 
 | Ref | Head | Note |
 |---|---|---|
-| `paper/paper-b-draft` | merge of everything below; last push 2026-10-19, later commits are local only | **The single merged branch to pull.** It holds the manuscript in `misc/paper_b/` (worktree `../SCA2_PofW-paper-b-draft`) plus all of `feat/paper-b-cohort`. |
-| `feat/paper-b-cohort` | code branch (this worktree); last push 2026-10-19, later commits are local only | Paper B code, results, claim lock. Merged into the branch above after every commit. |
-| `Adapter-Brain-Vizualization` | `e5fea0b` | Workbench. Not merged anywhere. |
-| `main` | local `2e4989b`, origin `305d820` | Local main is 1 commit ahead (the arXiv upload package), unpushed. Paper B is not merged to main. |
+| `paper/paper-b-draft` | see [Checkpoint](#checkpoint-2026-10-20-co-author-review) | **The single merged branch to pull.** It holds the manuscript in `misc/paper_b/` (worktree `../SCA2_PofW-paper-b-draft`) plus all of `feat/paper-b-cohort`. |
+| `feat/paper-b-cohort` | code branch (this worktree) | Paper B code, results, claim lock. Merged into the branch above after every commit. |
+| `Adapter-Brain-Vizualization` | see [Checkpoint](#checkpoint-2026-10-20-co-author-review) | Workbench. Not merged anywhere. |
+| `main` | local `2e4989b`, origin `305d820` | Local main is 1 commit ahead (the arXiv upload package), unpushed. Paper B is not merged to main. Untouched at the checkpoint. |
 | tags | `arxiv-2610.06562-v1`, `prereg-heldout-2026-10-14` | |
 
 ## What exists on the Hub
@@ -115,33 +132,36 @@ version. The current one is "Synthetic Cultural Agents as Scoring Instruments…
 has still to confirm the page count. The older Overleaf projects are untouched. The preprint is disclosed only on
 the title page and in `submission/COVER_LETTER_DRAFT.md`; the manuscript never cites it.
 
-## Open
+## Open after the checkpoint
 
-**Checkpoint sprint (2026-10-19; target 08:00 MST 2026-10-20).** Amendment C9 is applied: C9-1 (human agreement),
-C9-2 (TVD, three of four cells) and W1 (cross-talk decomposition) are banked as descriptive, not preregistered rows
-in [results/c9/](planning/sprint_2026-10-11/paper-b-tier1/results/c9/), after a cross-family verification (`VERIFICATION_C9.md`).
-The verifier ruled both candidate insights WEAK. Human-profile grouping is **inconclusive** (the test has power only for
-a true between-share near 0.57), so it does not locate the prediction bottleneck. W1 is a behavioral decomposition,
-not a neural mechanism, and Var(cross)/Var(full) is a ratio that can exceed 1. No claim is earned.
+Targets are proposals for Augusto. "Blocked by" names the decision or card that must come first.
 
-**C9-4 did not run** (no Colab session, 0 units spent). Still absent: the adapter+persona TVD cell (run
-`adapter-persona-strict-v1-20261019` is not on the Hub) and held-out label recovery on 42 adapters. Its 16-country
-fixture is not a result, and `results/c9/c9_gpu_run.md` overstates it (it says real adapter weights; its code says a
-planning script). Those files are untracked until a separate C9-4 audit. The manuscript does not carry the C9 rows yet.
-Running C9-4 needs Augusto's go for Colab (about 1 unit for the TVD cell).
-
-**Augusto only:** coauthor sign-off on C7, C7.1, C8 and C9; author list and order; OSF registration; the anonymous
-mirror; IRB, COI, funding, compute and AI-use statements; SMR's preprint policy; the Overleaf page count.
-
-**Human-derived tables, untracked 2026-10-19:** six CSVs (WVS-7 per-option distributions, country item means, model–human joins
-and per-item metrics in `paper-b-20261011/local_eval/` and `analysis/phase2/outputs/`) were in the public repo. They
-are now gitignored and stay local, so the scripts still read them. They remain in the git history of the pushed
-branches, and three of them (`analysis/phase2/outputs/`) are still on `main`; `paper_a/country_item_scores.csv` (model scores with TVD to humans) is still tracked and goes to the same review. Revisit before Paper B is shared:
-whether to purge the history (needs a force-push), the `main` copies, and the tracked bank-1 `D_syn_*.jsonl`.
-
-**Next planning session.** From the 2026-10-19 list of preprint results that the journal version should carry on the 42
-countries, C9 now covers adapter–human, human–GPS, the between-profile share and three of four TVD cells. Still open:
-label recovery and the adapter+persona TVD cell (C9-4), and the manuscript section that uses the C9 rows.
+| Item | Owner | Target date | Blocked by |
+|---|---|---|---|
+| Coauthor sign-off on C7, C7.1, C8 and C9 | Augusto | co-author meeting 2026-10-20 | the meeting |
+| Author list and order | Augusto | 2026-10-20 | the meeting |
+| OSF registration | Augusto | before SMR submission | sign-off |
+| Anonymous mirror | Augusto | before SMR submission | author list |
+| IRB, COI, funding, compute and AI-use statements | Augusto | before SMR submission | none |
+| SMR preprint policy (disclosure of arXiv:2610.06562) | Augusto | before SMR submission | none |
+| Overleaf page count (project "… (1)") | Augusto | 2026-10-21 | none |
+| Create the Hugging Face organization, transfer the Space, invite co-authors | Augusto | 2026-10-20 | none (WB2 could not: the token user has no organization) |
+| Confirm the definition of "recursive generalization" | Augusto | 2026-10-21 | none |
+| Go for Colab spend (about 1 unit) to run C9-4: adapter+persona TVD cell and held-out label recovery on 42 adapters, then audit and a new amendment | Augusto, then `engineer` | 2026-10-22 | Augusto's go; the C9-4 code (`paper_b/c9_label_recovery.py`, `paper_b/colab/vm_c9_*`) is committed as never-run code with passing unit tests, and the audit of the first output ruled BLOCK |
+| C9 section in the manuscript, via the writer profile | writer | 2026-10-23 | sign-off |
+| Novelty audit "LM evaluation for social-science measurement" | `sca` | 2026-10-23 | none |
+| Space landing footer wording contradicts the journal-version framing; brief section 6 to be replaced by this table | `writer`, `engineer` | 2026-10-21 | none |
+| W2 prompt-route queue: finish (about 23:45 MST 2026-10-19 at 30 s a unit), commit its code, independent verifier | `engineer`, verifier | 2026-10-21 | the queue |
+| Upload the W2 prompt-route captures to the Hub; weights-versus-prompt analysis of the risk inversion | `engineer` | 2026-10-21 | W2 verified |
+| W3b: one-test LoRA principal-angle analysis on the 30 one-bit bank-2 pairs, figure, report, verifier; repeat W3 with the prompt route | `engineer`, verifier | 2026-10-22 | W3b pre-registration (frozen); W2 for the prompt-route repeat |
+| Clean the workbench tree: untracked W3 debris (`analysis/out/_discarded_W3/`, stubs), uncommitted W2 code, WB1 findings F1 to F5, and the full-suite failure P1 | `engineer` | 2026-10-22 | W2 and W3b finished |
+| Extract a general (non-SCA2) workbench repository | `engineer` | 2026-10-23 | WB cleanup |
+| Parity reference in float64 for the next capture run | `engineer` | with the next capture run | next run |
+| Live adapter chat card with a cost and data-rights check | `engineer` | 2026-10-26 | Augusto's go |
+| Public workbench release | Augusto | after co-author review | sign-off; data-rights check |
+| Data review before Paper B is shared: purge or keep the git history of the six untracked human-derived CSVs; the three copies on `main`; tracked bank-1 `D_syn_*.jsonl`; `paper_a/country_item_scores.csv`; GPS PDFs | Augusto | with SMR submission prep | the decision on a force-push |
+| Paper C candidate: magnitude-graded compiler design and preregistration | Augusto, `sca` | early November | the sign-profile evaluation concluded |
+| Housekeeping: the creative profile's false positive in the no-PAYG check; data-scientist `max_turns` and a real-browser profile; the check script needs `pyyaml` | `sca` | 2026-10-24 | none |
 
 ## Compute
 
@@ -170,7 +190,8 @@ Every Markdown file under `planning/` must appear here, by itself or through its
 - [paper-b-tier1/VERIFICATION.md](planning/sprint_2026-10-11/paper-b-tier1/VERIFICATION.md): Tier-1 verification record
 - [C6_DESIGN.md](planning/sprint_2026-10-11/paper-b-tier1/C6_DESIGN.md) and [C8_PERSONA_DESIGN.md](planning/sprint_2026-10-11/paper-b-tier1/C8_PERSONA_DESIGN.md): design locks
 - [paper-b-tier1/results/](planning/sprint_2026-10-11/paper-b-tier1/results/): result notes, one per analysis
-- [paper-b-tier1/results/c9/](planning/sprint_2026-10-11/paper-b-tier1/results/c9/): C9 outputs (human agreement, TVD, W1 decomposition) and the cross-family verification `VERIFICATION_C9.md`; descriptive, not preregistered. The C9-4 files in that folder are not results
+- [paper-b-tier1/results/c9/](planning/sprint_2026-10-11/paper-b-tier1/results/c9/): C9 outputs (human agreement, TVD, W1 decomposition), the cross-family verification `VERIFICATION_C9.md` and the C9-4 audit `C9_GPU_VERIFICATION.md` (BLOCK); descriptive, not preregistered. Nothing in that folder is a C9-4 result
+- [planning/checkpoint_2026-10-20/](planning/checkpoint_2026-10-20/): the co-author brief `COAUTHOR_BRIEF.md`, the shared sprint rules `common_rules.md`, and `cards/` (texts of the 2026-10-19 sprint cards, exported as dated records)
 - [paper_b/RUNBOOK.md](paper_b/RUNBOOK.md) and [paper_b/README.md](paper_b/README.md): how to run
 
 ### Record (dated; each opens with a "Record, not status" banner)
