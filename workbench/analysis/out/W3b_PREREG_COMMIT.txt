@@ -1,0 +1,4 @@
+W3b_PREREG.md frozen in commit eec05a693429d0a6c2ed93a668203391aea1d5a2
+commit time 2026-10-19T19:09:32-07:00
+W3b_PREREG.md sha256 dc23d71b16f3bdedd06dd32c1d1db9e14d54677d4f645c2d29832b0145651498
+No results file exists at this commit (no overlap/angle output).
