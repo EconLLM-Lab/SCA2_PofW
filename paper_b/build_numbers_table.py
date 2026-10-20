@@ -571,7 +571,9 @@ def c9_tvd_rows(t: Table):
     for cell, c in d["cells"].items():
         if c["status"] != "ok":
             continue
-        who = {"base": "base model", "adapter": "country adapters (cohort 1)", "persona": "country-named persona prompt"}[cell]
+        who = {"base": "base model", "adapter": "country adapters (cohort 1)",
+               "persona": "country-named persona prompt",
+               "adapter_persona": "country adapters (cohort 1) + country-named persona prompt"}[cell]
         kw = dict(run_id=run, script=f, out=o)
         t.add(f"C9_TVD_{cell}_mean_tvd_country_equal", f"C9-2 descriptive: mean TVD to humans, {who}; country-equal "
               "(mean of country means); lower is closer", "mean TVD, country-equal", c["mean_tvd_country_equal"],
@@ -592,11 +594,15 @@ def c9_tvd_rows(t: Table):
                   "bootstrap", "Spearman rho", u["point"], ci=(u["ci_lo"], u["ci_hi"]), n=u["n"],
                   surface=f"strict 23-item battery; 42 countries; trust composite; {name} bootstrap; {C9_LABEL}", **kw)
     for name, c in d["contrasts"].items():
-        a, b = name.split("_minus_")
+        if "_minus_" in name:
+            a, b = name.split("_minus_")
+            desc = f"C9-2 descriptive: mean TVD of {a} minus {b} (negative = {a} closer to humans)"
+        else:                                     # the interaction contrast has no a-minus-b form
+            desc = ("C9-2 descriptive interaction: (adapter+persona - persona) - (adapter - base); positive = the "
+                    "pair is farther from humans than the sum of the two parts; zero = the effects add")
         for unit, uname in (("profile_block", "profile-block"), ("country", "country")):
             u = c[unit]
-            t.add(f"C9_TVD_{name}_{unit}", f"C9-2 descriptive: mean TVD of {a} minus {b} (negative = {a} closer to "
-                  f"humans); paired {uname} bootstrap", "difference of mean TVD", u["point"],
+            t.add(f"C9_TVD_{name}_{unit}", f"{desc}; paired {uname} bootstrap", "difference of mean TVD", u["point"],
                   ci=(u["ci_lo"], u["ci_hi"]), n=u["n"], surface=f"{base}; paired {uname} bootstrap", run_id=run,
                   script=f, out=o)
 

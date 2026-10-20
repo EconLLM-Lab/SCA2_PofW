@@ -50,7 +50,7 @@ Bootstrap: 2000 draws; profile-block seed 20261011, country seed 20260905; perce
 | base | ok | 42 | 965 | 0.470 | 0.470 | trust composite is constant across countries | - |
 | adapter | ok | 42 | 965 | 0.515 | 0.515 | 0.744 [0.500, 0.865] | 0.744 [0.577, 0.847] |
 | persona | ok | 42 | 965 | 0.365 | 0.365 | 0.028 [-0.339, 0.381] | 0.028 [-0.273, 0.330] |
-| adapter_persona | pending | - | - | - | - | - | - |
+| adapter_persona | ok | 42 | 965 | 0.420 | 0.419 | 0.725 [0.505, 0.820] | 0.725 [0.569, 0.817] |
 
 Skipped cells (no human distribution): JOR/Q178.
 
@@ -61,7 +61,7 @@ Skipped cells (no human distribution): JOR/Q178.
 | base | 0.413 | 0.664 | 0.565 | 0.384 | 0.411 | 0.494 |
 | adapter | 0.479 | 0.655 | 0.614 | 0.436 | 0.508 | 0.439 |
 | persona | 0.315 | 0.541 | 0.524 | 0.244 | 0.352 | 0.244 |
-| adapter_persona | - | - | - | - | - | - |
+| adapter_persona | 0.375 | 0.558 | 0.559 | 0.341 | 0.418 | 0.304 |
 
 ## Paired differences (country means of per-item TVD differences; negative = first cell closer to humans)
 
@@ -69,7 +69,9 @@ Skipped cells (no human distribution): JOR/Q178.
 |---|---|---|---|
 | adapter_minus_base | 0.045 [0.006, 0.093] | 0.045 [0.017, 0.079] | 42 |
 | persona_minus_base | -0.105 [-0.122, -0.086] | -0.105 [-0.119, -0.091] | 42 |
-
-The adapter+persona cell is PENDING (run `adapter-persona-strict-v1-20261019` is not available). Re-running this script fills it and adds the adapter_persona_* and interaction contrasts, with no code change.
+| adapter_persona_minus_base | -0.051 [-0.095, 0.005] | -0.051 [-0.084, -0.012] | 42 |
+| adapter_persona_minus_adapter | -0.096 [-0.115, -0.078] | -0.096 [-0.111, -0.081] | 42 |
+| adapter_persona_minus_persona | 0.055 [0.016, 0.097] | 0.055 [0.027, 0.086] | 42 |
+| interaction | 0.009 [-0.003, 0.022] | 0.009 [-0.001, 0.019] | 42 |
 
 Base trust-GPS is undefined: the base model has no country conditioning, so its trust composite is the same for every country.

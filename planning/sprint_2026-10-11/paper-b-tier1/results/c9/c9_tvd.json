@@ -38,8 +38,41 @@
       }
     },
     "adapter_persona": {
-      "reason": "scores for this cell are not available yet",
-      "status": "pending"
+      "mean_tvd_country_equal": 0.41950116386997005,
+      "mean_tvd_pooled": 0.41946945538284547,
+      "n_cells": 965,
+      "n_countries": 42,
+      "per_dimension": {
+        "altruism": 0.3035474682534571,
+        "negrecip": 0.4182721570787358,
+        "patience": 0.5582816545100012,
+        "posrecip": 0.3410165440184315,
+        "risktaking": 0.5589544260429131,
+        "trust": 0.3752848827313718
+      },
+      "skipped_cells": [
+        "JOR/Q178"
+      ],
+      "status": "ok",
+      "trust_gps": {
+        "country": {
+          "ci_hi": 0.8172431752297051,
+          "ci_lo": 0.5686723680955216,
+          "degenerate_draws": 0,
+          "draws": 2000,
+          "n": 42,
+          "point": 0.7254679523539421
+        },
+        "profile_block": {
+          "ci_hi": 0.819536884318551,
+          "ci_lo": 0.5045527062375771,
+          "degenerate_draws": 0,
+          "draws": 2000,
+          "n": 42,
+          "point": 0.7254679523539421
+        },
+        "status": "ok"
+      }
     },
     "base": {
       "mean_tvd_country_equal": 0.470046650620059,
@@ -125,6 +158,94 @@
         "unit": "profile_block"
       }
     },
+    "adapter_persona_minus_adapter": {
+      "country": {
+        "ci_hi": -0.08079357789024097,
+        "ci_lo": -0.111003735300155,
+        "draws": 2000,
+        "n": 42,
+        "point": -0.09597547790417249,
+        "seed": 20260905,
+        "unit": "country"
+      },
+      "label": "DESCRIPTIVE / NOT PREREGISTERED: TVD(adapter+persona) - TVD(adapter); negative = adapter+persona closer",
+      "n_countries": 42,
+      "profile_block": {
+        "ci_hi": -0.07763268990263332,
+        "ci_lo": -0.11452277939054879,
+        "draws": 2000,
+        "n": 42,
+        "point": -0.09597547790417249,
+        "seed": 20261011,
+        "unit": "profile_block"
+      }
+    },
+    "adapter_persona_minus_base": {
+      "country": {
+        "ci_hi": -0.01244998028538771,
+        "ci_lo": -0.08363604968441053,
+        "draws": 2000,
+        "n": 42,
+        "point": -0.05054548675008909,
+        "seed": 20260905,
+        "unit": "country"
+      },
+      "label": "DESCRIPTIVE / NOT PREREGISTERED: TVD(adapter+persona) - TVD(base); negative = adapter+persona closer",
+      "n_countries": 42,
+      "profile_block": {
+        "ci_hi": 0.00548412981330979,
+        "ci_lo": -0.09453081764312539,
+        "draws": 2000,
+        "n": 42,
+        "point": -0.05054548675008909,
+        "seed": 20261011,
+        "unit": "profile_block"
+      }
+    },
+    "adapter_persona_minus_persona": {
+      "country": {
+        "ci_hi": 0.08552519108774091,
+        "ci_lo": 0.026998794104705983,
+        "draws": 2000,
+        "n": 42,
+        "point": 0.05459650525478486,
+        "seed": 20260905,
+        "unit": "country"
+      },
+      "label": "DESCRIPTIVE / NOT PREREGISTERED: TVD(adapter+persona) - TVD(persona); negative = adapter+persona closer",
+      "n_countries": 42,
+      "profile_block": {
+        "ci_hi": 0.09662035133703001,
+        "ci_lo": 0.01587128110326034,
+        "draws": 2000,
+        "n": 42,
+        "point": 0.05459650525478486,
+        "seed": 20261011,
+        "unit": "profile_block"
+      }
+    },
+    "interaction": {
+      "country": {
+        "ci_hi": 0.019099617928255205,
+        "ci_lo": -0.0007327323228584694,
+        "draws": 2000,
+        "n": 42,
+        "point": 0.00916651410070148,
+        "seed": 20260905,
+        "unit": "country"
+      },
+      "label": "DESCRIPTIVE / NOT PREREGISTERED: (adapter+persona - persona) - (adapter - base): does the adapter shift differ with a persona prompt",
+      "n_countries": 42,
+      "profile_block": {
+        "ci_hi": 0.022368632285632302,
+        "ci_lo": -0.0032999105110756164,
+        "draws": 2000,
+        "n": 42,
+        "point": 0.00916651410070148,
+        "seed": 20261011,
+        "unit": "profile_block"
+      }
+    },
     "persona_minus_base": {
       "country": {
         "ci_hi": -0.09075109980078375,
@@ -151,9 +272,9 @@
   "draws": 2000,
   "inputs": {
     "adapter_persona_run": {
+      "files": 42,
       "path": "adapter-persona-strict-v1-20261019",
-      "reason": "no files under Bonorinoa/SCA2-paper-b-artifacts/runs/adapter-persona-strict-v1-20261019/synthetic/ on the Hub",
-      "source": null
+      "source": "hub:Bonorinoa/SCA2-paper-b-artifacts/runs/adapter-persona-strict-v1-20261019/synthetic/"
     },
     "cohort1_model_probs": {
       "path": "planning/sprint_2026-10-11/paper-b-20261011/model_probs.csv",

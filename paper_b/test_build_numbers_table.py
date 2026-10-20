@@ -332,11 +332,14 @@ def test_c9_1_interval_types_follow_the_sprint_rule(by_id):
         assert src["interval_type"].startswith(want), src["claim_id"]
 
 
-def test_c9_2_rows_match_the_tvd_json_and_the_pending_cell_has_none(rows, by_id):
+def test_c9_2_rows_match_the_tvd_json_and_the_label_recovery_cell_has_none(rows, by_id):
     d = json.loads((C9 / "c9_tvd.json").read_text())
-    assert d["cells"]["adapter_persona"]["status"] == "pending"
-    assert not [r for r in rows if "adapter_persona" in r["claim_id"] or "label_recovery" in r["claim_id"]]
-    for cell in ("base", "adapter", "persona"):
+    # the adapter+persona cell is filled once its run (C9-4) exists on the Hub; before that it is "pending"
+    assert d["cells"]["adapter_persona"]["status"] == "ok"
+    assert d["cells"]["adapter_persona"]["n_countries"] == 42
+    assert [r for r in rows if "C9_TVD_adapter_persona" in r["claim_id"]]      # rows exist for the filled cell
+    assert not [r for r in rows if "label_recovery" in r["claim_id"]]          # C9-4 B rows are not added yet
+    for cell in ("base", "adapter", "persona", "adapter_persona"):
         c = d["cells"][cell]
         r = by_id[f"C9_TVD_{cell}_mean_tvd_country_equal"]
         assert float(r["value"]) == c["mean_tvd_country_equal"] and int(r["n"]) == c["n_countries"]

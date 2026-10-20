@@ -268,10 +268,10 @@ and distributional results on the frozen Paper B stack (42 countries, strict 23-
 number over. Augusto approved the C9 analyses on 2026-10-19 (`planning/DECISIONS.md`). This amendment banks what
 those runs returned, and says what they do not show. It changes the claim source only.
 
-**New claim source.** `NUMBERS_TABLE.csv` now has 536 rows, sha256 `9d56145d…642df`
-(`9d56145d2cf94c3719f77ba596b6c6d6b34666b6b42b563c7cfa54809eb642df`). It replaces the 271-row table
+**New claim source.** `NUMBERS_TABLE.csv` now has 554 rows, sha256 `02c5d0cf…9dd1`
+(`02c5d0cf9281f2927b8222386160412f1276437bf9dca8f70eafdc042dda9dd1`). It replaces the 271-row table
 `51ddcce1…97855`. All 271 earlier rows are unchanged, byte for byte and in order. A test pins them against commit
-`1cf9db7`, next to the older pin against `92406dd`. The 265 added rows carry the prefix `C9_`.
+`1cf9db7`, next to the older pin against `92406dd`. The 283 added rows carry the prefix `C9_`.
 
 **Label.** Every added row is DESCRIPTIVE / NOT PREREGISTERED. The 2026-10-11 surface had already been seen when
 these were computed. None of them is a test, none enters a preregistered family, and none earns a claim.
@@ -291,18 +291,24 @@ not part of that acceptance.
 | `C9_d_*` | same | Agreement of each country's human composite with the mean of its sign-mates (leave one out). A measure of sign-mate agreement, not a ceiling. |
 | `C9_e_*` | same | Reference scorers built from the GPS signs, for scale. Mechanical, not success tests. |
 | `C9_f_*` | same | Item-level and complete-case variants of the preprint's human-agreement readouts. |
-| `C9_TVD_*` | `paper_b/c9_tvd.py` | Mean total variation distance between the model's option probabilities and the survey-weighted human answer shares, per country-item cell, for three cells: base model, cohort-1 country adapters, country-named persona prompt. The headline is country-equal (mean of country means), with the preprint's pooled mean beside it. n = 42 countries and 965 cells (42 × 23, less the JOR/Q178 cell). |
+| `C9_TVD_*` | `paper_b/c9_tvd.py` | Mean total variation distance between the model's option probabilities and the survey-weighted human answer shares, per country-item cell, for four cells: base model, cohort-1 country adapters, country-named persona prompt, and the two together (the rows the 2026-10-19 run added). The interaction contrast tests whether the two interventions add. The headline is country-equal (mean of country means), with the preprint's pooled mean beside it. n = 42 countries and 965 cells (42 × 23, less the JOR/Q178 cell). |
 | `C9_W1_*` | `paper_b/w1_crosstalk.py` | W1, a behavioral factorial decomposition: the six bank-2 main effects on each surface, split into an own-bit term and a cross-bit term, and the Spearman of each prediction with GPS across the 42 countries. Model quantities and published GPS z only, no human rows. |
 
-The adapter+persona TVD cell has no row. Run `adapter-persona-strict-v1-20261019` is not on the Hub (checked
-2026-10-20 against `Bonorinoa/SCA2-paper-b-artifacts` and `Bonorinoa/SCA2-paper-b-adapters`), so `c9_tvd.py` leaves
-the cell pending. No number was invented for it.
+The adapter+persona TVD cell now has rows. Run `adapter-persona-strict-v1-20261019` scored all 42 countries on
+2026-10-19 (cohort-1 adapters at revision `7550fd4c` plus the country-named persona prompt, strict battery, pinned
+spec `persona_strict_v1`). Its gates passed before any country was scored: the fresh base reproduced the banked
+strict base, the ARG adapter without persona reproduced its banked cohort-1 rows and differed from base, and
+disabling the adapter returned the base. `c9_tvd.py` fetched the run from `Bonorinoa/SCA2-paper-b-artifacts` and
+filled the fourth cell, so all four cells and their contrasts are in the table as `C9_TVD_*`.
 
-**C9-4 did not run.** The GPU job (the adapter+persona cell and held-out label recovery on 42 adapters) never
-started: the Colab account shows 0 units spent and no session. The only C9-4 output is a 16-country fixture
-summary. It is not a result, and the table holds no row from it. `results/c9/c9_gpu_run.md` says the run used real
-adapter weights, but its own code says the call is a planning script and not the adapter loader. That file and the
-fixture stay out of the commit until a separate C9-4 audit settles them.
+**C9-4 ran twice, and only the second run counts.** The first attempt produced a 16-country fixture summary under a
+42-country run name and spent nothing; card `t_433e7ef5` ruled it BLOCK (`C9_GPU_VERIFICATION.md`) and those files
+are out of the tree. The genuine run was executed by the orchestrator directly on a Colab T4 on 2026-10-19, about
+one compute unit for experiment A. Experiment A (adapter plus persona, 42 countries) is what fills the fourth TVD
+cell. Experiment B (held-out synthetic-label recovery on the 42 cohort-1 adapters) was still scoring when this
+amendment was written; it has no row here, and when it finishes it needs its own dated amendment, as the rule at the
+end of this section says. Both the run and this amendment still owe a cross-family audit: the orchestrator wrote the
+C9-4 code and ran it, so the verifier that accepted C9-1, C9-2 and W1 cannot be the one that accepts C9-4.
 
 **Readings (all descriptive).**
 
