@@ -1,0 +1,35 @@
+{
+ "space": "https://huggingface.co/spaces/Bonorinoa/sca2-workbench",
+ "private": true,
+ "sdk": "static",
+ "space_sha": "753ccc69ebd8112a715f1b920f2f3a6a9a63bb7b",
+ "built_from_commit": "e86d4c2",
+ "manifest_files": 94,
+ "remote_files_total": 96,
+ "remote_extra": [
+  ".gitattributes",
+  "README.md"
+ ],
+ "missing": [],
+ "bundle_files_size_bytes": 572239120,
+ "manifest_payload_bytes": 572239120,
+ "sha_from_lfs": 45,
+ "sha_from_download": 49,
+ "mismatches": [],
+ "pass_": true,
+ "browser": {
+  "host": "https://bonorinoa-sca2-workbench.static.hf.space",
+  "auth": "Bearer header (token not recorded)",
+  "routes": 27,
+  "featuredLinks": 16,
+  "consoleMsgs": 0,
+  "pageerrors": 0,
+  "badresponses": 0,
+  "requestfailed": 0,
+  "routeErrors": 0,
+  "report": "workbench/viewer/screens/sca2/deployed/deployed-report.json"
+ },
+ "unrelated_open_issue": "P1: 8 failures in untracked W3 test_w3_mechanisms.py (176 passed, 4 skipped otherwise); not part of bundle",
+ "org": "token user Bonorinoa has no org membership; Space created under user account",
+ "readme_and_gitattributes_extra": true
+}

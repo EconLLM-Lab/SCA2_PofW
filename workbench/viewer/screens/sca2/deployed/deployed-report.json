@@ -1,0 +1,212 @@
+{
+ "routes": [
+  {
+   "tag": "root",
+   "url": "/",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 9471
+  },
+  {
+   "tag": "tab-a",
+   "url": "/?tab=a",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1001
+  },
+  {
+   "tag": "tab-b",
+   "url": "/?tab=b",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 717
+  },
+  {
+   "tag": "tab-c",
+   "url": "/?tab=c",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1064
+  },
+  {
+   "tag": "story",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "cells": 294
+  },
+  {
+   "tag": "story-cohort-cohort1",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 6885,
+   "cells": 294
+  },
+  {
+   "tag": "story-cohort-bank2",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 6885,
+   "cells": 294
+  },
+  {
+   "tag": "story-cohort-signprompt",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 6885,
+   "cells": 294
+  },
+  {
+   "tag": "story-cohort-persona",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 6885,
+   "cells": 294
+  },
+  {
+   "tag": "story-crosstalk-adapter",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 6885,
+   "cells": 42
+  },
+  {
+   "tag": "story-crosstalk-signprompt",
+   "url": "/sca2/index.html",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 6885,
+   "cells": 42
+  },
+  {
+   "tag": "featured-00",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_bgd&item=wvs_Q57",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1687
+  },
+  {
+   "tag": "featured-01",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_chn&item=wvs_Q57",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1689
+  },
+  {
+   "tag": "featured-02",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_grc&item=wvs_Q106",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1858
+  },
+  {
+   "tag": "featured-03",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_nga&item=wvs_Q106",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1856
+  },
+  {
+   "tag": "featured-04",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_irn&item=wvs_Q43",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1637
+  },
+  {
+   "tag": "featured-05",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_can&item=wvs_Q43",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1639
+  },
+  {
+   "tag": "featured-06",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_irn&item=wvs_Q50",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1713
+  },
+  {
+   "tag": "featured-07",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q50",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1731
+  },
+  {
+   "tag": "featured-08",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_tha&item=wvs_Q99",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1613
+  },
+  {
+   "tag": "featured-09",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_egy&item=wvs_Q99",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1611
+  },
+  {
+   "tag": "featured-10",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_gbr&item=wvs_Q81",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1698
+  },
+  {
+   "tag": "featured-11",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q81",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1730
+  },
+  {
+   "tag": "featured-12",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_phl&item=wvs_Q176",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1741
+  },
+  {
+   "tag": "featured-13",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q176",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1768
+  },
+  {
+   "tag": "featured-14",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_chn&item=wvs_Q99",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1618
+  },
+  {
+   "tag": "featured-15",
+   "url": "/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q99",
+   "status": 200,
+   "pageError": null,
+   "bodyChars": 1641
+  }
+ ],
+ "console": [],
+ "pageerrors": [],
+ "badresponses": [],
+ "requestfailed": [],
+ "summary": {
+  "routes": 27,
+  "featuredLinks": 16,
+  "consoleMsgs": 0,
+  "pageerrors": 0,
+  "badresponses": 0,
+  "requestfailed": 0,
+  "routeErrors": 0
+ }
+}
