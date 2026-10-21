@@ -5,6 +5,8 @@ description = "SCA2 adapter-brain workbench — slice 1: tensor conservation hoo
 readme = "AUDIT.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
+  "scipy>=1.11",
+  "matplotlib>=3.9",
     "huggingface-hub>=2.2.0",
     "numpy>=2.4.6",
     "peft>=0.21.2",
@@ -31,3 +33,5 @@ testpaths = ["tests"]
 # (macOS UF_HIDDEN + site.py skipping hidden .pth files). Pinning src/ here makes
 # the test run depend on the source tree, not on that install path. See AUDIT.md §4.
 pythonpath = ["src"]
+
+# W3 mechanism analysis: scipy+matplotlib are scoped to analysis extra, declared 2026-10-19.

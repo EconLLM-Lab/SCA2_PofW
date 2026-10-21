@@ -12,9 +12,19 @@ import subprocess
 import sys
 import time
 import uuid
+from sca2_workbench import sign_route as SR
 
 RSS_LIMIT = 16_000_000_000
 PACKAGE = Path(__file__).resolve().parents[2] / "plans" / "gpu_cohort"
+
+
+def unit_tag(model, profile_id=None):
+    """Keep ordinary model keys unchanged; only prompt-profile units get a suffix."""
+    if profile_id is None:
+        return model
+    if model != "base":
+        raise ValueError("a prompt profile is only valid for model 'base'")
+    return SR.unit_tag(profile_id)
 
 
 def digest(path):
@@ -145,7 +155,8 @@ def source_digest():
     root = Path(__file__).resolve().parents[2]
     files = sorted((root / "src" / "sca2_workbench").glob("*.py"))
     files += [PACKAGE / "runner" / "unit.py"]
-    files += [PACKAGE / "models.json", PACKAGE / "items.json", root / "plans" / "stage1_8b_gaps.json"]
+    files += [PACKAGE / "models.json", PACKAGE / "items.json", PACKAGE / "sign_profiles.json",
+              root / "plans" / "stage1_8b_gaps.json"]
     h = hashlib.sha256()
     for p in files:
         h.update(str(p.relative_to(root)).encode() + b"\0" + p.read_bytes())
@@ -185,6 +196,7 @@ def capture(args):
     from transformers import AutoTokenizer
     from sca2_workbench import export as EX, gates as G, items as I, llama_capture as LC
     from sca2_workbench import stream_capture as SC, stream_export as SE
+    from sca2_workbench import sign_route as SR
     from sca2_workbench.nf4_source import FrozenNF4Source
     from sca2_workbench.offload_hf import build_offloaded_hf
     torch.set_grad_enabled(False)
@@ -194,14 +206,26 @@ def capture(args):
     torch.backends.cudnn.allow_tf32 = False
     registry = json.loads((PACKAGE / "models.json").read_text())
     item_record = next(x for x in json.loads((PACKAGE / "items.json").read_text())["items"] if x["item_id"] == args.item)
-    identity_data = {"model": args.model, "item": args.item, "weights": args.weights, "dtype": args.dtype,
+    identity_extra = {}
+    tag = unit_tag(args.model, args.prompt_profile)
+    baseline = None
+    if args.prompt_profile is not None:
+        if args.baseline is None or (args.weights, args.dtype, args.device) != ("nf4_dequant", "float64", "cpu"):
+            raise ValueError("prompt route requires a phase-1 baseline and nf4_dequant/float64/cpu")
+        profile = SR.load_profiles()[args.prompt_profile]
+        baseline = SR.load_baseline(args.baseline, args.item)
+        identity_extra["prompt_profile"] = args.prompt_profile
+        identity_extra["prompt_profile_sha256"] = profile["prompt_sha256"]
+        identity_extra["archive_source_digest"] = profile["archive"][args.item]["source"]
+        identity_extra["baseline_files"] = baseline["files"]
+    identity_data = {**identity_extra, "model": args.model, "item": args.item, "weights": args.weights, "dtype": args.dtype,
                      "device": args.device, "threads": args.threads, "source_digest": source_digest(),
                      "corrupt_mlp_layer": args.corrupt_mlp_layer,
                      "packages": {p: importlib.metadata.version(p) for p in
                                   ("torch", "transformers", "peft", "numpy", "bitsandbytes", "safetensors")}}
     identity = hashlib.sha256(json_bytes(identity_data)).hexdigest()
     root = Path(args.output)
-    marker = root / "units" / f"{args.weights}_{args.dtype}_{args.model}_{args.item}.json"
+    marker = root / "units" / f"{args.weights}_{args.dtype}_{tag}_{args.item}.json"
     if completed(root, marker, identity):
         update_index(root)
         print("SKIP verified", marker, flush=True)
@@ -213,6 +237,14 @@ def capture(args):
     item = I.Item(**{**{k: v for k, v in item_record.items() if k != "archive"},
                     "codes": tuple(item_record["codes"]), "labels": tuple(item_record["labels"]),
                     "parts": tuple(tuple(x) for x in item_record["parts"])})
+    if baseline:
+        neutral = I.readout_ids(tok, item, {"date_string": "26 Jul 2024"})
+        old = baseline["manifest"]
+        if (old["model"]["adapter"] is not None or old["item"]["meta"].get("prompt_profile") is not None
+                or [t["id"] for t in old["tokens"]] != neutral["prompt_ids"]
+                or old["provenance"]["prompt_sha256"] != hashlib.sha256(neutral["formatted_prompt"].encode()).hexdigest()):
+            raise ValueError("baseline is not the exact neutral base prompt")
+        item = SR.sign_item(item, profile)
     ro = I.readout_ids(tok, item, {"date_string": "26 Jul 2024"})
     dtype = getattr(torch, args.dtype)
     frozen = Path(args.frozen)
@@ -247,8 +279,14 @@ def capture(args):
         instrument = {**instrument, "files": {p.name: digest(p) for p in sorted(frozen.glob("*.safetensors"))}}
     # Source versions, CPU/CUDA codes and distinct frozen instruments must coexist, not overwrite.
     instrument_id = hashlib.sha256(json_bytes(instrument)).hexdigest()[:8]
+    if baseline:
+        old = baseline["manifest"]["provenance"]
+        if old["instrument"] != instrument or old["base_revision"] != registry["base"]["revision"]:
+            raise ValueError("baseline uses a different frozen instrument or base revision")
     base_key = f"llama31_8b_{args.weights}_{args.dtype}_{args.device}_{identity_data['source_digest'][:8]}_{instrument_id}"
     keys = {"a": base_key, "b": f"{base_key}_{args.model.lower()}"}
+    if baseline:
+        keys["a"] = f"{base_key}_{tag}"
     if args.corrupt_mlp_layer is not None:
         keys = {k: f"{v}_corrupt_l{args.corrupt_mlp_layer}" for k, v in keys.items()}
     taus = G.GateTaus(**json.loads((PACKAGE.parent / "stage1_8b_gaps.json").read_text())["taus"]
@@ -266,6 +304,8 @@ def capture(args):
         probs = LC.code_probs(logits, ro["code_token"])
         key = keys[arm]
         label = f"Llama-3.1-8B-Instruct{' + ' + args.model + ' LoRA' if arm == 'b' else ''} [{args.weights}, {args.dtype}]"
+        if baseline:
+            label += f" + sign prompt {args.prompt_profile}"
         meta = None if arm == "a" else {**lora.describe(), "dir": entry["path"], "country": args.model,
                                         "revision": entry["revision"], "item_split": None}
         man, bw = SE.run_manifest(key=key, label=label, model_id=registry["base"]["model_id"],
@@ -275,7 +315,7 @@ def capture(args):
                                  chat_kwargs={"date_string": "26 Jul 2024"}, adapter=meta)
         man["readout"]["probs_teacher_forced_hf_source"] = "HF float32 on the same effective weights; shared-prefix Eq.6 factorization"
         arm_archive = "base" if arm == "a" else args.model
-        archived = item_record["archive"][arm_archive]
+        archived = profile["archive"][args.item] if baseline else item_record["archive"][arm_archive]
         scores = completion_logprobs(res[arm], ro)
         man["readout"]["option_logprobs"] = scores
         man["readout"]["option_logprob_source"] = "streamed high-precision full-vocabulary log-softmax: shared prefix token + final code token, summed nats"
@@ -288,6 +328,24 @@ def capture(args):
         manifests[arm] = man
         outputs[stem + ".json"] = json_bytes(man)
         outputs[stem + ".bin"] = b"".join(bw.parts)
+    if baseline:
+        man, bw = SE.prompt_pair_manifest(
+            key_a=baseline["key"], key_b=keys["a"], item_id=args.item,
+            man_a=baseline["manifest"], man_b=manifests["a"], out_a=baseline["out"],
+            out_a_clamped=baseline["out"]["_clamped_attr"], out_b=res["a"], out_b_clamped=res["a_clamped"],
+            run_files={"a": baseline["run_file"], "b": f"run__{keys['a']}__{args.item}.json"},
+            profile_id=args.prompt_profile, retain_failed=True)
+        man = canonical_manifest(man, {"weights": args.weights, "compute_dtype": args.dtype,
+                                       "source_digest": identity_data["source_digest"],
+                                       "baseline_files": baseline["files"]})
+        stem = f"pair__{baseline['key']}__{keys['a']}__{args.item}"
+        man["bin"] = stem + ".bin"
+        manifests["pair"] = man
+        outputs[stem + ".json"] = json_bytes(man)
+        outputs[stem + ".bin"] = b"".join(bw.parts)
+        # Self-contained exports, preserving A's original immutable bytes and provenance.
+        for name in baseline["files"]:
+            outputs[name] = (Path(args.baseline) / name).read_bytes()
     if lora:
         dh, dm = SC.lora_weight_delta(lora, src)
         man, bw = SE.pair_manifest(key_a=keys["a"], key_b=keys["b"], item_id=args.item,
@@ -310,11 +368,11 @@ def capture(args):
            "files": {n: digest(root / n) for n in sorted(outputs)}}
     publish(marker, json_bytes(rec))
     update_index(root)
-    timings = {"model": args.model, "item": args.item, "weights": args.weights, "dtype": args.dtype,
+    timings = {"model": tag, "item": args.item, "weights": args.weights, "dtype": args.dtype,
                "capture_seconds": capture_seconds, "total_seconds": time.monotonic() - t0,
                "peak_rss_gib": SC.peak_rss_gb(), "pass": passed,
                "sizes": {n: len(raw) for n, raw in outputs.items()}}
-    attempt = root / "attempts" / f"{args.model}_{args.item}_{time.time_ns()}.json"
+    attempt = root / "attempts" / f"{tag}_{args.item}_{time.time_ns()}.json"
     publish(attempt, json_bytes(timings))
     print("UNIT_DONE", json.dumps(timings), flush=True)
     if not passed:
@@ -363,13 +421,22 @@ def main():
     ap.add_argument("--timeout", type=float, default=1800)
     ap.add_argument("--pause-after-layer", type=int)
     ap.add_argument("--corrupt-mlp-layer", type=int)
+    # W2 prompt route: base + sign-profile prompt (no adapter, same frozen instrument)
+    ap.add_argument("--prompt-profile", type=str, default=None,
+                    help="profile id from sign_profiles.json; when set, the base is prompted with that profile")
+    ap.add_argument("--baseline", type=str, default=None,
+                    help="path to phase-1 base-run directory for pair comparison; only with --prompt-profile")
     ap.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = ap.parse_args()
+    if args.prompt_profile is not None and args.model != "base":
+        ap.error("--prompt-profile is only valid with --model base")
+    if (args.prompt_profile is None) != (args.baseline is None):
+        ap.error("--prompt-profile and --baseline must be supplied together")
     if args.worker:
         capture(args)
     else:
         stamp = time.time_ns()
-        log = Path(args.output) / "attempts" / f"{args.model}_{args.item}_{stamp}.log"
+        log = Path(args.output) / "attempts" / f"{unit_tag(args.model, args.prompt_profile)}_{args.item}_{stamp}.log"
         print("LOG", log, flush=True)
         # A file lock also prevents two separately launched cohort workers sharing the host.
         import fcntl

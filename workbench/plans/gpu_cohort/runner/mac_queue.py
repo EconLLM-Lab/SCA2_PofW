@@ -18,9 +18,12 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
 from sca2_workbench.cohort import PACKAGE, RSS_LIMIT, digest, fetch_inputs, source_digest as current_source_digest
+from sca2_workbench.sign_route import load_profiles, profile_of_tag
+from sca2_workbench.cohort import unit_tag
 from cohort_queue import plan
 
-B0_SECONDS = {"base": 32.5, "adapter": 65.3}   # Mac M4 Pro, float64, benchmark/BENCHMARK.md
+B0_SECONDS = {"base": 32.5, "adapter": 65.3,   # Mac M4 Pro, float64, benchmark/BENCHMARK.md
+              "prompt": 65.0}   # base + sign-profile prompt: 2-unit proof 61.7 s, first 37 units median 63.6 s
 WALL_FACTOR = 4
 MIN_FREE_BYTES = 40e9
 MAX_CONSECUTIVE_FAILURES = 3
@@ -39,7 +42,12 @@ class UnitResult:
 
 
 def wall_limit(key):
-    return WALL_FACTOR * B0_SECONDS["base" if key == "base" else "adapter"]
+    # wall_limit is defined at module level so the test can call it directly
+    if isinstance(key, str) and key.startswith("base_sp"):
+        return WALL_FACTOR * B0_SECONDS["prompt"]   # longer prompt; the plain-base limit aborted at 36/598
+    if key == "base":
+        return WALL_FACTOR * B0_SECONDS["base"]
+    return WALL_FACTOR * B0_SECONDS["adapter"]
 
 
 def marker_path(root, key, item_id):
@@ -147,13 +155,28 @@ def kill_descendants(*_):
     raise Terminated()
 
 
-def unit_runner(root, frozen):
+def plan_route(profiles, items):
+    """One base-model unit per sign profile and strict-battery item."""
+    return [unit_tag("base", pid) for pid in sorted(profiles)], items
+
+
+def unit_command(key, item_id, *, root, frozen, baseline=None):
+    profile = profile_of_tag(key)
+    cmd = [sys.executable, str(PACKAGE / "runner" / "unit.py"), "--model", "base" if profile else key,
+           "--item", item_id, "--weights", WEIGHTS, "--dtype", DTYPE, "--device", "cpu",
+           "--output", str(root), "--frozen", str(frozen), "--timeout", str(wall_limit(key))]
+    if profile:
+        if baseline is None:
+            raise ValueError("prompt route requires a baseline directory")
+        cmd += ["--prompt-profile", profile, "--baseline", str(baseline)]
+    return cmd
+
+
+def unit_runner(root, frozen, baseline=None):
     root = Path(root)
 
     def run_unit(key, item_id):
-        cmd = [sys.executable, str(PACKAGE / "runner" / "unit.py"), "--model", key, "--item", item_id,
-               "--weights", WEIGHTS, "--dtype", DTYPE, "--device", "cpu", "--output", str(root),
-               "--frozen", str(frozen), "--timeout", str(wall_limit(key))]
+        cmd = unit_command(key, item_id, root=root, frozen=frozen, baseline=baseline)
         # Offline: adapters are prefetched and the base is cached; no per-unit Hub round trip.
         env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", HF_HUB_OFFLINE="1")
         print("UNIT_START", key, item_id, flush=True)
@@ -185,17 +208,21 @@ def main():
     ap.add_argument("--frozen", type=Path, required=True)
     ap.add_argument("--only", nargs="+", metavar="KEY:ITEM", help="proof runs: just these units")
     ap.add_argument("--prefetch-only", action="store_true")
+    ap.add_argument("--prompt-route", action="store_true")
+    ap.add_argument("--baseline", type=Path)
     args = ap.parse_args()
+    if args.prompt_route != (args.baseline is not None):
+        ap.error("--prompt-route and --baseline must be supplied together")
     reg = json.loads((PACKAGE / "models.json").read_text())
     if args.prefetch_only:
         prefetch(reg)
         return
     items = json.loads((PACKAGE / "items.json").read_text())["items"]
-    keys, items = plan(False, reg, items)
+    keys, items = plan_route(load_profiles(), items) if args.prompt_route else plan(False, reg, items)
     only = {tuple(x.split(":", 1)) for x in args.only} if args.only else None
     signal.signal(signal.SIGTERM, kill_descendants)
     with single_queue(args.output):
-        status = run_queue(keys, items, root=args.output, run_unit=unit_runner(args.output, args.frozen),
+        status = run_queue(keys, items, root=args.output, run_unit=unit_runner(args.output, args.frozen, args.baseline),
                            free_bytes=lambda: __import__("shutil").disk_usage(args.output).free,
                            source_digest=current_source_digest(), pid=os.getpid(), only=only)
     print("QUEUE_END", json.dumps(status), flush=True)

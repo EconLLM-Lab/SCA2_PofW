@@ -180,3 +180,53 @@ def pair_manifest(*, key_a: str, key_b: str, item_id: str, man_a: dict, man_b: d
                        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
     }
     return pair, b
+def prompt_pair_manifest(*, key_a: str, key_b: str, item_id: str, man_a: dict, man_b: dict,
+                              out_a: dict, out_b: dict, out_a_clamped: dict, out_b_clamped: dict,
+                              run_files: dict, profile_id: str, retain_failed: bool = False) -> tuple:
+    """Signed readout DLA differences only: token positions in A and B are NOT aligned.
+
+    Each arm uses its own final RMS denominator, exactly as its raw logit margin does.
+    No common-rho rescaling, token-norm subtraction, or invented weight delta is valid here.
+    The existing four pair-conservation gates apply unchanged, including stored-f32 sums.
+    """
+    for section, fields in (("item", ("item_id", "codes", "j_plus", "j_minus")),
+                            ("readout", ("code_token", "prefix_tokens")),
+                            ("model", ("model_id", "n_layers", "n_heads", "adapter"))):
+        for field in fields:
+            if man_a.get(section, {}).get(field) != man_b.get(section, {}).get(field):
+                raise ValueError(f"{item_id}: incompatible readout {section}.{field}")
+
+    def attr(out, clamped):
+        return {**{k: out[k] for k in ("head_attr", "mlp_attr", "embed_attr", "attn_attr")},
+                "_clamped_attr": {k: clamped[k] for k in ("head_attr", "mlp_attr", "embed_attr")}}
+    a, b = attr(out_a, out_a_clamped), attr(out_b, out_b_clamped)
+    for name in ("head_attr", "mlp_attr", "attn_attr"):
+        if a[name].shape != b[name].shape:
+            raise ValueError(f"{item_id}: incompatible readout shape {name}")
+    ra, rb = man_a["readout"], man_b["readout"]
+    d, embed, chk = EX.d_attribution_gate(a, b, ra["margin"], rb["margin"])
+    dc, embed_c, chk_c = EX.d_attribution_gate(a, b, ra["margin_clamped"], rb["margin_clamped"], clamped=True)
+    conservation = EX.pair_conservation(chk, chk_c)
+    if not conservation["pass"] and not retain_failed:
+        raise AssertionError(f"{key_a} -> {key_b} {item_id}: prompt attributions do not sum to d_margin: {conservation}")
+    bw = EX.BinWriter()
+    for name in ("head_attr", "mlp_attr", "attn_attr"):
+        bw.add("d_" + name, d[name], f"Signed {name}(prompt B) - {name}(neutral A) at each arm's readout.")
+    for name in ("head_attr", "mlp_attr"):
+        bw.add("d_" + name + "_clamped", dc[name], f"Signed clamped {name}(B) - {name}(A).")
+    pair = {
+        "schema": EX.SCHEMA, "kind": "pair", "route": "prompt", "prompt_profile": profile_id,
+        "a": key_a, "b": key_b, "item_id": item_id, "runs": run_files,
+        "tokens": {"a": len(man_a["tokens"]), "b": len(man_b["tokens"])},
+        "d_probs": {c: rb["probs"][c] - ra["probs"][c] for c in ra["probs"]},
+        "d_margin": rb["margin"] - ra["margin"],
+        "d_margin_clamped": rb["margin_clamped"] - ra["margin_clamped"],
+        "d_embed_attr": embed, "d_embed_attr_clamped": embed_c,
+        "conservation": conservation, "arrays": bw.meta,
+        "provenance": {"capture": "prompt B minus neutral A; signed readout DLA only",
+                       "readout_scale": "raw logit(j+) - logit(j-); each arm's own final RMS denominator",
+                       "baseline_attribution_storage": "float32 widened to float64 before subtraction",
+                       "unaligned_token_differences": "not defined; omitted",
+                       "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
+    }
+    return pair, bw
