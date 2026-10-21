@@ -14,7 +14,8 @@
 // disposal (disposeScene, renderLists.dispose) is in scene.ts / tab-a.ts and runs on every rebuild
 // and whenever the 3D tab is left.
 
-import { ensureHeavy, loadBundle, loadIndex, type Bundle, type IndexFile } from "./data";
+import { ensureHeavy, loadBundle, loadIndex, prefetchHeavy, type Bundle, type IndexFile } from "./data";
+import { initTopBar, showLoader } from "./loading";
 import { checkLine, checksOf, esc, openLearn, roleOf } from "./common";
 import { mountLanding } from "./landing";
 import { mountLadder } from "./tab-c";
@@ -143,6 +144,14 @@ async function route() {
   document.querySelector<HTMLDialogElement>("dialog#learn")?.close();
   const p = url(), tab = p.get("tab") as Tab | null;
   const { a, b, item } = shared(p);
+  // The loading card: inside the boot screen on the first visit, else a centred card over the greyed view.
+  const boot = app.querySelector<HTMLElement>(".boot");
+  const hide = showLoader(tab === "a"
+    ? { host: boot ?? undefined, delay: boot ? 0 : 350, title: boot ? "" : "Loading the 3D view",
+        note: "The 3D view needs the attention data of every layer: about 40 MB on the first visit. This browser keeps a copy, so the next visit opens at once." }
+    : { host: boot ?? undefined, delay: boot ? 0 : 350, title: boot ? "" : "Loading the saved model run",
+        note: "Only the first visit downloads this. This browser keeps a copy, so the next visit opens at once." });
+  const signal = ac.signal;
   try {
     const got = await loadBundle(a, b, item);
     // The 3D object draws the attention and gate arrays (~20 MB per Llama run), so it waits for them. The ladder
@@ -154,11 +163,11 @@ async function route() {
       app.className = "landing";
       unmount = mountLanding(app, D, { go });
       W.__ready = true;
+      idle(seq, () => prefetchHeavy(got, signal));
     } else {
       const view = shell(tab, D);
       const sA = app.querySelector<HTMLElement>(".slot.a")!, sB = app.querySelector<HTMLElement>(".slot.b")!;
       sA.title = `Model A: ${D.A.m.model.label}${roleOf(D, "A")}`; sB.title = `Model B: ${D.B.m.model.label}${roleOf(D, "B")}`;
-      const signal = ac.signal;
       const ctx: Ctx = {
         get: (k) => url().get(k),
         set: (k, v) => { const q = url(); if (v == null || v === "") q.delete(k); else q.set(k, String(v)); write(q); },
@@ -167,10 +176,12 @@ async function route() {
         mode: (on) => { const c = app.querySelector<HTMLElement>("#clampchip"); if (c) c.hidden = !on; },
       };
       unmount = TABS[tab](view, D, ctx);
+      if (tab === "k") idle(seq, () => prefetchHeavy(got, signal));
       if (tab === "c" || tab === "b") {
         const D0 = D;
-        ensureHeavy(D0).then(() => { if (seq === routeSeq) document.dispatchEvent(new Event("sca2:heavy")); })
-          .catch((e) => { if (seq === routeSeq) console.error(`attention arrays failed to load: ${e}`); });
+        // Background, and aborted when the visitor moves on, so it never slows the next view (finished chunks stay cached).
+        ensureHeavy(D0, { quiet: true, signal }).then(() => { if (seq === routeSeq) document.dispatchEvent(new Event("sca2:heavy")); })
+          .catch((e) => { if (seq === routeSeq && !signal.aborted) console.error(`attention arrays failed to load: ${e}`); });
       }
     }
     if (p.get("learn")) openLearn(D, p.get("learn")!);
@@ -183,7 +194,13 @@ async function route() {
       <pre class="err">${esc(String(e))}</pre>
       <p>No figure from another pair is left on screen. Reload the page, or <a href="?tab=c">open the default view</a>.</p></div>`;
     W.__ready = "error: " + String(e);
+  } finally {
+    hide();
   }
+}
+/** Run fn once the page has been idle for a moment, unless another route has started since. */
+function idle(seq: number, fn: () => void) {
+  setTimeout(() => { if (seq === routeSeq) fn(); }, 2500);
 }
 
 // One delegated listener for tab buttons, landing links and every "learn more" button.
@@ -209,6 +226,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 (async () => {
+  initTopBar();
   try { index = await loadIndex(); W.__index = index; await route(); }
   catch (e) { app.textContent = String(e); W.__ready = "error: " + String(e); }
 })();

@@ -117,6 +117,56 @@ const CHUNK = 2 * 1024 * 1024;   // and split long spans into requests of at mos
                                  // (the CDN serves each request at roughly 0.5-1 MB/s; parallel requests add up)
 const fullFile = new Map<string, Promise<ArrayBuffer>>();   // servers that ignore Range (plain dev servers)
 
+/** Options for one array fetch. `quiet`: background work (it shows only in the thin top bar, never in the
+ * loading card). `signal`: abort a background prefetch when the visitor moves on. */
+export interface FetchOpts { quiet?: boolean; signal?: AbortSignal }
+
+/** Bytes requested from and received over the network (cache hits do not count). `fg` is what the visible view
+ * waits for; `bg` is background work. Listeners: the "sca2:progress" event (at most once per frame). */
+export const progress = { fg: { want: 0, got: 0 }, bg: { want: 0, got: 0 } };
+let tick = 0;
+function emit() {
+  if (tick) return;
+  tick = requestAnimationFrame(() => {
+    tick = 0;
+    for (const b of [progress.fg, progress.bg]) if (b.got >= b.want) { b.want = 0; b.got = 0; }   // settled: start over
+    document.dispatchEvent(new Event("sca2:progress"));
+  });
+}
+const bucket = (o?: FetchOpts) => (o?.quiet ? progress.bg : progress.fg);
+
+// At most SLOTS network ranges at a time, the visible view's first. The CDN caps each visitor's bandwidth, so more
+// parallel requests do not finish sooner; with a queue the chunks finish one after another and each finished chunk
+// is cached, so an aborted background download keeps most of its work (WB5-V N1).
+const SLOTS = 4;
+let busy = 0;
+const waiting: { fg: (() => void)[]; bg: (() => void)[] } = { fg: [], bg: [] };
+function slot(quiet: boolean, signal?: AbortSignal): Promise<void> {
+  if (busy < SLOTS && !waiting.fg.length && (!quiet || !waiting.bg.length)) { busy++; return Promise.resolve(); }
+  return new Promise((ok, no) => {
+    const q = quiet ? waiting.bg : waiting.fg;
+    const go = () => { signal?.removeEventListener("abort", drop); busy++; ok(); };
+    const drop = () => { const i = q.indexOf(go); if (i >= 0) q.splice(i, 1); no(new DOMException("aborted", "AbortError")); };
+    if (signal?.aborted) return drop();
+    signal?.addEventListener("abort", drop, { once: true });
+    q.push(go);
+  });
+}
+function release() { busy--; const next = waiting.fg.shift() ?? waiting.bg.shift(); if (next) next(); }
+
+/** Read a response body of known length, counting bytes as they arrive (for the progress display). */
+async function readCounted(r: Response, n: number, b: { want: number; got: number }, c: { n: number }): Promise<ArrayBuffer> {
+  if (!r.body) { const x = await r.arrayBuffer(); const k = Math.min(n, x.byteLength); b.got += k; c.n += k; emit(); return x; }
+  const out = new Uint8Array(n), rd = r.body.getReader(); let o = 0;
+  for (;;) {
+    const { done, value } = await rd.read();
+    if (done) break;
+    if (o + value.byteLength > n) { rd.cancel().catch(() => {}); throw new Error(`more than the ${n} bytes asked for`); }
+    out.set(value, o); o += value.byteLength; b.got += value.byteLength; c.n += value.byteLength; emit();
+  }
+  return o === n ? out.buffer : out.buffer.slice(0, o);   // a short body is caught by the caller's length check
+}
+
 async function sha256hex(text: string): Promise<string> {
   try {
     const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -126,7 +176,7 @@ async function sha256hex(text: string): Promise<string> {
 async function openCache(): Promise<Cache | null> {
   try { return "caches" in self ? await caches.open(RANGE_CACHE) : null; } catch { return null; }
 }
-async function getRange(bin: string, start: number, end: number, ver: string): Promise<ArrayBuffer> {
+async function getRange(bin: string, start: number, end: number, ver: string, opts?: FetchOpts): Promise<ArrayBuffer> {
   const want = end - start, key = `/__sca2-range/${ver}/${encodeURIComponent(bin)}/${start}-${end}`;
   const cache = ver ? await openCache() : null;
   if (cache) {
@@ -135,15 +185,31 @@ async function getRange(bin: string, start: number, end: number, ver: string): P
   let buf: ArrayBuffer;
   if (fullFile.has(bin)) buf = (await fullFile.get(bin)!).slice(start, end);
   else {
-    const r = await fetch(`/exports/${bin}`, { headers: { Range: `bytes=${start}-${end - 1}` } });
-    if (!r.ok) throw new Error(`${bin}: HTTP ${r.status}`);
-    if (r.status === 206) {
-      const cr = r.headers.get("content-range");   // "bytes s-e/total", when the header is exposed
-      const m = cr?.match(/bytes (\d+)-(\d+)/);
-      if (m && (+m[1] !== start || +m[2] !== end - 1)) throw new Error(`${bin}: asked for bytes ${start}-${end - 1}, got ${cr}`);
-      buf = await r.arrayBuffer();
-    } else {   // 200: the server ignored Range and sent the whole file; keep it for the other ranges of this file
-      const whole = r.arrayBuffer(); fullFile.set(bin, whole); buf = (await whole).slice(start, end);
+    const b = bucket(opts); b.want += want; emit();
+    const counted = { n: 0 };
+    let held = false;
+    try {
+      await slot(!!opts?.quiet, opts?.signal); held = true;
+      const hit2 = cache ? await cache.match(key).catch(() => undefined) : undefined;   // filled while we queued?
+      if (hit2) { const x = await hit2.arrayBuffer(); if (x.byteLength === want) return x; }
+      if (fullFile.has(bin)) buf = (await fullFile.get(bin)!).slice(start, end);   // whole file arrived while we queued
+      else {
+        const r = await fetch(`/exports/${bin}`, { headers: { Range: `bytes=${start}-${end - 1}` }, signal: opts?.signal });
+        if (!r.ok) throw new Error(`${bin}: HTTP ${r.status}`);
+        if (r.status === 206) {
+          const cr = r.headers.get("content-range");   // "bytes s-e/total", when the header is exposed
+          const m = cr?.match(/bytes (\d+)-(\d+)/);
+          if (m && (+m[1] !== start || +m[2] !== end - 1)) throw new Error(`${bin}: asked for bytes ${start}-${end - 1}, got ${cr}`);
+          buf = await readCounted(r, want, b, counted);
+        } else {   // 200: the server ignored Range and sent the whole file; keep it for the other ranges of this file
+          const whole = r.arrayBuffer(); fullFile.set(bin, whole);
+          whole.catch(() => fullFile.delete(bin));   // a failed whole-file read must not poison later ranges
+          buf = (await whole).slice(start, end);
+        }
+      }
+    } finally {
+      if (held) release();
+      b.got += want - counted.n; emit();   // settle this request in the progress count, success or not
     }
   }
   if (buf.byteLength !== want) throw new Error(`${bin}: got ${buf.byteLength} bytes for range ${start}-${end - 1}`);
@@ -151,7 +217,7 @@ async function getRange(bin: string, start: number, end: number, ver: string): P
   return buf;
 }
 
-async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>, ver: string, only?: (name: string) => boolean): Promise<Record<string, Tensor>> {
+async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>, ver: string, only?: (name: string) => boolean, opts?: FetchOpts): Promise<Record<string, Tensor>> {
   const pick = Object.entries(arrays).filter(([k]) => !only || only(k)).sort((x, y) => x[1].offset - y[1].offset);
   const groups: { start: number; end: number; items: [string, ArrayMeta][] }[] = [];
   for (const it of pick) {
@@ -160,9 +226,9 @@ async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>, v
     else groups.push({ start: m.offset, end: m.offset + m.nbytes, items: [it] });
   }
   const span = async (start: number, end: number): Promise<ArrayBuffer> => {
-    if (end - start <= CHUNK) return getRange(binName, start, end, ver);
+    if (end - start <= CHUNK) return getRange(binName, start, end, ver, opts);
     const cuts: number[] = []; for (let a = start; a < end; a += CHUNK) cuts.push(a);
-    const parts = await Promise.all(cuts.map((a) => getRange(binName, a, Math.min(a + CHUNK, end), ver)));
+    const parts = await Promise.all(cuts.map((a) => getRange(binName, a, Math.min(a + CHUNK, end), ver, opts)));
     const whole = new Uint8Array(end - start); let o = 0;
     for (const q of parts) { whole.set(new Uint8Array(q), o); o += q.byteLength; }
     return whole.buffer;
@@ -182,7 +248,8 @@ async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>, v
 }
 
 export interface Run { m: RunManifest; t: Record<string, Tensor>; clientCheck: ClientCheck;
-  /** cache version: SHA-256 of the manifest text */ ver: string; /** set once the HEAVY arrays are requested */ heavy?: Promise<void> }
+  /** cache version: SHA-256 of the manifest text */ ver: string; /** set once the HEAVY arrays are requested */ heavy?: Promise<void>;
+  /** the abort signal of the request behind `heavy`, if it was a prefetch */ heavySignal?: AbortSignal }
 export interface Pair { m: PairManifest; t: Record<string, Tensor> }
 
 /** Closure recomputed in the browser from the float32 arrays that are drawn. Python passes
@@ -225,13 +292,24 @@ export async function loadPair(file: string): Promise<Pair> {
 }
 
 export const hasHeavy = (r: Run) => [...HEAVY].every((k) => !(k in r.m.arrays) || k in r.t);
-function ensureHeavyRun(r: Run): Promise<void> {
-  if (!r.heavy) r.heavy = fetchArrays(r.m.bin, r.m.arrays, r.ver, (k) => HEAVY.has(k)).then((t) => { Object.assign(r.t, t); })
-    .catch((e) => { r.heavy = undefined; throw e; });
+function ensureHeavyRun(r: Run, opts?: FetchOpts): Promise<void> {
+  // A pending request that belongs to an aborted prefetch is not reused: start again (finished chunks are cached).
+  if (r.heavy && r.heavySignal?.aborted) r.heavy = undefined;
+  if (!r.heavy) {
+    const p: Promise<void> = fetchArrays(r.m.bin, r.m.arrays, r.ver, (k) => HEAVY.has(k), opts).then((t) => { Object.assign(r.t, t); r.heavySignal = undefined; })
+      .catch((e) => { if (r.heavy === p) r.heavy = undefined; throw e; });
+    r.heavy = p; r.heavySignal = opts?.signal;
+  }
   return r.heavy;
 }
 /** Load the HEAVY arrays of A and B (once per run; later calls return the same promise). */
-export const ensureHeavy = (D: Bundle) => Promise.all([ensureHeavyRun(D.A), ensureHeavyRun(D.B)]).then(() => undefined);
+export const ensureHeavy = (D: Bundle, opts?: FetchOpts) => Promise.all([ensureHeavyRun(D.A, opts), ensureHeavyRun(D.B, opts)]).then(() => undefined);
+/** Fetch the HEAVY arrays in the background, so the 3D view and the attention panels are usually ready before
+ * they are opened. Aborted when the visitor moves to another view; never reports an error. */
+export function prefetchHeavy(D: Bundle, signal: AbortSignal) {
+  if (hasHeavy(D.A) && hasHeavy(D.B)) return;
+  ensureHeavy(D, { quiet: true, signal }).catch(() => { /* aborted or failed: the view that needs them retries */ });
+}
 
 /** A, B and their pair export for one item. Cached, so switching tabs does not refetch. */
 export interface Bundle { A: Run; B: Run; P: Pair; key: string }

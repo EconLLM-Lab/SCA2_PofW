@@ -3,15 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SCA2 workbench</title>
+  <title>SCA2 workbench · inside Llama-3.1-8B with country adapters</title>
+  <meta name="description" content="Saved runs of Llama-3.1-8B-Instruct, with and without country adapters trained on six preference signs: see which layers move the model's survey answer. EconLLM Lab, Paper B." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SCA2 workbench · inside Llama-3.1-8B with country adapters" />
+  <meta property="og:description" content="Saved runs of Llama-3.1-8B-Instruct, with and without country adapters trained on six preference signs: see which layers move the model's survey answer." />
+  <meta property="og:image" content="https://econllm-sca2-workbench.static.hf.space/screens/v4/ladder-1440.png" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 <body>
   <!-- main.ts routes: no ?tab = landing; ?tab=c|b|a = workbench tabs (ladder, matrix, 3D object) -->
-  <!-- Shown until main.ts draws: the default Llama captures are ~22 MB per run, fetched as byte ranges and kept in this browser's cache (data.ts). -->
+  <!-- Shown until main.ts draws. main.ts adds the loading card (loading.ts: layer bars + real download progress) inside .boot. -->
   <div id="app"><div class="boot" data-obj="boot"><b>Loading the saved model run…</b>
-    <p>The first visit downloads a few megabytes of saved model internals (Llama-3.1-8B captures). This browser keeps them, so later visits open at once.</p>
     <p>Meanwhile, the <a href="/sca2/index.html">Paper B story</a> loads quickly.</p></div></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
