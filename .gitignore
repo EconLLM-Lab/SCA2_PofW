@@ -246,3 +246,6 @@ synthetic_generation/AGENTS.md
 *.sav
 *.rds
 # --- end model weights & raw data ---
+
+# WB7-H: descriptive WVS-7 country shares; local only, never committed
+workbench/human_ref/

@@ -15,6 +15,7 @@
 import { loadPair, type Bundle, type IndexFile, type Pair } from "./data";
 import type { Ctx } from "./main";
 import { C, diverging, esc } from "./common";
+import { LEGEND, NO_DATA, RULE_TIP, WHO_TIP, cellOf, compare, countryName, hpct, loadHuman, markerText } from "./human";
 import {
   SIGNS, answerName, arrange, buildRows, change, defaultShow, loadItemInfo, pairSentence, pct, profileName, shortQuestion,
   type Block, type ItemInfo, type Row, type Section, type Show, type Sort,
@@ -54,7 +55,8 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   document.querySelector("#frame .illus")?.remove();   // the frame's "no data yet" badge is for the empty state only
 
   // ---------------------------------------------------------------- state: the URL keys `show` and `sort`
-  const sortOf = (): Sort => (ctx.get("sort") === "size" ? "size" : "pair");
+  type SortK = Sort | "survey";
+  const sortOf = (): SortK => (ctx.get("sort") === "size" ? "size" : ctx.get("sort") === "survey" ? "survey" : "pair");
 
   root.innerHTML = `<div class="k-wrap"><p id="kskel" class="muted">Loading the question wording and the saved answers…</p></div><div class="k-tip" role="tooltip" hidden></div>`;
   const wrap = root.querySelector<HTMLElement>(".k-wrap")!, tip = root.querySelector<HTMLElement>(".k-tip")!;
@@ -68,7 +70,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     return run ? loadItemInfo(run.file) : Promise.reject(new Error(`no saved run of the base on ${it}`));
   }));
 
-  Promise.all([infosP, signsP]).then(([infos, bitsOf]) => {
+  Promise.all([infosP, signsP, loadHuman()]).then(([infos, bitsOf, human]) => {
     if (!alive) return;
     const info = new Map<string, ItemInfo>(infos.map((i) => [i.item_id, i]));
     const cur = info.get(item);
@@ -83,6 +85,31 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const bFor = (it: string) => { const ps = itemsOf(it); return (ps.find((p) => p.b === D.B.m.model.key) ?? ps[0]).b; };
     const lays = new Map<string, number[]>();   // filled when the pair files arrive
     const ans = (code: string) => answerName(cur, code);
+    // ---- WB7-H: the descriptive human reference. On only for a survey question and only when the bundle has the file.
+    const humanOn = !!human && item.startsWith("wvs_");
+    const probsOf = (m: string) => runs.find((r) => r.model === m && r.item_id === item) as unknown as { probs?: Record<string, number> } | undefined;
+    const itemShape = { codes: cur.codes, labels: cur.labels, j_plus: cur.j_plus, j_minus: cur.j_minus };
+    /** null: no survey comparison for this row (a sign prompt is a profile, not a country). "nodata": a country with no cell. */
+    const survey = (r: Row) => {
+      if (!humanOn || r.who.kind !== "adapter" || !r.who.cc) return null;
+      const ci = cellOf(human, item, r.who.cc), pb = probsOf(base)?.probs, pc = probsOf(r.who.b)?.probs;
+      if (!ci || !pb || !pc) return "nodata" as const;
+      return { ci, c: compare(itemShape, ci.cell, pb, pc), share: ci.cell.shares[cur.j_plus] ?? 0 };
+    };
+    const rank = (r: Row) => { const v = survey(r); return v == null ? 3 : v === "nodata" ? 2 : v.c.closer ? 0 : 1; };   // yes, no, no survey data, sign prompt
+    const surveyTip = (r: Row) => {
+      const v = survey(r); if (v == null) return "";
+      const who = countryName(r.who.cc!);
+      if (v === "nodata") return ` Survey: ${NO_DATA} for ${who}.`;
+      return ` Survey: ${hpct(v.share)} of respondents in ${who} chose ${plus}. ${v.c.rule === "mean" ? `Mean answer ${v.c.human.toFixed(1)}; the model's expected answer ${v.c.base.toFixed(1)} (base model), ${v.c.cmp.toFixed(1)} (adapter). ` : ""}${markerText(v.c)}. Descriptive comparison, not a Paper B result.`;
+    };
+    const svCell = (r: Row) => {
+      const v = survey(r);
+      if (!humanOn) return "";
+      if (v == null) return `<div class="k-sv" title="A sign prompt is a profile, not a country: it has no survey comparison.">–</div>`;
+      if (v === "nodata") return `<div class="k-sv nd" data-hum="nodata" title="${esc(NO_DATA + " for this country on this question")}">${NO_DATA}</div>`;
+      return `<div class="k-sv ${v.c.closer ? "yes" : "no"}" data-hum="marker" title="${esc(markerText(v.c) + ". " + RULE_TIP + " " + WHO_TIP)}">${v.c.closer ? "yes" : "no"}</div>`;
+    };
     const plus = ans(cur.j_plus), minus = ans(cur.j_minus);
 
     const dots = (bits?: string, onMap = false) => bits && !onMap ? `<span class="k-dots" title="${esc(SIGNS.map((s, i) => `${s}: ${bits[i] === "1" ? "positive" : "negative"}`).join(" · "))}" aria-hidden="true">${[...bits].map((c) => `<i class="${c === "1" ? "p" : "n"}"></i>`).join("")}<code>${esc(bits)}</code></span>` : "";
@@ -94,7 +121,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       const ad = rows.filter((o) => o.who.kind === "adapter" && o.bits === r.bits).map((o) => poss(o.who.name));
       return ad.length ? `= ${ad.join(" and ")} signs` : "";
     };
-    const rowTip = (r: Row) => `${who(r)}${match(r) ? " " + match(r) : ""}: the model gives ${plus} a ${pct(r.pCmp)} probability (base model ${pct(r.pBase)}). Change from the base model in the log-odds of ${plus} over ${minus}: ${change(r.d)}.`;
+    const rowTip = (r: Row) => `${who(r)}${match(r) ? " " + match(r) : ""}: the model gives ${plus} a ${pct(r.pCmp)} probability (base model ${pct(r.pBase)}). Change from the base model in the log-odds of ${plus} over ${minus}: ${change(r.d)}.${surveyTip(r)}`;
     const label = (r: Row, onMap = false) => r.who.kind === "adapter"
       ? `<span class="k-nm"><b>${esc(r.who.name)}</b><em>country adapter</em></span>${dots(r.bits, onMap)}`
       : r.who.kind === "prompt" ? `<span class="k-nm"><b>Sign prompt${onMap && r.bits ? " " + esc(r.bits) : ""}</b><em>${esc(match(r) || "weights unchanged")}</em></span>${dots(r.bits, onMap)}`
@@ -121,7 +148,8 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       if (r.pBase == null || r.pCmp == null) return `<div class="k-db muted">probabilities not in the index</div>`;
       const b = r.pBase * 100, c = r.pCmp * 100, lo = Math.min(b, c), w = Math.abs(c - b);
       const dir = c > b ? "r" : c < b ? "l" : "";
-      return `<div class="k-db" aria-hidden="true">${w > 0 ? `<i class="k-ln" style="left:${lo}%;width:${w}%"></i>` : ""}<i class="k-mb" style="left:${b}%"></i><i class="k-mc" style="left:${c}%"></i>${dir ? `<i class="k-chev ${dir}" style="left:${c}%"></i>` : ""}</div>`;
+      const sv = survey(r), tick = sv && sv !== "nodata" ? `<i class="k-hu" style="left:${sv.share}%" data-hum="tick"></i>` : "";
+      return `<div class="k-db" aria-hidden="true">${tick}${w > 0 ? `<i class="k-ln" style="left:${lo}%;width:${w}%"></i>` : ""}<i class="k-mb" style="left:${b}%"></i><i class="k-mc" style="left:${c}%"></i>${dir ? `<i class="k-chev ${dir}" style="left:${c}%"></i>` : ""}</div>`;
     };
     const topName = (code: string) => ans(code).replace(/^answer /, "");
     // The percentage of the followed answer, with extra decimals only when it ties the most likely answer after rounding.
@@ -134,9 +162,10 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         <div class="k-mid">${dumbbell(r)}${likely}</div>
         <div class="k-pc"><b>${plusText(tb, r.pBase)}</b> <span aria-hidden="true">→</span> <b class="c">${plusText(tc, r.pCmp)}</b></div>
         <div class="k-d num" title="Change from the base model, in log-odds of ${esc(plus)} over ${esc(minus)}">${change(r.d)}</div>
+        ${svCell(r)}
         ${r.cohortOnly ? `<span class="k-open" title="${esc(coTip)}">Cohort only</span>` : `<a class="k-open" href="?tab=c&${esc(ladder(r.who.b))}" ${go(r)} tabindex="-1">Open in the Ladder →</a>`}</div>`;
     };
-    const axis = `<div class="k-row k-axis" aria-hidden="true"><div class="k-who"></div><div class="k-mid"><div class="k-ticks">${[0, 25, 50, 75, 100].map((t) => `<span style="left:${t}%">${t}%</span>`).join("")}</div></div><div class="k-pc">base model → comparator</div><div class="k-d" title="Change from the base model, in log-odds">log-odds change</div><div class="k-open"></div></div>`;
+    const axis = `<div class="k-row k-axis" aria-hidden="true"><div class="k-who"></div><div class="k-mid"><div class="k-ticks">${[0, 25, 50, 75, 100].map((t) => `<span style="left:${t}%">${t}%</span>`).join("")}</div></div><div class="k-pc">base model → comparator</div><div class="k-d" title="Change from the base model, in log-odds">log-odds change</div>${humanOn ? `<div class="k-sv" title="${esc(RULE_TIP)}">closer to survey than base?</div>` : ""}<div class="k-open"></div></div>`;
 
     // ---- the layer map: one row per comparator, one square per layer
     const L = D.A.m.model.n_layers;
@@ -184,9 +213,9 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         <p class="k-q" data-obj="cohort-question"><span class="muted">${esc(cur.item_id)} · </span>“${esc(cur.text)}”<br><span class="muted">Answer followed: ${esc(plus)}. Log-odds compare only ${esc(plus)} and ${esc(minus)}, so they can move differently from one answer's percentage.</span></p>
       </section>
       ${thinMsg}
-      <section class="obj k-head" data-obj="dmargin"><header><span class="cap">Probability that each model gives this answer</span><span class="k-legend" aria-hidden="true"><i class="k-lb"></i>base model<i class="k-lc"></i>comparator</span></header>
+      <section class="obj k-head" data-obj="dmargin"><header><span class="cap">Probability that each model gives this answer</span><span class="k-legend" aria-hidden="true"><i class="k-lb"></i>base model<i class="k-lc"></i>comparator${humanOn ? `<i class="k-lh" title="${esc(WHO_TIP)}"></i><span title="${esc(WHO_TIP)}">${LEGEND}</span>` : ""}</span></header>
         <div class="k-ctl2"><span class="k-ctl"><span class="cap">Show</span><span id="kshow"></span></span><span class="k-ctl"><span class="cap">Order by</span><span id="ksort"></span></span></div>
-        <div id="krows"></div></section>
+        <div id="krows"${humanOn ? ` class="k-hum"` : ""}></div></section>
       ${enough ? `<section class="obj k-map" data-obj="cohort" id="kmapsec"></section>` : ""}
       <details class="k-more" data-obj="cohort-legend"><summary>What do these words mean?</summary>
         <dl>
@@ -232,11 +261,14 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     let blocksNow: Block[] = [];
     const drawMap = () => { const ms = root.querySelector("#kmapsec"); if (ms) ms.innerHTML = mapHtml(blocksNow); };
     const draw = () => {
-      const show = showOf(), sort = sortOf(), blocks = (blocksNow = arrange(rows, show, sort));
+      const show = showOf(), want = sortOf(), sort: SortK = want === "survey" && !humanOn ? "pair" : want;
+      // "survey": one row per block, the rows that are closer to the survey than the base model first, then the others, then no survey data and sign prompts; by size of change within each
+      const flat = sort === "survey" ? arrange(rows, show, "size") : null;
+      const blocks = (blocksNow = flat ? flat.sort((x, y) => rank(x.rows[0]) - rank(y.rows[0])) : arrange(rows, show, sort as Sort));
       const cnt = (n: number) => (n ? ` <span class="n">${n}</span>` : "");
       root.querySelector("#kshow")!.innerHTML = seg("show", [["adapter", `Country adapters${cnt(kinds.adapter)}`], ["prompt", `Sign prompts${cnt(kinds.prompt)}`], ["both", `All comparators${cnt(rows.length)}`]], show);
-      root.querySelector("#ksort")!.innerHTML = seg("sort", [["pair", "Matched pairs", "Group the rows by their six signs: a sign prompt and the country adapters trained on the same six signs, side by side"], ["size", "Size of change (log-odds)", "Largest change in log-odds from the base model first, up or down"]], sort);
-      root.querySelector("#krows")!.innerHTML = blocks.length ? listHtml(blocks, sort) : `<p class="muted">No comparator of this kind on this question.</p>`;
+      root.querySelector("#ksort")!.innerHTML = seg("sort", [["pair", "Matched pairs", "Group the rows by their six signs: a sign prompt and the country adapters trained on the same six signs, side by side"], ["size", "Size of change (log-odds)", "Largest change in log-odds from the base model first, up or down"], ...(humanOn ? [["survey", "Closer to the survey", "Rows that are closer to the survey than the base model first. " + RULE_TIP] as [string, string, string]] : [])], sort);
+      root.querySelector("#krows")!.innerHTML = blocks.length ? listHtml(blocks, sort === "survey" ? "size" : sort) : `<p class="muted">No comparator of this kind on this question.</p>`;
       drawMap();
     };
     draw();

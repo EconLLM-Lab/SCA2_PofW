@@ -151,6 +151,23 @@ def comparator_identity(model: str, base: str) -> dict:
     raise ValueError(f'Q57 comparator is neither an adapter of {base} nor a sign prompt: {model}')
 
 
+def check_human_reference(path: Path) -> dict:
+    """The human reference holds country-level aggregates only: right schema, no cell under n=100, no row-level keys."""
+    if path.is_symlink() or not path.is_file():
+        raise FileNotFoundError(f'Missing or symlink human reference: {path}')
+    ref = json.loads(path.read_text())
+    if ref.get('schema') != 'sca2-workbench/human-reference@1':
+        raise ValueError('human reference: unknown schema')
+    allowed = {'n', 'shares', 'top', 'mean'}
+    cells = 0
+    for iid, item in ref['items'].items():
+        for cc, cell in item['cells'].items():
+            if set(cell) - allowed or cell['n'] < 100 or set(cell['shares']) != set(item['codes']):
+                raise ValueError(f'human reference: bad cell {iid}/{cc}')
+            cells += 1
+    return {'items': len(ref['items']), 'cells': cells, 'source': ref['source']}
+
+
 def build_bundle(args) -> int:
     w = Path(args.workbench).resolve()
     viewer = w / 'viewer'
@@ -362,6 +379,11 @@ def build_bundle(args) -> int:
         def index_bytes(tiers):
             return (json.dumps(dict(curated, comparators=listing(tiers)), indent=1) + '\n').encode()
 
+        # ---- WB7-H: the optional descriptive human reference (off by default). Counted before the byte budget.
+        human = None
+        if getattr(args, 'human_reference', None):
+            human = check_human_reference(Path(args.human_reference))
+            write_bytes(Path(args.human_reference).read_bytes(), 'exports/human_reference.json', 'human-reference')
         widest = len(index_bytes({k: 'numbers' for k in q57_rank if k not in full_keys} | {k: 'full' for k in full_keys}))
         budget = limit - widest - sum(e['bytes'] for e in entries.values())
         # ---- byte budget: upgrade the derived run captures to light runs, in `q57_rank` order
@@ -439,6 +461,7 @@ def build_bundle(args) -> int:
                                         'run numbers only (pairs-only); index.json lists every comparator with its '
                                         'light flag; v1.4 captures stay byte-identical; exact run/pair/binary closure'),
                         q57=q57_report,
+                        human_reference=human,
                         deploy_status='NOT DEPLOYED')
         manifest_tmp = Path(temp) / 'manifest.json'
         manifest_tmp.write_text(json.dumps(manifest, indent=1) + '\n')
@@ -472,6 +495,8 @@ if __name__ == '__main__':
     ap.add_argument('--workbench', type=Path, default=HERE)
     ap.add_argument('--out', type=Path)
     ap.add_argument('--max-bytes', type=int, default=MAX_BYTES)
+    ap.add_argument('--human-reference', type=Path, default=None,
+                    help='WB7-H: copy this aggregate file into the bundle as exports/human_reference.json (off by default)')
     args = ap.parse_args()
     try:
         raise SystemExit(build_bundle(args))

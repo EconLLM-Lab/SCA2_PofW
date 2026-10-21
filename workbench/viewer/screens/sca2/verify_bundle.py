@@ -104,6 +104,19 @@ def main():
         assert c["tier"] in ("full", "light", "numbers"), c
         assert (c["tier"] == "full") == has_heavy, c
         assert (c["tier"] == "numbers") == (not run["arrays"]), c
+    # WB7-H: the human reference is optional. When present it is country-level aggregates only (no row-level keys, no cell under n=100).
+    human_cells = None
+    if "exports/human_reference.json" in entries:
+        ref = json.loads((site / "exports/human_reference.json").read_text())
+        assert ref["schema"] == "sca2-workbench/human-reference@1" and ref["source"].startswith("World Values Survey wave 7"), "human reference schema"
+        human_cells = 0
+        for iid, item in ref["items"].items():
+            assert any(r["item_id"] == iid for r in index["runs"]), iid
+            for cc, cell in item["cells"].items():
+                assert set(cell) <= {"n", "shares", "top", "mean"} and cell["n"] >= 100, (iid, cc)
+                assert set(cell["shares"]) == set(item["codes"]) and cell["top"] in item["codes"], (iid, cc)
+                assert all(isinstance(v, int) and 0 <= v <= 100 for v in cell["shares"].values()), (iid, cc)
+                human_cells += 1
     assert all(not p.endswith((".safetensors", ".pt", ".pth", ".gguf")) for p in entries)
     for rel, entry in entries.items():
         p = site / rel
@@ -119,7 +132,7 @@ def main():
               "files": len(entries), "runs": len(index["runs"]), "pairs": len(index["pairs"]),
               "capture_manifests": jsons, "comparators": len(comparators), "light_runs": light_runs,
               "numbers_only_runs": numbers_only_runs, "array_names": sorted(array_names),
-              "archive_sha256": manifest["archive_sha256"]}
+              "archive_sha256": manifest["archive_sha256"], "human_reference_cells": human_cells}
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))

@@ -451,3 +451,24 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 .boot { max-width: 640px; margin: 18vh auto 0; padding: 0 24px; line-height: 1.55; color: #d8d8d8; font-family: var(--sans); }
 .boot b { font-size: 20px; color: var(--text); }
 .boot a { color: inherit; text-decoration: underline; }
+
+/* WB7-H: the descriptive human reference (only drawn when exports/human_reference.json is in the bundle). */
+:root { --hum: #ff6fa8; }
+#human.hum { flex: none; display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; padding: 0 0 12px; font: 14px/1.45 var(--sans); color: #d6d6d6; position: relative; }
+#human.hum[hidden] { display: none; }
+#human .hum-tag { font: 11px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--hum); border: 1px solid var(--hum); border-radius: 3px; padding: 1px 6px; }
+#human .say2 b { font-weight: 600; color: #fff; }
+#human .hum-mk { font-weight: 600; white-space: nowrap; } #human .hum-mk.yes { color: #7fd6a0; } #human .hum-mk.no { color: #ffb36b; } #human .hum-mk.tie { color: #c8c8c8; }
+#human .hum-all { position: relative; font-size: 13px; } #human .hum-all summary { cursor: pointer; color: var(--muted); text-decoration: underline dotted; }
+#human .hum-all[open] > table, #human .hum-all[open] > p { position: relative; }
+#human .hum-all[open] { z-index: 20; }
+#human .hum-all table { border-collapse: collapse; margin-top: 6px; background: #151517; border: 1px solid #333; font-variant-numeric: tabular-nums; }
+#human .hum-all th, #human .hum-all td { padding: 3px 12px; text-align: right; border-bottom: 1px solid #262626; } #human .hum-all th:first-child, #human .hum-all th[scope=row] { text-align: left; font-weight: 400; }
+#human .hum-all thead th { color: var(--muted); font-weight: 400; font-size: 12px; } #human .hum-all td:nth-child(2) { color: var(--hum); }
+#human .hum-all > p { margin: 4px 0 0; max-width: 460px; background: #151517; padding: 4px 8px; }
+.tab-k .k-hu { width: 3px; height: 20px; top: 2px; transform: translateX(-50%); background: var(--hum); border-radius: 1px; z-index: 3; box-shadow: 0 0 0 1px #0b0b0b; }
+.tab-k .k-lh { display: inline-block; width: 3px; height: 16px; margin-left: 16px; background: var(--hum); border-radius: 1px; position: static; transform: none; }
+.tab-k .k-hum .k-row { grid-template-columns: 206px minmax(0, 1fr) 128px 84px 112px 138px; }
+.tab-k .k-sv { font: 600 13px var(--sans); text-align: center; color: var(--k-mut); } .tab-k .k-sv.yes { color: #7fd6a0; } .tab-k .k-sv.no { color: #ffb36b; } .tab-k .k-sv.nd { font-weight: 400; font-size: 12px; }
+.tab-k .k-axis .k-sv { font: 12px/1.25 var(--sans); color: var(--k-mut); font-weight: 400; }
+@media (max-width: 1100px) { .tab-k .k-hum .k-row { grid-template-columns: 170px minmax(0, 1fr) 118px 70px 96px; } }

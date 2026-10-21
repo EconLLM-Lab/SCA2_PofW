@@ -36,7 +36,7 @@ export const SIGNS = ["trust", "risk taking", "patience", "altruism", "positive 
 
 // ISO 3-letter codes → names, for the 42 countries of the cohort. Not data of this study; a lookup so that no
 // reader meets "CAN" or "BGD" unexplained.
-const COUNTRY: Record<string, string> = {
+export const COUNTRY: Record<string, string> = {
   ARG: "Argentina", AUS: "Australia", BGD: "Bangladesh", BOL: "Bolivia", BRA: "Brazil", CAN: "Canada", CHL: "Chile", CHN: "China",
   COL: "Colombia", CZE: "Czechia", DEU: "Germany", EGY: "Egypt", GBR: "United Kingdom", GRC: "Greece", GTM: "Guatemala", IDN: "Indonesia",
   IND: "India", IRN: "Iran", IRQ: "Iraq", JOR: "Jordan", JPN: "Japan", KAZ: "Kazakhstan", KEN: "Kenya", KOR: "South Korea",

@@ -10,6 +10,7 @@
 
 import { isLight, type Bundle, type Run } from "./data";
 import { NO_3D } from "./notshipped";
+import { mountHumanLine } from "./human";
 import type { Ctx } from "./main";
 import {
   A_COL, B_COL, CHANGE_FOOT, answerStrip, cmpTable, checksOf, checkLine, dAttr, diverging, esc, faceTainted, failedWho, fmt, inspectorHTML,
@@ -29,6 +30,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   root.className = "tab-c v3";
   root.innerHTML = `
     <section id="answer" data-obj="answer"></section>
+    <section id="human" class="hum" data-obj="human" hidden></section>
     <div id="work" class="c-work">
       <section class="obj" id="prompt" data-obj="prompt"><header><span class="cap" title="The prompt as the model reads it. Template text (the fixed chat wrapper) sits on one dashed line; click it to expand. Help: the ? in the top bar">The prompt</span><input id="q" placeholder="find a word" autocomplete="off" hidden /></header>
         <div id="ptext" class="ptext"></div><div class="foot" id="pkey"></div></section>
@@ -68,6 +70,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
 
   // ---------------- the answer strip: one sentence, two bars, and the full card on demand
   function strip() { $("answer").innerHTML = answerStrip(D, clamp); }
+  mountHumanLine($("human"), D);   // WB7-H: stays hidden unless exports/human_reference.json is in the bundle
 
   // ---------------- geometry shared by the ladder and the margin chart (same rows)
   const TOP = 34;   // room above the top row for the margin chart's A/B end labels
