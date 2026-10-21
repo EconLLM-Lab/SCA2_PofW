@@ -391,6 +391,40 @@ the start of this amendment; they still owe a cross-family audit and remain unqu
 still has no banked row. Finishing B, or changing any number or reading after either audit, requires a new dated
 amendment. This correction changes no value, interval, label or claim.
 
+#### Amendment C9.1 2026-10-20 (Paper B; C9-4 experiment B, held-out synthetic-label recovery; orchestrator under Augusto's delegation; coauthor sign-off pending)
+
+**What changed.** `NUMBERS_TABLE.csv` now has 562 rows, sha256 `71ee7c8c…86a4`
+(`71ee7c8c68eb856bf7215165dd836aef7cc3f67993a6523790cee4b22ce186a4`). It appends 8 rows, `C9_label_recovery_*`, to
+the 554-row table `02c5d0cf…dd9dd1` of commit `0d4d701`. A test pins those 554 rows, byte for byte and in order. No
+earlier value, interval, label or claim changes.
+
+**The run.** `label-recovery-cohort1-v1-20261019`, on a Colab T4, by the orchestrator, after experiment A on the same
+session. For each of the 42 cohort-1 adapters (revision `7550fd4c`) it scored the 132 held-out training-scenario pairs
+of the shared split as sequence log probabilities of the chosen and the rejected completion, under the adapter and
+under the base model. It used the recipe that built the training reference cache. Two gates passed before any country
+was scored: the base model reproduced the banked cohort-1 reference log probabilities on 20 training pairs with a gap
+of zero, and the ARG adapter changed the log probabilities while disabling it returned the base exactly. All 42
+country files were read back from the Hub by sha256. Experiments A and B together used about three compute units of
+the five approved.
+
+**The rows.** Country-equal means over the 42 adapters, with a profile-block bootstrap (26 sign profiles) and a
+country bootstrap. Profile-block intervals here:
+
+- Recovery, the adapter margin above the base margin: 0.940 [0.926, 0.952].
+- Accuracy, the adapter preferring its own label outright: 0.816 [0.771, 0.856].
+- Base accuracy, the base model before training: 0.489 [0.471, 0.506]. The interval includes chance.
+- Mean margin shift: 40.282 nats [28.246, 54.063].
+
+**Reading (descriptive).** These are construction checks. They show that training installed each country's synthetic
+labels on scenarios the adapter never saw. They say nothing about whether the labels order countries like the GPS,
+and nothing about humans. Read beside the C9-2 cell, they separate two facts: the same adapters that recover their
+labels move the model's answer distribution away from the survey (adapter minus base TVD 0.045 [0.006, 0.093],
+profile-block). Label fidelity is not agreement with respondents. The preprint's development-stage recovery figures
+came from other adapters and banks, so they are not a replication target here.
+
+**What stays open.** C9-4 still owes a cross-family audit, because the orchestrator wrote and ran its code. Until that
+audit passes, neither experiment's rows are quotable as results. No claim is earned.
+
 ---
 
 ## Never quote as current

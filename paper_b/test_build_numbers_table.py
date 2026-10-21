@@ -338,7 +338,6 @@ def test_c9_2_rows_match_the_tvd_json_and_the_label_recovery_cell_has_none(rows,
     assert d["cells"]["adapter_persona"]["status"] == "ok"
     assert d["cells"]["adapter_persona"]["n_countries"] == 42
     assert [r for r in rows if "C9_TVD_adapter_persona" in r["claim_id"]]      # rows exist for the filled cell
-    assert not [r for r in rows if "label_recovery" in r["claim_id"]]          # C9-4 B rows are not added yet
     for cell in ("base", "adapter", "persona", "adapter_persona"):
         c = d["cells"][cell]
         r = by_id[f"C9_TVD_{cell}_mean_tvd_country_equal"]
@@ -392,3 +391,37 @@ def test_c9_w1_uses_the_covariance_share_beside_the_variance_ratio(by_id):
     assert float(r["value"]) > 1
     assert "not a share" in r["sentence_use"] or "ratio" in r["sentence_use"]
     assert "behavioral" in r["sentence_use"].lower()
+
+
+def test_c9_4b_label_recovery_rows_match_the_json(rows, by_id):
+    """C9-4 B: eight rows (four quantities x two bootstraps), equal to the analysis JSON; construction checks only."""
+    d = json.loads((C9 / "c9_label_recovery.json").read_text())
+    assert d["n_countries"] == 42 and d["n_pairs_per_country"] == 132
+    lr = [r for r in rows if r["claim_id"].startswith("C9_label_recovery_")]
+    assert len(lr) == 8
+    for q in BN.C9_LR_QUANTITIES:
+        for unit in ("profile_block", "country"):
+            g = d["cohort"][q][unit]
+            r = by_id[f"C9_label_recovery_{q}_{unit}"]
+            assert (float(r["value"]), float(r["ci_low"]), float(r["ci_high"])) == (g["point"], g["ci_lo"], g["ci_hi"])
+            assert int(r["n"]) == 42
+            assert "construction check" in r["surface_label"] and LABEL in r["surface_label"]
+    # the reading the amendment gives: training installed the labels, the base model sits at chance
+    assert float(by_id["C9_label_recovery_base_accuracy_profile_block"]["ci_low"]) < 0.5 < float(
+        by_id["C9_label_recovery_base_accuracy_profile_block"]["ci_high"])
+    assert float(by_id["C9_label_recovery_accuracy_profile_block"]["ci_low"]) > 0.5
+
+
+def test_rows_of_the_c9_table_are_unchanged_by_the_c9_4b_addition(rows):
+    """Commit 0d4d701 fixed 554 rows (sha 02c5d0cf...dd9dd1); the C9-4 B rows are appended, never move these."""
+    import hashlib
+    import subprocess
+    rel = "planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv"
+    old = subprocess.run(["git", "-C", str(ROOT), "show", f"0d4d701:{rel}"], capture_output=True, check=True).stdout
+    assert hashlib.sha256(old).hexdigest() == "02c5d0cf9281f2927b8222386160412f1276437bf9dca8f70eafdc042dda9dd1"
+    before = {r["claim_id"]: r for r in csv.DictReader(old.decode().splitlines())}
+    assert len(before) == 554
+    now = {r["claim_id"]: r for r in rows}
+    for cid, r in before.items():
+        assert now[cid] == r, cid
+    assert [r["claim_id"] for r in rows[:554]] == list(before)

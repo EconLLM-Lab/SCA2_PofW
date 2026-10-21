@@ -665,6 +665,33 @@ def c9_w1_rows(t: Table):
               surface=f"{bank} training pairs; 42 countries; {C9_LABEL}", **kw)
 
 
+C9_LR_QUANTITIES = {
+    "recovery": ("share of held-out pairs where the adapter's chosen-minus-rejected margin exceeds the base model's",
+                 "share of pairs"),
+    "accuracy": ("share of held-out pairs where the adapter prefers its own chosen completion outright (margin > 0)",
+                 "share of pairs"),
+    "base_accuracy": ("share of held-out pairs where the base model already prefers the chosen completion",
+                      "share of pairs"),
+    "mean_margin_shift": ("mean of (adapter margin - base margin) over the held-out pairs", "nats"),
+}
+
+
+def c9_label_recovery_rows(t: Table):
+    """C9-4 B: held-out synthetic-label recovery on the 42 cohort-1 adapters. A construction check (did training
+    install each country's labels on scenarios it never saw), not evidence about GPS order or about humans."""
+    o, f = f"{RES}/c9/c9_label_recovery.json", "paper_b/c9_label_recovery.py"
+    d = _read(o)
+    n_pairs = d["n_pairs_per_country"]
+    base = (f"{d['n_countries']} cohort-1 adapters x {n_pairs} held-out training-scenario pairs (shared split "
+            f"TRAIN_FRAC 0.80, SEED 42); country-equal mean; construction check; {C9_LABEL}")
+    for q, (what, stat) in C9_LR_QUANTITIES.items():
+        for unit, uname in (("profile_block", "profile-block"), ("country", "country")):
+            u = d["cohort"][q][unit]
+            t.add(f"C9_label_recovery_{q}_{unit}", f"C9-4 B descriptive: {what}; mean over the cohort-1 adapters; "
+                  f"{uname} bootstrap", f"{stat}, country-equal mean", u["point"], ci=(u["ci_lo"], u["ci_hi"]),
+                  n=u["n"], surface=f"{base}; {uname} bootstrap", run_id=d["run_id"], script=f, out=o)
+
+
 # ------------------------------------------------------------------ assemble
 def build_rows(readout_dir: Path = READOUT_DIR) -> list[dict]:
     freeze = json.loads((ROOT / "paper_b/heldout/FREEZE.json").read_text())
@@ -682,6 +709,7 @@ def build_rows(readout_dir: Path = READOUT_DIR) -> list[dict]:
     c9_human_agreement_rows(t)
     c9_tvd_rows(t)
     c9_w1_rows(t)
+    c9_label_recovery_rows(t)
     return t.rows
 
 
