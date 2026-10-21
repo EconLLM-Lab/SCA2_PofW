@@ -61,6 +61,17 @@ Files: ~/.hermes/cache/scratch/wb6p/{old_tokens,new_tokens}.json, parity.txt.
 2. The "models" pop-up said every adapter matches "the USA's direction". The default adapter is CAN. I made it "that country's direction" (no number involved).
 
 ## Caveats
-- The howto-a fix ("The 3D object" -> "This view") was made after the bundle build; tsc was re-run, the bundle was not rebuilt.
-- Screenshots of landing, ladder and story at 1440x860 are in ~/.hermes/cache/scratch/wb6/words/ (landing.png, tab_c.png, story.png and others). I did not get to look at them: check for overflow in the new longer button labels (ladder "Change (B − A)", matrix "size of change ‖B − A‖", 3D scene bar).
 - Added small non-behavioural code: a FACE_TIP constant for button tooltips in tab-b.ts and tab-c.ts, one glossary link on the landing page (data-learn="terms").
+
+## Layout review (retry, run 121)
+Screenshots of landing, Ladder, Matrix, Object and story at 1440x860 are in ~/.hermes/cache/scratch/wb6/words/ (re-taken from the final build). I looked at them.
+- Ladder "Change (B − A)", Matrix "size of change ‖B − A‖" and Object "A | size of change ‖B − A‖": all fit on one line, no clipping or wrapping.
+- One regression found and fixed: the Object tab's right panel title "‖B − A‖ · size of the change, B = <label>" is cut by the code at a fixed length (short()). The longer prefix pushed the cut to "...+ C...", hiding the adapter name. Restored the original "the change" wording (cut again at "...+ CAN LoRA..."). A shorter prefix was tried and rejected: it revealed "[nf4" and added a number token "4" (parity fail). The original-length prefix keeps parity exactly.
+- Seen but not caused by this pass (same text and wrapping in the old build, outside the copy fence): the model B dropdown is clipped at "[nf4_dequ", P("1") 0.06 -> 0.66 wraps to three lines, the archive-check note wraps, the layer labels L30/L31 are close together in the ladder and 3D scenes. For the owner or the PM.
+
+## Rerun after the final edit (tab-a.ts, one string)
+- tsc --noEmit: exit 0.
+- pytest: 183 passed, 4 skipped. No test touched.
+- Bundle rebuilt from the final tree; verify_bundle.py: pass true (143 files).
+- Number parity, old e9b5fda vs final build, headless Chromium 1440x860, textContent / innerText: landing 198/190, ?tab=c 174/178, ?tab=b 156/159, ?tab=a 162/165, story 710/702. All five multisets identical. Console errors: 0 on all five pages.
+- Pop-ups (19): identical except eq6, which lost the "1" and "3" of a redundant sentence (the two answer codes). The howto-a difference from the first run is gone.

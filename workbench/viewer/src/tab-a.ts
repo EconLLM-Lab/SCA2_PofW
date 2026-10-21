@@ -131,7 +131,7 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       panels.push({ scene: makeThreeScene(ts, run), ts, label, run });
     };
     if (view === "single") { const r = sel("single").value === "b" ? b : a; add(r, `${sel("single").value.toUpperCase()} · ${r.m.model.label}`, false); }
-    else { add(a, `A · ${a.m.model.label}`, false); view === "delta" ? add(b, `‖B − A‖ · size of the change, B = ${b.m.model.label}`, true) : add(b, `B · ${b.m.model.label}`, false); }
+    else { add(a, `A · ${a.m.model.label}`, false); view === "delta" ? add(b, `‖B − A‖ · the change, B = ${b.m.model.label}`, true) : add(b, `B · ${b.m.model.label}`, false); }
     $("labelA").textContent = short(panels[0].label, 60); $("labelA").title = panels[0].label;
     $("labelA").style.color = panels[0].run === D.B && view === "single" ? B_COL : A_COL;
     $("sceneB").hidden = panels.length < 2; $("insetBox").hidden = panels.length < 2;
