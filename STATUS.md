@@ -52,9 +52,10 @@ the claim lock and this file were updated. The current main-worktree `paper_b` s
 rows remain unquotable until an independent cross-family audit accepts the genuine run. Experiment B finished later
 (42 of 42) and is banked by Amendment C9.1, under the same audit.
 
-W2's live `RUN_STATUS.json` said running, 343 of 598 done, no failed units and PID 61988 at the 21:33 MST snapshot.
-The workbench tree is intentionally dirty while W2 runs and while the post-checkpoint W3b artifacts await disposition;
-final assembly does not clean or adopt those files. W3b's independent audit reproduced its registered numbers but
+**Internal presentation checkpoint: CLOSED 2026-10-20 19:30 MST** (readiness card `t_ed70bc80`, all six checks PASS):
+C9-4 audit ACCEPT; manuscript carries the C9 results with both number audits PASS (482/482, 525/525); Space v1.1 equals
+its manifest (142/142); all three branches match origin. W2 finished 598 of 598 units and is verified. The only
+uncommitted workbench file is `analysis/w3b/run_w3b.py`, which belongs to W3b (post-presentation). W3b's independent audit reproduced its registered numbers but
 BLOCKED the artifact because its results and report add an unregistered p<0.05 classifier. The three unfinished W3b
 orchestration cards are explained in the completion comment and remain outside Paper B.
 
@@ -167,13 +168,14 @@ Targets are proposals for Augusto. "Blocked by" names the decision or card that 
 | Overleaf page count (project "… (1)") | Augusto | 2026-10-21 | none |
 | Invite co-authors to the EconLLM Hugging Face organization and grant access to the transferred private Space | Augusto | 2026-10-20 | none |
 | Confirm the definition of "recursive generalization" | Augusto | 2026-10-21 | none |
-| C9 section in the manuscript, via the writer profile | writer | 2026-10-23 | sign-off |
+| Optional: the label-fidelity finding in the abstract, introduction and conclusion (C9 is in results and discussion only) | Augusto, writer | before co-author sharing | Augusto's go |
+| Optional v1.2 of workbench step 4: supporting text at 14 px or more, recovery-dot jitter (WB3.1-V N1, N2) | `engineer`, verifier | before projection | Augusto's look at v1.1 |
+| `build_deploy_bundle.py`: drop the hard-coded engineer scratch path; resolve symlinked scratch (WB3.1-V N3) | `engineer` | with the next bundle build | none |
 | Novelty audit "LM evaluation for social-science measurement" | `sca` | 2026-10-23 | none |
 | Space landing footer wording contradicts the journal-version framing | `engineer` | 2026-10-21 | none |
-| W2 prompt-route queue (finished 598/598): commit its code, independent verifier | `engineer`, verifier | 2026-10-21 | none |
-| Upload the W2 prompt-route captures to the Hub; weights-versus-prompt analysis of the risk inversion | `engineer` | 2026-10-21 | W2 verified |
+| Upload the W2 prompt-route captures to the Hub (17 GB, local only); weights-versus-prompt analysis of the risk inversion | `engineer` | 2026-10-21 | none |
 | Resolve the W3b audit BLOCK: owner decision on removing the unregistered p<0.05 classifier (recommended) or labelling it as dated exploratory output; package the renderer/report; complete the existing verifier lane; repeat W3 with the prompt route | Augusto, `engineer`, verifier | 2026-10-22 | Augusto's scope decision; W2 for the prompt-route repeat |
-| Clean the workbench tree: untracked W3 debris (`analysis/out/_discarded_W3/`, stubs), uncommitted W2 code, WB1 findings F1 to F5, and the full-suite failure P1 | `engineer` | 2026-10-22 | W2 and W3b finished |
+| Clean the workbench tree: WB1 findings F1 to F5 (W2 code committed, W3 stubs quarantined in `_discarded_W3/`) | `engineer` | 2026-10-22 | W3b finished |
 | Extract a general (non-SCA2) workbench repository | `engineer` | 2026-10-23 | WB cleanup |
 | Parity reference in float64 for the next capture run | `engineer` | with the next capture run | next run |
 | Live adapter chat card with a cost and data-rights check | `engineer` | 2026-10-26 | Augusto's go |
