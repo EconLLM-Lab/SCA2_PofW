@@ -139,9 +139,19 @@ def test_light_run_output_numbers_and_closure(light):
         source = json.loads(source_path.read_text())
         shipped = json.loads(files["exports/" + name])
         if name in pair_names:
-            # Every pair ships in full: the exact source bytes, new Q57 pairs included.
-            assert files["exports/" + name] == source_path.read_bytes()
-            assert files["exports/" + shipped["bin"]] == (source_path.parent / source["bin"]).read_bytes()
+            if "BASE_usa" in name or not name.endswith("__wvs_Q57.json"):
+                # A pair already in the v1.4 selection ships whole: the exact source bytes.
+                assert files["exports/" + name] == source_path.read_bytes()
+                assert files["exports/" + shipped["bin"]] == (source_path.parent / source["bin"]).read_bytes()
+                continue
+            # A new Q57 pair drops only d_head_norm (PM decision, WB7-Q comment 157); every kept number is the source's.
+            assert set(shipped["arrays"]) == set(source["arrays"]) - {"d_head_norm"} and "light" not in shipped
+            assert {k: v for k, v in shipped.items() if k not in ("arrays", "bin")} == \
+                   {k: v for k, v in source.items() if k not in ("arrays", "bin")}
+            pbin, sbin = files["exports/" + shipped["bin"]], (source_path.parent / source["bin"]).read_bytes()
+            for array, meta in shipped["arrays"].items():
+                st = source["arrays"][array]["offset"]
+                assert pbin[meta["offset"]:meta["offset"] + meta["nbytes"]] == sbin[st:st + meta["nbytes"]], (name, array)
             continue
         # Every non-array field of a run is the source export's, unchanged.
         assert {k: v for k, v in shipped.items() if k not in ("arrays", "bin", "light")} == \
@@ -160,7 +170,7 @@ def test_light_run_output_numbers_and_closure(light):
             assert shipped_bin == source_bin
         if shipped.get("light"):
             assert not set(shipped["arrays"]) & HEAVY
-            assert set(shipped["arrays"]) == set(source["arrays"]) - HEAVY   # neuron_attr stays
+            assert set(shipped["arrays"]) == set(source["arrays"]) - HEAVY - {"neuron_attr", "q3_write_norm"}
             assert sum(m["nbytes"] for m in shipped["arrays"].values()) == len(shipped_bin)
         for meta in shipped["arrays"].values():
             assert 0 <= meta["offset"] <= meta["offset"] + meta["nbytes"] <= len(shipped_bin)
@@ -178,10 +188,13 @@ def test_light_run_output_numbers_and_closure(light):
 def test_cap_fills_adapters_first_and_leaves_the_rest_pairs_only(light, monkeypatch):
     w, args = light
     with monkeypatch.context() as m:
-        m.setattr(builder, "HEAVY_ARRAYS", tuple(n for n, _, _ in RUN_ARRAYS))   # nothing is light: numbers only
+        m.setattr(builder, "LIGHT_DROP", tuple(n for n, _, _ in RUN_ARRAYS))   # nothing is light: numbers only
         assert builder.build_bundle(args) == 0
     floor = json.loads((w / "dist/deploy_bundle.tar.manifest.json").read_text())["payload_bytes"]
-    args.max_bytes = floor + 600   # room for one light run, not two
+    assert builder.build_bundle(args) == 0   # unconstrained: the size of one upgrade
+    sizes = json.loads((w / "dist/deploy_bundle.tar.manifest.json").read_text())["q57"]
+    one = sizes["upgrade_bytes"] // len(sizes["shipped_light"])
+    args.max_bytes = floor + one + one // 2   # room for one light run, not two
     assert builder.build_bundle(args) == 0
     manifest = json.loads((w / "dist/deploy_bundle.tar.manifest.json").read_text())
     files = read_archive(w / "dist/deploy_bundle.tar.gz")
@@ -256,4 +269,4 @@ def test_verify_bundle_accepts_light_runs_and_comparator_index(light, monkeypatc
     data = json.loads(report.read_text())
     assert data["pass"] is True and data["light_runs"] == 3 and data["numbers_only_runs"] == 0
     assert data["comparators"] == 4
-    assert "d_head_norm" in data["array_names"]   # every pair is whole
+    assert "d_head_norm" in data["array_names"]   # the v1.4 pair stays whole

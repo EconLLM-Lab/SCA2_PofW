@@ -29,6 +29,13 @@ IMAGES = ('v4/ladder-1440.png', 'v4/matrix-1440.png', 'v4/object-1440.png', 'v4/
 Q57_ITEM = 'wvs_Q57'
 # A light run keeps every array of the source run except these six (about 19.0 of 21.5 MB).
 HEAVY_ARRAYS = ('attn_topk_idx', 'attn_topk_val', 'attn_topk_mass', 'g_last', 'u_last', 'c_last')
+# PM decision (WB7-Q, comment 157): a light run also leaves out the two arrays only the 3D object reads.
+# neuron_attr (1.8 MB) sums per layer to mlp_attr, which is kept, so the browser re-sum still closes;
+# q3_write_norm is read by no 2D view.
+LIGHT_DROP = HEAVY_ARRAYS + ('neuron_attr', 'q3_write_norm')
+# A pair of a *new* Q57 comparator ships without this array (540,672 of 617,232 bytes), read only by the
+# Matrix per-head panel and the 3D object. Pairs already in the v1.4 selection stay byte-identical.
+PAIR_DROP = ('d_head_norm',)
 PIN = r'export const {}\s*=\s*\{{\s*a:\s*"([^"]+)",\s*b:\s*"([^"]+)",\s*item:\s*"([^"]+)"\s*\}}'
 
 
@@ -242,6 +249,7 @@ def build_bundle(args) -> int:
         # if the byte budget allows, else the run's numbers only (`arrays: {}`, `bin: null`), so the
         # pair's run references still close. Allocation order: country adapters first, then sign
         # prompts, largest |d_margin| first within each group.
+        legacy_pairs = {key for wanted in roots.values() for key in wanted}
         legacy_runs = {(a, item) for wanted in roots.values() for a, _, item in wanted}
         legacy_runs |= {(b, item) for wanted in roots.values() for _, b, item in wanted}
         q57_rank, q57_pair = {}, {}
@@ -321,6 +329,12 @@ def build_bundle(args) -> int:
                                     'metadata': metadata, 'model': row['model'], 'item_id': row['item_id'],
                                     'numbers_bytes': len(body)})
                     continue
+                if name.startswith('pair__') and (row['a'], row['b'], row['item_id']) not in legacy_pairs:
+                    keep = tuple(n for n in capture['arrays'] if n not in PAIR_DROP)
+                    slim, blob = compact_capture(capture, keep, (root / binary).read_bytes(), light=False)
+                    write_bytes(json.dumps(slim, separators=(',', ':')).encode(), 'exports/' + name, 'capture', **metadata)
+                    write_bytes(blob, 'exports/' + binary, 'capture-binary')
+                    continue
                 copy(root / name, 'exports/' + name, 'capture', **metadata)
                 copy(root / binary, 'exports/' + binary, 'capture-binary')
                 length = (stage / 'exports' / binary).stat().st_size
@@ -355,7 +369,7 @@ def build_bundle(args) -> int:
         tiers = {k: 'full' for k in full_keys}
         upgraded = []
         for d in sorted(derived, key=lambda d: q57_rank[(d['model'], d['item_id'])]):
-            keep = tuple(n for n in d['capture']['arrays'] if n not in HEAVY_ARRAYS)
+            keep = tuple(n for n in d['capture']['arrays'] if n not in LIGHT_DROP)
             light, blob = compact_capture(d['capture'], keep, d['source_bin'].read_bytes())
             if not blob:
                 continue   # nothing to keep: the capture stays numbers only
@@ -379,8 +393,10 @@ def build_bundle(args) -> int:
                           'shipped_full': sorted(m for m, _ in full_keys),
                           'shipped_light': [m for m, i in order if tiers[(m, i)] == 'light'],
                           'pairs_only': [m for m, i in order if tiers[(m, i)] == 'numbers'],
-                          'light_rule': 'every array of the source run except heavy_arrays',
+                          'light_rule': 'every array of the source run except light_drop (the heavy arrays plus the 3D-only ones)',
                           'heavy_arrays': list(HEAVY_ARRAYS),
+                          'light_drop': list(LIGHT_DROP),
+                          'new_pairs_drop': list(PAIR_DROP),
                           'light_run_bytes': {d['model']: size for d, _, size in upgraded},
                           'upgrade_bytes': sum(extra for _, extra, _ in upgraded),
                           'budget_left_bytes': budget}

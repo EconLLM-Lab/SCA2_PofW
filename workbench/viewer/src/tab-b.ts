@@ -8,6 +8,7 @@
 // URL keys: qty=attn|resid|mlp (attn default), face=a|b|d (d default), fold=0, pin=l,t.
 
 import type { Bundle, Tensor } from "./data";
+import { NO_PER_HEAD } from "./notshipped";
 import type { Ctx } from "./main";
 import {
   A_COL, B_COL, C, CHANGE_FOOT, answerStrip, checkLine, checksOf, cmpTable, drawerHTML, esc, failedWho, faceTainted, fmt, inspectorHTML,
@@ -170,10 +171,11 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     let body: string;
     if (qty === "attn") {
       const a = D.A.t, b = D.B.t, p = D.P.t;
-      const vmax = Math.max(...Array.from({ length: H }, (_, h) => Math.max(a.head_norm.get(l, h, t), b.head_norm.get(l, h, t), p.d_head_norm.get(l, h, t)))) || 1;
+      const vmax = Math.max(...Array.from({ length: H }, (_, h) => Math.max(a.head_norm.get(l, h, t), b.head_norm.get(l, h, t), (p.d_head_norm ? p.d_head_norm.get(l, h, t) : 0)))) || 1;
       body = cmpTable([{ label: "Attention addition ‖a‖", tip: "attn_norm · d_attn_norm", a: a.attn_norm.get(l, t), b: b.attn_norm.get(l, t), d: { v: p.d_attn_norm.get(l, t), how: "len", src: "d_attn_norm" } }])
         + `<div class="sub">The ${H} heads of layer ${l} at this token: <span style="color:${A_COL}">A</span>, <span style="color:${B_COL}">B</span> and <span style="color:var(--delta)">the size of the change ‖B − A‖</span>, on one linear scale (longest ${fmt(vmax, 3)}).</div>`
-        + Array.from({ length: H }, (_, h) => `<div class="hrow"><span>h${h}</span><span class="hb3"><i style="top:0;width:${(a.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${A_COL}"></i><i style="top:4.5px;width:${(b.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${B_COL}"></i><i style="top:9px;height:3px;width:${(p.d_head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${C.delta}"></i></span><span class="num">${fmt(p.d_head_norm.get(l, h, t), 3)}</span></div>`).join("")
+        + Array.from({ length: H }, (_, h) => `<div class="hrow"><span>h${h}</span><span class="hb3"><i style="top:0;width:${(a.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${A_COL}"></i><i style="top:4.5px;width:${(b.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${B_COL}"></i><i style="top:9px;height:3px;width:${((p.d_head_norm ? p.d_head_norm.get(l, h, t) : 0) / vmax * 100).toFixed(1)}%;background:${C.delta}"></i></span><span class="num">${fmt((p.d_head_norm ? p.d_head_norm.get(l, h, t) : 0), 3)}</span></div>`).join("")
+        + (p.d_head_norm ? "" : `<p class="muted">${NO_PER_HEAD} The bars show A and B only.</p>`)
         + CHANGE_FOOT;
     } else body = inspectorHTML(D, { kind: qty, l, t } as Slice, { pinned: true, bare: true });
     dr.hidden = false;
