@@ -55,7 +55,12 @@ export function compare(it: ItemShape, cell: HumanCell, pBase: Probs, pCmp: Prob
   const gb = Math.abs(base - human), gc = Math.abs(cmp - human);
   return { rule: mean ? "mean" : "share", human, base, cmp, closer: gc < gb, tie: gc === gb };
 }
-export const markerText = (c: Cmp) => (c.tie ? "as far from the survey as the base model" : c.closer ? "closer to the survey than the base model" : "further from the survey than the base model");
+/** The two gaps behind the marker, so "closer" is never read as "matches": percentage points (2 answers) or answer-scale units. */
+export const gapText = (c: Cmp) => c.rule === "share"
+  ? `${Math.round(Math.abs(c.cmp - c.human) * 100)} vs ${Math.round(Math.abs(c.base - c.human) * 100)} percentage points from the survey share`
+  : `${Math.abs(c.cmp - c.human).toFixed(1)} vs ${Math.abs(c.base - c.human).toFixed(1)} points from the survey mean on the answer scale`;
+export const markerText = (c: Cmp) => (c.tie ? "as far from the survey as the base model" : c.closer ? "closer to the survey than the base model" : "further from the survey than the base model")
+  + ` (${gapText(c)})`;
 
 /** The Ladder line, for country adapter B. Returns "" when this is not a survey question with a country adapter. */
 export function ladderHTML(D: Bundle, h: HumanRef): string {

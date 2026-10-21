@@ -131,7 +131,7 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
   // sign prompt nor an adapter (no such B exists today) stays above the groups, never dropped.
   // A comparator with only its answer probabilities in the public sample (tier numbers) is kept, marked "Cohort only".
   const cohortOnly = (k: string) => index.comparators?.some((c) => c.model === k && c.item_id === item && c.tier === "numbers") ?? false;
-  const opt = (k: string) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}${cohortOnly(k) ? ` (${COHORT_ONLY})` : ""}</option>`;
+  const opt = (k: string) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}${cohortOnly(k) ? ` · ${COHORT_ONLY}` : ""}</option>`;
   const byName = (x: string, y: string) => plainName(index.models[x]?.label ?? x).localeCompare(plainName(index.models[y]?.label ?? y), "en", { numeric: true });
   const groupedOptions = (keys: string[]) => {
     const kind = (k: string) => /\+ sign prompt [01](?:_[01]){5}/.test(index.models[k]?.label ?? "") ? "sp" : index.models[k]?.adapter ? "ad" : "other";

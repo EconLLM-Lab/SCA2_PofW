@@ -154,9 +154,11 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const topName = (code: string) => ans(code).replace(/^answer /, "");
     // The percentage of the followed answer, with extra decimals only when it ties the most likely answer after rounding.
     const plusText = (t: Row["topBase"], p: number | undefined) => (t?.code === cur.j_plus ? t.text : t?.code2 === cur.j_plus && t.text2 ? t.text2 : pct(p));
+    // One caption per block when every row of the block has the same pair of most likely answers (the percentages are in each row).
+    const sameLikely = (b: Block) => b.rows.length > 1 && b.rows.every((r) => r.topBase && r.topCmp && r.topBase.code === b.rows[0].topBase?.code && r.topCmp.code === b.rows[0].topCmp?.code);
     const rowHtml = (r: Row, blk: Block) => {
       const tb = r.topBase, tc = r.topCmp;
-      const likely = tb && tc ? `<span class="k-top">Most likely answer: ${esc(topName(tb.code))} (${tb.text}) → ${esc(topName(tc.code))} (${tc.text})</span>` : "";
+      const likely = tb && tc && !(blk.section !== "size" && blk.section !== "other" && sameLikely(blk)) ? `<span class="k-top">Most likely answer: ${esc(topName(tb.code))} (${tb.text}) → ${esc(topName(tc.code))} (${tc.text})</span>` : "";
       return `<div class="k-row${r.cohortOnly ? " k-co" : ""}" tabindex="0" role="group" data-b="${esc(r.who.b)}" aria-label="${esc(rowTip(r) + (r.cohortOnly ? " Cohort only: not shipped in the public sample." : " Press Enter to open this pair in the Ladder."))}" ${go(r)}>
         <div class="k-who">${listWho(r, blk)}</div>
         <div class="k-mid">${dumbbell(r)}${likely}</div>
@@ -213,7 +215,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         <p class="k-q" data-obj="cohort-question"><span class="muted">${esc(cur.item_id)} · </span>“${esc(cur.text)}”<br><span class="muted">Answer followed: ${esc(plus)}. Log-odds compare only ${esc(plus)} and ${esc(minus)}, so they can move differently from one answer's percentage.</span></p>
       </section>
       ${thinMsg}
-      <section class="obj k-head" data-obj="dmargin"><header><span class="cap">Probability that each model gives this answer</span><span class="k-legend" aria-hidden="true"><i class="k-lb"></i>base model<i class="k-lc"></i>comparator${humanOn ? `<i class="k-lh" title="${esc(WHO_TIP)}"></i><span title="${esc(WHO_TIP)}">${LEGEND}</span>` : ""}</span></header>
+      <section class="obj k-head" data-obj="dmargin"><header><span class="cap">Probability each model gives this answer${humanOn ? " · share of respondents who chose it (pink)" : ""}</span><span class="k-legend" aria-hidden="true"><i class="k-lb"></i>base model<i class="k-lc"></i>comparator${humanOn ? `<i class="k-lh" title="${esc(WHO_TIP)}"></i><span title="${esc(WHO_TIP)}">${LEGEND}</span>` : ""}</span></header>
         <div class="k-ctl2"><span class="k-ctl"><span class="cap">Show</span><span id="kshow"></span></span><span class="k-ctl"><span class="cap">Order by</span><span id="ksort"></span></span></div>
         <div id="krows"${humanOn ? ` class="k-hum"` : ""}></div></section>
       ${enough ? `<section class="obj k-map" data-obj="cohort" id="kmapsec"></section>` : ""}
@@ -254,7 +256,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         if (sort === "pair" && b.section !== last) { last = b.section; out.push(`<h4 class="k-sec">${esc(SECTION[b.section](b.section === "other" ? rows.filter((r) => !r.bits || r.who.kind === "other").length : per.get(b.section)!))}</h4>`); }
         if (b.section === "size" || b.section === "other") { out.push(b.rows.map((r) => rowHtml(r, b)).join("")); continue; }
         const sentence = b.matched ? pairSentence(b, cur) : "";
-        out.push(`<div class="k-group" role="group" aria-label="${esc(`Six signs ${b.bits}`)}">${headHtml(b)}${b.rows.map((r) => rowHtml(r, b)).join("")}${sentence ? `<p class="k-pair">${esc(sentence)}</p>` : ""}</div>`);
+        out.push(`<div class="k-group" role="group" aria-label="${esc(`Six signs ${b.bits}`)}">${headHtml(b)}${sameLikely(b) ? `<p class="k-same">Most likely answer in every row: ${esc(topName(b.rows[0].topBase!.code))} → ${esc(topName(b.rows[0].topCmp!.code))}</p>` : ""}${b.rows.map((r) => rowHtml(r, b)).join("")}${sentence ? `<p class="k-pair">${esc(sentence)}</p>` : ""}</div>`);
       }
       return out.join("");
     };

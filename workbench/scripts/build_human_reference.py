@@ -33,6 +33,7 @@ HELDOUT = MAIN / 'paper_b/heldout'
 ITEMS = ['Q43', 'Q50', 'Q57', 'Q81', 'Q99', 'Q106', 'Q176']
 MIN_N = 100
 SOURCE = 'World Values Survey wave 7, weighted; country-level shares'
+UNORDERED_ITEMS = {'wvs_Q43', 'wvs_Q99'}   # WB7-W: three-code items are not assumed ordered, so no survey mean
 SCHEMA = 'sca2-workbench/human-reference@1'
 
 
@@ -95,7 +96,9 @@ def build(csv_path: Path, index_path: Path, items=ITEMS, heldout: Path = HELDOUT
                 continue
             codes = [r['option_code'] for r in rows]
             labels = [r['option_label'] for r in rows]
-            ordered = rows[0]['is_ordered'] == 'True'
+            # WB7-W's list: Q50, Q106, Q176 scales and Q81 (4 labelled codes) are ordered; Q43 and Q99 (3 codes) are not, and a
+            # two-answer item has no mean. The viewer compares the named answer's share for every item that has no mean.
+            ordered = rows[0]['is_ordered'] == 'True' and len(codes) > 2 and iid not in UNORDERED_ITEMS
             if meta is None:
                 meta = {'codes': codes, 'labels': labels, 'ordered': ordered}
             elif meta['codes'] != codes:

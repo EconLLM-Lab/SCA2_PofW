@@ -478,3 +478,6 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 #answer .say-dir { font: 12px var(--sans); color: var(--muted); }
 dialog#learn h4 { margin: 16px 0 4px; font: 600 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 dialog#learn ul { margin: 4px 0 8px; padding-left: 18px; } dialog#learn li { margin: 4px 0; }
+
+.tab-k .k-same { margin: 2px 0 4px 206px; font: 12px/15px var(--sans); color: var(--k-mut); }
+footer .foot-src { margin: 10px 0 0; font-size: 11px; line-height: 1.5; opacity: .8; }

@@ -20,7 +20,7 @@ export const notShippedPanel = (sentence: string, title = "Not shipped in the pu
 
 /** A comparator whose run has no arrays at all (tier `numbers`): the Ladder, Matrix and 3D object have nothing to draw.
  * The sentence is HTML: "Cohort tab" links to the Cohort on the same question (data-go keeps the pair in the app). */
-export const NUMBERS_ONLY = "The public workbench ships only this comparator's answer probabilities, not its internal data. You can see it in the Cohort tab.";
+export const NUMBERS_ONLY = "The public workbench ships only this comparator's answer probabilities, not its internal data. Its answer probabilities are in the Cohort tab.";
 export const numbersOnlyHTML = (item: string): string => {
   const q = `item=${encodeURIComponent(item)}`;
   return NUMBERS_ONLY.replace("Cohort tab", `<a href="?tab=k&${q}" data-go="k" data-extra="${q}">Cohort tab</a>`);

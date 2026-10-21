@@ -57,7 +57,7 @@ def test_reference_cells_drops_and_privacy(tmp_path):
     ref = href.build(tmp_path / "p.csv", tmp_path / "index.json", items=["Q57", "Q81", "Q50"], heldout=synthetic_heldout(tmp_path / "h", ["Q7"]))
     assert ref["source"] == "World Values Survey wave 7, weighted; country-level shares"
     usa = ref["items"]["wvs_Q57"]["cells"]["USA"]
-    assert usa == {"n": 500, "shares": {"1": 30, "2": 70}, "top": "2", "mean": 1.7}
+    assert usa == {"n": 500, "shares": {"1": 30, "2": 70}, "top": "2"}   # two answers: no mean
     assert ref["items"]["wvs_Q81"]["cells"]["USA"]["mean"] == 3.0
     assert "CHN" not in ref["items"]["wvs_Q57"]["cells"]                     # n=40 < 100
     assert ref["dropped_cells"] == [{"item": "wvs_Q57", "country": "CHN", "why": "n=40 < 100"},
