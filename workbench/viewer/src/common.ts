@@ -320,6 +320,8 @@ function relativeTable(D: Bundle, cA: Conservation, cB: Conservation): string {
   const main = keys.filter((k) => !k.endsWith("_clamped"));
   const clamped = keys.filter((k) => k.endsWith("_clamped"));
   const notGated = cA.legacy_absolute_applicable === false || cB.legacy_absolute_applicable === false;
+  // Say the dtype the manifest records; legacy_absolute_applicable alone does not imply float32 (WB4-V N1).
+  const dtype = String((D.A.m as unknown as { provenance?: { compute_dtype?: string } }).provenance?.compute_dtype ?? "unknown");
   const pc = D.P.m.conservation;
   const pairRow = !pc
     ? `<tr><td colspan="4" class="muted">This pair export is @1: it has no B − A check of its own.</td></tr>`
@@ -337,7 +339,9 @@ function relativeTable(D: Bundle, cA: Conservation, cB: Conservation): string {
       <tr><td>Eq. 6 vs the full-answer calculation (absolute gap). A test checks this; each export also records the gap.</td><td class="num">none</td><td class="num">${fmt(cA.eq6_teacher_forced_max_abs_gap, 2)}</td><td class="num">${fmt(cB.eq6_teacher_forced_max_abs_gap, 2)}</td></tr>
       </table></details>
       <p>Every row of the first table is <b>relative</b>: <code>rel</code> is the error divided by the size of the quantity the error is an error of (each row's tooltip names that scale), and the row passes when <code>rel ≤ τ</code>. A τ is ${ra.tau_multiple}× the largest round-off measured for that check on this model family, rounded up to the next power of ten (<code>plans/stage1_f32_gaps.md</code>), so the gate does not fire on round-off and still catches a real break.</p>
-      <p>${notGated
+      <p>${dtype !== "float32" && notGated
+        ? `This export was computed in <b>${esc(dtype)}</b> (<code>provenance.compute_dtype</code>). Its manifest marks the absolute bounds of the contract as not applicable to this capture (<code>legacy_absolute_applicable: false</code>), so the verdict is the relative table above; the browser re-sum is still shown with its number.`
+        : notGated
         ? "This export was computed in <b>float32</b> (<code>provenance.compute_dtype</code>). The absolute bounds of the contract cannot be met at that dtype: the residual gate 1e-3 is about nine float32 ulps wide at a state whose largest entry is 8.9e2, so it fires on round-off rather than on a break in the capture. Those rows are still shown where they exist, and the browser re-sum is shown with its number, but the verdict is this relative table."
         : "This export was computed in <b>float64</b> (<code>provenance.compute_dtype</code>); the relative gates still carry the verdict, with more headroom than the absolute set had."}</p>`;
 }
