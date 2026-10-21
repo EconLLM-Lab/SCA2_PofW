@@ -42,7 +42,7 @@ def main():
         # Paths/type checked above; no links, devices or directories in archive.
         tar.extractall(args.destination, members=members)
     payload = sum(e["bytes"] for e in entries.values())
-    assert payload == manifest["payload_bytes"] <= 1_500_000_000
+    assert payload == manifest["payload_bytes"] <= 950_000_000   # the WB7 storage gate (Space cap is 1 GB)
     site = args.destination
     index = json.loads((site / "exports/index.json").read_text())
     assert set(index["models"]) == {r["model"] for r in index["runs"]}
@@ -62,6 +62,9 @@ def main():
         if m.get("light"):
             assert m["arrays"], rel
             assert not (set(m["arrays"]) & heavy), (rel, set(m["arrays"]) & heavy)
+            # The binary holds exactly the listed arrays, packed from offset 0.
+            assert sum(a["nbytes"] for a in m["arrays"].values()) == entries["exports/" + m["bin"]]["bytes"], rel
+            assert sorted((a["offset"], a["nbytes"]) for a in m["arrays"].values())[0][0] == 0, rel
         if m["arrays"]:
             assert m["bin"] and "exports/" + m["bin"] in entries
             binary = "exports/" + m["bin"]
@@ -86,6 +89,21 @@ def main():
             numbers_only_runs += 1
         jsons += 1
     assert array_names <= allowed, array_names - allowed
+    # index.json lists every Q57 comparator: kind, code, light flag, and files that exist.
+    comparators = index.get("comparators", [])
+    for c in comparators:
+        assert ("exports/" + c["run"]) in entries and ("exports/" + c["pair"]) in entries, c
+        assert (c["model"], c["item_id"]) in run_ids, c
+        if c["kind"] == "adapter":
+            assert len(c["cc"]) == 3 and c["cc"].isupper() and "bits" not in c, c
+        else:
+            assert c["kind"] == "sign_prompt" and set(c["bits"]) <= set("01") and len(c["bits"]) == 6 and "cc" not in c, c
+        run = json.loads((site / "exports" / c["run"]).read_text())
+        assert c["light"] is (c["tier"] == "light") and bool(run.get("light")) is c["light"], c
+        has_heavy = bool(set(run["arrays"]) & heavy)
+        assert c["tier"] in ("full", "light", "numbers"), c
+        assert (c["tier"] == "full") == has_heavy, c
+        assert (c["tier"] == "numbers") == (not run["arrays"]), c
     assert all(not p.endswith((".safetensors", ".pt", ".pth", ".gguf")) for p in entries)
     for rel, entry in entries.items():
         p = site / rel
@@ -99,7 +117,7 @@ def main():
                 assert private not in text, (rel, private)
     result = {"pass": True, "archive_bytes": manifest["archive_bytes"], "payload_bytes": payload,
               "files": len(entries), "runs": len(index["runs"]), "pairs": len(index["pairs"]),
-              "capture_manifests": jsons, "light_runs": light_runs,
+              "capture_manifests": jsons, "comparators": len(comparators), "light_runs": light_runs,
               "numbers_only_runs": numbers_only_runs, "array_names": sorted(array_names),
               "archive_sha256": manifest["archive_sha256"]}
     args.report.parent.mkdir(parents=True, exist_ok=True)

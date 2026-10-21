@@ -14,6 +14,9 @@ WORKBENCH = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("deploy_bundle", WORKBENCH / "scripts/build_deploy_bundle.py")
 builder = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(builder)
+ISPEC = importlib.util.spec_from_file_location("bundle_identity", WORKBENCH / "scripts/check_bundle_identity.py")
+identity = importlib.util.module_from_spec(ISPEC)
+ISPEC.loader.exec_module(identity)
 VERIFY = WORKBENCH / "viewer/screens/sca2/verify_bundle.py"
 BASE = "BASE"
 ADAPTERS = "phase1_nf4_t4"
@@ -68,7 +71,7 @@ def light(tmp_path, monkeypatch):
     sets = ((ADAPTERS, [(BASE, BASE + "_usa", "wvs_Q57", 1.0), (BASE, BASE + "_chn", "wvs_Q57", -2.0),
                         (BASE, BASE + "_bgd", "wvs_Q57", 3.0), (BASE, BASE + "_arg", "wvs_Q81", 0.5),
                         (BASE, BASE + "_bra", "wvs_Q81", -0.5)]),
-            (PROMPTS, [(BASE, "PROMPT_000000", "wvs_Q57", 0.25), (BASE, "PROMPT_arg", "wvs_Q81", 0.75),
+            (PROMPTS, [(BASE, "PROMPT_base_sp000000", "wvs_Q57", 0.25), (BASE, "PROMPT_arg", "wvs_Q81", 0.75),
                        (BASE, "PROMPT_bra", "wvs_Q81", 0.25)]))
     for folder, pairs in sets:
         root = w / "exports" / folder
@@ -120,10 +123,12 @@ def test_light_run_output_numbers_and_closure(light):
     q57 = manifest["q57"]
     assert q57["comparators"] == 4
     assert q57["shipped_full"] == ["BASE_usa"]
-    assert q57["shipped_light"] == ["BASE_bgd", "BASE_chn", "PROMPT_000000"]
-    assert q57["numbers_only"] == []
-    assert q57["pairs_without"] == ["d_head_norm"]
-    assert "every Q57 comparator" in manifest["selection_rule"]
+    # Allocation order: adapters first (largest |d_margin| first), then sign prompts.
+    assert q57["shipped_light"] == ["BASE_bgd", "BASE_chn", "PROMPT_base_sp000000"]
+    assert q57["allocation_order"][-1] == "PROMPT_base_sp000000"
+    assert q57["pairs_only"] == []
+    assert q57["heavy_arrays"] == sorted(HEAVY) or set(q57["heavy_arrays"]) == HEAVY
+    assert "every Q57 comparator" in manifest["selection_rule"] and "light flag" in manifest["selection_rule"]
 
     index = json.loads(files["exports/index.json"])
     run_names = {r["file"] for r in index["runs"]}
@@ -133,12 +138,14 @@ def test_light_run_output_numbers_and_closure(light):
         source_path = w / "exports" / folder_of(name) / name
         source = json.loads(source_path.read_text())
         shipped = json.loads(files["exports/" + name])
-        # Every non-array field is the source export's, unchanged.
+        if name in pair_names:
+            # Every pair ships in full: the exact source bytes, new Q57 pairs included.
+            assert files["exports/" + name] == source_path.read_bytes()
+            assert files["exports/" + shipped["bin"]] == (source_path.parent / source["bin"]).read_bytes()
+            continue
+        # Every non-array field of a run is the source export's, unchanged.
         assert {k: v for k, v in shipped.items() if k not in ("arrays", "bin", "light")} == \
                {k: v for k, v in source.items() if k not in ("arrays", "bin")}
-        if shipped["bin"] is None:
-            assert shipped["arrays"] == {}
-            continue
         shipped_bin = files["exports/" + shipped["bin"]]
         source_bin = (source_path.parent / source["bin"]).read_bytes()
         for array, meta in shipped["arrays"].items():
@@ -147,43 +154,97 @@ def test_light_run_output_numbers_and_closure(light):
             # Every number is the source export's, byte for byte.
             assert shipped_bin[meta["offset"]:meta["offset"] + meta["nbytes"]] == \
                    source_bin[start:start + meta["nbytes"]], (name, array)
-        if name in pair_names and name.endswith("__wvs_Q57.json") and name.split("__")[2] != "BASE_usa":
-            # A new Q57 pair: everything but the per-head array.
-            assert set(shipped["arrays"]) == set(source["arrays"]) - {"d_head_norm"}, name
-        if name in pair_names and ("__wvs_Q81" in name or name.split("__")[2] == "BASE_usa"):
-            # A pair already in the v1.4 selection keeps its exact bytes.
-            assert files["exports/" + name] == source_path.read_bytes()
-            assert shipped_bin == source_bin
-        if name in run_names and name.split("__")[1] == "BASE_usa":
+        if name.split("__")[1] == "BASE_usa":
             # A capture already in the v1.4 selection keeps its exact bytes.
             assert files["exports/" + name] == source_path.read_bytes()
             assert shipped_bin == source_bin
         if shipped.get("light"):
             assert not set(shipped["arrays"]) & HEAVY
-            assert set(shipped["arrays"]) == set(builder.LIGHT_ARRAYS) & set(source["arrays"])
+            assert set(shipped["arrays"]) == set(source["arrays"]) - HEAVY   # neuron_attr stays
+            assert sum(m["nbytes"] for m in shipped["arrays"].values()) == len(shipped_bin)
         for meta in shipped["arrays"].values():
             assert 0 <= meta["offset"] <= meta["offset"] + meta["nbytes"] <= len(shipped_bin)
 
+    by_model = {c["model"]: c for c in index["comparators"]}
+    assert len(index["comparators"]) == 4
+    assert by_model["BASE_usa"] | {} == dict(model="BASE_usa", item_id="wvs_Q57", kind="adapter", cc="USA",
+                                             tier="full", light=False, run="run__BASE_usa__wvs_Q57.json",
+                                             pair="pair__BASE__BASE_usa__wvs_Q57.json")
+    assert by_model["BASE_chn"]["light"] is True and by_model["BASE_chn"]["cc"] == "CHN"
+    assert by_model["PROMPT_base_sp000000"]["kind"] == "sign_prompt"
+    assert by_model["PROMPT_base_sp000000"]["bits"] == "000000" and by_model["PROMPT_base_sp000000"]["light"] is True
 
-def test_numbers_only_fallback_when_nothing_fits(light, monkeypatch):
+
+def test_cap_fills_adapters_first_and_leaves_the_rest_pairs_only(light, monkeypatch):
     w, args = light
-    monkeypatch.setattr(builder, "LIGHT_ARRAYS", ())
+    with monkeypatch.context() as m:
+        m.setattr(builder, "HEAVY_ARRAYS", tuple(n for n, _, _ in RUN_ARRAYS))   # nothing is light: numbers only
+        assert builder.build_bundle(args) == 0
+    floor = json.loads((w / "dist/deploy_bundle.tar.manifest.json").read_text())["payload_bytes"]
+    args.max_bytes = floor + 600   # room for one light run, not two
     assert builder.build_bundle(args) == 0
-    manifest = json.loads((w / "dist/deploy_bundle.tar.gz").with_suffix(".manifest.json").read_text())
+    manifest = json.loads((w / "dist/deploy_bundle.tar.manifest.json").read_text())
     files = read_archive(w / "dist/deploy_bundle.tar.gz")
     q57 = manifest["q57"]
-    assert q57["shipped_light"] == [] and q57["shipped_full"] == ["BASE_usa"]
-    assert q57["numbers_only"] == ["BASE_bgd", "BASE_chn", "PROMPT_000000"]
-    for model in q57["numbers_only"]:
-        name = f"exports/run__{model}__wvs_Q57.json"
-        shipped = json.loads(files[name])
+    assert manifest["payload_bytes"] <= args.max_bytes
+    assert q57["shipped_light"] == ["BASE_bgd"]
+    assert q57["pairs_only"] == ["BASE_chn", "PROMPT_base_sp000000"]
+    index = json.loads(files["exports/index.json"])
+    assert {c["model"]: (c["tier"], c["light"]) for c in index["comparators"]} == {
+        "BASE_usa": ("full", False), "BASE_bgd": ("light", True), "BASE_chn": ("numbers", False),
+        "PROMPT_base_sp000000": ("numbers", False)}
+    for model in q57["pairs_only"]:
+        shipped = json.loads(files[f"exports/run__{model}__wvs_Q57.json"])
         assert shipped["arrays"] == {} and shipped["bin"] is None and "light" not in shipped
-        source = json.loads((w / "exports" / folder_of(name.split("/")[-1]) / name.split("/")[-1]).read_text())
-        assert {k: v for k, v in shipped.items() if k not in ("arrays", "bin")} == \
-               {k: v for k, v in source.items() if k not in ("arrays", "bin")}
+        assert f"exports/pair__BASE__{model}__wvs_Q57.json" in files   # its pair is still whole
 
 
-def test_verify_bundle_accepts_light_and_reduced_pairs(light, monkeypatch):
+def test_a_cap_below_the_numbers_floor_fails(light):
+    w, args = light
+    args.max_bytes = 1000
+    with pytest.raises(ValueError):
+        builder.build_bundle(args)
+
+
+def test_check_light_rejects_heavy_array_and_size_mismatch():
+    table = {"head_attr": {"dtype": "float32", "offset": 0, "nbytes": 8}}
+    builder.check_light({"arrays": table}, bytes(8))
+    with pytest.raises(ValueError, match="heavy"):
+        builder.check_light({"arrays": table | {"g_last": {"dtype": "float32", "offset": 8, "nbytes": 8}}}, bytes(16))
+    with pytest.raises(ValueError, match="size"):
+        builder.check_light({"arrays": table}, bytes(9))
+    with pytest.raises(ValueError, match="bounds"):
+        builder.check_light({"arrays": {"head_attr": {"dtype": "float32", "offset": 4, "nbytes": 8}}}, bytes(8))
+
+
+def test_comparator_identity():
+    assert builder.comparator_identity("B_1_arg", "B_1") == {"kind": "adapter", "cc": "ARG"}
+    assert builder.comparator_identity("X_9_base_sp010101", "B_1") == {"kind": "sign_prompt", "bits": "010101"}
+    with pytest.raises(ValueError):
+        builder.comparator_identity("B_1_arg_corrupt_l15", "B_1")
+
+
+def test_v14_identity_check():
+    baseline = {"files": {"exports/a.bin": {"sha256": "1", "bytes": 3}, "exports/index.json": {"sha256": "2", "bytes": 4},
+                          "assets/app.js": {"sha256": "3", "bytes": 5}, "sca2/index.html": {"sha256": "4", "bytes": 6},
+                          "sca2/sca2_data.json": {"sha256": "5", "bytes": 7}}}
+    same = [{"file": n, "sha256": v["sha256"], "bytes": v["bytes"]} for n, v in baseline["files"].items()]
+    assert identity.compare(baseline, {"files": same})["violations"] == []
+    moved = [dict(f, sha256="9") if f["file"] in ("exports/index.json", "assets/app.js", "sca2/index.html") else f
+             for f in same]
+    result = identity.compare(baseline, {"files": moved})
+    assert result["violations"] == [] and len(result["allowed_changed"]) == 3
+    bad = [dict(f, sha256="9") if f["file"] == "exports/a.bin" else f for f in same if f["file"] != "sca2/sca2_data.json"]
+    assert identity.compare(baseline, {"files": bad})["violations"] == [
+        "exports/a.bin (changed)", "sca2/sca2_data.json (missing)"]
+
+
+def test_real_v14_baseline_has_143_files():
+    baseline = json.loads((WORKBENCH / "deploy/v1.4_file_hashes.json").read_text())
+    assert len(baseline["files"]) == 143
+
+
+def test_verify_bundle_accepts_light_runs_and_comparator_index(light, monkeypatch):
     w, args = light
     assert builder.build_bundle(args) == 0
     monkeypatch.undo()   # the verifier runs in its own process; restore the real subprocess.run
@@ -194,5 +255,5 @@ def test_verify_bundle_accepts_light_and_reduced_pairs(light, monkeypatch):
     assert result.returncode == 0, result.stderr
     data = json.loads(report.read_text())
     assert data["pass"] is True and data["light_runs"] == 3 and data["numbers_only_runs"] == 0
-    # The head array is gone from the new Q57 pair but kept by the v1.4 pairs.
-    assert "d_head_norm" in data["array_names"]
+    assert data["comparators"] == 4
+    assert "d_head_norm" in data["array_names"]   # every pair is whole

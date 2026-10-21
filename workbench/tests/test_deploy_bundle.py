@@ -54,7 +54,7 @@ def fixture(monkeypatch):
                            'default_units': [{'cc': 'USA', 'item': 'wvs_Q81'}]},
                  'featured': [{'bit': 'trust', 'surface': 'trust',
                                'x': 'ARG', 'y': 'BRA', 'item': 'wvs_Q57',
-                               'prompt_x': 'PROMPT_arg', 'prompt_y': 'PROMPT_bra'}],
+                               'prompt_x': 'PROMPT_base_sp000001', 'prompt_y': 'PROMPT_base_sp000010'}],
                  'sources': [{'path': 'relative/source.csv', 'sha256': 'a' * 64}]}
         put(w / 'viewer/public/sca2/sca2_data.json', story)
         (w / 'viewer/public/sca2/index.html').write_text('<h1>Story</h1>')
@@ -72,8 +72,8 @@ def fixture(monkeypatch):
                               ('phase1_nf4_t4', [('BASE', 'BASE_arg', 'wvs_Q57'),
                                ('BASE', 'BASE_bra', 'wvs_Q57'), ('BASE', 'BASE_usa', 'wvs_Q81'),
                                ('BASE', 'BASE_unused', 'wvs_Q99')]),
-                              ('phase1_promptroute_nf4_t4', [('BASE', 'PROMPT_arg', 'wvs_Q57'),
-                               ('BASE', 'PROMPT_bra', 'wvs_Q57')])]:
+                              ('phase1_promptroute_nf4_t4', [('BASE', 'PROMPT_base_sp000001', 'wvs_Q57'),
+                               ('BASE', 'PROMPT_base_sp000010', 'wvs_Q57')])]:
             root = w / 'exports' / folder
             index = {'schema': 'sca2-workbench/capture@1.1', 'models': {}, 'runs': [], 'pairs': []}
             for a, b, item in pairs:
@@ -128,7 +128,7 @@ def test_real_archive_closure_and_manifest(fixture):
         assert entry['sha256'] == hashlib.sha256(files[entry['file']]).hexdigest()
     index = json.loads(files['exports/index.json'])
     assert len(index['pairs']) == 6 and len(index['runs']) == 9
-    assert set(index['models']) == {'BASE', 'BASE_arg', 'BASE_bra', 'BASE_usa', 'PROMPT_arg', 'PROMPT_bra',
+    assert set(index['models']) == {'BASE', 'BASE_arg', 'BASE_bra', 'BASE_usa', 'PROMPT_base_sp000001', 'PROMPT_base_sp000010',
                                     'smol_inst', 'smol_inst_usa_e3'}
     for row in index['runs'] + index['pairs']:
         name = row['file']
