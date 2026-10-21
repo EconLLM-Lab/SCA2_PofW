@@ -2,7 +2,11 @@
 // add-ons to the weights, each trained on one country's six signs) and sign prompts (the same six signs written
 // into the prompt; the weights do not change).
 //   1. headline   how often each comparator gives one answer, against the base (dumbbell per row), exact from index.json
-//   2. controls   question picker (routes through the app), show adapters / sign prompts, order by size / matched pairs
+//   2. controls   question picker (routes through the app), show country adapters / sign prompts / all, order by matched pairs / size.
+//                 More than MANY (30) comparators, as on Q57 (42 adapters + 26 sign prompts): the list opens on the country adapters.
+//                 Matched pairs = one block per six-sign profile: a header naming the profile, its sign prompt, then its adapters.
+//                 Profiles that lack the other kind get their own sections, after the matched ones (see cohort-model.ts arrange()).
+//                 Rows have a fixed height and the list is written to the page once per change, so 68 rows cost one layout.
 //   3. map        where in the model the change happens: change in contribution to the answer, by layer
 // This view describes what the models do on these saved runs. It makes no claim about what a model "represents".
 // Hooks kept for tests and the verifier: #answer, data-obj="answer" | "cohort" | "cohort-legend" | "dmargin", ctx.ready().
@@ -12,8 +16,8 @@ import { loadPair, type Bundle, type IndexFile, type Pair } from "./data";
 import type { Ctx } from "./main";
 import { C, diverging, esc } from "./common";
 import {
-  SIGNS, answerName, arrange, buildRows, change, loadItemInfo, pairSentence, pct, shortQuestion,
-  type Block, type ItemInfo, type Row, type Show, type Sort,
+  SIGNS, answerName, arrange, buildRows, change, defaultShow, loadItemInfo, pairSentence, pct, profileName, shortQuestion,
+  type Block, type ItemInfo, type Row, type Section, type Show, type Sort,
 } from "./cohort-model";
 
 const MIN_ADAPTERS = 3;
@@ -50,7 +54,6 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   document.querySelector("#frame .illus")?.remove();   // the frame's "no data yet" badge is for the empty state only
 
   // ---------------------------------------------------------------- state: the URL keys `show` and `sort`
-  const showOf = (): Show => { const v = ctx.get("show"); return v === "adapter" || v === "prompt" ? v : "both"; };
   const sortOf = (): Sort => (ctx.get("sort") === "size" ? "size" : "pair");
 
   root.innerHTML = `<div class="k-wrap"><p id="kskel" class="muted">Loading the question wording and the saved answers…</p></div><div class="k-tip" role="tooltip" hidden></div>`;
@@ -73,6 +76,8 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const rows: Row[] = buildRows(index, base, item, cur, bitsOf);
     const enough = rows.length >= MIN_ADAPTERS;
     const kinds = { adapter: rows.filter((r) => r.who.kind === "adapter").length, prompt: rows.filter((r) => r.who.kind === "prompt").length };
+    const defShow = defaultShow(rows);   // the URL key `show` is dropped when it equals this
+    const showOf = (): Show => { const v = ctx.get("show"); return v === "adapter" || v === "prompt" || v === "both" ? v : defShow; };
     const ladder = (b: string, it = item) => `a=${encodeURIComponent(base)}&b=${encodeURIComponent(b)}&item=${encodeURIComponent(it)}`;
     // Switching question keeps the current comparator when it also has a pair on the new question.
     const bFor = (it: string) => { const ps = itemsOf(it); return (ps.find((p) => p.b === D.B.m.model.key) ?? ps[0]).b; };
@@ -94,10 +99,20 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       ? `<span class="k-nm"><b>${esc(r.who.name)}</b><em>country adapter</em></span>${dots(r.bits, onMap)}`
       : r.who.kind === "prompt" ? `<span class="k-nm"><b>Sign prompt${onMap && r.bits ? " " + esc(r.bits) : ""}</b><em>${esc(match(r) || "weights unchanged")}</em></span>${dots(r.bits, onMap)}`
       : `<span class="k-nm"><b>${esc(r.who.name)}</b></span>`;
-    const go = (r: Row) => `data-go="c" data-extra="${esc(ladder(r.who.b))}"`;
+    // A comparator with only its probabilities in the public sample ("Cohort only") has no Ladder: its rows do not navigate.
+    const go = (r: Row) => (r.cohortOnly ? "" : `data-go="c" data-extra="${esc(ladder(r.who.b))}"`);
+    const coTip = "Not shipped in the public sample: only this comparator's answer probabilities and its per-layer changes are here, so there is no Ladder to open.";
     const twins = (r: Row) => (r.bits ? rows.filter((o) => o !== r && o.bits === r.bits && o.who.kind !== r.who.kind && o.who.kind !== "other") : []);
-    const sameSigns = (r: Row, blk: Block) => (!blk.matched && twins(r).length
+    const sameSigns = (r: Row) => (twins(r).length
       ? `<span class="k-same" title="Another comparator on this question carries the same six signs. Order by matched pairs to see them side by side.">same signs as ${esc(twins(r).map((o) => (o.who.kind === "adapter" ? o.who.name + " adapter" : "the sign prompt")).join(", "))}</span>` : "");
+    // The left cell of a list row: two lines, fixed. Inside a profile block the six signs are in the block header, so the row is the name alone.
+    const listWho = (r: Row, blk: Block) => {
+      const grouped = blk.section !== "size" && blk.section !== "other";
+      // In a profile block the header already says which kind of comparator follows, so the row is the name alone.
+      const nm = r.who.kind === "adapter" ? `<b>${esc(r.who.name)}</b>${grouped ? "" : "<em>country adapter</em>"}`
+        : r.who.kind === "prompt" ? `<b>Sign prompt</b>${grouped ? "" : `<em>${esc(match(r) || "weights unchanged")}</em>`}` : `<b>${esc(r.who.name)}</b>`;
+      return `<span class="k-nm">${nm}${r.cohortOnly ? `<i class="k-tag" title="${esc(coTip)}">Cohort only</i>` : ""}</span>${grouped ? "" : `<span class="k-sub2">${dots(r.bits)}${sameSigns(r)}</span>`}`;
+    };
 
     // ---- the dumbbell: base model (white bar) to comparator (filled dot), on a fixed 0 to 100% axis.
     // The chevron sits just beyond the comparator dot, on the side the probability moved to, so a direction shows even
@@ -114,13 +129,12 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const rowHtml = (r: Row, blk: Block) => {
       const tb = r.topBase, tc = r.topCmp;
       const likely = tb && tc ? `<span class="k-top">Most likely answer: ${esc(topName(tb.code))} (${tb.text}) → ${esc(topName(tc.code))} (${tc.text})</span>` : "";
-      const t = rowTip(r);
-      return `<div class="k-row" tabindex="0" role="group" data-b="${esc(r.who.b)}" data-tip="${esc(t)}" aria-label="${esc(t + " Press Enter to open this pair in the Ladder.")}" ${go(r)}>
-        <div class="k-who">${label(r)}${sameSigns(r, blk)}</div>
+      return `<div class="k-row${r.cohortOnly ? " k-co" : ""}" tabindex="0" role="group" data-b="${esc(r.who.b)}" aria-label="${esc(rowTip(r) + (r.cohortOnly ? " Cohort only: not shipped in the public sample." : " Press Enter to open this pair in the Ladder."))}" ${go(r)}>
+        <div class="k-who">${listWho(r, blk)}</div>
         <div class="k-mid">${dumbbell(r)}${likely}</div>
         <div class="k-pc"><b>${plusText(tb, r.pBase)}</b> <span aria-hidden="true">→</span> <b class="c">${plusText(tc, r.pCmp)}</b></div>
         <div class="k-d num" title="Change from the base model, in log-odds of ${esc(plus)} over ${esc(minus)}">${change(r.d)}</div>
-        <a class="k-open" href="?tab=c&${esc(ladder(r.who.b))}" ${go(r)} tabindex="-1">Open in the Ladder →</a></div>`;
+        ${r.cohortOnly ? `<span class="k-open" title="${esc(coTip)}">Cohort only</span>` : `<a class="k-open" href="?tab=c&${esc(ladder(r.who.b))}" ${go(r)} tabindex="-1">Open in the Ladder →</a>`}</div>`;
     };
     const axis = `<div class="k-row k-axis" aria-hidden="true"><div class="k-who"></div><div class="k-mid"><div class="k-ticks">${[0, 25, 50, 75, 100].map((t) => `<span style="left:${t}%">${t}%</span>`).join("")}</div></div><div class="k-pc">base model → comparator</div><div class="k-d" title="Change from the base model, in log-odds">log-odds change</div><div class="k-open"></div></div>`;
 
@@ -130,17 +144,17 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const mapRowHtml = (r: Row, m: number) => {
       const v = lays.get(r.who.b);
       let best = -1; if (v) v.forEach((x, l) => { if (best < 0 || Math.abs(x) > Math.abs(v[best])) best = l; });
-      const cells = v ? v.map((x, l) => `<i data-tip="${esc(`${who(r)}${match(r) ? " " + match(r) : ""} · layer ${l}: contribution to the answer changes by ${change(x)} (${x >= 0 ? "toward " + plus : "toward " + minus}). Attention and MLP block together.`)}" style="background:${diverging(x, m)}"></i>`).join("") : `<span class="muted">loading…</span>`;
-      const aria = `${who(r)}${match(r) ? " " + match(r) : ""}.${v ? ` Largest change at layer ${best}: ${change(v[best])}.` : ""} Press Enter to open this pair in the Ladder.`;
-      return `<div class="k-hrow" tabindex="0" role="group" data-b="${esc(r.who.b)}" aria-label="${esc(aria)}" ${go(r)}>
-        <div class="k-who">${label(r, true)}</div><div class="k-cells" style="--L:${L}">${cells}</div><span class="k-go" aria-hidden="true">›</span></div>`;
+      const cells = v ? v.map((x, l) => `<i data-l="${l}" style="background:${diverging(x, m)}"></i>`).join("") : `<span class="muted">loading…</span>`;
+      const aria = `${who(r)}${match(r) ? " " + match(r) : ""}.${v ? ` Largest change at layer ${best}: ${change(v[best])}.` : ""}${r.cohortOnly ? " Cohort only: not shipped in the public sample." : " Press Enter to open this pair in the Ladder."}`;
+      return `<div class="k-hrow${r.cohortOnly ? " k-co" : ""}" tabindex="0" role="group" data-b="${esc(r.who.b)}" aria-label="${esc(aria)}" ${go(r)}>
+        <div class="k-who">${label(r, true)}</div><div class="k-cells" style="--L:${L}">${cells}</div><span class="k-go" aria-hidden="true">${r.cohortOnly ? "" : "›"}</span></div>`;
     };
     const mapHtml = (blocks: Block[]) => {
       const all = [...lays.values()].flat(), m = all.length ? Math.max(...all.map(Math.abs)) || 1 : 1;
       const grad = [-1, -0.5, -0.25, 0, 0.25, 0.5, 1].map((s) => `${diverging(s * m, m)} ${((s + 1) * 50).toFixed(0)}%`).join(",");
-      const body = blocks.map((b) => `<div class="k-hblk${b.matched ? " m" : ""}">${b.matched ? `<div class="k-gb" aria-hidden="true"></div>` : ""}${b.rows.map((r) => mapRowHtml(r, m)).join("")}</div>`).join("");
+      const body = blocks.map((b) => `<div class="k-hblk${b.rows.length > 1 ? " m" : ""}">${b.rows.length > 1 ? `<div class="k-gb" aria-hidden="true"></div>` : ""}${b.rows.map((r) => mapRowHtml(r, m)).join("")}</div>`).join("");
       return `<header><span class="cap">Where in the model the change happens</span></header>
-        <p class="k-sub">Each square is one layer: how much that layer's contribution to the answer changes, comparator minus base model. Hover a square for the number. Click a row to open that pair in the Ladder.</p>
+        <p class="k-sub">Each square is one layer: how much that layer's contribution to the answer changes, comparator minus base model. Hover a square for the number. Click a row to open that pair in the Ladder (rows marked “Cohort only” have no Ladder in the public sample).</p>
         <p class="k-mq" data-obj="cohort-map-question"><span class="muted">Question · </span>“${esc(cur.text)}”</p>
         <div class="k-hrow k-haxis" aria-hidden="true"><div class="k-who">layer →</div><div class="k-cells k-lay">${TICKS.map((l) => `<span style="left:${((l + 0.5) / L) * 100}%">${l}</span>`).join("")}</div><span class="k-go"></span></div>
         <div class="k-hrow k-haxis k-hnote" aria-hidden="true"><div class="k-who"></div><div class="k-cells k-lay"><span class="l">← reads the question</span><span class="r">writes the answer →</span></div><span class="k-go"></span></div>
@@ -186,43 +200,90 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         </dl>
         <p class="muted">This view describes what the models do on these saved runs. It does not show that a model represents a country.</p></details>`;
 
-    // ---- drawing, repeated when a filter changes
+    // ---- drawing, repeated when a filter changes. The list is built as one string and written once; rows have a fixed height
+    // (style.css), so the browser lays the list out in one pass and skips the rows that are off screen.
+    const count = new Map<string, { a: number; p: number }>();   // per six-sign profile, all rows of this question
+    for (const r of rows) if (r.bits && r.who.kind !== "other") { const c = count.get(r.bits) ?? { a: 0, p: 0 }; c[r.who.kind === "adapter" ? "a" : "p"]++; count.set(r.bits, c); }
+    const SECTION: Record<Section, (n: number) => string> = {
+      pair: (n) => `A sign prompt and country adapters with the same six signs · ${plural(n, "profile")}`,
+      "no-prompt": (n) => `Country adapters with no sign prompt of the same six signs on this question · ${plural(n, "profile")}`,
+      "no-adapter": (n) => `Sign prompts with no country adapter of the same six signs on this question · ${plural(n, "profile")}`,
+      other: (n) => `Comparators with no six-sign profile · ${n}`,
+      size: () => "",
+    };
+    const headHtml = (b: Block) => {
+      const c = count.get(b.bits!)!;
+      const hid = b.partnerHidden ? ` <span class="k-gh">· ${b.rows[0].who.kind === "adapter" ? "sign prompt" : "country adapters"} hidden by the filter</span>` : "";
+      return `<div class="k-ghead" role="heading" aria-level="4" aria-label="${esc(`Six signs ${b.bits}: ${profileName(b.bits!)}`)}">${dots(b.bits)}<span class="k-gname">${esc(profileName(b.bits!))}</span><span class="k-gn">${[c.p ? plural(c.p, "sign prompt") : "", c.a ? plural(c.a, "country adapter") : ""].filter(Boolean).join(" · ")}${hid}</span></div>`;
+    };
+    const listHtml = (blocks: Block[], sort: Sort) => {
+      const out: string[] = [axis];
+      if (sort === "pair") out.push(`<p class="k-note">Each block is one six-sign profile: the sign prompt first, then the country adapters trained on the same six signs. + is a positive sign (filled dot), − a negative one (open dot).</p>`);
+      const per = new Map<Section, number>(); for (const b of blocks) per.set(b.section, (per.get(b.section) ?? 0) + 1);
+      let last: Section | null = null;
+      for (const b of blocks) {
+        if (sort === "pair" && b.section !== last) { last = b.section; out.push(`<h4 class="k-sec">${esc(SECTION[b.section](b.section === "other" ? rows.filter((r) => !r.bits || r.who.kind === "other").length : per.get(b.section)!))}</h4>`); }
+        if (b.section === "size" || b.section === "other") { out.push(b.rows.map((r) => rowHtml(r, b)).join("")); continue; }
+        const sentence = b.matched ? pairSentence(b, cur) : "";
+        out.push(`<div class="k-group" role="group" aria-label="${esc(`Six signs ${b.bits}`)}">${headHtml(b)}${b.rows.map((r) => rowHtml(r, b)).join("")}${sentence ? `<p class="k-pair">${esc(sentence)}</p>` : ""}</div>`);
+      }
+      return out.join("");
+    };
+    let blocksNow: Block[] = [];
+    const drawMap = () => { const ms = root.querySelector("#kmapsec"); if (ms) ms.innerHTML = mapHtml(blocksNow); };
     const draw = () => {
-      const show = showOf(), sort = sortOf(), blocks = arrange(rows, show, sort);
+      const show = showOf(), sort = sortOf(), blocks = (blocksNow = arrange(rows, show, sort));
       const cnt = (n: number) => (n ? ` <span class="n">${n}</span>` : "");
-      root.querySelector("#kshow")!.innerHTML = seg("show", [["both", `Both${cnt(rows.length)}`], ["adapter", `Country adapters${cnt(kinds.adapter)}`], ["prompt", `Sign prompts${cnt(kinds.prompt)}`]], show);
-      root.querySelector("#ksort")!.innerHTML = seg("sort", [["pair", "Matched pairs", "Put a country adapter and a sign prompt with the same six signs side by side"], ["size", "Size of change (log-odds)", "Largest change in log-odds from the base model first, up or down"]], sort);
-      const body = blocks.map((b) => b.matched
-        ? `<div class="k-group" role="group" aria-label="Same six signs"><div class="k-gb" aria-hidden="true"></div>${b.rows.map((r) => rowHtml(r, b)).join("")}<p class="k-pair">${esc(pairSentence(b, cur))}</p></div>`
-        : b.rows.map((r) => rowHtml(r, b)).join("")).join("");
-      root.querySelector("#krows")!.innerHTML = blocks.length ? axis + body : `<p class="muted">No comparator of this kind on this question.</p>`;
-      const ms = root.querySelector("#kmapsec"); if (ms) ms.innerHTML = mapHtml(blocks);
+      root.querySelector("#kshow")!.innerHTML = seg("show", [["adapter", `Country adapters${cnt(kinds.adapter)}`], ["prompt", `Sign prompts${cnt(kinds.prompt)}`], ["both", `All comparators${cnt(rows.length)}`]], show);
+      root.querySelector("#ksort")!.innerHTML = seg("sort", [["pair", "Matched pairs", "Group the rows by their six signs: a sign prompt and the country adapters trained on the same six signs, side by side"], ["size", "Size of change (log-odds)", "Largest change in log-odds from the base model first, up or down"]], sort);
+      root.querySelector("#krows")!.innerHTML = blocks.length ? listHtml(blocks, sort) : `<p class="muted">No comparator of this kind on this question.</p>`;
+      drawMap();
     };
     draw();
 
     // ---- events: filters, tooltip, hover link between the two lists, Enter on a row
     root.addEventListener("click", (e) => {
       const t = e.target as HTMLElement, s = t.closest<HTMLElement>("[data-show]"), o = t.closest<HTMLElement>("[data-sort]");
-      if (s) { const v = s.dataset.show!; ctx.set("show", v === "both" ? null : v); draw(); root.querySelector<HTMLElement>(`[data-show="${v}"]`)?.focus(); }
+      if (s) { const v = s.dataset.show!; ctx.set("show", v === defShow ? null : v); draw(); root.querySelector<HTMLElement>(`[data-show="${v}"]`)?.focus(); }
       if (o) { const v = o.dataset.sort!; ctx.set("sort", v === "pair" ? null : v); draw(); root.querySelector<HTMLElement>(`[data-sort="${v}"]`)?.focus(); }
     });
     root.addEventListener("keydown", (e) => {
       const r = (e.target as HTMLElement).closest<HTMLElement>(".k-row[data-go], .k-hrow[data-go]");
       if (r && e.target === r && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); r.click(); }
     });
-    const hl = (b: string | null) => root.querySelectorAll<HTMLElement>("[data-b]").forEach((el) => el.classList.toggle("hl", b != null && el.dataset.b === b));
+    // The hover link between the two lists touches only the rows of the comparator under the pointer, and only when it changes.
+    const byB = new Map(rows.map((r) => [r.who.b, r] as const));
+    let hlNow: string | null = null;
+    const hl = (b: string | null) => {
+      if (b === hlNow) return;
+      hlNow = b;
+      root.querySelectorAll<HTMLElement>("[data-b].hl").forEach((el) => el.classList.remove("hl"));
+      if (b != null) root.querySelectorAll<HTMLElement>(`[data-b="${CSS.escape(b)}"]`).forEach((el) => el.classList.add("hl"));
+    };
+    // Tooltip text is made when it is shown (a layer square, or a list row), not stored in 2,000 attributes.
+    const tipOf = (el: HTMLElement): string => {
+      const sq = el.closest<HTMLElement>(".k-cells i[data-l]");
+      if (sq) {
+        const r = byB.get(sq.closest<HTMLElement>("[data-b]")?.dataset.b ?? ""), l = Number(sq.dataset.l), x = r ? lays.get(r.who.b)?.[l] : undefined;
+        return r && x != null ? `${who(r)}${match(r) ? " " + match(r) : ""} · layer ${l}: contribution to the answer changes by ${change(x)} (toward ${x >= 0 ? plus : minus}). Attention and MLP block together.` : "";
+      }
+      const row = el.closest<HTMLElement>(".k-row[data-b]"), r = row && byB.get(row.dataset.b!);
+      return r ? rowTip(r) : "";
+    };
     const place = (x: number, y: number) => { tip.style.left = Math.max(8, Math.min(x + 14, innerWidth - 360)) + "px"; tip.style.top = Math.max(8, Math.min(y + 16, innerHeight - 100)) + "px"; };
     root.addEventListener("pointermove", (e) => {
-      const el = e.target as HTMLElement, t = el.closest<HTMLElement>("[data-tip]");
+      const el = e.target as HTMLElement, text = tipOf(el);
       hl(el.closest<HTMLElement>("[data-b]")?.dataset.b ?? null);
-      if (!t) { tip.hidden = true; return; }
-      tip.textContent = t.dataset.tip!; tip.hidden = false; place(e.clientX, e.clientY);
+      if (!text) { tip.hidden = true; return; }
+      if (tip.textContent !== text) tip.textContent = text;
+      tip.hidden = false; place(e.clientX, e.clientY);
     });
     root.addEventListener("pointerleave", () => { tip.hidden = true; hl(null); });
     root.addEventListener("focusin", (e) => {
       const r = (e.target as HTMLElement).closest<HTMLElement>("[data-b]"); hl(r?.dataset.b ?? null);
-      if (!r?.dataset.tip) { tip.hidden = true; return; }
-      const b = r.getBoundingClientRect(); tip.textContent = r.dataset.tip; tip.hidden = false; place(b.left + 200, b.bottom - 8);
+      const text = r ? tipOf(r) : "";
+      if (!r || !text) { tip.hidden = true; return; }
+      const b = r.getBoundingClientRect(); tip.textContent = text; tip.hidden = false; place(b.left + 200, b.bottom - 8);
     });
     root.addEventListener("focusout", () => { tip.hidden = true; hl(null); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") tip.hidden = true; }, { signal: ctx.signal });
@@ -235,7 +296,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         if (!P.t.d_attn_attr || !P.t.d_mlp_attr) continue;
         lays.set(r.who.b, Array.from({ length: L }, (_, l) => P.t.d_attn_attr.get(l) + P.t.d_mlp_attr.get(l)));
       }
-      draw();
+      drawMap();
       ctx.ready();
     });
   }).catch((e) => {

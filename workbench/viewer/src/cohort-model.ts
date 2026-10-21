@@ -19,8 +19,16 @@ export interface Row {
   pBase?: number; pCmp?: number;                       // probability of j_plus, base and comparator
   topBase?: Top; topCmp?: Top;
   bits?: string;                                       // the six signs this comparator carries, "101111"
+  cohortOnly?: boolean;                                // the public sample ships only this comparator's probabilities (no Ladder, Matrix, 3D)
 }
-export interface Block { rows: Row[]; matched: boolean; bits?: string }
+// A block is what is drawn together. In the matched-pairs order it is one six-sign profile; in the size order, one row.
+//   section "pair"       the profile has a sign prompt and a country adapter on this question
+//   section "no-prompt"  adapters whose six signs no sign prompt on this question carries
+//   section "no-adapter" sign prompts whose six signs no adapter on this question carries
+//   section "other"      rows with no six-sign profile at all (shown one by one, last)
+// `matched` is "both kinds are in this block now"; `partnerHidden` is "the other kind exists on this question but the filter hides it".
+export type Section = "pair" | "no-prompt" | "no-adapter" | "other" | "size";
+export interface Block { rows: Row[]; matched: boolean; bits?: string; section: Section; partnerHidden: boolean }
 export type Show = "both" | "adapter" | "prompt";
 export type Sort = "pair" | "size";
 
@@ -105,33 +113,54 @@ export function buildRows(index: IndexFile, base: string, item: string, info: It
   const runs = index.runs as unknown as IndexRun[];
   const probs = (m: string) => runs.find((r) => r.model === m && r.item_id === item)?.probs;
   const pb = probs(base);
+  const numbersOnly = new Set((index.comparators ?? []).filter((c) => c.item_id === item && c.tier === "numbers").map((c) => c.model));
   return index.pairs.filter((p) => p.a === base && p.item_id === item).map((p) => {
     const who = whoOf(index, p.b), pc = probs(p.b);
     return {
       who, d: p.d_margin, file: p.file, pBase: pb?.[info.j_plus], pCmp: pc?.[info.j_plus], topBase: top(pb), topCmp: top(pc),
       bits: who.kind === "prompt" ? who.bits : who.cc ? bitsOfCountry.get(who.cc) : undefined,
+      cohortOnly: numbersOnly.has(p.b),
     };
   });
 }
 
-/** Filter, then arrange. "pair": an adapter and a sign prompt with the same six signs sit together in one block
- * (largest change first), then everything else by size of change. "size": one row per block, by size of change. */
+/** More comparators than this and the list opens on the country adapters alone (Q57: 42 adapters + 26 sign prompts). */
+export const MANY = 30;
+export const defaultShow = (rows: Row[]): Show => (rows.length > MANY && rows.some((r) => r.who.kind === "adapter") ? "adapter" : "both");
+
+/** The six signs of a profile in words: "trust +, risk taking −, …". */
+export const profileName = (bits: string) => [...bits].map((c, i) => `${SIGNS[i]} ${c === "1" ? "+" : "−"}`).join(", ");
+
+/** Filter, then arrange. "pair": rows are grouped by their six signs, one block per profile (prompt first, then its adapters, each by
+ * size of change). A profile is matched when, on this question, a sign prompt and an adapter carry the same six signs; that is decided
+ * on ALL rows, so a filter that hides one kind does not turn matched profiles into unmatched ones. Order of blocks: matched profiles
+ * (largest change first), then adapters without a sign prompt, then sign prompts without an adapter, then rows with no profile.
+ * "size": one row per block, by size of change. */
 export function arrange(rows: Row[], show: Show, sort: Sort): Block[] {
   const kept = rows.filter((r) => show === "both" || r.who.kind === show);
   const size = (a: Row, b: Row) => Math.abs(b.d) - Math.abs(a.d);
-  if (sort === "size") return [...kept].sort(size).map((r) => ({ rows: [r], matched: false }));
-  const byBits = new Map<string, Row[]>();
-  for (const r of kept) if (r.bits && r.who.kind !== "other") byBits.set(r.bits, [...(byBits.get(r.bits) ?? []), r]);
-  const pairs = [...byBits.entries()].filter(([, g]) => g.some((r) => r.who.kind === "adapter") && g.some((r) => r.who.kind === "prompt"));
-  const used = new Set(pairs.flatMap(([, g]) => g));
-  const blocks: Block[] = pairs.map(([bits, g]) => ({ rows: [...g.filter((r) => r.who.kind === "adapter").sort(size), ...g.filter((r) => r.who.kind === "prompt").sort(size)], matched: true, bits }))
-    .sort((x, y) => Math.max(...y.rows.map((r) => Math.abs(r.d))) - Math.max(...x.rows.map((r) => Math.abs(r.d))));
-  return [...blocks, ...kept.filter((r) => !used.has(r)).sort(size).map((r) => ({ rows: [r], matched: false }))];
+  const peak = (b: Block) => Math.max(...b.rows.map((r) => Math.abs(r.d)));
+  if (sort === "size") return [...kept].sort(size).map((r) => ({ rows: [r], matched: false, section: "size" as Section, partnerHidden: false }));
+  const has = new Map<string, Set<Kind>>();   // profile -> kinds present on this question, filter ignored
+  for (const r of rows) if (r.bits && r.who.kind !== "other") has.set(r.bits, (has.get(r.bits) ?? new Set()).add(r.who.kind));
+  const groups = new Map<string, Row[]>(), other: Row[] = [];
+  for (const r of kept) { if (r.bits && r.who.kind !== "other") groups.set(r.bits, [...(groups.get(r.bits) ?? []), r]); else other.push(r); }
+  const blocks: Block[] = [...groups.entries()].map(([bits, g]) => {
+    const kinds = has.get(bits)!, both = kinds.has("adapter") && kinds.has("prompt");
+    const shown = new Set(g.map((r) => r.who.kind));
+    const section: Section = both ? "pair" : kinds.has("adapter") ? "no-prompt" : "no-adapter";
+    return { rows: [...g.filter((r) => r.who.kind === "prompt").sort(size), ...g.filter((r) => r.who.kind === "adapter").sort(size)], bits, section,
+      matched: shown.has("adapter") && shown.has("prompt"), partnerHidden: both && shown.size < 2 };
+  });
+  const rank: Record<Section, number> = { pair: 0, "no-prompt": 1, "no-adapter": 2, other: 3, size: 4 };
+  blocks.sort((x, y) => rank[x.section] - rank[y.section] || peak(y) - peak(x));
+  return [...blocks, ...other.sort(size).map((r) => ({ rows: [r], matched: false, section: "other" as Section, partnerHidden: false }))];
 }
 
 /** The one sentence under a matched block. */
 export function pairSentence(b: Block, it: ItemInfo): string {
   const lo = `the log-odds of ${answerName(it, it.j_plus)} over ${answerName(it, it.j_minus)}`;
   const w = b.rows.filter((r) => r.who.kind === "adapter"), s = b.rows.filter((r) => r.who.kind === "prompt");
+  if (!w.length || !s.length) return "";
   return `Same six signs: in the weights (${w.map((r) => `${r.who.name} adapter`).join(", ")}) ${lo} move ${w.map((r) => change(r.d)).join(", ")}; in words (${s.map((r) => `sign prompt ${r.who.bits}`).join(", ")}) ${s.map((r) => change(r.d)).join(", ")}.`;
 }

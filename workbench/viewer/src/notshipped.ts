@@ -17,3 +17,13 @@ export const NOT_IN_SAMPLE = "not shipped in the public sample";
 /** One plain sentence, in the same card frame as the other panels. No spinner, no error panel. */
 export const notShippedPanel = (sentence: string, title = "Not shipped in the public sample"): string =>
   `<section class="obj notshipped" data-obj="notshipped"><header><span class="cap">${title}</span></header><p>${sentence}</p></section>`;
+
+/** A comparator whose run has no arrays at all (tier `numbers`): the Ladder, Matrix and 3D object have nothing to draw.
+ * The sentence is HTML: "Cohort tab" links to the Cohort on the same question (data-go keeps the pair in the app). */
+export const NUMBERS_ONLY = "The public workbench ships only this comparator's answer probabilities, not its internal data. You can see it in the Cohort tab.";
+export const numbersOnlyHTML = (item: string): string => {
+  const q = `item=${encodeURIComponent(item)}`;
+  return NUMBERS_ONLY.replace("Cohort tab", `<a href="?tab=k&${q}" data-go="k" data-extra="${q}">Cohort tab</a>`);
+};
+/** The text beside a numbers-only comparator in a picker. */
+export const COHORT_ONLY = "Cohort only";

@@ -14,7 +14,7 @@
 // disposal (disposeScene, renderLists.dispose) is in scene.ts / tab-a.ts and runs on every rebuild
 // and whenever the 3D tab is left.
 
-import { ensureHeavy, loadBundle, loadIndex, prefetchHeavy, type Bundle, type IndexFile } from "./data";
+import { ensureHeavy, loadBundle, loadIndex, prefetchHeavy, tierOf, type Bundle, type IndexFile } from "./data";
 import { initTopBar, showLoader } from "./loading";
 import { checkLine, checksOf, esc, openLearn, roleOf } from "./common";
 import { mountLanding } from "./landing";
@@ -22,6 +22,7 @@ import { mountLadder } from "./tab-c";
 import { mountMatrix } from "./tab-b";
 import { mountObject } from "./tab-a";
 import { mountCohort } from "./tab-k";
+import { COHORT_ONLY, notShippedPanel, numbersOnlyHTML } from "./notshipped";
 
 // Default: the Paper B base against the CAN cohort-1 adapter on wvs_Q43. The SmolLM2-135M pair stays reachable
 // as the teaching example (TEACHING; landing link).
@@ -107,7 +108,7 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
           <button id="chk" data-learn="conservation" title="${esc(checks.map((c) => (c.ok ? "✓ " : "✗ ") + checkLine(c)).join("\n"))}">${bad.length ? `✗ ${bad.length} of ${checks.length}` : `✓ ${checks.length} checks pass`}</button><button id="help" data-learn="howto-${tab}" title="How to read this view, and the keys (?)">?</button></span>
       </div>
       <div class="r2" data-obj="pickers">
-        <label class="slot a" title="Model A: the model compared against"><span class="k">A (base)</span><select id="selA"></select></label>
+        <label class="slot a" title="Model A: the model compared against"><span class="k">${tab === "k" ? "Base model" : "A (base)"}</span><select id="selA"></select></label>
         <span class="vs">${tab === "k" ? "against its adapters and sign prompts (pick the question below)" : "vs"}</span>
         <label class="slot b" title="Model B"${tab === "k" ? " hidden" : ""}><span class="k">B (compared)</span><select id="selB"></select></label>
         <span id="clampchip" class="clampchip" hidden title="Every number on this tab is from the clamped run (Quadrant III neurons set to zero), not the normal run.">clamped run</span>
@@ -124,7 +125,9 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
   sa.value = a;
   // About 70 comparators: two optgroups, each sorted by the plain name shown. A label that is neither a
   // sign prompt nor an adapter (no such B exists today) stays above the groups, never dropped.
-  const opt = (k: string) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}</option>`;
+  // A comparator with only its answer probabilities in the public sample (tier numbers) is kept, marked "Cohort only".
+  const cohortOnly = (k: string) => index.comparators?.some((c) => c.model === k && c.item_id === item && c.tier === "numbers") ?? false;
+  const opt = (k: string) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}${cohortOnly(k) ? ` (${COHORT_ONLY})` : ""}</option>`;
   const byName = (x: string, y: string) => plainName(index.models[x]?.label ?? x).localeCompare(plainName(index.models[y]?.label ?? y), "en", { numeric: true });
   const groupedOptions = (keys: string[]) => {
     const kind = (k: string) => /\+ sign prompt [01](?:_[01]){5}/.test(index.models[k]?.label ?? "") ? "sp" : index.models[k]?.adapter ? "ad" : "other";
@@ -190,7 +193,7 @@ async function route() {
     } else {
       const view = shell(tab, D);
       const sA = app.querySelector<HTMLElement>(".slot.a")!, sB = app.querySelector<HTMLElement>(".slot.b")!;
-      sA.title = `Model A: ${D.A.m.model.label}${roleOf(D, "A")}`; sB.title = `Model B: ${D.B.m.model.label}${roleOf(D, "B")}`;
+      sA.title = `${tab === "k" ? "Base model" : "Model A"}: ${D.A.m.model.label}${roleOf(D, "A")}`; sB.title = `Model B: ${D.B.m.model.label}${roleOf(D, "B")}`;
       const ctx: Ctx = {
         get: (k) => url().get(k),
         set: (k, v) => { const q = url(); if (v == null || v === "") q.delete(k); else q.set(k, String(v)); write(q); },
@@ -198,9 +201,13 @@ async function route() {
         signal,
         mode: (on) => { const c = app.querySelector<HTMLElement>("#clampchip"); if (c) c.hidden = !on; },
       };
-      unmount = TABS[tab](view, D, ctx);
+      // A numbers-only A or B (run arrays not in the public sample) has nothing for the Ladder, Matrix or 3D object to draw:
+      // say so in the view's place. The Cohort reads index numbers and pair arrays, which do ship.
+      const numbersOnly = tab !== "k" && (tierOf(D.A.m) === "numbers" || tierOf(D.B.m) === "numbers");
+      if (numbersOnly) { view.innerHTML = notShippedPanel(numbersOnlyHTML(item)); unmount = null; W.__ready = true; }
+      else unmount = TABS[tab](view, D, ctx);
       if (tab === "k") idle(seq, () => prefetchHeavy(got, signal));
-      if (tab === "c" || tab === "b") {
+      if (!numbersOnly && (tab === "c" || tab === "b")) {
         const D0 = D;
         // Background, and aborted when the visitor moves on, so it never slows the next view (finished chunks stay cached).
         ensureHeavy(D0, { quiet: true, signal }).then(() => { if (seq === routeSeq) document.dispatchEvent(new Event("sca2:heavy")); })

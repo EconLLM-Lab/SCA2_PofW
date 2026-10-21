@@ -73,6 +73,8 @@ export interface IndexFile {
   models: Record<string, { model_id: string; adapter: string | null; label: string }>;
   runs: { file: string; model: string; label: string; item_id: string; T: number; pass: boolean; margin: number }[];
   pairs: { file: string; a: string; b: string; item_id: string; d_margin: number }[];
+  /** WB7-Q bundles: one row per comparator and question, with what the public sample ships of it (absent in older bundles). */
+  comparators?: { model: string; item_id: string; kind: "adapter" | "sign_prompt"; tier: Tier }[];
 }
 
 /** A dense row-major tensor view: get(i, j, ...) with bounds taken from the manifest shape. */
