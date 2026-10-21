@@ -16,8 +16,9 @@ import {
 
 type Qty = "attn" | "resid" | "mlp";
 type Face = "a" | "b" | "d";
-const QTY: [Qty, string, string][] = [["attn", "attention write ‖a‖", "Size of each layer's attention write (attn_norm)"], ["resid", "running state ‖h‖", "Size of the running state after each layer (resid_norm)"], ["mlp", "MLP write ‖m‖", "Size of each layer's MLP write (mlp_norm)"]];
-const FACES: [Face, string][] = [["a", "A"], ["b", "B"], ["d", "‖B − A‖"]];
+const QTY: [Qty, string, string][] = [["attn", "attention addition ‖a‖", "Size of what each layer's attention heads add to the running state (attn_norm)"], ["resid", "running state ‖h‖", "Size of the running state after each layer (resid_norm)"], ["mlp", "MLP block addition ‖m‖", "Size of what each layer's MLP block adds to the running state (mlp_norm)"]];
+const FACES: [Face, string][] = [["a", "A"], ["b", "B"], ["d", "size of change ‖B − A‖"]];
+const FACE_TIP: Record<Face, string> = { a: "A: the base model", b: "B: the model compared with the base (a country adapter or a sign prompt)", d: "The size of the change: how far B's vector is from A's, ‖B − A‖ (never negative)" };
 const SRC = { resid: ["resid_norm", "d_resid_norm"], attn: ["attn_norm", "d_attn_norm"], mlp: ["mlp_norm", "d_mlp_norm"] } as const;
 
 export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void {
@@ -29,9 +30,9 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     <div id="work" class="b-work">
       <section class="obj" id="map" data-obj="map"><header><span class="cap">Size of</span>
           <span class="seg" id="qty">${QTY.map(([k, t, tip]) => `<button data-q="${k}" title="${esc(tip)}">${esc(t)}</button>`).join("")}</span><span class="sp"></span>
-          <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}">${t}</button>`).join("")}</span></header>
+          <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}" title="${FACE_TIP[k]}">${t}</button>`).join("")}</span></header>
         <canvas id="cv"></canvas><div class="foot" id="bfoot"></div></section>
-      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="running_margin: h^l·w at t*, read with the final layer's rescaling held fixed">Margin by layer</span><span class="sp"></span><span id="mleg"></span></header>
+      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="The log-odds you would get by reading the answer off the running state after each layer, with the final rescaling held fixed (running_margin: h^l·w at the answer position)">Log-odds by layer</span><span class="sp"></span><span id="mleg"></span></header>
         <svg id="mc"></svg><div class="foot" id="mfoot"></div></section>
       <aside id="drawer" class="obj" data-obj="drawer" hidden></aside>
     </div>
@@ -102,8 +103,8 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     root.querySelectorAll<HTMLElement>("[data-q]").forEach((b) => b.classList.toggle("on", b.dataset.q === qty));
     const nSq = segs.filter((s) => !s.open).reduce((a, s) => a + s.n, 0);
     const why = tainted ? failing.filter((c) => face === "d" || c.who === face.toUpperCase()).map(checkLine).join(" · ") : "";
-    $("bfoot").innerHTML = `<div class="krow"><i class="kbar" style="background:linear-gradient(90deg,#141416,${col})"></i><span><b class="fl ${tainted ? "bad" : ""}">${face === "d" ? "‖B − A‖" : face.toUpperCase()}</b> · 0 → <span class="num">${fmt(sc.p99, 3)}</span> (99th percentile, linear; brighter cells are clipped) · max <span class="num">${fmt(sc.max, 3)}</span> · ${face === "d" ? `pair <code>${SRC[qty][1]}</code>, its own scale` : `run <code>${SRC[qty][0]}</code> of ${face.toUpperCase()}`}</span></div>
-      <div class="krow"><span>rows: ${qty === "resid" ? "running state h0 (start) … h" + L : "layers, L0 at the bottom"} · white frame: answer position t* · ${squeeze ? `${nSq} template tokens squeezed to 2 px` : "template text full width"} (<button class="lnk" id="fold">${squeeze ? "show full width" : "squeeze"}</button>)${why ? ` · <span class="sumline bad">check failed: ${esc(why)}</span>` : ""}</span></div>`;
+    $("bfoot").innerHTML = `<div class="krow"><i class="kbar" style="background:linear-gradient(90deg,#141416,${col})"></i><span><b class="fl ${tainted ? "bad" : ""}">${face === "d" ? "size of the change ‖B − A‖" : face.toUpperCase()}</b> · 0 → <span class="num">${fmt(sc.p99, 3)}</span> (99th percentile, linear; brighter cells are clipped) · max <span class="num">${fmt(sc.max, 3)}</span> · ${face === "d" ? `pair <code>${SRC[qty][1]}</code>, its own scale` : `run <code>${SRC[qty][0]}</code> of ${face.toUpperCase()}`}</span></div>
+      <div class="krow"><span>rows: ${qty === "resid" ? "running state h0 (start) … h" + L : "layers, L0 at the bottom"} · white frame: the answer position (t*) · ${squeeze ? `${nSq} template tokens (the fixed chat wrapper) squeezed to 2 px` : "template text full width"} (<button class="lnk" id="fold">${squeeze ? "show full width" : "squeeze"}</button>)${why ? ` · <span class="sumline bad">accounting check failed: ${esc(why)}</span>` : ""}</span></div>`;
     $("fold").onclick = () => { squeeze = !squeeze; ctx.set("fold", squeeze ? null : 0); draw(); };
     margin();
   }
@@ -131,7 +132,7 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const close = Math.abs(X(ends[0].v) - X(ends[1].v)) < 56;
     ends.sort((p, q) => p.v - q.v).forEach((e, i) => { const x = Math.max(pl + 18, Math.min(Wm - pr - 18, X(e.v))); o += `<text x="${x}" y="${close ? OY + BAND - 18 + i * 12 : OY + BAND - 6}" text-anchor="middle" style="fill:${e.col}">${e.n} ${e.v.toFixed(2)}</text>`; });
     const svg = $("mc"); svg.setAttribute("width", String(Wm)); svg.setAttribute("height", String(yAx + 22)); svg.style.marginTop = `-${OY}px`; svg.innerHTML = o;
-    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}”, if read off after each layer · dashed: 0 = even odds</span>`;
+    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”, if read off after each layer · dashed: 0 = even odds</span>`;
     $("mleg").innerHTML = `<i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B`;
   }
 
@@ -145,7 +146,7 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const l = R - 1 - Math.floor((y - BAND) / rowH);
     if (l < 0 || l >= R || x < AX) { tip.hidden = true; if (hov) { hov = null; draw(); } return; }
     const t = tAt(x), [an, dn] = SRC[qty];
-    tip.textContent = `${rowName(l)} · token ${t} “${tokText(D.A.m.tokens[t].text)}”${t === ro ? " (t*)" : ""}\nA ${fmt(D.A.t[an].get(l, t), 4)}   B ${fmt(D.B.t[an].get(l, t), 4)}\n‖B − A‖ ${fmt(D.P.t[dn].get(l, t), 4)} (pair export)`;
+    tip.textContent = `${rowName(l)} · token ${t} “${tokText(D.A.m.tokens[t].text)}”${t === ro ? " (answer position)" : ""}\nA ${fmt(D.A.t[an].get(l, t), 4)}   B ${fmt(D.B.t[an].get(l, t), 4)}\nSize of change ‖B − A‖ ${fmt(D.P.t[dn].get(l, t), 4)} (pair export)`;
     tip.hidden = false; tip.style.left = e.clientX + 14 + "px"; tip.style.top = e.clientY + 14 + "px";
     if (!hov || hov.l !== l || hov.t !== t) { hov = { l, t }; draw(); }
   });
@@ -165,18 +166,18 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   function drawer() {
     const dr = $("drawer");
     if (!pin) { dr.hidden = true; dr.innerHTML = ""; return; }
-    const { l, t } = pin, tok = `token ${t} “${tokText(D.A.m.tokens[t].text)}”${t === ro ? " · answer position t*" : ""}`;
+    const { l, t } = pin, tok = `token ${t} “${tokText(D.A.m.tokens[t].text)}”${t === ro ? " · answer position (t*)" : ""}`;
     let body: string;
     if (qty === "attn") {
       const a = D.A.t, b = D.B.t, p = D.P.t;
       const vmax = Math.max(...Array.from({ length: H }, (_, h) => Math.max(a.head_norm.get(l, h, t), b.head_norm.get(l, h, t), p.d_head_norm.get(l, h, t)))) || 1;
-      body = cmpTable([{ label: "Attention write ‖a‖", tip: "attn_norm · d_attn_norm", a: a.attn_norm.get(l, t), b: b.attn_norm.get(l, t), d: { v: p.d_attn_norm.get(l, t), how: "len", src: "d_attn_norm" } }])
-        + `<div class="sub">The ${H} heads of layer ${l} at this token: <span style="color:${A_COL}">A</span>, <span style="color:${B_COL}">B</span> and <span style="color:var(--delta)">‖B − A‖</span>, one linear scale (longest ${fmt(vmax, 3)}).</div>`
+      body = cmpTable([{ label: "Attention addition ‖a‖", tip: "attn_norm · d_attn_norm", a: a.attn_norm.get(l, t), b: b.attn_norm.get(l, t), d: { v: p.d_attn_norm.get(l, t), how: "len", src: "d_attn_norm" } }])
+        + `<div class="sub">The ${H} heads of layer ${l} at this token: <span style="color:${A_COL}">A</span>, <span style="color:${B_COL}">B</span> and <span style="color:var(--delta)">the size of the change ‖B − A‖</span>, on one linear scale (longest ${fmt(vmax, 3)}).</div>`
         + Array.from({ length: H }, (_, h) => `<div class="hrow"><span>h${h}</span><span class="hb3"><i style="top:0;width:${(a.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${A_COL}"></i><i style="top:4.5px;width:${(b.head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${B_COL}"></i><i style="top:9px;height:3px;width:${(p.d_head_norm.get(l, h, t) / vmax * 100).toFixed(1)}%;background:${C.delta}"></i></span><span class="num">${fmt(p.d_head_norm.get(l, h, t), 3)}</span></div>`).join("")
         + CHANGE_FOOT;
     } else body = inspectorHTML(D, { kind: qty, l, t } as Slice, { pinned: true, bare: true });
     dr.hidden = false;
-    dr.innerHTML = drawerHTML(`${qty === "attn" ? "Attention" : qty === "mlp" ? "MLP" : "Running state"} · ${rowName(l)}`, `pinned · ${esc(short(tok, 60))}`, body, failing);
+    dr.innerHTML = drawerHTML(`${qty === "attn" ? "Attention" : qty === "mlp" ? "MLP block" : "Running state"} · ${rowName(l)}`, `pinned · ${esc(short(tok, 60))}`, body, failing);
     $("unpin").onclick = () => setPin(null);
   }
 
