@@ -341,3 +341,8 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 .loadfail a { color: inherit; text-decoration: underline; }
 /* Cohort rows: kind tags and d_margin values */
 .tab-k .klegend { margin: 6px 0 0; font-size: 13px; color: #c4c4c4; max-width: 980px; line-height: 1.45; }
+
+/* First paint while the default run downloads (index.html); main.ts replaces #app when ready. */
+.boot { max-width: 640px; margin: 18vh auto 0; padding: 0 24px; line-height: 1.55; color: #d8d8d8; font-family: var(--sans); }
+.boot b { font-size: 20px; color: var(--text); }
+.boot a { color: inherit; text-decoration: underline; }
