@@ -43,8 +43,12 @@ type Mount = (root: HTMLElement, D: Bundle, ctx: Ctx) => () => void;
 const TABS: Record<Tab, Mount> = { c: mountLadder, b: mountMatrix, a: mountObject, k: mountCohort };
 const TAB_NAMES: [Tab, string, string][] = [["c", "Ladder", "which parts decided the answer"], ["b", "Matrix", "where in the prompt the change sits"], ["a", "Object", "the whole run as 3D blocks"], ["k", "Cohort", "one base model vs many adapters and sign prompts"]];
 // Plain names for the pickers. The full technical label (weights format, precision) stays in each option's tooltip.
-const COUNTRY: Record<string, string> = { BGD: "Bangladesh", CAN: "Canada", CHN: "China", EGY: "Egypt", GBR: "United Kingdom", GRC: "Greece",
-  IRN: "Iran", NGA: "Nigeria", PHL: "Philippines", THA: "Thailand", USA: "United States" };
+export const COUNTRY: Record<string, string> = { ARG: "Argentina", AUS: "Australia", BGD: "Bangladesh", BOL: "Bolivia", BRA: "Brazil",
+  CAN: "Canada", CHL: "Chile", CHN: "China", COL: "Colombia", CZE: "Czechia", DEU: "Germany", EGY: "Egypt", GBR: "United Kingdom",
+  GRC: "Greece", GTM: "Guatemala", IDN: "Indonesia", IND: "India", IRN: "Iran", IRQ: "Iraq", JOR: "Jordan", JPN: "Japan",
+  KAZ: "Kazakhstan", KEN: "Kenya", KOR: "South Korea", MAR: "Morocco", MEX: "Mexico", NGA: "Nigeria", NIC: "Nicaragua",
+  NLD: "Netherlands", PAK: "Pakistan", PER: "Peru", PHL: "Philippines", ROU: "Romania", RUS: "Russia", SRB: "Serbia",
+  THA: "Thailand", TUR: "Turkey", UKR: "Ukraine", USA: "United States", VEN: "Venezuela", VNM: "Vietnam", ZWE: "Zimbabwe" };
 export function plainName(label: string): string {
   const base = label.replace(/\s*\[[^\]]*\]/g, "").replace("-Instruct", "");
   const ad = base.match(/^(.*?) \+ ([A-Z]{3})(?: DPO)? LoRA(.*)$/);

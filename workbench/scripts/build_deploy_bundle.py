@@ -244,8 +244,8 @@ def build_bundle(args) -> int:
                 raise ValueError(f'Viewer pin {pin.groups()} found in {len(homes)} export folders, need exactly 1')
             roots[homes[0]] = roots[homes[0]] | {pin.groups()}
         # ---- Q57 panel (WB7-Q): every comparator of the base on the trust item, for the Cohort tab.
-        # A comparator already selected above keeps its full capture. A new one gets its pair in full
-        # (a byte copy) and a derived run capture: the light run (every array but the six heavy ones)
+        # A comparator already selected above keeps its full capture. A new one gets its pair without
+        # PAIR_DROP and a derived run capture: the light run (every array but LIGHT_DROP)
         # if the byte budget allows, else the run's numbers only (`arrays: {}`, `bin: null`), so the
         # pair's run references still close. Allocation order: country adapters first, then sign
         # prompts, largest |d_margin| first within each group.
@@ -434,8 +434,8 @@ def build_bundle(args) -> int:
                         selection_rule=('story BASE versus all featured adapters; matching sign prompts only for the largest '
                                         'saved adapter-margin gap per sign bit; default country units; viewer DEFAULT; '
                                         'every Q57 comparator of the base (all country adapters, then all sign prompts, '
-                                        'largest |d_margin| first): its pair in full and its run as a light run '
-                                        '(every array but the six heavy ones) while the 0.95 GB cap allows, else the '
+                                        'largest |d_margin| first): its pair without d_head_norm (Matrix per-head detail) and its run as a light run '
+                                        '(every array but the six heavy ones, neuron_attr and q3_write_norm) while the 0.95 GB cap allows, else the '
                                         'run numbers only (pairs-only); index.json lists every comparator with its '
                                         'light flag; v1.4 captures stay byte-identical; exact run/pair/binary closure'),
                         q57=q57_report,
