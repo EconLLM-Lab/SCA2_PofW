@@ -95,11 +95,11 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
       </div>
       <div class="r2" data-obj="pickers">
         <label class="slot a" title="Model A"><span class="k">A</span><select id="selA"></select></label>
-        <span class="vs">vs</span>
-        <label class="slot b" title="Model B"><span class="k">B</span><select id="selB"></select></label>
+        <span class="vs">${tab === "k" ? "against its adapters and sign prompts (pick the question below)" : "vs"}</span>
+        <label class="slot b" title="Model B"${tab === "k" ? " hidden" : ""}><span class="k">B</span><select id="selB"></select></label>
         <span id="clampchip" class="clampchip" hidden title="Every number on this tab is from the clamped run (Quadrant III neurons set to zero), not the normal run.">clamped run</span>
         <span class="sp"></span>
-        <label class="slot item" title="The prompt (item)"><span class="k">prompt</span><select id="item"></select></label>
+        <label class="slot item" title="The prompt (item)"${tab === "k" ? " hidden" : ""}><span class="k">prompt</span><select id="item"></select></label>
       </div>
     </header>
     ${bad.length ? `<div id="failbar" data-obj="fail" role="alert"><b>✗ ${bad.length} check${bad.length > 1 ? "s" : ""} failed</b> · ${bad.map((c) => esc(checkLine(c))).join(" · ")}. The parts below do not add up for ${[...new Set(bad.map((c) => c.who))].join(", ")}; do not read them as measurements until the export is fixed.</div>` : ""}
