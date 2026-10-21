@@ -40,7 +40,19 @@ export interface Ctx {
 }
 type Mount = (root: HTMLElement, D: Bundle, ctx: Ctx) => () => void;
 const TABS: Record<Tab, Mount> = { c: mountLadder, b: mountMatrix, a: mountObject, k: mountCohort };
-const TAB_NAMES: [Tab, string, string][] = [["c", "Ladder", "what decided the answer"], ["b", "Matrix", "where the change sits"], ["a", "Object", "the whole run in 3D"], ["k", "Cohort", "one base vs many adapters"]];
+const TAB_NAMES: [Tab, string, string][] = [["c", "Ladder", "which parts decided the answer"], ["b", "Matrix", "where in the prompt the change sits"], ["a", "Object", "the whole run as 3D blocks"], ["k", "Cohort", "one base model vs many adapters and sign prompts"]];
+// Plain names for the pickers. The full technical label (weights format, precision) stays in each option's tooltip.
+const COUNTRY: Record<string, string> = { BGD: "Bangladesh", CAN: "Canada", CHN: "China", EGY: "Egypt", GBR: "United Kingdom", GRC: "Greece",
+  IRN: "Iran", NGA: "Nigeria", PHL: "Philippines", THA: "Thailand", USA: "United States" };
+export function plainName(label: string): string {
+  const base = label.replace(/\s*\[[^\]]*\]/g, "").replace("-Instruct", "");
+  const ad = base.match(/^(.*?) \+ ([A-Z]{3})(?: DPO)? LoRA(.*)$/);
+  if (ad) return `${ad[1] === "Instruct" ? "SmolLM2-135M" : ad[1]} + ${COUNTRY[ad[2]] ?? ad[2]} adapter${ad[3]}`;
+  const sp = base.match(/^(.*?) \+ sign prompt ([01](?:_[01]){5})$/);
+  if (sp) return `${sp[1]} + sign prompt ${sp[2].replace(/_/g, "")}`;
+  return `${base} (base model)`;
+}
+const itemName = (id: string) => id.replace(/^wvs_Q/, "World Values Survey Q");
 
 const app = document.getElementById("app")!;
 const W = window as any;
@@ -81,7 +93,8 @@ export function go(tab: Tab | null, extra: Record<string, string> = {}) {
 }
 
 function shell(tab: Tab, D: Bundle): HTMLElement {
-  const name = (k: string) => esc(index.models[k]?.label ?? k);
+  const name = (k: string) => esc(plainName(index.models[k]?.label ?? k));
+  const full = (k: string) => esc(index.models[k]?.label ?? k);
   const checks = checksOf(D), bad = checks.filter((c) => !c.ok);
   app.className = "wb";
   app.innerHTML = `<header id="frame">
@@ -91,15 +104,15 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
         <span class="sp"></span>
         ${tab === "k" ? `<span class="illus" title="The cohort map needs exports that do not exist yet; the only figure on this tab is an illustration">no data yet · illustration</span>` : ""}
         <span id="status" class="status ${bad.length ? "bad" : "ok"}" data-obj="status">
-          <button id="chk" data-learn="conservation" title="${esc(checks.map((c) => (c.ok ? "✓ " : "✗ ") + checkLine(c)).join("\n"))}">${bad.length ? `✗ ${bad.length} of ${checks.length}` : `✓ ${checks.length}`}</button><button id="help" data-learn="howto-${tab}" title="How to read this view, and the keys (?)">?</button></span>
+          <button id="chk" data-learn="conservation" title="${esc(checks.map((c) => (c.ok ? "✓ " : "✗ ") + checkLine(c)).join("\n"))}">${bad.length ? `✗ ${bad.length} of ${checks.length}` : `✓ ${checks.length} checks pass`}</button><button id="help" data-learn="howto-${tab}" title="How to read this view, and the keys (?)">?</button></span>
       </div>
       <div class="r2" data-obj="pickers">
-        <label class="slot a" title="Model A"><span class="k">A</span><select id="selA"></select></label>
+        <label class="slot a" title="Model A: the model compared against"><span class="k">A (base)</span><select id="selA"></select></label>
         <span class="vs">${tab === "k" ? "against its adapters and sign prompts (pick the question below)" : "vs"}</span>
-        <label class="slot b" title="Model B"${tab === "k" ? " hidden" : ""}><span class="k">B</span><select id="selB"></select></label>
+        <label class="slot b" title="Model B"${tab === "k" ? " hidden" : ""}><span class="k">B (compared)</span><select id="selB"></select></label>
         <span id="clampchip" class="clampchip" hidden title="Every number on this tab is from the clamped run (Quadrant III neurons set to zero), not the normal run.">clamped run</span>
         <span class="sp"></span>
-        <label class="slot item" title="The prompt (item)"${tab === "k" ? " hidden" : ""}><span class="k">prompt</span><select id="item"></select></label>
+        <label class="slot item" title="The survey question (the prompt)"${tab === "k" ? " hidden" : ""}><span class="k">question</span><select id="item"></select></label>
       </div>
     </header>
     ${bad.length ? `<div id="failbar" data-obj="fail" role="alert"><b>✗ ${bad.length} check${bad.length > 1 ? "s" : ""} failed</b> · ${bad.map((c) => esc(checkLine(c))).join(" · ")}. The parts below do not add up for ${[...new Set(bad.map((c) => c.who))].join(", ")}; do not read them as measurements until the export is fixed.</div>` : ""}
@@ -107,17 +120,17 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
   const { a, b, item } = shared(url());
   const sa = app.querySelector<HTMLSelectElement>("#selA")!, sb = app.querySelector<HTMLSelectElement>("#selB")!, is = app.querySelector<HTMLSelectElement>("#item")!;
   const as = [...new Set(index.pairs.map((p) => p.a))];
-  sa.innerHTML = as.map((k) => `<option value="${esc(k)}">${name(k)}</option>`).join("");
+  sa.innerHTML = as.map((k) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}</option>`).join("");
   sa.value = a;
   const fillB = (sel: string) => {
     const bs = [...new Set(index.pairs.filter((p) => p.a === sa.value).map((p) => p.b))];
-    sb.innerHTML = bs.map((k) => `<option value="${esc(k)}">${name(k)}</option>`).join("");
+    sb.innerHTML = bs.map((k) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}</option>`).join("");
     sb.value = bs.includes(sel) ? sel : bs[0];
     if (tab === "k") { sb.disabled = true; sb.title = "On Cohort, B is every adapter of base A; pick B on the other tabs."; }
   };
   const fillItems = (sel: string) => {
     const items = index.pairs.filter((x) => x.a === sa.value && x.b === sb.value).map((x) => x.item_id);
-    is.innerHTML = items.map((i) => `<option>${esc(i)}</option>`).join("");
+    is.innerHTML = items.map((i) => `<option value="${esc(i)}">${esc(itemName(i))}</option>`).join("");
     is.value = items.includes(sel) ? sel : items[0];
   };
   fillB(b); fillItems(item);
@@ -125,7 +138,7 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
     // selections index into the old prompt's tokens: drop them when the prompt changes
     for (const k of ["sel", "pin", "fly", "hl"]) p.delete(k);
     write(p, true); route(); };
-  const titles = () => { sa.title = sa.selectedOptions[0]?.textContent ?? ""; sb.title = sb.selectedOptions[0]?.textContent ?? ""; };
+  const titles = () => { sa.title = sa.selectedOptions[0]?.title ?? ""; sb.title = sb.selectedOptions[0]?.title ?? ""; };
   titles();
   sa.onchange = () => { fillB(sb.value); fillItems(is.value); titles(); reload(); };
   sb.onchange = () => { fillItems(is.value); titles(); reload(); };

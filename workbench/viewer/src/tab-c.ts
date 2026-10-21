@@ -209,7 +209,9 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const bg = (w: number) => (!w ? "" : `background:${mix("#0c0c0d", w < 0 ? A_COL : face === "a" ? A_COL : B_COL, Math.min(0.9, Math.sqrt(Math.abs(w)) * 1.1))};${Math.abs(w) > 0.3 ? "color:#111;" : ""}`);
     const hidden = segs.filter((sg) => !sg.open), hn = hidden.reduce((a, sg) => a + sg.n, 0);
     let sum = 0; if (head) for (const sg of hidden) for (let t = sg.a; t <= sg.b; t++) sum += v(t);
-    let html = hidden.length ? `<button class="tpl${query && hidden.some((sg) => sg.text.toLowerCase().includes(query)) ? " hit" : ""}" id="tpl" title="${esc(hidden.map((sg) => sg.label).join(" · "))}\nClick to ${tplOpen ? "collapse" : "show"} it">${tplOpen ? "▾" : "⋯"} template text · ${hidden.length} parts · ${hn} tokens${head ? ` · total attention ${sum >= 0 && face === "d" ? "+" : ""}${sum.toFixed(2)}` : ""}</button>` : "";
+    // WB5-V N4: until the attention arrays arrive, every weight reads 0, so no total is shown (never a false 0.00).
+    const attnReady = !!(D.A.t.attn_topk_val && D.B.t.attn_topk_val);
+    let html = hidden.length ? `<button class="tpl${query && hidden.some((sg) => sg.text.toLowerCase().includes(query)) ? " hit" : ""}" id="tpl" title="${esc(hidden.map((sg) => sg.label).join(" · "))}\nClick to ${tplOpen ? "collapse" : "show"} it">${tplOpen ? "▾" : "⋯"} template text · ${hidden.length} parts · ${hn} tokens${head && !attnReady ? " · attention loading…" : head ? ` · total attention ${sum >= 0 && face === "d" ? "+" : ""}${sum.toFixed(2)}` : ""}</button>` : "";
     for (const sg of segs) {
       if (!sg.open && !tplOpen) continue;
       if (sg.kind === "question") html += `<div class="cap seglab" title="prompt part: ${esc(sg.label)} (manifest.segments)">${isBank(D.A) ? "Scenario" : "Survey question"}</div>`;
