@@ -15,7 +15,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { isLight, type Bundle, type Run } from "./data";
 import type { Ctx } from "./main";
 import {
-  A_COL, B_COL, C, answerStrip, checksOf, drawerHTML, esc, fmt, inspectorHTML, mix, makeRamp, openLearn, rampU,
+  A_COL, B_COL, C, answerStrip, checksOf, drawerHTML, esc, fmt, inspectorHTML, lm, mix, makeRamp, openLearn, rampU,
   segmentsOf, short, tokText, type Seg, type Slice,
 } from "./common";
 import {
@@ -71,12 +71,12 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
           <select id="single" title="Which model the single scene shows"><option value="a">A</option><option value="b">B</option></select>
           <span class="cap">camera</span><span class="seg">${[["readout", "answer position"], ["overview", "whole"], ["top", "above"], ["front", "layer stack"]].map(([k, t]) => `<button data-cam="${k}">${t}</button>`).join("")}</span>
           <span class="sp"></span><input id="q" placeholder="find a word ⏎" autocomplete="off" hidden /><div id="hits" hidden></div>
-          <button id="clamp" class="tog" title="Clamped run: the Quadrant III neurons switched off (set to zero), in the A and B scenes">clamped run</button></header>
+          <button id="clamp" class="tog" title="Clamped run: the Quadrant III neurons switched off (set to zero), in the A and B scenes, to test whether the answer depends on them">clamped run</button>${lm("clamp", "what is this?")}</header>
         <div class="foot" id="enc"></div></section>
       <div id="stage">
         <section class="scene" id="sceneA" data-obj="sceneA"><header class="cap" id="labelA"></header></section>
         <section class="scene" id="sceneB" data-obj="sceneB"><header class="cap" id="labelB"></header></section>
-        <section class="obj inset" id="insetBox" data-obj="inset"><header class="cap">log-odds by layer</header><div id="inset"></div></section>
+        <section class="obj inset" id="insetBox" data-obj="inset"><header class="cap" title="If the model stopped after each layer and answered, this is the log-odds it would give. Early and middle layers are rough. A line near 0 early means no readable preference yet, not neutral.">log-odds by layer</header><div id="inset"></div></section>
         <div id="tip" hidden></div>
         <div id="glLost" hidden>The graphics card (GPU) dropped the drawing context (WebGL). Waiting for it to come back (reload the page if it does not).</div></div>
       <section class="obj" id="mini" data-obj="minimap"><div class="foot" id="minicap"></div><canvas id="mm"></canvas></section>

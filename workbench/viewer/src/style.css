@@ -472,3 +472,9 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 .tab-k .k-sv { font: 600 13px var(--sans); text-align: center; color: var(--k-mut); } .tab-k .k-sv.yes { color: #7fd6a0; } .tab-k .k-sv.no { color: #ffb36b; } .tab-k .k-sv.nd { font-weight: 400; font-size: 12px; }
 .tab-k .k-axis .k-sv { font: 12px/1.25 var(--sans); color: var(--k-mut); font-weight: 400; }
 @media (max-width: 1100px) { .tab-k .k-hum .k-row { grid-template-columns: 170px minmax(0, 1fr) 118px 70px 96px; } }
+/* WB7-W: many-option headline (answer strip) and headed sections in the pop-ups */
+#answer .sayw { display: flex; flex-direction: column; gap: 3px; }
+#answer .say-sub { font: 12px/1.45 var(--sans); color: var(--muted); } #answer .say-warn { color: var(--delta); }
+#answer .say-dir { font: 12px var(--sans); color: var(--muted); }
+dialog#learn h4 { margin: 16px 0 4px; font: 600 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+dialog#learn ul { margin: 4px 0 8px; padding-left: 18px; } dialog#learn li { margin: 4px 0; }
