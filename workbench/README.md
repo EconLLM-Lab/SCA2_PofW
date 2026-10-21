@@ -60,19 +60,21 @@ of payload, built from `d8a232d`. Two later commits change only `index.html`, th
 Public static Hugging Face Space `EconLLM/sca2-workbench`
 (https://huggingface.co/spaces/EconLLM/sca2-workbench). It was made public by Augusto on 2026-10-20.
 
-The current deploy is v1.3, 2026-10-21, from `fa04992`. The viewer fetches array byte ranges, caches them in the
-browser, and loads the attention arrays on demand (`plans/WB5_ACCEPTANCE.md`; verification is card `t_4da518a4`).
-- All 143 manifest files are on the Space, with 0 sha256 or size mismatches. Stage RUNNING; storage 0.916 GB.
-- Live, in a fresh Chromium: the landing page opens in 7.3 s (47 s on v1.2). Reloads and the ladder, matrix and
-  Cohort tabs open in 0.5 to 1.9 s and fetch no `.bin` data.
-- Still slow: the first fetch of the attention and gate arrays, which the 3D tab and a pinned head's attention panel
-  need. That is about 40 MB for the default pair, about 42 s on the CDN. After that, those views are also cached.
+The current deploy is v1.4, 2026-10-21, from `7b3a563`. It has a loading card with real download progress, an
+interactive Cohort tab, plain language for social scientists, pop-up model sizes read from the manifest, and a plain
+frame. Records: `plans/WB6L_ACCEPTANCE.md`, `WB6P_ACCEPTANCE.md`, `WB6K_ACCEPTANCE.md`; verifier `plans/WB6_VERIFICATION.md`
+(`t_fb8b00a6`, DeepSeek): PASS-WITH-NOTES, with F1 and N5 fixed before deploy.
+- All 143 manifest files are on the Space, with 0 sha256 or size mismatches. Stage RUNNING; storage 0.916 GB. The Space
+  README comes from `deploy/SPACE_README.md`.
+- Live, in a fresh Chromium: the cold landing page opens in 2.6 s, with the card showing "3.1 of 5.7 MB · 55%". Reloads,
+  the Ladder and the Matrix open in 0.5 s; Cohort in 1.3 s; Cohort Q99 (8 comparators) in 3.3 s. 0 console errors.
 
 Earlier deploys:
 - WB2 on 2026-10-19 from `e86d4c2` (receipt `plans/WB2_DEPLOY_RECEIPT.json`);
 - v1 on 2026-10-20 from `2309ab0`;
 - v1.1 on 2026-10-20 from `67200ce`;
-- v1.2 to v1.2.2 on 2026-10-21 from `1c2a2dd`, `c52480d` and `3c68a82` (whole-file fetches, uncacheable).
+- v1.2 to v1.2.2 on 2026-10-21 from `1c2a2dd`, `c52480d` and `3c68a82` (whole-file fetches, uncacheable);
+- v1.3 on 2026-10-21 from `fa04992` (range fetch and browser cache; WB5-V PASS).
 
 Three Hub pitfalls:
 - **The 1 GB cap counts every LFS object in the Space's history, not just the current files.** When an upload is
