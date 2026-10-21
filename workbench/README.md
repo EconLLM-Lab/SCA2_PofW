@@ -46,7 +46,8 @@ env -u PYTHONPATH HF_TOKEN= uv run --project workbench python workbench/viewer/s
 
 `build_sca2_data.py` writes the story JSON from Paper B's banked inputs, selecting C9 rows by exact claim id and
 keeping source digests and logical input paths. `build_deploy_bundle.py` runs a fresh `npm run build`, copies an allowlisted static site and a closed set of
-capture files, and fails when either the archive or the payload exceeds 1.5 GB. It writes
+capture files, and fails when either the archive or the payload exceeds 950,000,000 bytes. To stay below the Space's
+1 GB storage ceiling, it keeps every featured adapter pair but only the largest saved-margin prompt pair per sign bit. It writes
 `dist/deploy_bundle.tar.gz` and a sidecar `dist/deploy_bundle.tar.manifest.json` that hashes each shipped file.
 `verify_bundle.py` recomputes every hash and the dependency closure. The record of the last verified build is
 `plans/WB1_ACCEPTANCE.md` (producer) and `plans/WB1_VERIFICATION.md` (independent verifier): 94 files, 572,239,120

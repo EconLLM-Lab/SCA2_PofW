@@ -16,10 +16,11 @@ page.on('pageerror', e => errors.push(e.message));
 page.on('response', r => { requests.push({ url: new URL(r.url()).pathname, status: r.status() }); if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`); });
 async function load(url, story = false) {
   await page.goto(base + url, { waitUntil: 'networkidle0', timeout: 60000 });
-  await page.waitForFunction(story ? "document.querySelector('#cohort-map tbody tr') !== null" : 'window.__ready === true', { timeout: 60000 });
+  await page.waitForFunction(story ? 'window.__storyReady === true' : 'window.__ready === true', { timeout: 60000 });
 }
 try {
   const D = await (await fetch(base + '/sca2/sca2_data.json')).json();
+  const captureIndex = await (await fetch(base + '/exports/index.json')).json();
   await page.setViewport({ width: 1440, height: 860 });
   await load('/sca2/index.html', true);
   const order = await page.$$eval('#cohort-map tbody tr th', es => es.map(e => e.title));
@@ -61,7 +62,10 @@ try {
     checks.push({ crosstalk: route, cells: cells.length });
   }
   assert.equal(await page.$eval('.audit-label', e => e.textContent.trim()), D.c9.label);
-  assert.equal(await page.$eval('#c9 figcaption', e => e.textContent.trim()), 'Label fidelity is not agreement with respondents.');
+  assert.equal(await page.$eval('#c9 .c9-takeaway', e => e.textContent.trim()), 'Label fidelity is not agreement with respondents.');
+  assert.ok((await page.$eval('#c9 .c9-panel:last-child h3', e => e.textContent)).includes('lower = closer to respondents'));
+  assert.deepEqual(await page.$$eval('#c9 .tvd-factor-col', es => es.map(e => e.textContent.trim())), ['no persona', 'persona']);
+  assert.deepEqual(await page.$$eval('#c9 .tvd-factor-row', es => es.map(e => e.textContent.trim())), ['no adapter', 'adapter']);
   const summaries = await page.$$eval('[data-c9-summary]', es => es.map(e => ({ key:e.dataset.c9Summary, value:+e.dataset.value, text:e.querySelector('strong').textContent.trim() })));
   assert.equal(summaries.length, 3);
   for (const row of summaries) {
@@ -74,22 +78,39 @@ try {
     const row = D.c9.label_recovery.countries.find(r => r.cc === dot.cc);
     assert.equal(dot.value, row[dot.metric]); assert.ok(dot.title.endsWith(row[dot.metric].toFixed(3)));
   }
+  const means = await page.$$eval('[data-c9-mean]', es => es.map(e => ({ key:e.dataset.c9Mean, value:+e.dataset.value, title:e.title })));
+  assert.equal(means.length, 2);
+  for (const marker of means) {
+    assert.equal(marker.value, D.c9.label_recovery.summary[marker.key].value);
+    assert.equal(marker.title, `Mean ${marker.value.toFixed(3)}`);
+  }
+  assert.equal(await page.$eval('#c9 .strip-axis', e => e.textContent.includes('chance')), true);
   const tvd = await page.$$eval('[data-c9-cell]', es => es.map(e => ({ key:e.dataset.c9Cell, value:+e.dataset.value, text:e.querySelector('strong').textContent.trim() })));
   assert.equal(tvd.length, Object.keys(D.c9.tvd_cells).length);
   for (const row of tvd) {
     const value = D.c9.tvd_cells[row.key].value;
     assert.equal(row.value, value); assert.equal(row.text, value.toFixed(3));
   }
-  const contrasts = await page.$$eval('[data-c9-contrast]', es => es.map(e => ({ key:e.dataset.c9Contrast, value:+e.dataset.value, lo:+e.dataset.lo, hi:+e.dataset.hi, text:e.querySelector('strong').textContent.trim() })));
+  const farthest = Object.entries(D.c9.tvd_cells).sort((a,b) => b[1].value - a[1].value)[0][0];
+  assert.equal(await page.$eval('[data-farthest="true"]', e => e.dataset.c9Cell), farthest);
+  const contrasts = await page.$$eval('[data-c9-contrast]', es => es.map(e => ({ key:e.dataset.c9Contrast, value:+e.dataset.value, lo:+e.dataset.lo, hi:+e.dataset.hi, text:e.querySelector('strong').textContent.trim(), title:e.title })));
   assert.equal(contrasts.length, Object.keys(D.c9.contrasts).length);
   for (const row of contrasts) {
     const c = D.c9.contrasts[row.key];
     assert.equal(row.value, c.value); assert.equal(row.lo, c.ci_low); assert.equal(row.hi, c.ci_high);
-    assert.equal(row.text, `${c.value.toFixed(3)} [${c.ci_low.toFixed(3)}, ${c.ci_high.toFixed(3)}]`);
+    const exact = `${c.value.toFixed(3)} [${c.ci_low.toFixed(3)}, ${c.ci_high.toFixed(3)}]`;
+    assert.equal(row.text, exact); assert.ok(row.title.endsWith(exact));
   }
+  assert.equal(await page.$$('#c9 .forest-zero').then(es => es.length), Object.keys(D.c9.contrasts).length);
+  assert.ok((await page.$eval('#c9 .forest-note', e => e.textContent)).includes(`95% profile-block bootstrap over the ${Object.keys(D.profiles).length} sign profiles`));
+  assert.ok((await page.$eval('#c9 .forest-note', e => e.textContent)).includes('(adapter + persona − persona) − (adapter − base)'));
   checks.push({ c9: { summaries:summaries.length, dots:dots.length, tvd:tvd.length, contrasts:contrasts.length } });
   const links = await page.$$eval('a[data-featured]', es => es.map(e => ({ href: e.getAttribute('href'), cc: e.dataset.cc, item: e.dataset.item, model:e.dataset.model, route:e.dataset.route, text: e.textContent })));
-  assert.equal(links.length, D.featured.length * 4);
+  const shippedPairs = new Set(captureIndex.pairs.map(row => [row.a,row.b,row.item_id].join('\u0000')));
+  const expectedPromptLinks = D.featured.flatMap(f => ['x','y'].map(side => [D.export.base,f[`prompt_${side}`],f.item].join('\u0000'))).filter(key => shippedPairs.has(key)).length;
+  assert.equal(links.length, D.featured.length * 2 + expectedPromptLinks);
+  const promptBits = new Set(links.filter(link => link.route === 'signprompt').map(link => D.featured.find(f => f.item === link.item && (f.x === link.cc || f.y === link.cc)).bit));
+  assert.deepEqual([...promptBits].sort(), [...D.dims].sort());
   assert.ok(await page.$eval('#comparison-limit', e => e.textContent.includes('unavailable')));
   const nav = await page.$$eval('nav a', es => es.map(e => e.getAttribute('href')));
   for (const link of nav) assert.ok(link.startsWith('/?tab='));

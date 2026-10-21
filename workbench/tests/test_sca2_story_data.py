@@ -188,6 +188,27 @@ def test_c9_rendered_values_are_not_typed_into_the_page(D):
         assert f'{record["value"]:.3f}' not in html
 
 
+def test_c9_projection_polish_is_present_and_data_driven():
+    html = (DATA.parent / "index.html").read_text()
+    required = [
+        "lower = closer to respondents",
+        "no persona",
+        "persona",
+        "no adapter",
+        "adapter",
+        "data-c9-mean",
+        "chance",
+        "forestPlot",
+        "forest-zero",
+        "95% profile-block bootstrap over the ${Object.keys(D.profiles).length} sign profiles",
+        "(adapter + persona − persona) − (adapter − base)",
+        "Label fidelity is not agreement with respondents.",
+    ]
+    for text in required:
+        assert text in html
+    assert '<div class="contrast-list">' not in html
+
+
 def test_featured_links_are_valid(D):
     bits = {c["cc"]: c["bits"] for c in D["countries"]}
     for f in D["featured"]:

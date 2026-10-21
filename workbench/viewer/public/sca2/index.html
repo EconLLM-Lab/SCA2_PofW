@@ -11,6 +11,52 @@
 main { max-width:1220px; margin:auto; padding:36px 32px 70px; } header { padding-bottom:22px; } h1 { font-size:32px; line-height:1.2; margin:12px 0; font-weight:500; } h2 { font-size:21px; margin:0 0 12px; font-weight:500; } p { margin:10px 0; } a { color:var(--blue); } nav { display:flex; gap:24px; flex-wrap:wrap; margin-top:18px; } .eyebrow { letter-spacing:.13em; text-transform:uppercase; font-size:11px; color:var(--blue); }
 section { background:var(--card); border:1px solid var(--line); border-radius:10px; margin:20px 0; padding:24px; scroll-margin-top:20px; } .muted, small { color:var(--muted); } .section-head { display:flex; align-items:center; justify-content:space-between; gap:20px; } label { white-space:nowrap; font-size:13px; } select { background:#252d36; color:var(--text); padding:8px; border:1px solid #526171; border-radius:5px; font:inherit; }
 .scroll { overflow:auto; max-height:472px; border:1px solid var(--line); border-radius:5px; margin-top:16px; } table { border-collapse:separate; border-spacing:0; width:100%; table-layout:fixed; font-size:12px; font-variant-numeric:tabular-nums; } th,td { padding:7px 9px; text-align:right; border-bottom:1px solid #ffffff0c; } th { font-weight:500; color:#cfdae6; background:#222a33; } thead th { position:sticky; top:0; z-index:2; } th:first-child,td:first-child { text-align:left; width:170px; } tbody th { text-align:left; } .heat td { font-family:ui-monospace,monospace; color:#f6f9fc; } .heat td.own { outline:2px solid #b6e4ff; outline-offset:-3px; font-weight:bold; } .range { display:block; color:#abb9c7; font:10px ui-monospace,monospace; } .legend { font-size:12px; color:var(--muted); margin:12px 0; } .ramp { display:inline-block; width:90px; height:9px; background:linear-gradient(90deg,#a55c2d,#222a33,#2878a8); border-radius:3px; margin:0 7px; } .notice { border-left:3px solid #7894af; padding:8px 16px; background:#202933; } code { font-size:12px; overflow-wrap:anywhere; } details { margin-top:12px; } summary { cursor:pointer; color:var(--blue); } .sources { list-style:none; padding:0; } .sources li { margin:14px 0; } .digest { display:block; font-family:ui-monospace,monospace; color:var(--muted); font-size:10px; overflow-wrap:anywhere; } .links th:first-child { width:130px; } .links td { text-align:left; } .links a { white-space:nowrap; } .c9-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; margin-top:16px; } .c9-panel { border:1px solid var(--line); border-radius:7px; padding:17px; background:#151a20; } .c9-panel h3 { margin:0 0 12px; font-size:15px; font-weight:500; } .audit-label { display:inline-block; border:1px solid #866e4d; color:#e8c995; border-radius:999px; padding:3px 9px; font-size:11px; } .metric-row { display:grid; grid-template-columns:1fr auto; gap:12px; padding:7px 0; border-bottom:1px solid #ffffff0c; } .metric-row strong,.tvd-cell strong,.contrast-list strong { font-family:ui-monospace,monospace; font-variant-numeric:tabular-nums; } .dot-label { display:flex; justify-content:space-between; margin-top:14px; font-size:11px; color:var(--muted); } .dot-track { position:relative; height:22px; margin:4px 3px 10px; border-bottom:1px solid #596776; background:linear-gradient(90deg,transparent,#ffffff08); } .dot-track i { position:absolute; bottom:-4px; width:7px; height:7px; margin-left:-3px; border-radius:50%; background:var(--blue); opacity:.65; } .dot-track.accuracy i { background:var(--orange); } .tvd-matrix { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:13px; } .tvd-cell { min-height:72px; padding:10px; border:1px solid #3d4a57; border-radius:5px; display:flex; flex-direction:column; justify-content:space-between; background:#202731; } .tvd-cell span,.contrast-list span { color:var(--muted); font-size:11px; } .contrast-list { display:grid; gap:6px; } .contrast-list div { display:grid; grid-template-columns:1fr auto; gap:10px; } figcaption { margin-top:14px; color:#d7e0e9; } #error { padding:25px; } @media(max-width:800px) { main { padding:20px 14px; } section { padding:16px; } .section-head { align-items:flex-start; flex-direction:column; } table { min-width:850px; } .c9-grid { grid-template-columns:1fr; } h1 { font-size:27px; } }
+/* Step 4 is tuned for projection: larger secondary labels and two compact, shared-scale plots. */
+#c9 .section-head { align-items:flex-start; }
+.c9-takeaway { margin:4px 0 0; padding:7px 12px; border-left:3px solid var(--blue); background:#1d2831; color:#edf5fa; font-size:16px; font-weight:600; }
+#c9 .c9-grid { margin-top:12px; }
+#c9 .c9-panel h3 { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:16px; }
+.polarity { color:#c6d3de; font-size:12px; font-weight:500; white-space:nowrap; }
+.panel-subtitle { min-height:39px; margin:0 0 5px; color:#c6d3de; font-size:12px; line-height:1.45; }
+#c9 .metric-row { font-size:13px; }
+#c9 .range { color:#bec9d3; font-size:11px; }
+#c9 .dot-label { color:#c6d3de; font-size:12px; }
+#c9 .dot-track { height:25px; margin-bottom:9px; overflow:visible; }
+#c9 .dot-track::after { content:""; position:absolute; left:50%; top:0; bottom:-1px; border-left:1px dashed #a4b0bc; opacity:.7; }
+#c9 .dot-track i { z-index:2; width:7px; height:7px; }
+.mean-marker { position:absolute; z-index:3; top:1px; width:0; height:0; margin-left:-5px; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #f3f6f8; filter:drop-shadow(0 1px 1px #000); }
+.strip-axis { position:relative; height:25px; margin:0 3px 2px; border-top:1px solid #778593; color:#c6d3de; font:11px ui-monospace,monospace; }
+.strip-axis span { position:absolute; top:4px; transform:translateX(-50%); }
+.strip-axis span:first-child { left:0; transform:none; }
+.strip-axis .chance { left:50%; text-align:center; line-height:1.15; }
+.strip-axis span:last-child { left:100%; transform:translateX(-100%); }
+.strip-legend { margin:0; color:#c6d3de; font-size:11px; }
+.mean-key { display:inline-block; width:0; height:0; margin:0 5px -1px 7px; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #f3f6f8; }
+#c9 .tvd-matrix { grid-template-columns:78px 1fr 1fr; gap:6px; margin-bottom:12px; }
+.tvd-factor-col,.tvd-factor-row { color:#c6d3de; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+.tvd-factor-col { align-self:end; padding:0 6px 2px; text-align:center; }
+.tvd-factor-row { align-self:center; text-align:right; padding-right:4px; }
+#c9 .tvd-cell { min-height:61px; padding:8px 9px; }
+#c9 .tvd-cell span { color:#c6d3de; font-size:12px; }
+#c9 .tvd-cell.farthest { border-color:#8da2b5; box-shadow:inset 3px 0 #8da2b5; background:#232c35; }
+#c9 .tvd-cell small { color:#c6d3de; font-size:10px; }
+.forest-plot { display:grid; gap:4px; margin-top:6px; }
+.forest-row { display:grid; grid-template-columns:minmax(115px,1fr) 125px 146px; gap:8px; align-items:center; min-height:22px; }
+.forest-label { color:#c6d3de; font-size:11px; line-height:1.15; }
+.forest-track { position:relative; height:16px; background:linear-gradient(90deg,transparent,#ffffff05,transparent); }
+.forest-zero { position:absolute; left:50%; top:0; bottom:0; border-left:1px solid #c2ccd5; opacity:.75; }
+.forest-ci { position:absolute; left:var(--lo); width:calc(var(--hi) - var(--lo)); top:7px; height:2px; background:#7f8b97; }
+.forest-point { position:absolute; left:var(--point); top:4px; width:8px; height:8px; margin-left:-4px; border-radius:50%; background:#8b98a5; }
+.forest-row.excludes-zero .forest-ci,.forest-row.excludes-zero .forest-point { background:#78b7dc; }
+.forest-value { color:#e8edf2; font:11px ui-monospace,monospace; text-align:right; white-space:nowrap; }
+.forest-axis { display:grid; grid-template-columns:minmax(115px,1fr) 125px 146px; gap:8px; color:#b8c5d0; font-size:10px; }
+.forest-axis-track { display:flex; justify-content:space-between; }
+.forest-legend { text-align:right; }
+.forest-legend i { display:inline-block; width:7px; height:7px; margin:0 3px 0 7px; border-radius:50%; background:#78b7dc; }
+.forest-legend i.crosses { background:#8b98a5; }
+.forest-note { margin:7px 0 0; color:#c6d3de; font-size:11px; line-height:1.35; }
+.prompt-omitted { color:#aebbc7; font-size:11px; }
+@media(max-width:1050px) { .forest-row,.forest-axis { grid-template-columns:minmax(105px,1fr) 105px 136px; } #c9 .tvd-matrix { grid-template-columns:68px 1fr 1fr; } }
 </style>
 </head>
 <body><main>
@@ -29,7 +75,8 @@ const heat = (value, min, max) => {
   const t = max === min ? 0 : Math.max(-1, Math.min(1, 2 * (value - min) / (max - min) - 1));
   return t < 0 ? `rgba(190,103,48,${.12 + .58 * -t})` : `rgba(38,128,184,${.12 + .58 * t})`;
 };
-function render(D) {
+async function render(D) {
+  window.__storyReady = false;
   if (D.schema !== 'sca2-workbench/story-data@1' || !D.countries?.length || !D.surfaces?.length || !D.dims?.length || !D.featured?.length || !D.c9) throw Error('Missing or empty story data');
   const countries = [...D.countries].sort((a,b) => a.unit.localeCompare(b.unit) || a.cc.localeCompare(b.cc)), surfaces = D.surfaces;
   const own = D.crosstalk.adapter.cells.filter(c => c.own);
@@ -46,9 +93,16 @@ function render(D) {
   const c9s = D.c9.label_recovery.summary;
   const c9Countries = D.c9.label_recovery.countries;
   const c9Metric = (key, label, note='') => `<div class="metric-row" data-c9-summary="${esc(key)}" data-value="${c9s[key].value}"><span>${esc(label)}${note ? `<small class="range">${esc(note)}</small>` : ''}</span><strong>${number(c9s[key].value)}</strong></div>`;
-  const dotTrack = (key, label) => `<div class="dot-label"><span>${esc(label)}</span><span>${c9Countries.length} countries</span></div><div class="dot-track ${esc(key)}" data-c9-dots="${esc(key)}">${c9Countries.map(r => `<i data-cc="${esc(r.cc)}" data-value="${r[key]}" style="left:${100*r[key]}%" title="${esc(r.cc)} ${number(r[key])}"></i>`).join('')}</div>`;
-  const tvdCell = (key, label) => { const c=D.c9.tvd_cells[key]; return `<div class="tvd-cell" data-c9-cell="${esc(key)}" data-value="${c.value}"><span>${esc(label)}</span><strong>${number(c.value)}</strong></div>`; };
+  const dotTrack = (key, label) => `<div class="dot-label"><span>${esc(label)}</span><span>${c9Countries.length} countries</span></div><div class="dot-track ${esc(key)}" data-c9-dots="${esc(key)}">${c9Countries.map(r => `<i data-cc="${esc(r.cc)}" data-value="${r[key]}" style="left:${100*r[key]}%" title="${esc(r.cc)} ${number(r[key])}"></i>`).join('')}<b class="mean-marker" data-c9-mean="${esc(key)}" data-value="${c9s[key].value}" style="left:${100*c9s[key].value}%" title="Mean ${number(c9s[key].value)}"></b></div>`;
+  const farthestTvd = Object.entries(D.c9.tvd_cells).reduce((best, row) => row[1].value > best[1].value ? row : best)[0];
+  const tvdCell = (key, label) => { const c=D.c9.tvd_cells[key], farthest=key === farthestTvd; return `<div class="tvd-cell ${farthest?'farthest':''}" data-c9-cell="${esc(key)}" data-value="${c.value}"${farthest?' data-farthest="true"':''}><span>${esc(label)}</span><strong>${number(c.value)}</strong>${farthest?'<small>farthest</small>':''}</div>`; };
   const contrastLabels = {adapter_minus_base:'adapter − base',adapter_persona_minus_adapter:'adapter + persona − adapter',adapter_persona_minus_base:'adapter + persona − base',adapter_persona_minus_persona:'adapter + persona − persona',persona_minus_base:'persona − base',interaction:'interaction'};
+  const contrastLimit = Math.max(...Object.values(D.c9.contrasts).flatMap(c => [Math.abs(c.value),Math.abs(c.ci_low),Math.abs(c.ci_high)])) * 1.08;
+  const forestPosition = value => 50 + 50 * value / contrastLimit;
+  const forestPlot = () => `<div class="forest-plot">${Object.entries(D.c9.contrasts).map(([key,c]) => { const excludes=c.ci_low>0||c.ci_high<0; return `<div class="forest-row ${excludes?'excludes-zero':'crosses-zero'}" data-c9-contrast="${esc(key)}" data-value="${c.value}" data-lo="${c.ci_low}" data-hi="${c.ci_high}" title="${esc(contrastLabels[key]+': '+claimText(c))}"><span class="forest-label">${esc(contrastLabels[key])}</span><span class="forest-track" style="--lo:${forestPosition(c.ci_low)}%;--hi:${forestPosition(c.ci_high)}%;--point:${forestPosition(c.value)}%"><i class="forest-zero"></i><i class="forest-ci"></i><i class="forest-point"></i></span><strong class="forest-value">${claimText(c)}</strong></div>`; }).join('')}<div class="forest-axis"><span></span><span class="forest-axis-track"><span>−</span><span>0</span><span>+</span></span><span class="forest-legend"><i></i>excludes 0 <i class="crosses"></i>crosses 0</span></div></div>`;
+  const featuredHref = (model, item) => esc(href(model,item));
+  const adapterLinks = f => ['x','y'].map(side => { const cc=f[side], model=D.export.base+'_'+cc.toLowerCase(); return `<a data-featured data-route="adapter" data-model="${esc(model)}" data-cc="${esc(cc)}" data-item="${esc(f.item)}" href="${featuredHref(model,f.item)}">base → ${esc(cc)} adapter ↗</a>`; }).join('<br>');
+  const promptSlots = f => ['x','y'].map(side => { const cc=f[side], model=f['prompt_'+side]; return `<span data-prompt-slot data-model="${esc(model)}" data-cc="${esc(cc)}" data-item="${esc(f.item)}" data-href="${featuredHref(model,f.item)}">checking compact bundle…</span>`; }).join('<br>');
   root.innerHTML = `
 <section id="profiles"><h2>1 / Signs → profiles → countries</h2>
 <p>${countries.length} countries × ${D.dims.length} binary preference signs map to ${Object.keys(D.profiles).length} profiles out of ${2 ** D.dims.length} possible cells. Sign order: ${D.dims.map(esc).join(' · ')}. GPS magnitudes are not shipped.</p>
@@ -62,16 +116,16 @@ function render(D) {
 <p class="legend">Rows = input bits; columns = response surfaces. β in frozen-recode composite units. Orange = negative, blue = positive <span class="ramp"></span> symmetric range ±${number(betaLimit)} shared by both routes; no clipping. Pale outline = own-bit cell. Hover for exact β, SE and claim IDs.</p>
 <div class="scroll"><table class="heat" id="crosstalk-map"></table></div>
 <p class="muted">Off-own cells measure behavioral cross-talk, not a neural mechanism or causal component attribution. Grouping alone does not establish an anchor bottleneck, especially after an underpowered null. Country ordering and human agreement are not evaluated on this page.</p><p id="ct-source" class="muted"></p></section>
-<section id="c9"><div class="section-head"><h2>4 / Does learning the labels mean behaving like the respondents?</h2><span class="audit-label">${esc(D.c9.label)}</span></div>
-<figure><div class="c9-grid"><article class="c9-panel"><h3>Held-out synthetic-label recovery</h3><p class="range">Construction check on held-out synthetic pairs; not a respondent-agreement test.</p>
+<section id="c9"><div class="section-head"><h2>4 / Does learning the labels mean behaving like the respondents?</h2><span class="audit-label">${esc(D.c9.label)}</span></div><p class="c9-takeaway">Label fidelity is not agreement with respondents.</p>
+<figure><div class="c9-grid"><article class="c9-panel"><h3>Held-out synthetic-label recovery <small class="polarity">higher = better</small></h3><p class="panel-subtitle">Construction check: held-out synthetic pairs only — not a respondent-agreement test.</p>
 ${c9Metric('recovery','Recovery')}${c9Metric('accuracy','Adapter accuracy')}${c9Metric('base_accuracy','Base accuracy','at chance')}
-${dotTrack('recovery','Recovery by country')}${dotTrack('accuracy','Accuracy by country')}</article>
-<article class="c9-panel"><h3>Mean TVD to respondent distributions</h3><div class="tvd-matrix">${tvdCell('base','Base')}${tvdCell('persona','Persona')}${tvdCell('adapter','Adapter')}${tvdCell('adapter_persona','Adapter + persona')}</div>
-<div class="contrast-list">${Object.entries(D.c9.contrasts).map(([key,c]) => `<div data-c9-contrast="${esc(key)}" data-value="${c.value}" data-lo="${c.ci_low}" data-hi="${c.ci_high}"><span>${esc(contrastLabels[key])}</span><strong>${claimText(c)}</strong></div>`).join('')}</div><p class="range">Profile-block intervals; lower TVD is closer.</p></article></div><figcaption>Label fidelity is not agreement with respondents.</figcaption></figure></section>
+${dotTrack('recovery','Recovery by country')}${dotTrack('accuracy','Accuracy by country')}<div class="strip-axis" aria-label="Shared zero to one scale"><span>0</span><span class="chance">0.5<br>chance</span><span>1</span></div><p class="strip-legend"><span class="mean-key"></span>mean marker · both strips share the 0–1 scale</p></article>
+<article class="c9-panel"><h3>Mean TVD to respondent distributions <small class="polarity">lower = closer to respondents</small></h3><div class="tvd-matrix"><span></span><span class="tvd-factor-col">no persona</span><span class="tvd-factor-col">persona</span><span class="tvd-factor-row">no adapter</span>${tvdCell('base','Base')}${tvdCell('persona','Persona')}<span class="tvd-factor-row">adapter</span>${tvdCell('adapter','Adapter')}${tvdCell('adapter_persona','Adapter + persona')}</div>
+${forestPlot()}<p class="forest-note">95% profile-block bootstrap over the ${Object.keys(D.profiles).length} sign profiles. Interaction = (adapter + persona − persona) − (adapter − base).</p></article></div></figure></section>
 <section id="featured"><h2>5 / Inspect the saved forward passes</h2>
 <p>Each featured country pair differs in one sign bit. Selection is descriptive: the largest absolute difference of saved adapter-minus-base margins among exported candidate pairs, on the displayed item. These are cohort-1 captures, not the bank-2 factorial above.</p>
 <p class="notice" id="comparison-limit"><strong>Direct route Δ unavailable.</strong> The tensor viewer opens base → one saved route. Adapter and sign-prompt links below share the same item and sign profile, so the route can be flipped without pretending either link is a direct adapter → prompt comparison.</p>
-<div class="scroll"><table class="links"><thead><tr><th>Input bit</th><th>Surface / item</th><th>X / Y</th><th>Exported / candidate pairs</th><th>Adapter route</th><th>Sign-prompt route</th></tr></thead><tbody>${D.featured.map(f => `<tr><th scope="row">${esc(f.bit)}</th><td>${esc(f.surface)}<br><code>${esc(f.item)}</code></td><td>${esc(f.x)} / ${esc(f.y)}</td><td>${f.n_with_exports} / ${f.n_candidates}</td><td>${['x','y'].map(side => { const cc=f[side], model=D.export.base+'_'+cc.toLowerCase(); return `<a data-featured data-route="adapter" data-model="${esc(model)}" data-cc="${esc(cc)}" data-item="${esc(f.item)}" href="${esc(href(model,f.item))}">base → ${esc(cc)} adapter ↗</a>`; }).join('<br>')}</td><td>${['x','y'].map(side => { const cc=f[side], model=f['prompt_'+side]; return `<a data-featured data-route="signprompt" data-model="${esc(model)}" data-cc="${esc(cc)}" data-item="${esc(f.item)}" href="${esc(href(model,f.item))}">base → ${esc(cc)} signs ↗</a>`; }).join('<br>')}</td></tr>`).join('')}</tbody></table></div></section>
+<div class="scroll"><table class="links"><thead><tr><th>Input bit</th><th>Surface / item</th><th>X / Y</th><th>Exported / candidate pairs</th><th>Adapter route</th><th>Sign-prompt route</th></tr></thead><tbody>${D.featured.map(f => `<tr><th scope="row">${esc(f.bit)}</th><td>${esc(f.surface)}<br><code>${esc(f.item)}</code></td><td>${esc(f.x)} / ${esc(f.y)}</td><td>${f.n_with_exports} / ${f.n_candidates}</td><td>${adapterLinks(f)}</td><td>${promptSlots(f)}</td></tr>`).join('')}</tbody></table></div></section>
 <section id="provenance"><h2>Provenance & boundaries</h2><p>Every cell is read from the saved JSON, not inferred live. Claim IDs in cross-talk tooltips refer to NUMBERS_TABLE.csv; all other display summaries are descriptive workbench computations. The bundle builder measures file sizes and hashes locally; this page makes no deployment or bundle-size assertion.</p><details><summary>Source paths and SHA-256 digests (${D.sources.length})</summary><ul class="sources">${D.sources.map(s => `<li>${esc(s.role)}<br><code>${esc(s.path)}</code><span class="digest">${esc(s.sha256)}</span></li>`).join('')}</ul><p class="digest">Main repository HEAD at data generation: ${esc(D.main_repo_head)}</p></details></section>`;
   function cohort() {
     const route = document.querySelector('#cohort-route').value, r = D.routes[route];
@@ -93,7 +147,25 @@ ${dotTrack('recovery','Recovery by country')}${dotTrack('accuracy','Accuracy by 
   }
   document.querySelector('#cohort-route').onchange = cohort;
   document.querySelector('#crosstalk-route').onchange = crosstalk;
+  const captureResponse = await fetch('../exports/index.json');
+  if (!captureResponse.ok) throw Error('HTTP '+captureResponse.status+' for compact capture index');
+  const captureIndex = await captureResponse.json();
+  const shippedPairs = new Set(captureIndex.pairs.map(row => [row.a,row.b,row.item_id].join('\u0000')));
+  document.querySelectorAll('[data-prompt-slot]').forEach(slot => {
+    const available = shippedPairs.has([D.export.base,slot.dataset.model,slot.dataset.item].join('\u0000'));
+    if (available) {
+      const link = document.createElement('a');
+      link.dataset.featured = ''; link.dataset.route = 'signprompt';
+      link.dataset.model = slot.dataset.model; link.dataset.cc = slot.dataset.cc; link.dataset.item = slot.dataset.item;
+      link.href = slot.dataset.href; link.textContent = `base → ${slot.dataset.cc} signs ↗`;
+      slot.replaceChildren(link);
+    } else {
+      slot.className = 'prompt-omitted'; slot.textContent = `${slot.dataset.cc}: omitted from compact bundle`;
+    }
+    slot.dataset.ready = 'true';
+  });
   cohort(); crosstalk();
+  window.__storyReady = true;
 }
 fetch('sca2_data.json').then(r => { if (!r.ok) throw Error('HTTP '+r.status); return r.json(); }).then(render).catch(e => {
   root.innerHTML = `<p class="notice" id="error" role="alert">Story data unavailable. ${esc(e.message)}. Rebuild the saved story data before using this view.</p>`;

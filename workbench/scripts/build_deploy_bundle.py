@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build (never deploy) a fresh static site and byte-identical capture closure.
 
-Both actual gzip bytes and uncompressed file payload must fit 1,500,000,000
+Both actual gzip bytes and uncompressed file payload must fit 950,000,000
 bytes. The adjacent .tar.manifest.json describes every archive file, not itself.
 No model loading, inference, weight copying, or source-capture rewriting occurs.
 """
@@ -19,7 +19,7 @@ import tarfile
 import tempfile
 
 HERE = Path(__file__).resolve().parent.parent
-MAX_BYTES = 1_500_000_000
+MAX_BYTES = 950_000_000
 SCRATCH = Path.home() / '.hermes/profiles/engineer/cache/scratch/wb1'
 IMAGES = ('ladder-1440.png', 'matrix-1440.png', 'object-1440.png', 'cohort-illustration.png')
 
@@ -62,6 +62,30 @@ def unique(rows, key, wanted):
     if len(matches) != 1:
         raise ValueError(f'Expected exactly one dependency {wanted!r}; found {len(matches)}')
     return matches[0]
+
+
+def select_prompt_features(featured, adapter_index, base):
+    """Keep the largest saved adapter-margin gap for each sign bit."""
+    margins = {(row['b'], row['item_id']): row['d_margin'] for row in adapter_index['pairs']
+               if row['a'] == base}
+    enriched = []
+    for feature in featured:
+        item = feature['item']
+        models = [base + '_' + str(feature[side]).lower() for side in ('x', 'y')]
+        try:
+            gap = abs(margins[(models[1], item)] - margins[(models[0], item)])
+        except KeyError as exc:
+            raise ValueError(f'Missing adapter margin for prompt selection: {exc.args[0]!r}') from exc
+        enriched.append(dict(feature, saved_margin_difference=gap))
+
+    winners = {}
+    for row in enriched:
+        key = (row['saved_margin_difference'], row['item'], row['x'], row['y'])
+        if row['bit'] not in winners or key > winners[row['bit']][0]:
+            winners[row['bit']] = (key, row)
+    kept = [row for row in enriched if winners[row['bit']][1] is row]
+    dropped = [row for row in enriched if winners[row['bit']][1] is not row]
+    return kept, dropped
 
 
 def build_bundle(args) -> int:
@@ -128,8 +152,11 @@ def build_bundle(args) -> int:
         selected = {(base, base + '_' + str(f[cc]).lower(), f['item'])
                     for f in story['featured'] for cc in ('x', 'y')}
         selected.update((base, base + '_' + u['cc'].lower(), u['item']) for u in export['default_units'])
+        adapter_index = read_json(source_dir / 'index.json')
+        prompt_features, dropped_prompt_features = select_prompt_features(
+            story['featured'], adapter_index, base)
         prompt_selected = {(base, f['prompt_' + side], f['item'])
-                           for f in story['featured'] for side in ('x', 'y')}
+                           for f in prompt_features for side in ('x', 'y')}
         # Follow the actual viewer default; refuse a changed/unrecognizable declaration.
         main = (viewer / 'src/main.ts').read_text()
         default = re.search(r'export const DEFAULT\s*=\s*\{\s*a:\s*"([^"]+)",\s*b:\s*"([^"]+)",\s*item:\s*"([^"]+)"\s*\}', main)
@@ -233,7 +260,9 @@ def build_bundle(args) -> int:
                         payload_bytes=payload, archive_bytes=compressed,
                         archive_sha256=sha256(archive), files=files,
                         source_indexes=source_indexes, story_sources=story['sources'],
-                        selection_rule='story BASE versus both featured adapters and matching sign prompts on the same items, default country units, viewer DEFAULT; exact run/pair/binary closure',
+                        prompt_features_kept=prompt_features,
+                        prompt_features_dropped=dropped_prompt_features,
+                        selection_rule='story BASE versus all featured adapters; matching sign prompts only for the largest saved adapter-margin gap per sign bit; default country units; viewer DEFAULT; exact run/pair/binary closure',
                         deploy_status='NOT DEPLOYED')
         manifest_tmp = Path(temp) / 'manifest.json'
         manifest_tmp.write_text(json.dumps(manifest, indent=1) + '\n')

@@ -24,6 +24,27 @@ def put(path, data):
     path.write_text(json.dumps(data))
 
 
+def test_hugging_face_cap_and_prompt_feature_selection():
+    assert builder.MAX_BYTES == 950_000_000
+    base = "BASE"
+    featured = [
+        {"bit": "trust", "surface": "trust", "item": "q1", "x": "ARG", "y": "BRA"},
+        {"bit": "trust", "surface": "altruism", "item": "q2", "x": "CHN", "y": "USA"},
+        {"bit": "patience", "surface": "patience:Q43", "item": "q3", "x": "IRN", "y": "CAN"},
+    ]
+    pairs = []
+    for model, item, margin in [
+        ("BASE_arg", "q1", -1.0), ("BASE_bra", "q1", 2.0),
+        ("BASE_chn", "q2", -5.0), ("BASE_usa", "q2", 4.0),
+        ("BASE_irn", "q3", 0.0), ("BASE_can", "q3", 1.0),
+    ]:
+        pairs.append({"a": base, "b": model, "item_id": item, "d_margin": margin})
+    kept, dropped = builder.select_prompt_features(featured, {"pairs": pairs}, base)
+    assert [(row["bit"], row["item"]) for row in kept] == [("trust", "q2"), ("patience", "q3")]
+    assert [(row["bit"], row["item"]) for row in dropped] == [("trust", "q1")]
+    assert dropped[0]["saved_margin_difference"] == pytest.approx(3.0)
+
+
 @pytest.fixture
 def fixture(monkeypatch):
     SCRATCH.mkdir(parents=True, exist_ok=True)
@@ -31,7 +52,8 @@ def fixture(monkeypatch):
         w = Path(temp) / 'workbench'
         story = {'export': {'src': 'phase1_nf4_t4', 'prompt_src': 'phase1_promptroute_nf4_t4', 'base': 'BASE',
                            'default_units': [{'cc': 'USA', 'item': 'wvs_Q81'}]},
-                 'featured': [{'x': 'ARG', 'y': 'BRA', 'item': 'wvs_Q57',
+                 'featured': [{'bit': 'trust', 'surface': 'trust',
+                               'x': 'ARG', 'y': 'BRA', 'item': 'wvs_Q57',
                                'prompt_x': 'PROMPT_arg', 'prompt_y': 'PROMPT_bra'}],
                  'sources': [{'path': 'relative/source.csv', 'sha256': 'a' * 64}]}
         put(w / 'viewer/public/sca2/sca2_data.json', story)
@@ -61,7 +83,8 @@ def fixture(monkeypatch):
                         put(root / name, {'schema': index['schema'], 'kind': 'run', 'model': {'key': key, 'adapter': None}, 'item': {'item_id': item}, 'bin': name.replace('.json', '.bin'), 'arrays': {}, 'provenance': {'source_digest': 'b' * 64}})
                         (root / name.replace('.json', '.bin')).write_bytes(b'\0' * 128)
                 name = f'pair__{a}__{b}__{item}.json'
-                index['pairs'].append({'file': name, 'a': a, 'b': b, 'item_id': item})
+                index['pairs'].append({'file': name, 'a': a, 'b': b, 'item_id': item,
+                                       'd_margin': float(len(index['pairs']))})
                 put(root / name, {'schema': index['schema'], 'kind': 'pair', 'a': a, 'b': b, 'item_id': item, 'arrays': {}, 'bin': name.replace('.json', '.bin')})
                 (root / name.replace('.json', '.bin')).write_bytes(b'\0' * 128)
             put(root / 'index.json', index)
@@ -82,7 +105,7 @@ def fixture(monkeypatch):
             (dist / 'assets/app.js').write_text('/* synthetic static build */')
             shutil.copytree(w / 'viewer/public/sca2', dist / 'sca2')
         monkeypatch.setattr(subprocess, 'run', npm)
-        args = argparse.Namespace(workbench=w, out=None, max_bytes=1_500_000_000)
+        args = argparse.Namespace(workbench=w, out=None, max_bytes=builder.MAX_BYTES)
         yield w, args, calls
 
 
