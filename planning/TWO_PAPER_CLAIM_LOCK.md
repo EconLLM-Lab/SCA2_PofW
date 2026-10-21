@@ -425,6 +425,15 @@ came from other adapters and banks, so they are not a replication target here.
 **What stays open.** C9-4 still owes a cross-family audit, because the orchestrator wrote and ran its code. Until that
 audit passes, neither experiment's rows are quotable as results. No claim is earned.
 
+**Append-only: the audit (2026-10-20).** Card `t_b4030219`, a verifier on a different model family from the
+orchestrator (a Codex model on the `openai-codex` route), ACCEPTED both C9-4 experiments on all six checks: provenance
+(42 of 42 countries on the Hub for each run, gates and executed driver hashes), conditions (A applies each country's
+pinned adapter and that country's C8 persona; B scores the 132 held-out pairs of the shared split with that country's
+labels, and no country name appears in any model-visible prompt or completion), an independent recomputation that
+equals the 562-row table, the intervals, a mutation test the suite catches, and this text. Report:
+`paper-b-tier1/results/c9/C9_4_VERIFICATION.md`. The C9-4 rows are now quotable as what they are: descriptive, not
+preregistered, construction checks for B. This note changes no value, interval, label or claim, and no claim is earned.
+
 ---
 
 ## Never quote as current
