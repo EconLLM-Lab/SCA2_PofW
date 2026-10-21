@@ -17,7 +17,8 @@ import {
 
 type Sel = { l: number; h: number } | null;   // h = -1: MLP; l = -1: embedding term
 type Face = "a" | "b" | "d";
-const FACES: [Face, string][] = [["a", "A"], ["b", "B"], ["d", "B − A"]];
+const FACES: [Face, string][] = [["a", "A"], ["b", "B"], ["d", "Change (B − A)"]];
+const FACE_TIP: Record<Face, string> = { a: "A: the base model", b: "B: the model compared with the base (a country adapter or a sign prompt)", d: "The change from the base: B − A" };
 
 export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void {
   const L = D.A.m.model.n_layers, H = D.A.m.model.n_heads, ro = D.A.m.readout.position, it = D.A.m.item;
@@ -28,13 +29,13 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   root.innerHTML = `
     <section id="answer" data-obj="answer"></section>
     <div id="work" class="c-work">
-      <section class="obj" id="prompt" data-obj="prompt"><header><span class="cap" title="The prompt as the model reads it. Template text sits on one dashed line; click it to expand. Help: the ? in the frame">The prompt</span><input id="q" placeholder="find a word" autocomplete="off" hidden /></header>
+      <section class="obj" id="prompt" data-obj="prompt"><header><span class="cap" title="The prompt as the model reads it. Template text (the fixed chat wrapper) sits on one dashed line; click it to expand. Help: the ? in the top bar">The prompt</span><input id="q" placeholder="find a word" autocomplete="off" hidden /></header>
         <div id="ptext" class="ptext"></div><div class="foot" id="pkey"></div></section>
-      <section class="obj" id="ladder" data-obj="ladder"><header><span class="cap" title="Push on the answer: every attention head and MLP, read at the answer position t*">Push at t*</span><span class="sp"></span>
-          <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}">${t}</button>`).join("")}</span>
-          <button id="clamp" class="tog" title="Quadrant III clamped run (key C)">clamped</button></header>
+      <section class="obj" id="ladder" data-obj="ladder"><header><span class="cap" title="Contribution to the answer: every attention head and MLP block, read at the answer position (t*)">Contributions to the answer</span><span class="sp"></span>
+          <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}" title="${FACE_TIP[k]}">${t}</button>`).join("")}</span>
+          <button id="clamp" class="tog" title="Clamped run (key C): run the model again with the Quadrant III neurons switched off (set to zero)">clamped run</button></header>
         <svg id="lad"></svg><div class="foot" id="lfoot"></div></section>
-      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="running_margin: h^l·w at t*, read with the final layer's rescaling held fixed">Margin by layer</span></header>
+      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="The log-odds you would get by reading the answer off the running state after each layer, with the final rescaling held fixed (running_margin: h^l·w at the answer position)">Log-odds by layer</span></header>
         <svg id="mc"></svg><div class="foot" id="mfoot"></div></section>
       <aside id="drawer" class="obj" data-obj="drawer" hidden></aside>
     </div>
@@ -62,7 +63,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     return all.sort((x, y) => y[2] - x[2]).slice(0, 5).map(([l, h]) => [l, h]);
   }
   const ringed = (r: [number, number][], l: number, h: number) => r.some(([a, b]) => a === l && b === h);
-  const partName = (l: number, h: number) => (l < 0 ? "embedding term" : h < 0 ? `MLP · layer ${l}` : `head ${h} · layer ${l}`);
+  const partName = (l: number, h: number) => (l < 0 ? "embedding term" : h < 0 ? `MLP block · layer ${l}` : `head ${h} · layer ${l}`);
 
   // ---------------- the answer strip: one sentence, two bars, and the full card on demand
   function strip() { $("answer").innerHTML = answerStrip(D, clamp); }
@@ -93,12 +94,12 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     // footer first (its height feeds the layout): key, re-sum line, ring legend. Never hidden (rules 2, 3).
     let sum = val(face, -1, 0); for (let l = 0; l < L; l++) for (let h = -1; h < H; h++) sum += val(face, l, h);
     const target = face === "d" ? dd.margin : S(face === "a" ? D.A : D.B).margin;
-    const tsrc = face === "d" ? (dd.marginExported ? "change in margin, pair export" : "change in margin, computed in this browser") : `${face.toUpperCase()}'s margin, from the export`;
+    const tsrc = face === "d" ? (dd.marginExported ? "change in log-odds, pair export" : "change in log-odds, computed in this browser") : `${face.toUpperCase()}'s log-odds, from the export`;
     const close = Math.abs(sum - target) < 1e-2, ok = close && !tainted;
     const why = tainted ? failing.filter((c) => face === "d" || c.who === face.toUpperCase()).map(checkLine).join(" · ") : "";
-    $("lfoot").innerHTML = `<div class="krow"><i class="kbar" style="background:linear-gradient(90deg,${diverging(-1, 1)},${diverging(0, 1)},${diverging(1, 1)})"></i><span>orange: toward ${esc(jm)} · blue: toward ${esc(jp)} · ±${fmt(vmax, 2)}, square-root scale</span></div>
-      <div class="sumline ${ok ? "ok" : "bad"}" title="Re-summed in this browser from the float32 arrays drawn (threshold 1e-2)${browser ? "; this face's cells are B − A computed in this browser" : ""}">${ok ? "✓" : "✗"} cells + embedding = <span class="num">${sum.toFixed(4)}</span> ${close ? "=" : "≠"} ${tsrc} <span class="num">${target.toFixed(4)}</span>${why ? ` · check failed: ${esc(why)}` : ""}</div>
-      <div class="krow"><i class="ring"></i><span>gold ring: 5 largest B − A${browser ? " (browser)" : ""}</span>${pin ? `<span class="nw"><i class="pinbox"></i> pinned</span>` : ""}</div>`;
+    $("lfoot").innerHTML = `<div class="krow"><i class="kbar" style="background:linear-gradient(90deg,${diverging(-1, 1)},${diverging(0, 1)},${diverging(1, 1)})"></i><span>contribution to the answer: orange pushes toward ${esc(jm)} · blue pushes toward ${esc(jp)} · up to ±${fmt(vmax, 2)}, square-root scale</span></div>
+      <div class="sumline ${ok ? "ok" : "bad"}" title="Added up again in this browser from the float32 arrays drawn (tolerance 1e-2)${browser ? "; this face's cells are B − A computed in this browser" : ""}">${ok ? "✓" : "✗"} all cells + embedding term = <span class="num">${sum.toFixed(4)}</span> ${close ? "=" : "≠"} ${tsrc} <span class="num">${target.toFixed(4)}</span>${why ? ` · accounting check failed: ${esc(why)}` : ""}</div>
+      <div class="krow"><i class="ring"></i><span>gold ring: the 5 largest changes (B − A)${browser ? " (browser)" : ""}</span>${pin ? `<span class="nw"><i class="pinbox"></i> pinned</span>` : ""}</div>`;
     layout();
     const { s, cw, lab, W } = g, mx = lab + H * cw + 8;
     const hl = (pin || hov)?.l ?? -9;
@@ -110,15 +111,15 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         o += `<rect class="cell" data-l="${l}" data-h="${h}" x="${(x + 0.5).toFixed(1)}" y="${(y(l) + 0.5).toFixed(1)}" width="${(w - 1.5).toFixed(1)}" height="${(s - 1.5).toFixed(1)}" rx="1.5" fill="${diverging(v, vmax)}"/>`;
       }
     }
-    o += `<text x="${lab - 6}" y="${yEmb() + s * 0.72}" text-anchor="end"><title>embedding term: what each token's starting vector adds, before layer 0</title>emb</text>`;
+    o += `<text x="${lab - 6}" y="${yEmb() + s * 0.72}" text-anchor="end"><title>embedding term: what the word's own starting vector contributes, before layer 0</title>emb</text>`;
     o += `<rect class="cell" data-l="-1" data-h="-2" x="${lab + 0.5}" y="${yEmb() + 0.5}" width="${(H * cw - 1.5).toFixed(1)}" height="${(s - 1.5).toFixed(1)}" rx="1.5" fill="${diverging(val(face, -1, 0), vmax)}"/>`;
     const box = (l: number, h: number) => { const x = l < 0 ? lab : h < 0 ? mx : lab + h * cw, w = l < 0 ? H * cw : h < 0 ? cw * 1.8 : cw, yy = l < 0 ? yEmb() : y(l); return { x, w, yy }; };
     for (const [l, h] of rg) { const b = box(l, h); o += `<rect class="ringm" x="${(b.x - 1).toFixed(1)}" y="${(b.yy - 1).toFixed(1)}" width="${(b.w + 0.5).toFixed(1)}" height="${(s + 0.5).toFixed(1)}" rx="2"/>`; }
     if (hov && !(pin && hov.l === pin.l && hov.h === pin.h)) { const b = box(hov.l, hov.h); o += `<rect class="hovm" x="${(b.x).toFixed(1)}" y="${(b.yy).toFixed(1)}" width="${(b.w - 1).toFixed(1)}" height="${(s - 1).toFixed(1)}" rx="1.5"/>`; }
     if (pin) { const b = box(pin.l, pin.h); o += `<rect class="pinm" x="${(b.x - 2.5).toFixed(1)}" y="${(b.yy - 2.5).toFixed(1)}" width="${(b.w + 3.5).toFixed(1)}" height="${(s + 3.5).toFixed(1)}" rx="2.5"/>`; }
     const yb = yEmb() + s + 16;
-    o += `<text x="${lab}" y="${yb}">heads 0–${H - 1}</text><text x="${mx}" y="${yb}">MLP</text>`;
-    o += `<text x="${lab}" y="${TOP - 10}" class="facel ${tainted ? "bad" : ""}">${face === "a" ? "A" : face === "b" ? "B" : "B − A"}${clamp ? " · clamped run" : ""}${browser ? " · computed in this browser" : ""}</text>`;
+    o += `<text x="${lab}" y="${yb}">heads 0–${H - 1}</text><text x="${mx}" y="${yb}"><title>MLP block: the part of a layer that transforms what the heads read</title>MLP</text>`;
+    o += `<text x="${lab}" y="${TOP - 10}" class="facel ${tainted ? "bad" : ""}">${face === "a" ? "A" : face === "b" ? "B" : "change, B − A"}${clamp ? " · clamped run" : ""}${browser ? " · computed in this browser" : ""}</text>`;
     const svg = $("lad"); svg.setAttribute("width", String(W)); svg.setAttribute("height", String(g.Hsvg)); svg.innerHTML = o;
     $("ladder").classList.toggle("tainted", tainted);
     root.querySelectorAll<HTMLElement>("[data-face]").forEach((b) => { b.classList.toggle("on", b.dataset.face === face); b.classList.toggle("bad", faceTainted(b.dataset.face!, bad)); });
@@ -156,14 +157,14 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const hl = (pin || hov)?.l ?? -9;
     if (hl >= 0) o += `<rect x="1" y="${y(hl)}" width="${W - 2}" height="${s}" class="rowhl"/>`;
     const svg = $("mc"); svg.setAttribute("width", String(W)); svg.setAttribute("height", String(g.Hsvg)); svg.innerHTML = o;
-    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” vs “${esc(it.j_minus)}”, if read off after each layer${clamp ? " · clamped run" : ""}</span><span><i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B</span>`;
+    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”, if read off after each layer${clamp ? " · clamped run" : ""}</span><span><i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B</span>`;
   }
 
   // ---------------- hover tooltip (A, B, B − A of one cell; 3 rows max) and pinning
   const tip = $("ptip");
   function cellTip(e: MouseEvent, l: number, h: number) {
     const dd = dAttr(D, clamp);
-    tip.textContent = `${partName(l, h)}${clamp ? " · clamped run" : ""}\nA ${sgn(val("a", l, h), 4)}   B ${sgn(val("b", l, h), 4)}\nB − A ${sgn(val("d", l, h), 4)} ${dd.exported ? "(pair export)" : "(computed in this browser)"}`;
+    tip.textContent = `${partName(l, h)}${clamp ? " · clamped run" : ""}\nA ${sgn(val("a", l, h), 4)}   B ${sgn(val("b", l, h), 4)}\nChange, B − A ${sgn(val("d", l, h), 4)} ${dd.exported ? "(pair export)" : "(computed in this browser)"}`;
     tip.hidden = false; tip.style.left = e.clientX + 14 + "px"; tip.style.top = e.clientY + 14 + "px";
   }
   $("lad").addEventListener("mousemove", (e) => {
@@ -184,16 +185,16 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const dr = $("drawer");
     if (!pin) { dr.hidden = true; dr.innerHTML = ""; return; }
     const top5 = ringed(rings(), pin.l, pin.h), dd = dAttr(D, clamp);
-    const taint = failing.length ? `<div class="badp">✗ A check failed (${esc(failing.map(checkLine).join(" · "))}): these numbers are not conserved.</div>` : "";
+    const taint = failing.length ? `<div class="badp">✗ An accounting check failed (${esc(failing.map(checkLine).join(" · "))}): these numbers do not add up.</div>` : "";
     let body: string;
     if (pin.l < 0) {
-      body = cmpTable([{ label: `Push on the margin${clamp ? ", clamped run" : ""}`, tip: "readout.embed_attr · d_embed_attr", a: S(D.A).embed, b: S(D.B).embed, d: { v: dd.embed, how: dd.exported ? "exp" : "calc", src: dd.exported ? "d_embed_attr, pair export" : "computed in this browser" } }]) + CHANGE_FOOT;
+      body = cmpTable([{ label: `Contribution to the answer${clamp ? ", clamped run" : ""}`, tip: "readout.embed_attr · d_embed_attr", a: S(D.A).embed, b: S(D.B).embed, d: { v: dd.embed, how: dd.exported ? "exp" : "calc", src: dd.exported ? "d_embed_attr, pair export" : "computed in this browser" } }]) + CHANGE_FOOT;
     } else {
       const sl = pin.h >= 0 ? { kind: "head" as const, l: pin.l, h: pin.h, t: ro } : { kind: "mlp" as const, l: pin.l, t: ro };
       body = inspectorHTML(D, sl, { pinned: true, clamp, bare: true });
     }
     dr.hidden = false;
-    dr.innerHTML = `<div class="dr-h"><i class="pinbox" title="The pinned cell has this thick white outline in the ladder"></i><h3>${esc(pin.l < 0 ? "Embedding term" : pin.h < 0 ? `MLP · layer ${pin.l}` : `Head ${pin.h} · layer ${pin.l}`)}</h3><span class="sp"></span><button id="unpin" title="Unpin (Esc)">Esc ✕</button></div>
+    dr.innerHTML = `<div class="dr-h"><i class="pinbox" title="The pinned cell has this thick white outline in the ladder"></i><h3>${esc(pin.l < 0 ? "Embedding term" : pin.h < 0 ? `MLP block · layer ${pin.l}` : `Head ${pin.h} · layer ${pin.l}`)}</h3><span class="sp"></span><button id="unpin" title="Unpin (Esc)">Esc ✕</button></div>
       <div class="muted dr-sub">pinned · ${top5 ? `<span class="ringtxt">one of the 5 largest changes</span>` : "click another cell to move the pin"}${pin.l >= 0 && pin.h >= 0 ? ` · <span class="nw">keys <kbd>[</kbd> <kbd>]</kbd>: previous / next head in this layer</span>` : ""}</div>${taint}${body}`;
     $("unpin").onclick = () => setPin(null);
   }
@@ -208,7 +209,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const bg = (w: number) => (!w ? "" : `background:${mix("#0c0c0d", w < 0 ? A_COL : face === "a" ? A_COL : B_COL, Math.min(0.9, Math.sqrt(Math.abs(w)) * 1.1))};${Math.abs(w) > 0.3 ? "color:#111;" : ""}`);
     const hidden = segs.filter((sg) => !sg.open), hn = hidden.reduce((a, sg) => a + sg.n, 0);
     let sum = 0; if (head) for (const sg of hidden) for (let t = sg.a; t <= sg.b; t++) sum += v(t);
-    let html = hidden.length ? `<button class="tpl${query && hidden.some((sg) => sg.text.toLowerCase().includes(query)) ? " hit" : ""}" id="tpl" title="${esc(hidden.map((sg) => sg.label).join(" · "))}\nClick to ${tplOpen ? "collapse" : "show"} it">${tplOpen ? "▾" : "⋯"} template text · ${hidden.length} parts · ${hn} tokens${head ? ` · Σ attention ${sum >= 0 && face === "d" ? "+" : ""}${sum.toFixed(2)}` : ""}</button>` : "";
+    let html = hidden.length ? `<button class="tpl${query && hidden.some((sg) => sg.text.toLowerCase().includes(query)) ? " hit" : ""}" id="tpl" title="${esc(hidden.map((sg) => sg.label).join(" · "))}\nClick to ${tplOpen ? "collapse" : "show"} it">${tplOpen ? "▾" : "⋯"} template text · ${hidden.length} parts · ${hn} tokens${head ? ` · total attention ${sum >= 0 && face === "d" ? "+" : ""}${sum.toFixed(2)}` : ""}</button>` : "";
     for (const sg of segs) {
       if (!sg.open && !tplOpen) continue;
       if (sg.kind === "question") html += `<div class="cap seglab" title="prompt part: ${esc(sg.label)} (manifest.segments)">${isBank(D.A) ? "Scenario" : "Survey question"}</div>`;
@@ -223,7 +224,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     }
     $("ptext").innerHTML = html;
     $("pkey").innerHTML = head
-      ? `shaded: where head ${head.h} of layer ${head.l} looks from t* · ${face === "a" ? `<span style="color:${A_COL}">A</span>` : face === "b" ? `<span style="color:${B_COL}">B</span>` : `B − A, <span class="calc">computed in this browser</span>: <span style="color:${B_COL}">teal</span> = B reads it more, <span style="color:${A_COL}">grey</span> = A reads it more`} · top-16 weights (attn_topk_val)`
+      ? `shaded: where head ${head.h} of layer ${head.l} looks, from the answer position (t*) · ${face === "a" ? `<span style="color:${A_COL}">A</span>` : face === "b" ? `<span style="color:${B_COL}">B</span>` : `B − A, <span class="calc">computed in this browser</span>: <span style="color:${B_COL}">teal</span> = B reads it more, <span style="color:${A_COL}">grey</span> = A reads it more`} · top-16 weights (attn_topk_val)`
       : `pin or hover a head to shade the words it reads · <kbd>/</kbd> find`;
   }
   $("ptext").addEventListener("click", (e) => { if ((e.target as Element).closest("#tpl")) { tplOpen = !tplOpen; ctx.set("tpl", tplOpen ? 1 : null); prompt(); } });
@@ -231,7 +232,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const tk = (e.target as Element).closest<HTMLElement>(".tk"); if (!tk) { tip.hidden = true; return; }
     const t = +tk.dataset.t!, sel = pin || hov;
     let s = `token ${t}: “${tokText(D.A.m.tokens[t].text)}”`;
-    if (sel && sel.h >= 0 && sel.l >= 0) { const a = weights(D.A, sel.l, sel.h).get(t) || 0, b = weights(D.B, sel.l, sel.h).get(t) || 0; s += `\nhead ${sel.h}, layer ${sel.l}, attention from t*: A ${a.toFixed(3)}  B ${b.toFixed(3)}\nB − A ${sgn(b - a)} (computed in this browser)`; }
+    if (sel && sel.h >= 0 && sel.l >= 0) { const a = weights(D.A, sel.l, sel.h).get(t) || 0, b = weights(D.B, sel.l, sel.h).get(t) || 0; s += `\nhead ${sel.h}, layer ${sel.l}, attention from the answer position: A ${a.toFixed(3)}  B ${b.toFixed(3)}\nChange, B − A ${sgn(b - a)} (computed in this browser)`; }
     tip.textContent = s; tip.hidden = false; tip.style.left = e.clientX + 14 + "px"; tip.style.top = e.clientY + 14 + "px";
   });
   $("ptext").addEventListener("mouseleave", () => (tip.hidden = true));

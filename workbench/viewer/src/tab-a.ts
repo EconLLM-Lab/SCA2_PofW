@@ -56,22 +56,22 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     <section id="answer" data-obj="answer">${answerStrip(D)}</section>
     <div id="work" class="a-work"><div class="a-col">
       <section class="obj scenebar" data-obj="scenebar"><header><span class="cap">Show</span>
-          <span class="seg">${[["single", "A only"], ["side", "A | B"], ["delta", "A | ‖B − A‖"]].map(([k, t]) => `<button data-view="${k}">${t}</button>`).join("")}</span>
+          <span class="seg">${[["single", "A only"], ["side", "A | B"], ["delta", "A | size of change ‖B − A‖"]].map(([k, t]) => `<button data-view="${k}">${t}</button>`).join("")}</span>
           <select id="single" title="Which model the single scene shows"><option value="a">A</option><option value="b">B</option></select>
           <span class="cap">camera</span><span class="seg">${[["readout", "answer position"], ["overview", "whole"], ["top", "above"], ["front", "layer stack"]].map(([k, t]) => `<button data-cam="${k}">${t}</button>`).join("")}</span>
           <span class="sp"></span><input id="q" placeholder="find a word ⏎" autocomplete="off" hidden /><div id="hits" hidden></div>
-          <button id="clamp" class="tog" title="Quadrant III clamped run (A and B scenes)">clamped</button></header>
+          <button id="clamp" class="tog" title="Clamped run: the Quadrant III neurons switched off (set to zero), in the A and B scenes">clamped run</button></header>
         <div class="foot" id="enc"></div></section>
       <div id="stage">
         <section class="scene" id="sceneA" data-obj="sceneA"><header class="cap" id="labelA"></header></section>
         <section class="scene" id="sceneB" data-obj="sceneB"><header class="cap" id="labelB"></header></section>
-        <section class="obj inset" id="insetBox" data-obj="inset"><header class="cap">margin by layer</header><div id="inset"></div></section>
+        <section class="obj inset" id="insetBox" data-obj="inset"><header class="cap">log-odds by layer</header><div id="inset"></div></section>
         <div id="tip" hidden></div>
-        <div id="glLost" hidden>The GPU dropped the WebGL context. Waiting for it to come back (reload the page if it does not).</div></div>
+        <div id="glLost" hidden>The graphics card (GPU) dropped the drawing context (WebGL). Waiting for it to come back (reload the page if it does not).</div></div>
       <section class="obj" id="mini" data-obj="minimap"><div class="foot" id="minicap"></div><canvas id="mm"></canvas></section>
       </div><aside id="drawer" class="obj" data-obj="drawer" hidden></aside></div>
     <select id="hscale" hidden><option value="log">log</option><option value="linear">linear</option></select>
-    <select id="color" hidden><option value="dla">push on the margin</option><option value="q3">Quadrant III count</option><option value="plain">plain</option></select>`;
+    <select id="color" hidden><option value="dla">contribution to the answer</option><option value="q3">Quadrant III count</option><option value="plain">plain</option></select>`;
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>("#" + id)!;
   $("stage").prepend(canvas);
   const sel = <T extends HTMLElement = HTMLSelectElement>(id: string) => $<T>(id);
@@ -161,7 +161,7 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
 
   // ---------------- the scene bar's one-line key (the encoding of the faces shown)
   function encoding(color: ColorMode, delta: boolean, clamp: boolean) {
-    $("enc").innerHTML = `height = size of the vector, log scale shared by A and B${delta ? ` · <span style="color:var(--delta)">‖B − A‖</span>: its own scale, gold` : ""} · white frame and lit floor: the answer position t*${color === "dla" ? ` · only in t*: <span style="color:${C.pos}">blue</span> pushes toward “${esc(short(String(D.A.m.item.labels[D.A.m.item.codes.indexOf(D.A.m.item.j_plus)]), 24))}”, <span style="color:${C.neg}">orange</span> toward “${esc(short(String(D.A.m.item.labels[D.A.m.item.codes.indexOf(D.A.m.item.j_minus)]), 24))}”` : color === "q3" ? " · MLP colour: Quadrant III count" : ""}${clamp ? ` · <span style="color:var(--clamp)">clamped run</span>` : ""}`;
+    $("enc").innerHTML = `height = size of the vector (log scale, shared by A and B)${delta ? ` · <span style="color:var(--delta)">‖B − A‖</span> (size of the change): its own scale, gold` : ""} · white frame and lit floor: the answer position (t*)${color === "dla" ? ` · only there: <span style="color:${C.pos}">blue</span> pushes the answer toward “${esc(short(String(D.A.m.item.labels[D.A.m.item.codes.indexOf(D.A.m.item.j_plus)]), 24))}”, <span style="color:${C.neg}">orange</span> toward “${esc(short(String(D.A.m.item.labels[D.A.m.item.codes.indexOf(D.A.m.item.j_minus)]), 24))}”` : color === "q3" ? " · MLP block colour: Quadrant III count" : ""}${clamp ? ` · <span style="color:var(--clamp)">clamped run</span>` : ""}`;
   }
   /** Flat chart of the margin, A and B on one axis (in 3D it would run along depth, not comparable by eye).
    * Zero line, y ticks and layer ticks. */
@@ -182,7 +182,7 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       ends.push({ n: k, v: t.get(L), col });
     }
     ends.sort((p, q) => q.v - p.v).forEach((e, i) => (s += `<text x="${W - pr}" y="${11 + i * 12}" text-anchor="end" style="fill:${e.col}">${e.n} ${e.v.toFixed(2)}</text>`));
-    host.innerHTML = `<svg width="${W}" height="${Hh}">${s}</svg><div class="foot">log-odds of “${esc(D.A.m.item.j_plus)}” vs “${esc(D.A.m.item.j_minus)}” if read off after each layer · dashed: 0 = even odds${clamp ? " · clamped run" : ""}</div>`;
+    host.innerHTML = `<svg width="${W}" height="${Hh}">${s}</svg><div class="foot">log-odds of “${esc(D.A.m.item.j_plus)}” over “${esc(D.A.m.item.j_minus)}” if read off after each layer · dashed: 0 = even odds${clamp ? " · clamped run" : ""}</div>`;
   }
 
   // ---------------- camera: presets fit the whole (collapsed) object, so the token grid is never cropped
@@ -276,11 +276,11 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     if (s.kind === "head") {
       const p0 = panels.find((p) => !p.ts.delta)!;
       const gs = p0.ts.gapSums(s.l, s.h, s.t).filter(([, v]) => v > 0.005);
-      note = gs.length ? `Attention to collapsed parts (one Σ arc each, model ${p0.run === D.B ? "B" : "A"}): ${gs.map(([g, v]) => `${esc(g.label)} Σ ${v.toFixed(2)}`).join(" · ")}` : "";
+      note = gs.length ? `Attention to collapsed parts (one arc each, showing the total, model ${p0.run === D.B ? "B" : "A"}): ${gs.map(([g, v]) => `${esc(g.label)}: total ${v.toFixed(2)}`).join(" · ")}` : "";
     }
-    const dr = $("drawer"), name = s.kind === "head" ? `Head ${s.h} · layer ${s.l}` : s.kind === "mlp" ? `MLP · layer ${s.l}` : `Running state · ${s.l === 0 ? "start" : "after layer " + (s.l - 1)}`;
+    const dr = $("drawer"), name = s.kind === "head" ? `Head ${s.h} · layer ${s.l}` : s.kind === "mlp" ? `MLP block · layer ${s.l}` : `Running state · ${s.l === 0 ? "start" : "after layer " + (s.l - 1)}`;
     dr.hidden = false; $("work").classList.add("pinned");
-    dr.innerHTML = drawerHTML(name, `pinned · token ${s.t} “${esc(tokText(D.A.m.tokens[s.t].text))}”${s.t === ro ? " · answer position t*" : ""}`, inspectorHTML(D, s, { pinned: true, clamp: clampOn, note, bare: true }), failing);
+    dr.innerHTML = drawerHTML(name, `pinned · token ${s.t} “${esc(tokText(D.A.m.tokens[s.t].text))}”${s.t === ro ? " · answer position (t*)" : ""}`, inspectorHTML(D, s, { pinned: true, clamp: clampOn, note, bare: true }), failing);
     $("unpin").onclick = unpin;
   }
   function unpin() {
@@ -304,7 +304,7 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const kind = h.p.ts.kindOf(h.mesh); if (!kind) { tip.hidden = true; return; }
     // Synced hover: mark the same slice in every panel; one tooltip carries each panel's value.
     const s = sliceOf(h.p.ts, kind, h.id);
-    const lines = [`${s.kind === "head" ? "Head" : s.kind === "mlp" ? "MLP" : "State"} · layer ${s.l}${s.kind === "head" ? " · head " + s.h : ""} · token ${s.t} “${tokText(D.A.m.tokens[s.t].text)}”`];
+    const lines = [`${s.kind === "head" ? "Head" : s.kind === "mlp" ? "MLP block" : "State"} · layer ${s.l}${s.kind === "head" ? " · head " + s.h : ""} · token ${s.t} “${tokText(D.A.m.tokens[s.t].text)}”`];
     panels.forEach((p) => {
       p.ts.hover(p.ts.meshOfKind(kind), h.id);
       const info = p.ts.info(p.ts.meshOfKind(kind), h.id); if (!info) return;
@@ -359,7 +359,7 @@ export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     mc.width = w * dpr; mc.height = Hh * dpr; mc.style.height = Hh + "px"; const g = mc.getContext("2d")!; g.scale(dpr, dpr);
     const bandH = 18, hh = Hh - bandH - 6, cw = w / T, dm = view === "delta";
     const src = dm ? D.P.t.d_resid_norm : D.A.t.resid_norm, s = dm ? makeRamp([src]) : makeRamp([D.A.t.resid_norm, D.B.t.resid_norm]);
-    $("minicap").innerHTML = `<span class="cap">prompt map</span> every token (columns) × layer (rows) · brightness: ${dm ? "‖B − A‖ of the running state" : "size of the running state in A"}, log, clipped at p99 ${fmt(s.vmax, 3)} (max ${fmt(s.max, 3)}) · click a band to open or collapse it · white bracket: tokens in view`;
+    $("minicap").innerHTML = `<span class="cap">prompt map</span> every token (columns) × layer (rows) · brightness: ${dm ? "the size of the change ‖B − A‖ of the running state" : "the size of the running state in A"}, on a log scale, clipped at the 99th percentile ${fmt(s.vmax, 3)} (max ${fmt(s.max, 3)}) · click a band to open or collapse it · white bracket: tokens in view`;
     for (let l = 0; l <= L; l++) for (let t = 0; t < T; t++) { g.fillStyle = dm ? mix(C.neutral, C.delta, rampU(s, src.get(l, t))) : mix("#121212", "#cfd8e3", rampU(s, src.get(l, t))); g.fillRect(t * cw, bandH + 4 + ((L - l) * hh) / (L + 1), Math.ceil(cw), Math.ceil(hh / (L + 1))); }
     g.font = "10.5px ui-monospace, Menlo, monospace"; g.textBaseline = "middle";
     let lastEnd = -1;
