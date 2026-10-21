@@ -13,10 +13,11 @@ export type Kind = "adapter" | "prompt" | "other";
 export interface Who { b: string; kind: Kind; name: string; cc?: string; bits?: string }
 export interface IndexRun { file: string; model: string; item_id: string; probs?: Record<string, number>; margin?: number }
 export interface ItemInfo { item_id: string; j_plus: string; j_minus: string; codes: string[]; labels: string[]; text: string }
+export interface Top { code: string; p: number; text: string; code2?: string; text2?: string }   // text: the percentage, with extra decimals only when the runner-up would round to the same figure
 export interface Row {
   who: Who; d: number; file: string;
   pBase?: number; pCmp?: number;                       // probability of j_plus, base and comparator
-  topBase?: { code: string; p: number }; topCmp?: { code: string; p: number };
+  topBase?: Top; topCmp?: Top;
   bits?: string;                                       // the six signs this comparator carries, "101111"
 }
 export interface Block { rows: Row[]; matched: boolean; bits?: string }
@@ -62,6 +63,8 @@ export function pct(p: number | undefined): string {
   if (v > 99.9) return ">99.9%";
   return (v < 10 ? v.toFixed(1) : v.toFixed(0)) + "%";
 }
+/** A percentage with a fixed number of decimals (used only to separate a near tie). */
+export const pctDec = (p: number, d: number) => (p * 100).toFixed(d) + "%";
 /** A signed change, three significant digits: +14.6, −2.71, +0.74. */
 export const change = (v: number) => (v >= 0 ? "+" : "−") + String(Number(Math.abs(v).toPrecision(3)));
 
@@ -84,11 +87,17 @@ export function loadItemInfo(file: string): Promise<ItemInfo> {
   return p;
 }
 
-const top = (probs?: Record<string, number>) => {
+/** The most likely answer and its percentage (`text2`: the runner-up's, set only on a near tie). When the runner-up rounds to the same figure, both get one more
+ * decimal (and again, up to three) until they differ, so a near tie is never printed as two equal numbers. */
+const top = (probs?: Record<string, number>): Top | undefined => {
   if (!probs) return undefined;
-  const e = Object.entries(probs); if (!e.length) return undefined;
-  const [code, p] = e.reduce((x, y) => (y[1] > x[1] ? y : x));
-  return { code, p };
+  const e = Object.entries(probs).sort((x, y) => y[1] - x[1]); if (!e.length) return undefined;
+  const [code, p] = e[0], p2 = e[1]?.[1];
+  let text = pct(p), text2: string | undefined;
+  if (p2 != null && pct(p2) === text) {
+    for (let d = 1; d <= 3; d++) { text = pctDec(p, d); text2 = pctDec(p2, d); if (text !== text2) break; }
+  }
+  return { code, p, text, code2: e[1]?.[0], text2 };
 };
 
 /** One row per comparator of `base` on `item`: its probability of j_plus next to the base's, and its change in log-odds. */

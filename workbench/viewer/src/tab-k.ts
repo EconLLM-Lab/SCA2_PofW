@@ -10,7 +10,7 @@
 
 import { loadPair, type Bundle, type IndexFile, type Pair } from "./data";
 import type { Ctx } from "./main";
-import { C, diverging, esc, fmt } from "./common";
+import { C, diverging, esc } from "./common";
 import {
   SIGNS, answerName, arrange, buildRows, change, loadItemInfo, pairSentence, pct, shortQuestion,
   type Block, type ItemInfo, type Row, type Show, type Sort,
@@ -34,14 +34,14 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   if (!picker.length) {
     const rows = itemsOf(item);
     root.innerHTML = `
-      <section id="answer" data-obj="answer"><span class="say">One base model, many comparators: <b>who moves the answer, and where in the model</b></span></section>
+      <section id="answer" data-obj="answer"><span class="say">The base model against several comparators: <b>who moves the answer, and where in the model</b></span></section>
       <div class="k-work">
         <section class="obj k-empty" data-obj="cohort-empty"><header><span class="cap">Cohort · not built from data yet</span></header>
-          <p class="lead">This view puts one unchanged model next to several comparators on the same question. It needs at least ${MIN_ADAPTERS} comparators on one question.</p>
+          <p class="lead">This view puts the base model next to several comparators on the same question. A comparator is an adapter or sign prompt compared with the base model. It needs at least ${MIN_ADAPTERS} comparators on one question.</p>
           <p class="muted">Today, for <b>${name(base)}</b> on <code>${esc(item)}</code>, the index lists ${plural(rows.length, "comparator")}: ${rows.map((r) => name(r.b)).join(", ") || "none"}. Nothing on this tab is data until a third one is exported.</p></section>
         <figure class="obj k-thumb" data-obj="illustration"><span class="illus">illustration · not data</span>
           <img src="/screens/v3/cohort-illustration.png" alt="Design mockup of the cohort map: 42 placeholder adapters by 32 layers, not data" width="560" height="262" />
-          <figcaption class="foot">Design mockup: seeded placeholder values for an 8-billion-parameter base with 42 adapters. Not a measurement.</figcaption></figure>
+          <figcaption class="foot">Design mockup: seeded placeholder values for an 8-billion-parameter base model with 42 adapters. Not a measurement.</figcaption></figure>
       </div>`;
     requestAnimationFrame(() => ctx.ready());
     return off;
@@ -80,64 +80,80 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const ans = (code: string) => answerName(cur, code);
     const plus = ans(cur.j_plus), minus = ans(cur.j_minus);
 
-    const dots = (bits?: string) => bits ? `<span class="k-dots" title="${esc(SIGNS.map((s, i) => `${s}: ${bits[i] === "1" ? "positive" : "negative"}`).join(" · "))}" aria-hidden="true">${[...bits].map((c) => `<i class="${c === "1" ? "p" : "n"}"></i>`).join("")}<code>${esc(bits)}</code></span>` : "";
+    const dots = (bits?: string, onMap = false) => bits && !onMap ? `<span class="k-dots" title="${esc(SIGNS.map((s, i) => `${s}: ${bits[i] === "1" ? "positive" : "negative"}`).join(" · "))}" aria-hidden="true">${[...bits].map((c) => `<i class="${c === "1" ? "p" : "n"}"></i>`).join("")}<code>${esc(bits)}</code></span>` : "";
     const who = (r: Row) => (r.who.kind === "adapter" ? `${r.who.name} adapter` : r.who.kind === "prompt" ? `Sign prompt ${r.bits ?? ""}`.trim() : r.who.name);
-    const rowTip = (r: Row) => `${who(r)}: ${pct(r.pCmp)} give ${plus} (base model ${pct(r.pBase)}). Change from the base in the log-odds of ${plus} over ${minus}: ${change(r.d)}.`;
-    const label = (r: Row) => r.who.kind === "adapter"
-      ? `<span class="k-nm"><b>${esc(r.who.name)}</b><em>country adapter</em></span>${dots(r.bits)}`
-      : r.who.kind === "prompt" ? `<span class="k-nm"><b>Sign prompt</b><em>weights unchanged</em></span>${dots(r.bits)}`
+    const poss = (n: string) => (n.endsWith("s") ? `${n}'` : `${n}'s`);
+    // "= China's signs": the country adapter on this question that carries the same six signs (only when one is listed)
+    const match = (r: Row) => {
+      if (r.who.kind !== "prompt" || !r.bits) return "";
+      const ad = rows.filter((o) => o.who.kind === "adapter" && o.bits === r.bits).map((o) => poss(o.who.name));
+      return ad.length ? `= ${ad.join(" and ")} signs` : "";
+    };
+    const rowTip = (r: Row) => `${who(r)}${match(r) ? " " + match(r) : ""}: the model gives ${plus} a ${pct(r.pCmp)} probability (base model ${pct(r.pBase)}). Change from the base model in the log-odds of ${plus} over ${minus}: ${change(r.d)}.`;
+    const label = (r: Row, onMap = false) => r.who.kind === "adapter"
+      ? `<span class="k-nm"><b>${esc(r.who.name)}</b><em>country adapter</em></span>${dots(r.bits, onMap)}`
+      : r.who.kind === "prompt" ? `<span class="k-nm"><b>Sign prompt${onMap && r.bits ? " " + esc(r.bits) : ""}</b><em>${esc(match(r) || "weights unchanged")}</em></span>${dots(r.bits, onMap)}`
       : `<span class="k-nm"><b>${esc(r.who.name)}</b></span>`;
     const go = (r: Row) => `data-go="c" data-extra="${esc(ladder(r.who.b))}"`;
     const twins = (r: Row) => (r.bits ? rows.filter((o) => o !== r && o.bits === r.bits && o.who.kind !== r.who.kind && o.who.kind !== "other") : []);
     const sameSigns = (r: Row, blk: Block) => (!blk.matched && twins(r).length
       ? `<span class="k-same" title="Another comparator on this question carries the same six signs. Order by matched pairs to see them side by side.">same signs as ${esc(twins(r).map((o) => (o.who.kind === "adapter" ? o.who.name + " adapter" : "the sign prompt")).join(", "))}</span>` : "");
 
-    // ---- the dumbbell: base (open ring) to comparator (filled dot), on a fixed 0 to 100% axis
+    // ---- the dumbbell: base model (white bar) to comparator (filled dot), on a fixed 0 to 100% axis.
+    // The chevron sits just beyond the comparator dot, on the side the probability moved to, so a direction shows even
+    // when the two markers overlap (a 0.2-point change is one pixel wide).
     const dumbbell = (r: Row) => {
       if (r.pBase == null || r.pCmp == null) return `<div class="k-db muted">probabilities not in the index</div>`;
       const b = r.pBase * 100, c = r.pCmp * 100, lo = Math.min(b, c), w = Math.abs(c - b);
-      return `<div class="k-db" aria-hidden="true"><i class="k-bl" style="left:${b}%"></i>${w >= 1 ? `<i class="k-arrow ${c >= b ? "r" : "l"}${w < 5 ? " short" : ""}" style="left:${lo}%;width:${w}%"></i>` : ""}<i class="k-mb" style="left:${b}%"></i><i class="k-mc" style="left:${c}%"></i></div>`;
+      const dir = c > b ? "r" : c < b ? "l" : "";
+      return `<div class="k-db" aria-hidden="true">${w > 0 ? `<i class="k-ln" style="left:${lo}%;width:${w}%"></i>` : ""}<i class="k-mb" style="left:${b}%"></i><i class="k-mc" style="left:${c}%"></i>${dir ? `<i class="k-chev ${dir}" style="left:${c}%"></i>` : ""}</div>`;
     };
     const topName = (code: string) => ans(code).replace(/^answer /, "");
+    // The percentage of the followed answer, with extra decimals only when it ties the most likely answer after rounding.
+    const plusText = (t: Row["topBase"], p: number | undefined) => (t?.code === cur.j_plus ? t.text : t?.code2 === cur.j_plus && t.text2 ? t.text2 : pct(p));
     const rowHtml = (r: Row, blk: Block) => {
       const tb = r.topBase, tc = r.topCmp;
-      const likely = tb && tc ? `<span class="k-top">Most likely answer: ${esc(topName(tb.code))} (${pct(tb.p)}) → ${esc(topName(tc.code))} (${pct(tc.p)})</span>` : "";
+      const likely = tb && tc ? `<span class="k-top">Most likely answer: ${esc(topName(tb.code))} (${tb.text}) → ${esc(topName(tc.code))} (${tc.text})</span>` : "";
       const t = rowTip(r);
       return `<div class="k-row" tabindex="0" role="group" data-b="${esc(r.who.b)}" data-tip="${esc(t)}" aria-label="${esc(t + " Press Enter to open this pair in the Ladder.")}" ${go(r)}>
         <div class="k-who">${label(r)}${sameSigns(r, blk)}</div>
         <div class="k-mid">${dumbbell(r)}${likely}</div>
-        <div class="k-pc"><b>${pct(r.pBase)}</b> <span aria-hidden="true">→</span> <b class="c">${pct(r.pCmp)}</b></div>
-        <div class="k-d num" title="Change from the base, in log-odds of ${esc(plus)} over ${esc(minus)}">${change(r.d)}</div>
+        <div class="k-pc"><b>${plusText(tb, r.pBase)}</b> <span aria-hidden="true">→</span> <b class="c">${plusText(tc, r.pCmp)}</b></div>
+        <div class="k-d num" title="Change from the base model, in log-odds of ${esc(plus)} over ${esc(minus)}">${change(r.d)}</div>
         <a class="k-open" href="?tab=c&${esc(ladder(r.who.b))}" ${go(r)} tabindex="-1">Open in the Ladder →</a></div>`;
     };
-    const axis = `<div class="k-row k-axis" aria-hidden="true"><div class="k-who"></div><div class="k-mid"><div class="k-ticks">${[0, 25, 50, 75, 100].map((t) => `<span style="left:${t}%">${t}%</span>`).join("")}</div></div><div class="k-pc">base → comparator</div><div class="k-d" title="Change from the base, in log-odds">log-odds change</div><div class="k-open"></div></div>`;
+    const axis = `<div class="k-row k-axis" aria-hidden="true"><div class="k-who"></div><div class="k-mid"><div class="k-ticks">${[0, 25, 50, 75, 100].map((t) => `<span style="left:${t}%">${t}%</span>`).join("")}</div></div><div class="k-pc">base model → comparator</div><div class="k-d" title="Change from the base model, in log-odds">log-odds change</div><div class="k-open"></div></div>`;
 
     // ---- the layer map: one row per comparator, one square per layer
     const L = D.A.m.model.n_layers;
+    const TICKS = [...new Set([...Array.from({ length: Math.floor((L - 1) / 5) + 1 }, (_, i) => i * 5), L - 1])];
     const mapRowHtml = (r: Row, m: number) => {
       const v = lays.get(r.who.b);
       let best = -1; if (v) v.forEach((x, l) => { if (best < 0 || Math.abs(x) > Math.abs(v[best])) best = l; });
-      const cells = v ? v.map((x, l) => `<i data-tip="${esc(`${who(r)} · layer ${l}: contribution to the answer changes by ${change(x)} (${x >= 0 ? "toward " + plus : "toward " + minus}). Attention and MLP block together.`)}" style="background:${diverging(x, m)}"></i>`).join("") : `<span class="muted">loading…</span>`;
-      const aria = `${who(r)}.${v ? ` Largest change at layer ${best}: ${change(v[best])}.` : ""} Press Enter to open this pair in the Ladder.`;
+      const cells = v ? v.map((x, l) => `<i data-tip="${esc(`${who(r)}${match(r) ? " " + match(r) : ""} · layer ${l}: contribution to the answer changes by ${change(x)} (${x >= 0 ? "toward " + plus : "toward " + minus}). Attention and MLP block together.`)}" style="background:${diverging(x, m)}"></i>`).join("") : `<span class="muted">loading…</span>`;
+      const aria = `${who(r)}${match(r) ? " " + match(r) : ""}.${v ? ` Largest change at layer ${best}: ${change(v[best])}.` : ""} Press Enter to open this pair in the Ladder.`;
       return `<div class="k-hrow" tabindex="0" role="group" data-b="${esc(r.who.b)}" aria-label="${esc(aria)}" ${go(r)}>
-        <div class="k-who">${label(r)}</div><div class="k-cells" style="--L:${L}">${cells}</div></div>`;
+        <div class="k-who">${label(r, true)}</div><div class="k-cells" style="--L:${L}">${cells}</div><span class="k-go" aria-hidden="true">›</span></div>`;
     };
     const mapHtml = (blocks: Block[]) => {
-      const flat = blocks.flatMap((b) => b.rows);
       const all = [...lays.values()].flat(), m = all.length ? Math.max(...all.map(Math.abs)) || 1 : 1;
       const grad = [-1, -0.5, -0.25, 0, 0.25, 0.5, 1].map((s) => `${diverging(s * m, m)} ${((s + 1) * 50).toFixed(0)}%`).join(",");
+      const body = blocks.map((b) => `<div class="k-hblk${b.matched ? " m" : ""}">${b.matched ? `<div class="k-gb" aria-hidden="true"></div>` : ""}${b.rows.map((r) => mapRowHtml(r, m)).join("")}</div>`).join("");
       return `<header><span class="cap">Where in the model the change happens</span></header>
-        <p class="k-sub">Layer 0 reads the question. Layer 31 writes the answer. Each square is one layer: how much that layer's contribution to the answer changes, comparator minus base. Hover a square for the number. Click a row to open that pair in the Ladder.</p>
-        <div class="k-hrow k-haxis" aria-hidden="true"><div class="k-who">layer →</div><div class="k-cells k-lay">${[0, 5, 10, 15, 20, 25, L - 1].map((l) => `<span style="left:${((l + 0.5) / L) * 100}%">${l}</span>`).join("")}</div></div>
-        <div id="kmap">${flat.map((r) => mapRowHtml(r, m)).join("") || `<p class="muted">No rows match this filter.</p>`}</div>
-        <div class="k-key"><span class="bar" style="background:linear-gradient(90deg,${grad})"></span><span><b style="color:${C.pos}">Blue</b>: pushes toward ${esc(plus)}. <b style="color:${C.neg}">Orange</b>: pushes toward ${esc(minus)}. Grey: about zero. Deepest colour ±${fmt(m, 3)} (square-root scale; nothing is clipped).</span></div>`;
+        <p class="k-sub">Each square is one layer: how much that layer's contribution to the answer changes, comparator minus base model. Hover a square for the number. Click a row to open that pair in the Ladder.</p>
+        <p class="k-mq" data-obj="cohort-map-question"><span class="muted">Question · </span>“${esc(cur.text)}”</p>
+        <div class="k-hrow k-haxis" aria-hidden="true"><div class="k-who">layer →</div><div class="k-cells k-lay">${TICKS.map((l) => `<span style="left:${((l + 0.5) / L) * 100}%">${l}</span>`).join("")}</div><span class="k-go"></span></div>
+        <div class="k-hrow k-haxis k-hnote" aria-hidden="true"><div class="k-who"></div><div class="k-cells k-lay"><span class="l">← reads the question</span><span class="r">writes the answer →</span></div><span class="k-go"></span></div>
+        <div id="kmap"><div class="k-grid" aria-hidden="true"><div></div><div class="k-gl">${TICKS.map((l) => `<i style="left:${((l + 0.5) / L) * 100}%"></i>`).join("")}</div><div></div></div>${body || `<p class="muted">No rows match this filter.</p>`}</div>
+        <div class="k-key"><div class="k-kb"><span class="bar" style="background:linear-gradient(90deg,${grad})"></span><span class="ends"><i>${change(-m).replace("+", "")}</i><i>0</i><i>${change(m)}</i></span><span class="unit">log-odds</span></div>
+          <p><b style="color:${C.pos}">Blue</b>: the layer pushes toward ${esc(plus)}. <b style="color:${C.neg}">Orange</b>: toward ${esc(minus)}. Dark: about zero. Squares are drawn on a square-root scale: small changes are drawn brighter than their size, so faint squares stay visible.</p></div>`;
     };
 
     const thinMsg = !enough ? `<p class="k-thinnote" data-obj="cohort-thin"><b>Only ${plural(rows.length, "comparator")} on this question.</b> That is too few to compare, so the layer map is not drawn. The saved answers are shown as they are. Pick a question with ${MIN_ADAPTERS} or more above, or open a pair in the Ladder.</p>` : "";
 
     // ---- the page
     const known = rows.filter((r) => r.pCmp != null), lo = Math.min(...known.map((r) => r.pCmp!)), hi = Math.max(...known.map((r) => r.pCmp!));
-    const sentence = `Unchanged model: <b>${pct(rows[0]?.pBase)}</b> say ${esc(plus)} on “${esc(shortQuestion(item, cur.text))}”. Across the ${plural(rows.length, "comparator")} below, that share goes from <b>${pct(lo)}</b> to <b>${pct(hi)}</b>.`;
+    const sentence = `The base model gives ${esc(plus)} a <b>${plusText(rows[0]?.topBase, rows[0]?.pBase)}</b> probability on “${esc(shortQuestion(item, cur.text))}”. Across the ${plural(rows.length, "comparator")} it ranges from <b>${pct(lo)}</b> to <b>${pct(hi)}</b>.<span class="k-def">A comparator is an adapter or sign prompt compared with the base model.</span>`;
     const pickBtn = (it: string) => {
       const i = info.get(it)!, n = itemsOf(it).length;
       return `<button type="button" class="${it === item ? "on" : ""}" aria-pressed="${it === item}" data-go="k" data-extra="${esc(`b=${encodeURIComponent(bFor(it))}&item=${encodeURIComponent(it)}`)}" title="${esc(`${i.text} (${it})`)}">${esc(shortQuestion(it, i.text))} <span class="n">${n}</span></button>`;
@@ -151,19 +167,20 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       <section class="k-controls" data-obj="cohort-controls">
         <div class="k-ctl"><span class="cap" id="kq">Question</span><span class="k-pick" role="group" aria-labelledby="kq">${picker.map(pickBtn).join("")}</span></div>
         ${thinHtml}
-        <p class="k-q" data-obj="cohort-question"><span class="muted">${esc(cur.item_id)} · </span>“${esc(cur.text)}”<br><span class="muted">Answer followed: ${esc(plus)}. Log-odds compare ${esc(plus)} with ${esc(minus)}${cur.codes.length > 2 ? ". The other answers are left out of that comparison, so the log-odds can rise while this answer's own share falls. The “Most likely answer” line under each row shows where the probability went" : ""}.</span></p>
+        <p class="k-q" data-obj="cohort-question"><span class="muted">${esc(cur.item_id)} · </span>“${esc(cur.text)}”<br><span class="muted">Answer followed: ${esc(plus)}. Log-odds compare only ${esc(plus)} and ${esc(minus)}, so they can move differently from one answer's percentage.</span></p>
       </section>
       ${thinMsg}
-      <section class="obj k-head" data-obj="dmargin"><header><span class="cap">How often each model gives this answer</span><span class="k-legend" aria-hidden="true"><i class="k-mb"></i> base model <i class="k-mc"></i> comparator</span></header>
+      <section class="obj k-head" data-obj="dmargin"><header><span class="cap">Probability that each model gives this answer</span><span class="k-legend" aria-hidden="true"><i class="k-lb"></i>base model<i class="k-lc"></i>comparator</span></header>
         <div class="k-ctl2"><span class="k-ctl"><span class="cap">Show</span><span id="kshow"></span></span><span class="k-ctl"><span class="cap">Order by</span><span id="ksort"></span></span></div>
         <div id="krows"></div></section>
       ${enough ? `<section class="obj k-map" data-obj="cohort" id="kmapsec"></section>` : ""}
       <details class="k-more" data-obj="cohort-legend"><summary>What do these words mean?</summary>
         <dl>
-          <dt>Base model</dt><dd>The unchanged Llama-3.1-8B-Instruct, a large language model.</dd>
+          <dt>Base model</dt><dd>Llama-3.1-8B-Instruct with no change, a large language model. Every comparator is compared with it.</dd>
+          <dt>Comparator</dt><dd>An adapter or a sign prompt compared with the base model.</dd>
           <dt>Country adapter</dt><dd>A small add-on to the weights, trained on one country's six signs. (Technical name: LoRA adapter.)</dd>
           <dt>Sign prompt</dt><dd>The same six signs written into the prompt. The weights do not change. The six signs are trust, risk taking, patience, altruism, positive reciprocity and negative reciprocity. Each is positive (filled dot, 1) or negative (open dot, 0).</dd>
-          <dt>Log-odds of “A” over “B”</dt><dd>The log of how much more likely the model is to answer A than B, as in a logit. (Technical name: margin.) The change from the base is the comparator's value minus the base's.</dd>
+          <dt>Log-odds of “A” over “B”</dt><dd>The log of how much more likely the model is to answer A than B, as in a logit. (Technical name: margin.) The change from the base model is the comparator's value minus the base model's.</dd>
           <dt>Layer</dt><dd>One of 32 processing steps the model runs in order.</dd>
           <dt>Contribution to the answer</dt><dd>How much a layer pushes the log-odds toward one answer or the other. (Technical name: direct logit attribution.) Each square adds two parts: <b>attention</b>, which reads earlier words, and the <b>MLP block</b>, which transforms what was read.</dd>
         </dl>
@@ -174,7 +191,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       const show = showOf(), sort = sortOf(), blocks = arrange(rows, show, sort);
       const cnt = (n: number) => (n ? ` <span class="n">${n}</span>` : "");
       root.querySelector("#kshow")!.innerHTML = seg("show", [["both", `Both${cnt(rows.length)}`], ["adapter", `Country adapters${cnt(kinds.adapter)}`], ["prompt", `Sign prompts${cnt(kinds.prompt)}`]], show);
-      root.querySelector("#ksort")!.innerHTML = seg("sort", [["pair", "Matched pairs", "Put a country adapter and a sign prompt with the same six signs side by side"], ["size", "Size of change", "Largest change from the base first, up or down"]], sort);
+      root.querySelector("#ksort")!.innerHTML = seg("sort", [["pair", "Matched pairs", "Put a country adapter and a sign prompt with the same six signs side by side"], ["size", "Size of change (log-odds)", "Largest change in log-odds from the base model first, up or down"]], sort);
       const body = blocks.map((b) => b.matched
         ? `<div class="k-group" role="group" aria-label="Same six signs"><div class="k-gb" aria-hidden="true"></div>${b.rows.map((r) => rowHtml(r, b)).join("")}<p class="k-pair">${esc(pairSentence(b, cur))}</p></div>`
         : b.rows.map((r) => rowHtml(r, b)).join("")).join("");
