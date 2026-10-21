@@ -3,6 +3,8 @@
 // says so in its name and comment (a browser B − A fallback for @1 files, segment sums).
 // Copy follows design/layout-v2/COPY.md (string IDs in comments) and its PM rulings.
 
+import { isLight } from "./data";
+import { NO_3D } from "./notshipped";
 import type { Bundle, Conservation, RelativeCheck, RelativeConservation, Run, Segment, Tensor } from "./data";
 
 // ------------------------------------------------------------------ formatting
@@ -168,7 +170,8 @@ export function inspectorHTML(D: Bundle, s: Slice, o: { pinned?: boolean; clamp?
   if (s.kind === "head") {
     const ka = topKeys(D.A, s.l, s.h, s.t), kb = topKeys(D.B, s.l, s.h, s.t);
     const col = (ks: { key: number; w: number }[]) => ks.map((k) => `<div class="kk"><span class="bar" style="width:${(k.w * 100).toFixed(0)}%"></span><span class="num">${k.w.toFixed(2)}</span> · #${k.key} “${esc(tokText(tk[k.key].text))}”</div>`).join("");
-    if (!(D.A.t.attn_topk_idx && D.B.t.attn_topk_idx)) html += `<div class="sub">Where this head looks: the attention weights are still loading; this panel fills in when they arrive.</div>`;
+    if (isLight(D.A) || isLight(D.B)) html += `<div class="sub">Where this head looks: ${NO_3D}</div>`;   // light run: no attention weights exist, so no spinner
+    else if (!(D.A.t.attn_topk_idx && D.B.t.attn_topk_idx)) html += `<div class="sub">Where this head looks: the attention weights are still loading; this panel fills in when they arrive.</div>`;
     else html += `<div class="sub">Where this head looks${s.t === ro ? " from the answer position" : " from this token"}: its largest attention weights (weight · token number)</div><div class="two"><div><i>A</i>${col(ka)}</div><div><i>B</i>${col(kb)}</div></div>`;
     const dw = D.P.t.d_weight_head;
     html += `<div class="sub" title="Size of the weight change (Frobenius norm: the square root of the sum of squared differences). 0 means untouched. k and v are shared by 3 heads.">How far this head's weights moved from the base, B vs A (its four weight matrices q, k, v, o): <span class="num">${[0, 1, 2, 3].map((j) => fmt(dw.get(s.l, s.h, j), 2)).join(", ")}</span></div>`;

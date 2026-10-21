@@ -122,9 +122,19 @@ function shell(tab: Tab, D: Bundle): HTMLElement {
   const as = [...new Set(index.pairs.map((p) => p.a))];
   sa.innerHTML = as.map((k) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}</option>`).join("");
   sa.value = a;
+  // About 70 comparators: two optgroups, each sorted by the plain name shown. A label that is neither a
+  // sign prompt nor an adapter (no such B exists today) stays above the groups, never dropped.
+  const opt = (k: string) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}</option>`;
+  const byName = (x: string, y: string) => plainName(index.models[x]?.label ?? x).localeCompare(plainName(index.models[y]?.label ?? y), "en", { numeric: true });
+  const groupedOptions = (keys: string[]) => {
+    const kind = (k: string) => /\+ sign prompt [01](?:_[01]){5}/.test(index.models[k]?.label ?? "") ? "sp" : index.models[k]?.adapter ? "ad" : "other";
+    const pick = (t: string) => keys.filter((k) => kind(k) === t).sort(byName).map(opt).join("");
+    const group = (label: string, html: string) => (html ? `<optgroup label="${label}">${html}</optgroup>` : "");
+    return pick("other") + group("Country adapters", pick("ad")) + group("Sign prompts", pick("sp"));
+  };
   const fillB = (sel: string) => {
     const bs = [...new Set(index.pairs.filter((p) => p.a === sa.value).map((p) => p.b))];
-    sb.innerHTML = bs.map((k) => `<option value="${esc(k)}" title="${full(k)}">${name(k)}</option>`).join("");
+    sb.innerHTML = groupedOptions(bs);
     sb.value = bs.includes(sel) ? sel : bs[0];
     if (tab === "k") { sb.disabled = true; sb.title = "On Cohort, B is every adapter of base A; pick B on the other tabs."; }
   };

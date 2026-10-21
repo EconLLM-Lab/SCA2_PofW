@@ -12,7 +12,7 @@
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import type { Bundle, Run } from "./data";
+import { isLight, type Bundle, type Run } from "./data";
 import type { Ctx } from "./main";
 import {
   A_COL, B_COL, C, answerStrip, checksOf, drawerHTML, esc, fmt, inspectorHTML, mix, makeRamp, openLearn, rampU,
@@ -51,8 +51,8 @@ interface Panel { scene: THREE.Scene; ts: TensorScene; label: string; run: Run }
 export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void {
   // WB7-Q: the 3D object draws the heavy arrays, which the sample ships only for the featured pairs.
   // Say so in one sentence, before any WebGL context is created, and never request a missing array.
-  if (D.A.tier !== "full" || D.B.tier !== "full") {
-    const missing = D.A.tier === "full" ? D.B : D.A;
+  if (isLight(D.A) || isLight(D.B)) {
+    const missing = isLight(D.A) ? D.A : D.B;
     root.className = "tab-a v3";
     root.innerHTML = `<section id="answer" data-obj="answer">${answerStrip(D)}</section>`
       + notShippedPanel(missing.tier === "numbers" ? NO_3D_NUMBERS : NO_3D, "The 3D object needs the full capture");

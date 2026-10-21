@@ -8,7 +8,8 @@
 // URL keys: face=a|b|d, clamp=1, sel=l,h (h = -1 MLP; l = -1 embedding; none = nothing pinned), q, tpl=1.
 // innerHTML below only carries numbers and export strings passed through esc().
 
-import type { Bundle, Run } from "./data";
+import { isLight, type Bundle, type Run } from "./data";
+import { NO_3D } from "./notshipped";
 import type { Ctx } from "./main";
 import {
   A_COL, B_COL, CHANGE_FOOT, answerStrip, cmpTable, checksOf, checkLine, dAttr, diverging, esc, faceTainted, failedWho, fmt, inspectorHTML,
@@ -211,7 +212,8 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     let sum = 0; if (head) for (const sg of hidden) for (let t = sg.a; t <= sg.b; t++) sum += v(t);
     // WB5-V N4: until the attention arrays arrive, every weight reads 0, so no total is shown (never a false 0.00).
     const attnReady = !!(D.A.t.attn_topk_val && D.B.t.attn_topk_val);
-    let html = hidden.length ? `<button class="tpl${query && hidden.some((sg) => sg.text.toLowerCase().includes(query)) ? " hit" : ""}" id="tpl" title="${esc(hidden.map((sg) => sg.label).join(" · "))}\nClick to ${tplOpen ? "collapse" : "show"} it">${tplOpen ? "▾" : "⋯"} template text · ${hidden.length} parts · ${hn} tokens${head && !attnReady ? " · attention loading…" : head ? ` · total attention ${sum >= 0 && face === "d" ? "+" : ""}${sum.toFixed(2)}` : ""}</button>` : "";
+    const light = isLight(D.A) || isLight(D.B);   // light run: the weights are not shipped, so never "loading"
+    let html = hidden.length ? `<button class="tpl${query && hidden.some((sg) => sg.text.toLowerCase().includes(query)) ? " hit" : ""}" id="tpl" title="${esc(hidden.map((sg) => sg.label).join(" · "))}\nClick to ${tplOpen ? "collapse" : "show"} it">${tplOpen ? "▾" : "⋯"} template text · ${hidden.length} parts · ${hn} tokens${head && light ? "" : head && !attnReady ? " · attention loading…" : head ? ` · total attention ${sum >= 0 && face === "d" ? "+" : ""}${sum.toFixed(2)}` : ""}</button>` : "";
     for (const sg of segs) {
       if (!sg.open && !tplOpen) continue;
       if (sg.kind === "question") html += `<div class="cap seglab" title="prompt part: ${esc(sg.label)} (manifest.segments)">${isBank(D.A) ? "Scenario" : "Survey question"}</div>`;
@@ -225,7 +227,8 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
       if (sg.kind !== "template" && sg.kind !== "readout" && !sg.text.endsWith("\n")) html += "\n";
     }
     $("ptext").innerHTML = html;
-    $("pkey").innerHTML = head
+    $("pkey").innerHTML = head && light ? esc(NO_3D)
+      : head
       ? `shaded: where head ${head.h} of layer ${head.l} looks, from the answer position (t*) · ${face === "a" ? `<span style="color:${A_COL}">A</span>` : face === "b" ? `<span style="color:${B_COL}">B</span>` : `B − A, <span class="calc">computed in this browser</span>: <span style="color:${B_COL}">teal</span> = B reads it more, <span style="color:${A_COL}">grey</span> = A reads it more`} · top-16 weights (attn_topk_val)`
       : `pin or hover a head to shade the words it reads · <kbd>/</kbd> find`;
   }

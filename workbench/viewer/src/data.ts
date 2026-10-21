@@ -294,6 +294,10 @@ export function tierOf(m: RunManifest): Tier {
   return "numbers";
 }
 
+/** True for a capture that ships no heavy arrays: the builder's `light: true` flag, or an array table without
+ * them (a light run, or a numbers-only one). Nothing below ever requests a HEAVY array of such a run. */
+export const isLight = (r: Run): boolean => r.m.light === true || r.tier !== "full";
+
 /** A run with its core arrays only; the HEAVY ones arrive through ensureHeavy() (full captures only). */
 export async function loadRun(file: string): Promise<Run> {
   const text = await fetchText(`/exports/${file}`);
@@ -311,10 +315,10 @@ export async function loadPair(file: string, only?: readonly string[]): Promise<
   return { m, t: await fetchArrays(m.bin, m.arrays, await sha256hex(text), want ? (k) => want.has(k) : undefined) };
 }
 
-export const hasHeavy = (r: Run) => [...HEAVY].every((k) => !(k in r.m.arrays) || k in r.t);
+export const hasHeavy = (r: Run) => isLight(r) || [...HEAVY].every((k) => !(k in r.m.arrays) || k in r.t);
 function ensureHeavyRun(r: Run, opts?: FetchOpts): Promise<void> {
   // A light or numbers-only capture has no heavy arrays to request: never ask for one.
-  if (!r.m.bin || tierOf(r.m) !== "full") return Promise.resolve();
+  if (!r.m.bin || isLight(r)) return Promise.resolve();
   // A pending request that belongs to an aborted prefetch is not reused: start again (finished chunks are cached).
   if (r.heavy && r.heavySignal?.aborted) r.heavy = undefined;
   if (!r.heavy) {
@@ -324,8 +328,10 @@ function ensureHeavyRun(r: Run, opts?: FetchOpts): Promise<void> {
   }
   return r.heavy;
 }
-/** Load the HEAVY arrays of A and B (once per run; later calls return the same promise). */
-export const ensureHeavy = (D: Bundle, opts?: FetchOpts) => Promise.all([ensureHeavyRun(D.A, opts), ensureHeavyRun(D.B, opts)]).then(() => undefined);
+/** Load the HEAVY arrays of A and B (once per run; later calls return the same promise). Every view that draws them
+ * needs both sides, so when either capture is light nothing is requested, not even the other side's. */
+export const ensureHeavy = (D: Bundle, opts?: FetchOpts) =>
+  isLight(D.A) || isLight(D.B) ? Promise.resolve() : Promise.all([ensureHeavyRun(D.A, opts), ensureHeavyRun(D.B, opts)]).then(() => undefined);
 /** Fetch the HEAVY arrays in the background, so the 3D view and the attention panels are usually ready before
  * they are opened. Aborted when the visitor moves to another view; never reports an error. */
 export function prefetchHeavy(D: Bundle, signal: AbortSignal) {

@@ -229,7 +229,7 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
 
     // ---- layer data: one pair file per row (only its layer arrays are read)
     if (!enough) { ctx.ready(); return; }
-    return Promise.all(rows.map((r) => loadPair(r.file).then((P: Pair) => ({ r, P })))).then((got) => {
+    return Promise.all(rows.map((r) => loadPair(r.file, ["d_attn_attr", "d_mlp_attr"]).then((P: Pair) => ({ r, P })))).then((got) => {
       if (!alive) return;
       for (const { r, P } of got) {
         if (!P.t.d_attn_attr || !P.t.d_mlp_attr) continue;
