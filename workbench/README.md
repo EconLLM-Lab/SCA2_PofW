@@ -50,19 +50,35 @@ capture files, and fails when either the archive or the payload exceeds 950,000,
 1 GB storage ceiling, it keeps every featured adapter pair but only the largest saved-margin prompt pair per sign bit. It writes
 `dist/deploy_bundle.tar.gz` and a sidecar `dist/deploy_bundle.tar.manifest.json` that hashes each shipped file.
 `verify_bundle.py` recomputes every hash and the dependency closure. The record of the last verified build is
-`plans/WB3_1_ACCEPTANCE.md` (producer) and `plans/WB3_1_VERIFICATION.md` (independent verifier): 142 files,
-918,377,325 payload bytes, built from `67200ce`, archive sha256 `f1af0217…`. Earlier records: WB1 (94 files, `e86d4c2`)
-and WB3 (158 files, `2309ab0`).
+`plans/WB4_ACCEPTANCE.md` (producer) and `plans/WB4_VERIFICATION.md` (independent verifier): 143 files, about 918.4 MB
+of payload, built from `d8a232d`. Two later commits change only `index.html`, the CSS and the checks-table wording
+(`1c2a2dd`, `c52480d`). Earlier records: WB1 (94 files, `e86d4c2`), WB3 (158 files, `2309ab0`) and WB3.1 (142 files,
+`67200ce`).
 
 ## Deployment
 
-Private static Hugging Face Space `EconLLM/sca2-workbench`
-(https://huggingface.co/spaces/EconLLM/sca2-workbench). Current deploy, v1.1, 2026-10-20, from `67200ce`: all 142
-manifest files are on the Space with 0 sha256 or size mismatches (checked file by file after upload), stage RUNNING,
-and step 4 serves with HTTP 200. Earlier deploys: WB2 on 2026-10-19 from `e86d4c2` (receipt
-`plans/WB2_DEPLOY_RECEIPT.json`), then v1 on 2026-10-20 from `2309ab0`. The Space has a 1 GB storage cap, so keep the
-payload at 0.95 GB or less. Deploy from this worktree's `dist/deploy_bundle.tar.gz`: the bundle includes gitignored
-files, so a fresh clone cannot rebuild it. Augusto invites co-authors and grants access. A static Space has no live
+Public static Hugging Face Space `EconLLM/sca2-workbench`
+(https://huggingface.co/spaces/EconLLM/sca2-workbench). It was made public by Augusto on 2026-10-20.
+
+The current deploy is v1.2.1, 2026-10-21, from `c52480d`:
+- all 143 manifest files are on the Space, with 0 sha256 or size mismatches (checked file by file after upload);
+- stage RUNNING;
+- storage 0.916 GB.
+
+Earlier deploys:
+- WB2 on 2026-10-19 from `e86d4c2` (receipt `plans/WB2_DEPLOY_RECEIPT.json`);
+- v1 on 2026-10-20 from `2309ab0`;
+- v1.1 on 2026-10-20 from `67200ce`.
+
+Two Hub pitfalls:
+- **The 1 GB cap counts every LFS object in the Space's history, not just the current files.** When an upload is
+  refused, squash the history (`HfApi.super_squash_history`), then `permanently_delete_lfs_files` for objects the
+  current tree no longer references. On 2026-10-21 this freed 0.135 GB.
+- **Do not set `app_file` in the Space README.** For a static Space it re-roots the site at that file's folder, so
+  `/sca2/index.html` returns 404 and `/exports` breaks.
+
+Keep the payload at 0.95 GB or less. Deploy from this worktree's `dist/deploy_bundle.tar.gz`: the bundle includes
+gitignored files, so a fresh clone cannot rebuild it. Augusto invites co-authors and grants access. A static Space has no live
 inference.
 
 ## Data policy
@@ -71,7 +87,7 @@ The bundle carries precomputed captures and model-only scores. It carries no hum
 human means or distributions, no adapter or base-model weights, no tokenizer and no inference runtime. GPS signs and
 public survey item text are not licensed human responses. Privacy is checked structurally (an allowlist of story fields
 in `tests/test_sca2_story_data.py`), not by a banned-substring search. Live adapter chat is deferred to its own card with
-a cost and data-rights check; a public release follows co-author review.
+a cost and data-rights check. The Space went public on 2026-10-20, ahead of co-author review; the data-rights check for that is open in the main repo STATUS.
 
 ## Status of the audit
 
