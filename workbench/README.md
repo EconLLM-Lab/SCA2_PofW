@@ -50,17 +50,20 @@ capture files, and fails when either the archive or the payload exceeds 950,000,
 1 GB storage ceiling, it keeps every featured adapter pair but only the largest saved-margin prompt pair per sign bit. It writes
 `dist/deploy_bundle.tar.gz` and a sidecar `dist/deploy_bundle.tar.manifest.json` that hashes each shipped file.
 `verify_bundle.py` recomputes every hash and the dependency closure. The record of the last verified build is
-`plans/WB1_ACCEPTANCE.md` (producer) and `plans/WB1_VERIFICATION.md` (independent verifier): 94 files, 572,239,120
-payload bytes, built from `e86d4c2`.
+`plans/WB3_1_ACCEPTANCE.md` (producer) and `plans/WB3_1_VERIFICATION.md` (independent verifier): 142 files,
+918,377,325 payload bytes, built from `67200ce`, archive sha256 `f1af0217…`. Earlier records: WB1 (94 files, `e86d4c2`)
+and WB3 (158 files, `2309ab0`).
 
 ## Deployment
 
 Private static Hugging Face Space `EconLLM/sca2-workbench`
-(https://huggingface.co/spaces/EconLLM/sca2-workbench), deployed 2026-10-19 from `e86d4c2`. The receipt is
-`plans/WB2_DEPLOY_RECEIPT.json`: remote files match the manifest by sha256 and size (0 mismatches), and 27 routes load
-with 0 console errors (`viewer/screens/sca2/deployed/deployed-report.json`). The Space was transferred from the
-`Bonorinoa` account to the EconLLM organization and re-verified file by file. Augusto still needs to invite co-authors
-and grant access. A static Space has no live inference.
+(https://huggingface.co/spaces/EconLLM/sca2-workbench). Current deploy, v1.1, 2026-10-20, from `67200ce`: all 142
+manifest files are on the Space with 0 sha256 or size mismatches (checked file by file after upload), stage RUNNING,
+and step 4 serves with HTTP 200. Earlier deploys: WB2 on 2026-10-19 from `e86d4c2` (receipt
+`plans/WB2_DEPLOY_RECEIPT.json`), then v1 on 2026-10-20 from `2309ab0`. The Space has a 1 GB storage cap, so keep the
+payload at 0.95 GB or less. Deploy from this worktree's `dist/deploy_bundle.tar.gz`: the bundle includes gitignored
+files, so a fresh clone cannot rebuild it. Augusto invites co-authors and grants access. A static Space has no live
+inference.
 
 ## Data policy
 
