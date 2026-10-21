@@ -9,7 +9,7 @@ Run from the MAIN repo root with its venv (it imports the locked recode path fro
     env -u PYTHONPATH PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
         .worktrees/adapter-brain-vizualization/workbench/scripts/build_sca2_data.py
 
-What goes in (model scores and GPS signs only, no human data):
+What goes in (model outputs, aggregate C9 claims and GPS signs; no respondent rows):
 - countries: the 42 cohort countries, each with six GPS signs as 0/1 bits (sign rule factorial.unit_of_z).
   The GPS z values themselves are read in memory and never written.
 - routes: per country and surface, the frozen-recode composite (analyze_factorial.unit_composites)
@@ -19,7 +19,9 @@ What goes in (model scores and GPS signs only, no human data):
   sha256, re-derived here from the 64-unit composites as a check, with NUMBERS_TABLE claim ids
   attached wherever a claim's value equals the cell.
 - bit_pairs / featured: cohort country pairs whose profiles differ in exactly one bit, and the
-  click-through links the story uses (their run .bin files go into the deploy bundle).
+  adapter and sign-prompt click-through links the story uses (their run .bin files go into the deploy bundle).
+- c9: four country-equal TVD cell means, profile-block contrasts and label-recovery summaries selected
+  from NUMBERS_TABLE by exact claim id, plus per-country model-only label recovery/accuracy dots.
 """
 from __future__ import annotations
 
@@ -39,6 +41,7 @@ INPUTS = Path.home() / "Hermes/Projects/SCA2/paper_b_inputs"
 FACT = Path("planning/sprint_2026-10-11/paper-b-tier1/results/factorial")
 NUMBERS = Path("planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv")
 EXPORT = WB / "exports/phase1_nf4_t4"
+PROMPT_EXPORT = WB / "exports/phase1_promptroute_nf4_t4"
 OUT = WB / "viewer/public/sca2/sca2_data.json"
 SURFACES = ["trust", "risktaking", "patience:Q43", "patience:Q50", "altruism", "posrecip", "negrecip"]
 BASE_KEY = "llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27"
@@ -134,7 +137,7 @@ def main(argv=None) -> int:
         routes[k] = {"name": name, "desc": desc, "unit_of_score": of, "scores": rows, "within": within}
 
     # ------------------------------------------------ cross-talk: copy cells, re-derive, attach claims
-    nt = pd.read_csv(src("NUMBERS_TABLE (claim ids)", NUMBERS))
+    nt = pd.read_csv(src("NUMBERS_TABLE (claim ids)", NUMBERS), float_precision="round_trip")
     fact_claims = nt[nt.output_file.astype(str).str.contains("results/factorial/")]
     claims: dict[str, dict] = {}
 
@@ -168,12 +171,54 @@ def main(argv=None) -> int:
         claims[cid] = {"value": float(r.value), "statistic": r.statistic, "use": r.sentence_use,
                        "output_file": r.output_file}
 
+    # ------------------------------------------------ C9: exact claim-id selection; no country-level TVD
+    def c9_claim(cid: str) -> dict:
+        hit = nt[nt.claim_id == cid]
+        if len(hit) != 1:
+            raise SystemExit(f"Expected one NUMBERS_TABLE row for {cid}; found {len(hit)}")
+        r = hit.iloc[0]
+
+        def optional_float(value):
+            return None if pd.isna(value) or value == "" else float(value)
+
+        return {"claim_id": cid, "value": float(r.value), "ci_low": optional_float(r.ci_low),
+                "ci_high": optional_float(r.ci_high), "statistic": str(r.statistic)}
+
+    tvd_cells = {name: c9_claim(f"C9_TVD_{name}_mean_tvd_country_equal")
+                 for name in ("base", "adapter", "persona", "adapter_persona")}
+    contrast_names = ("adapter_minus_base", "adapter_persona_minus_adapter",
+                      "adapter_persona_minus_base", "adapter_persona_minus_persona",
+                      "persona_minus_base", "interaction")
+    contrasts = {name: c9_claim(f"C9_TVD_{name}_profile_block") for name in contrast_names}
+    recovery_names = ("recovery", "accuracy", "base_accuracy", "mean_margin_shift")
+    recovery_summary = {name: c9_claim(f"C9_label_recovery_{name}_profile_block")
+                        for name in recovery_names}
+    recovery_path = src("C9 label recovery by country (model-only)",
+                        Path("planning/sprint_2026-10-11/paper-b-tier1/results/c9/c9_label_recovery.csv"))
+    recovery_frame = pd.read_csv(recovery_path, float_precision="round_trip")
+    recovery_frame = recovery_frame[recovery_frame.country.isin(ccs)]
+    if len(recovery_frame) != len(ccs) or set(recovery_frame.country) != set(ccs):
+        raise SystemExit("C9 label-recovery countries do not match the 42-country cohort")
+    recovery_countries = [{"cc": str(r.country), "recovery": float(r.recovery),
+                           "accuracy": float(r.accuracy)}
+                          for _, r in recovery_frame.sort_values("country").iterrows()]
+    c9 = {"label": "descriptive, not preregistered; cross-family audited", "tvd_cells": tvd_cells,
+          "contrasts": contrasts,
+          "label_recovery": {"summary": recovery_summary, "countries": recovery_countries}}
+
     # ------------------------------------------------ click-through pairs and featured links
     bit_pairs = {}
     for i, d in enumerate(F.DIMS):
         bit_pairs[d] = [[x, y] for x in ccs for y in ccs
                         if F.bits_of_unit(unit[x])[i] == 0 and F.flip(unit[x], d) == unit[y]]
     idx = json.loads((EXPORT / "index.json").read_text())
+    prompt_idx = json.loads((PROMPT_EXPORT / "index.json").read_text())
+    if prompt_idx.get("schema") != idx.get("schema"):
+        raise SystemExit("Adapter and prompt-route capture schemas differ")
+    marker = " + sign prompt "
+    prompt_models = {m["label"].split(marker, 1)[1]: key for key, m in prompt_idx["models"].items()
+                     if marker in str(m.get("label", ""))}
+    prompt_pairs = {(p["a"], p["b"], p["item_id"]) for p in prompt_idx["pairs"]}
     dm = {(p["b"], p["item_id"]): p["d_margin"] for p in idx["pairs"] if p["a"] == BASE_KEY}
     jplus = {}
     for r in idx["runs"]:
@@ -189,7 +234,12 @@ def main(argv=None) -> int:
         item = "wvs_" + sitems[surf][0]
         cand = [(x, y) for x, y in bit_pairs[bit] if (key(x), item) in dm and (key(y), item) in dm]
         x, y = max(cand, key=lambda p: (abs(dm[(key(p[1]), item)] - dm[(key(p[0]), item)]), p))
+        prompt_x = prompt_models[unit[x].removeprefix("P_")]
+        prompt_y = prompt_models[unit[y].removeprefix("P_")]
+        if (BASE_KEY, prompt_x, item) not in prompt_pairs or (BASE_KEY, prompt_y, item) not in prompt_pairs:
+            raise SystemExit(f"Missing W2 prompt-route capture for {x}/{y} on {item}")
         featured.append({"bit": bit, "surface": surf, "item": item, "x": x, "y": y,
+                         "prompt_x": prompt_x, "prompt_y": prompt_y,
                          "n_candidates": len(bit_pairs[bit]), "n_with_exports": len(cand),
                          "rule": "largest |d_margin(y) - d_margin(x)| on the item among the candidate pairs"})
 
@@ -198,7 +248,8 @@ def main(argv=None) -> int:
     data = {
         "schema": "sca2-workbench/story-data@1",
         "label": "DESCRIPTIVE / NOT PREREGISTERED. Workbench display of Paper B artifacts (one-way read). "
-                 "Model scores and GPS signs only; no human data.",
+                 "Model outputs, aggregate claim-locked C9 statistics and GPS signs; no respondent rows, "
+                 "country-level TVD, human means or distributions.",
         "generated_by": "workbench/scripts/build_sca2_data.py",
         "main_repo_head": main_sha,
         "sources": sources,
@@ -210,9 +261,11 @@ def main(argv=None) -> int:
         "routes": routes,
         "crosstalk": crosstalk,
         "claims": dict(sorted(claims.items())),
+        "c9": c9,
         "bit_pairs": bit_pairs,
         "featured": featured,
-        "export": {"src": "phase1_nf4_t4", "base": BASE_KEY, "country_key": BASE_KEY + "_<cc lower>",
+        "export": {"src": "phase1_nf4_t4", "prompt_src": "phase1_promptroute_nf4_t4",
+                   "base": BASE_KEY, "country_key": BASE_KEY + "_<cc lower>",
                    "default_units": [{"cc": cc, "item": it} for cc, it in DEFAULT_UNITS],
                    "j_plus": {k: sorted(v)[0][0] for k, v in jplus.items()},
                    "j_minus": {k: sorted(v)[0][1] for k, v in jplus.items()}},

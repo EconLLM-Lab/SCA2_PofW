@@ -10,15 +10,18 @@ Decision recorded 2026-10-19 in `planning/DECISIONS.md` on `feat/paper-b-cohort`
 
 ## What it shows
 
-Four steps on one story page (`viewer/public/sca2/index.html`): signs to profiles to countries; the direction of each
-own-bit effect on average; the order within profile (which mostly fails); and where the effect lives, with click-through
-to the tensor viewer. Marks come from three sources.
+Five steps on one story page (`viewer/public/sca2/index.html`): signs to profiles to countries; country scores by
+route; own-bit direction and behavioral cross-talk; C9 label recovery against the four-cell TVD audit; and saved
+adapter/sign-prompt forward passes, with click-through to the tensor viewer. Marks come from banked sources.
 
 - A 42 country by 7 surface heatmap over four routes (cohort-1 adapters, bank-2 adapters, sign prompt, country-named
   persona), grouped by six-sign profile. The values are the model-only scores banked in the artifacts dataset.
 - A 6-bit by 7-surface factorial matrix, and the cross-talk view (a behavioral decomposition, not a neural mechanism).
+- The C9 aggregate four-cell TVD means and profile-block contrasts, beside model-only synthetic-label recovery and
+  per-country recovery/accuracy dots. It carries no per-country TVD, human means or respondent distributions.
 - The tensor viewer (`?tab=c` ladder, `?tab=b` matrix, `?tab=a` 3D object) over float64 captures of the residual stream,
-  per-head and MLP writes, and direct logit attribution. The contract is `spec/export_contract.md`.
+  per-head and MLP writes, and direct logit attribution. Featured adapter and sign-prompt links share the same items.
+  The contract is `spec/export_contract.md`.
 
 ## Run
 
@@ -35,14 +38,14 @@ The story page is `/sca2/index.html`; the root page links to it. Viewer details:
 
 ```bash
 # from the worktree root; each step exits non-zero on failure
-env -u PYTHONPATH HF_TOKEN= uv run --project workbench python workbench/scripts/build_sca2_data.py
+env -u PYTHONPATH HF_TOKEN= uv run --project workbench --with pandas python workbench/scripts/build_sca2_data.py
 env -u PYTHONPATH HF_TOKEN= uv run --project workbench python workbench/scripts/build_deploy_bundle.py
 env -u PYTHONPATH HF_TOKEN= uv run --project workbench python workbench/viewer/screens/sca2/verify_bundle.py \
     workbench/dist/deploy_bundle.tar.gz <fresh-scratch-dir> --report workbench/viewer/screens/sca2/bundle-check.json
 ```
 
-`build_sca2_data.py` writes the story JSON from Paper B's banked inputs, keeping source digests and logical input
-paths. `build_deploy_bundle.py` runs a fresh `npm run build`, copies an allowlisted static site and a closed set of
+`build_sca2_data.py` writes the story JSON from Paper B's banked inputs, selecting C9 rows by exact claim id and
+keeping source digests and logical input paths. `build_deploy_bundle.py` runs a fresh `npm run build`, copies an allowlisted static site and a closed set of
 capture files, and fails when either the archive or the payload exceeds 1.5 GB. It writes
 `dist/deploy_bundle.tar.gz` and a sidecar `dist/deploy_bundle.tar.manifest.json` that hashes each shipped file.
 `verify_bundle.py` recomputes every hash and the dependency closure. The record of the last verified build is

@@ -123,10 +123,13 @@ def build_bundle(args) -> int:
         public_metadata(story)
         export = story['export']
         source_dir = w / 'exports' / safe_relative(export['src'])
+        prompt_source_dir = w / 'exports' / safe_relative(export['prompt_src'])
         base = export['base']
         selected = {(base, base + '_' + str(f[cc]).lower(), f['item'])
                     for f in story['featured'] for cc in ('x', 'y')}
         selected.update((base, base + '_' + u['cc'].lower(), u['item']) for u in export['default_units'])
+        prompt_selected = {(base, f['prompt_' + side], f['item'])
+                           for f in story['featured'] for side in ('x', 'y')}
         # Follow the actual viewer default; refuse a changed/unrecognizable declaration.
         main = (viewer / 'src/main.ts').read_text()
         default = re.search(r'export const DEFAULT\s*=\s*\{\s*a:\s*"([^"]+)",\s*b:\s*"([^"]+)",\s*item:\s*"([^"]+)"\s*\}', main)
@@ -135,32 +138,42 @@ def build_bundle(args) -> int:
         curated = {'models': {}, 'runs': [], 'pairs': []}
         source_indexes = []
         schemas = set()
-        for root, wanted in [(w / 'exports', {default.groups()}), (source_dir, selected)]:
+        for root, wanted in [(w / 'exports', {default.groups()}), (source_dir, selected),
+                             (prompt_source_dir, prompt_selected)]:
             index_path = root / 'index.json'
             index = read_json(index_path)
             schemas.add(index['schema'])
             source_indexes.append({'file': index_path.relative_to(w).as_posix(), 'sha256': sha256(index_path), 'bytes': index_path.stat().st_size})
             runs = set()
+            source_rows = []
             for a, b, item in sorted(wanted):
                 row = unique(index['pairs'], lambda r: (r['a'], r['b'], r['item_id']), (a, b, item))
                 expected = f'pair__{a}__{b}__{item}.json'
                 if row['file'] != expected:
                     raise ValueError(f'Viewer filename contract mismatch: {row["file"]}')
-                curated['pairs'].append(row)
+                prior = [r for r in curated['pairs'] if (r['a'], r['b'], r['item_id']) == (a, b, item)]
+                if prior and prior[0] != row:
+                    raise ValueError(f'Conflicting pair metadata: {(a, b, item)}')
+                if not prior:
+                    curated['pairs'].append(row)
+                source_rows.append(row)
                 runs.update(((a, item), (b, item)))
             for model, item in sorted(runs):
                 row = unique(index['runs'], lambda r: (r['model'], r['item_id']), (model, item))
                 if row['file'] != f'run__{model}__{item}.json':
                     raise ValueError(f'Viewer filename contract mismatch: {row["file"]}')
-                curated['runs'].append(row)
+                prior = [r for r in curated['runs'] if (r['model'], r['item_id']) == (model, item)]
+                if prior and prior[0] != row:
+                    raise ValueError(f'Conflicting run metadata: {(model, item)}')
+                if not prior:
+                    curated['runs'].append(row)
+                source_rows.append(row)
                 model_meta = index['models'][model]
                 public_metadata(model_meta)
                 if model in curated['models'] and curated['models'][model] != model_meta:
                     raise ValueError(f'Model key collision: {model}')
                 curated['models'][model] = model_meta
-            rows = [r for r in curated['runs'] if (r['model'], r['item_id']) in runs]
-            rows += [r for r in curated['pairs'] if (r['a'], r['b'], r['item_id']) in wanted]
-            for row in rows:
+            for row in source_rows:
                 name = safe_relative(row['file'], flat=True).as_posix()
                 capture = read_json(root / name)
                 public_metadata(capture)
@@ -220,7 +233,7 @@ def build_bundle(args) -> int:
                         payload_bytes=payload, archive_bytes=compressed,
                         archive_sha256=sha256(archive), files=files,
                         source_indexes=source_indexes, story_sources=story['sources'],
-                        selection_rule='story BASE versus both featured countries, default country units, viewer DEFAULT; exact run/pair/binary closure',
+                        selection_rule='story BASE versus both featured adapters and matching sign prompts on the same items, default country units, viewer DEFAULT; exact run/pair/binary closure',
                         deploy_status='NOT DEPLOYED')
         manifest_tmp = Path(temp) / 'manifest.json'
         manifest_tmp.write_text(json.dumps(manifest, indent=1) + '\n')

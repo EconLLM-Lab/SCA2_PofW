@@ -48,7 +48,7 @@ def assert_model_only(data):
     def fields(value, allowed):
         assert set(value) == set(allowed.split()), set(value)
 
-    fields(data, "schema label generated_by main_repo_head sources dims surfaces surface_items countries profiles routes crosstalk claims bit_pairs featured export")
+    fields(data, "schema label generated_by main_repo_head sources dims surfaces surface_items countries profiles routes crosstalk claims c9 bit_pairs featured export")
     for source in data["sources"]:
         fields(source, "role path sha256")
         assert not Path(source["path"]).is_absolute()
@@ -70,9 +70,17 @@ def assert_model_only(data):
             fields(cell, "bit surface beta se t t_lenth claims own")
     for claim in data["claims"].values():
         fields(claim, "value statistic use output_file")
+    fields(data["c9"], "label tvd_cells contrasts label_recovery")
+    assert data["c9"]["label"] == "descriptive, not preregistered; cross-family audited"
+    for group in (data["c9"]["tvd_cells"], data["c9"]["contrasts"], data["c9"]["label_recovery"]["summary"]):
+        for claim in group.values():
+            fields(claim, "claim_id value ci_low ci_high statistic")
+    fields(data["c9"]["label_recovery"], "summary countries")
+    for country in data["c9"]["label_recovery"]["countries"]:
+        fields(country, "cc recovery accuracy")
     for featured in data["featured"]:
-        fields(featured, "bit surface item x y n_candidates n_with_exports rule")
-    fields(data["export"], "src base country_key default_units j_plus j_minus")
+        fields(featured, "bit surface item x y prompt_x prompt_y n_candidates n_with_exports rule")
+    fields(data["export"], "src prompt_src base country_key default_units j_plus j_minus")
     for unit in data["export"]["default_units"]:
         fields(unit, "cc item")
 
@@ -141,6 +149,45 @@ def test_crosstalk_cells_and_claims(D):
     assert len(own) == 7 and all(v > 0 for v in own.values())   # adapters: 0 of 7 own effects wrong-signed
 
 
+def test_c9_is_claim_id_selected_model_only_data(D):
+    c9 = D["c9"]
+    assert set(c9["tvd_cells"]) == {"base", "adapter", "persona", "adapter_persona"}
+    assert {v["claim_id"] for v in c9["tvd_cells"].values()} == {
+        "C9_TVD_base_mean_tvd_country_equal",
+        "C9_TVD_adapter_mean_tvd_country_equal",
+        "C9_TVD_persona_mean_tvd_country_equal",
+        "C9_TVD_adapter_persona_mean_tvd_country_equal",
+    }
+    assert {v["claim_id"] for v in c9["contrasts"].values()} == {
+        "C9_TVD_adapter_minus_base_profile_block",
+        "C9_TVD_adapter_persona_minus_adapter_profile_block",
+        "C9_TVD_adapter_persona_minus_base_profile_block",
+        "C9_TVD_adapter_persona_minus_persona_profile_block",
+        "C9_TVD_persona_minus_base_profile_block",
+        "C9_TVD_interaction_profile_block",
+    }
+    assert {v["claim_id"] for v in c9["label_recovery"]["summary"].values()} == {
+        "C9_label_recovery_recovery_profile_block",
+        "C9_label_recovery_accuracy_profile_block",
+        "C9_label_recovery_base_accuracy_profile_block",
+        "C9_label_recovery_mean_margin_shift_profile_block",
+    }
+    countries = c9["label_recovery"]["countries"]
+    assert len(countries) == 42
+    assert {r["cc"] for r in countries} == {r["cc"] for r in D["countries"]}
+    assert all(set(r) == {"cc", "recovery", "accuracy"} for r in countries)
+    # The only country-level C9 values shipped are model-only label recovery and accuracy.
+    assert all("tvd" not in key.lower() and "human" not in key.lower() for r in countries for key in r)
+
+
+def test_c9_rendered_values_are_not_typed_into_the_page(D):
+    html = (DATA.parent / "index.html").read_text()
+    records = list(D["c9"]["tvd_cells"].values())
+    records += list(D["c9"]["label_recovery"]["summary"].values())[:3]
+    for record in records:
+        assert f'{record["value"]:.3f}' not in html
+
+
 def test_featured_links_are_valid(D):
     bits = {c["cc"]: c["bits"] for c in D["countries"]}
     for f in D["featured"]:
@@ -148,3 +195,5 @@ def test_featured_links_are_valid(D):
         assert f["item"].removeprefix("wvs_") in D["surface_items"][f["surface"]]
         assert f["n_candidates"] == len(D["bit_pairs"][f["bit"]])
         assert bits[f["x"]] != bits[f["y"]]
+        assert f["prompt_x"].endswith("_sp" + "".join(map(str, bits[f["x"]])))
+        assert f["prompt_y"].endswith("_sp" + "".join(map(str, bits[f["y"]])))

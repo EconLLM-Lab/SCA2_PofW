@@ -29,9 +29,10 @@ def fixture(monkeypatch):
     SCRATCH.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=SCRATCH) as temp:
         w = Path(temp) / 'workbench'
-        story = {'export': {'src': 'phase1_nf4_t4', 'base': 'BASE',
+        story = {'export': {'src': 'phase1_nf4_t4', 'prompt_src': 'phase1_promptroute_nf4_t4', 'base': 'BASE',
                            'default_units': [{'cc': 'USA', 'item': 'wvs_Q81'}]},
-                 'featured': [{'x': 'ARG', 'y': 'BRA', 'item': 'wvs_Q57'}],
+                 'featured': [{'x': 'ARG', 'y': 'BRA', 'item': 'wvs_Q57',
+                               'prompt_x': 'PROMPT_arg', 'prompt_y': 'PROMPT_bra'}],
                  'sources': [{'path': 'relative/source.csv', 'sha256': 'a' * 64}]}
         put(w / 'viewer/public/sca2/sca2_data.json', story)
         (w / 'viewer/public/sca2/index.html').write_text('<h1>Story</h1>')
@@ -46,7 +47,9 @@ def fixture(monkeypatch):
         for folder, pairs in [('', [('smol_inst', 'smol_inst_usa_e3', 'wvs_Q81')]),
                               ('phase1_nf4_t4', [('BASE', 'BASE_arg', 'wvs_Q57'),
                                ('BASE', 'BASE_bra', 'wvs_Q57'), ('BASE', 'BASE_usa', 'wvs_Q81'),
-                               ('BASE', 'BASE_unused', 'wvs_Q99')])]:
+                               ('BASE', 'BASE_unused', 'wvs_Q99')]),
+                              ('phase1_promptroute_nf4_t4', [('BASE', 'PROMPT_arg', 'wvs_Q57'),
+                               ('BASE', 'PROMPT_bra', 'wvs_Q57')])]:
             root = w / 'exports' / folder
             index = {'schema': 'sca2-workbench/capture@1.1', 'models': {}, 'runs': [], 'pairs': []}
             for a, b, item in pairs:
@@ -99,17 +102,19 @@ def test_real_archive_closure_and_manifest(fixture):
         assert entry['bytes'] == len(files[entry['file']])
         assert entry['sha256'] == hashlib.sha256(files[entry['file']]).hexdigest()
     index = json.loads(files['exports/index.json'])
-    assert len(index['pairs']) == 4 and len(index['runs']) == 7
-    assert set(index['models']) == {'BASE', 'BASE_arg', 'BASE_bra', 'BASE_usa', 'smol_inst', 'smol_inst_usa_e3'}
+    assert len(index['pairs']) == 6 and len(index['runs']) == 9
+    assert set(index['models']) == {'BASE', 'BASE_arg', 'BASE_bra', 'BASE_usa', 'PROMPT_arg', 'PROMPT_bra',
+                                    'smol_inst', 'smol_inst_usa_e3'}
     for row in index['runs'] + index['pairs']:
         name = row['file']
-        source = w / 'exports' / ('' if 'smol_inst' in name else 'phase1_nf4_t4') / name
+        folder = '' if 'smol_inst' in name else ('phase1_promptroute_nf4_t4' if 'PROMPT' in name else 'phase1_nf4_t4')
+        source = w / 'exports' / folder / name
         assert files['exports/' + name] == source.read_bytes()
         binary = json.loads(files['exports/' + name])['bin']
         assert files['exports/' + binary] == (source.parent / binary).read_bytes()
     assert 'screens/v3/ladder-1440.png' in files and 'screens/v3/cohort-illustration.png' in files
     assert not any('unused' in x or 'stale' in x or 'not-allowed' in x for x in files)
-    assert len(manifest['source_indexes']) == 2
+    assert len(manifest['source_indexes']) == 3
     assert manifest['story_sources'][0]['sha256'] == 'a' * 64
     assert any(e.get('source_digest') == 'b' * 64 for e in manifest['files'])
 

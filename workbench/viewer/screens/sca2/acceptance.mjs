@@ -60,8 +60,36 @@ try {
     }
     checks.push({ crosstalk: route, cells: cells.length });
   }
-  const links = await page.$$eval('a[data-featured]', es => es.map(e => ({ href: e.getAttribute('href'), cc: e.dataset.cc, item: e.dataset.item, text: e.textContent })));
-  assert.equal(links.length, D.featured.length * 2);
+  assert.equal(await page.$eval('.audit-label', e => e.textContent.trim()), D.c9.label);
+  assert.equal(await page.$eval('#c9 figcaption', e => e.textContent.trim()), 'Label fidelity is not agreement with respondents.');
+  const summaries = await page.$$eval('[data-c9-summary]', es => es.map(e => ({ key:e.dataset.c9Summary, value:+e.dataset.value, text:e.querySelector('strong').textContent.trim() })));
+  assert.equal(summaries.length, 3);
+  for (const row of summaries) {
+    const value = D.c9.label_recovery.summary[row.key].value;
+    assert.equal(row.value, value); assert.equal(row.text, value.toFixed(3));
+  }
+  const dots = await page.$$eval('[data-c9-dots] i', es => es.map(e => ({ metric:e.parentElement.dataset.c9Dots, cc:e.dataset.cc, value:+e.dataset.value, title:e.title })));
+  assert.equal(dots.length, D.c9.label_recovery.countries.length * 2);
+  for (const dot of dots) {
+    const row = D.c9.label_recovery.countries.find(r => r.cc === dot.cc);
+    assert.equal(dot.value, row[dot.metric]); assert.ok(dot.title.endsWith(row[dot.metric].toFixed(3)));
+  }
+  const tvd = await page.$$eval('[data-c9-cell]', es => es.map(e => ({ key:e.dataset.c9Cell, value:+e.dataset.value, text:e.querySelector('strong').textContent.trim() })));
+  assert.equal(tvd.length, Object.keys(D.c9.tvd_cells).length);
+  for (const row of tvd) {
+    const value = D.c9.tvd_cells[row.key].value;
+    assert.equal(row.value, value); assert.equal(row.text, value.toFixed(3));
+  }
+  const contrasts = await page.$$eval('[data-c9-contrast]', es => es.map(e => ({ key:e.dataset.c9Contrast, value:+e.dataset.value, lo:+e.dataset.lo, hi:+e.dataset.hi, text:e.querySelector('strong').textContent.trim() })));
+  assert.equal(contrasts.length, Object.keys(D.c9.contrasts).length);
+  for (const row of contrasts) {
+    const c = D.c9.contrasts[row.key];
+    assert.equal(row.value, c.value); assert.equal(row.lo, c.ci_low); assert.equal(row.hi, c.ci_high);
+    assert.equal(row.text, `${c.value.toFixed(3)} [${c.ci_low.toFixed(3)}, ${c.ci_high.toFixed(3)}]`);
+  }
+  checks.push({ c9: { summaries:summaries.length, dots:dots.length, tvd:tvd.length, contrasts:contrasts.length } });
+  const links = await page.$$eval('a[data-featured]', es => es.map(e => ({ href: e.getAttribute('href'), cc: e.dataset.cc, item: e.dataset.item, model:e.dataset.model, route:e.dataset.route, text: e.textContent })));
+  assert.equal(links.length, D.featured.length * 4);
   assert.ok(await page.$eval('#comparison-limit', e => e.textContent.includes('unavailable')));
   const nav = await page.$$eval('nav a', es => es.map(e => e.getAttribute('href')));
   for (const link of nav) assert.ok(link.startsWith('/?tab='));
@@ -70,7 +98,10 @@ try {
   for (const link of links) {
     const u = new URL(link.href, base);
     assert.equal(u.pathname, '/'); assert.equal(u.searchParams.get('a'), D.export.base);
-    assert.equal(u.searchParams.get('b'), `${D.export.base}_${link.cc.toLowerCase()}`);
+    assert.equal(u.searchParams.get('b'), link.model);
+    const featured = D.featured.find(f => f.item === link.item && (f.x === link.cc || f.y === link.cc));
+    const side = featured.x === link.cc ? 'x' : 'y';
+    assert.equal(link.model, link.route === 'adapter' ? `${D.export.base}_${link.cc.toLowerCase()}` : featured[`prompt_${side}`]);
     assert.equal(u.searchParams.get('item'), link.item); assert.ok(link.text.includes('base'));
     const start = requests.length;
     await load(link.href);
@@ -78,7 +109,7 @@ try {
     const fetched = requests.slice(start).filter(r => r.url.startsWith('/exports/'));
     assert.ok(fetched.some(r => r.url.includes('run__') && r.url.endsWith('.bin')));
     assert.ok(fetched.some(r => r.url.includes('pair__') && r.url.endsWith('.bin')));
-    checks.push({ featured: link.cc, item: link.item, exportRequests: fetched.length });
+    checks.push({ featured: link.cc, route:link.route, item: link.item, exportRequests: fetched.length });
   }
   for (const size of [[1440, 860], [1700, 1000]]) {
     const [width, height] = size; await page.setViewport({ width, height });
@@ -87,7 +118,7 @@ try {
     }
     await load('/sca2/index.html', true);
     await page.screenshot({ path: `${out}/story-${width}.png` });
-    for (const [name, id] of [['cohort', '#cohort'], ['crosstalk', '#crosstalk'], ['featured', '#featured']]) {
+    for (const [name, id] of [['cohort', '#cohort'], ['crosstalk', '#crosstalk'], ['c9', '#c9'], ['featured', '#featured']]) {
       await page.$eval(id, e => e.scrollIntoView({ block: 'start' }));
       await page.screenshot({ path: `${out}/${name}-${width}.png` });
     }
