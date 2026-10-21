@@ -61,3 +61,8 @@ facts (byte identity, index numbers against export JSON, storage), not judgment 
   claim is strengthened. Paper B numbers come only from `NUMBERS_TABLE.csv`.
 - **Locks.** `HF_TOKEN=` blank in tests. Commit by explicit path. Never `git add` the symlinks. No push or deploy
   except by WB7-D after WB7-V passes. No country name in evaluation prompts (nothing here re-runs a model).
+
+## Card ids (board `sca2-paper-b`)
+
+WB7-0 `t_65abd013` · WB7-Q `t_7f9ce31a` · WB7-W `t_91b4bfea` · WB7-R `t_7b5d88a3` · WB7-H `t_63edca34` ·
+WB7-I `t_67420af5` · WB7-V `t_ab5d175a` · WB7-D `t_689970a1`. Worktree `.worktrees/wb7-words` (branch `wb7-words`) is WB7-W's.
