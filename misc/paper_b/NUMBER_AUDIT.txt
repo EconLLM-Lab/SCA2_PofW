@@ -1,5 +1,5 @@
 Paper B number audit (card T10). Table: planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv
-Table sha256 51ddcce1dd205ee29ecf6e3450fd30bf09948399e98adb32abfc0846e1b97855, 271 rows. Rule: a printed number passes only if it equals the
+Table sha256 71ee7c8c68eb856bf7215165dd836aef7cc3f67993a6523790cee4b22ce186a4, 562 rows. Rule: a printed number passes only if it equals the
 table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).
 
 == title_page.tex: 0 statistics, 0 design constants
@@ -72,7 +72,7 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (formula constant in display math): \begin{equation} \mathcal{L}_c(\theta)=-\frac{1}{|\mathcal{D}_c|}\sum_
   note  explained (formula constant in math mode): $s_{ck}=1\{z_{ck}\geq 0\}$
 
-== design.tex: 0 statistics, 44 design constants
+== design.tex: 0 statistics, 47 design constants
   PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
   PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
@@ -117,6 +117,9 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
   PASS          0.10  design:near_zero_cut                                    paper_b/factorial.py NEAR_ZERO
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS      20260905  design:seed_country                                     paper_b/analyze_surface.py COUNTRY_BOOT_SEED; C8_PERSONA_DESIGN.md E4
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
   note  explained (cross-reference or citation command): \citep{wvsts2022}
   note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
   note  explained (LaTeX length or layout argument): 0.27\textwidth
@@ -130,9 +133,12 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): waves 6 and 7
   note  explained (named instrument or model version): jev-1.13.0
   note  explained (named instrument or model version): \texttt{prereg-heldout-2026-10-14}
+  note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
@@ -142,10 +148,11 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (section or amendment number of a cited document): Amendment 1
   note  explained (section or amendment number of a cited document): Amendment 2
   note  explained (formula constant in display math): \begin{equation} a_i = s_i\cdot\rho\big(\bar h_{ci},\,z_{c,d_i}\big), 
+  note  explained (formula constant in display math): \begin{equation*} \mathrm{TVD}_{cq}=\tfrac{1}{2}\sum_j \bigl|\widehat{
   note  explained (TikZ figure geometry): \begin{tikzpicture}[>=Latex,node distance= ,every node/.style={font=\f
   note  explained (formula constant in math mode): $a_i>0$
 
-== results.tex: 171 statistics, 8 design constants
+== results.tex: 269 statistics, 12 design constants
   PASS         0.500  B2_cohort1_trust_rho:lo                                 full 0.5002088786337604 -> 0.500
   PASS         0.865  B2_cohort1_trust_rho:hi                                 full 0.8647856310906544 -> 0.865
   PASS         0.085  B2_cohort1_risktaking_rho:lo                            full 0.08459211972226777 -> 0.085
@@ -190,6 +197,56 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS         0.253  PD_adapter_secondary_risktaking_A_bonf:hi               full 0.25283844833699126 -> 0.253
   PASS        -0.109  SP_A_primary:lo                                         full -0.10859510229614298 -> -0.109
   PASS         0.158  SP_A_primary:hi                                         full 0.1584453830215301 -> 0.158
+  PASS         0.500  C9_a_adapter_gps_trust_spearman_rho:lo                  full 0.5002088786337604 -> 0.500
+  PASS         0.865  C9_a_adapter_gps_trust_spearman_rho:hi                  full 0.8647856310906544 -> 0.865
+  PASS        -0.044  C9_a_adapter_human_trust_spearman_rho:lo                full -0.043646061623232126 -> -0.044
+  PASS         0.547  C9_a_adapter_human_trust_spearman_rho:hi                full 0.5473661876066869 -> 0.547
+  PASS        -0.008  C9_a_adapter_human_negrecip_spearman_rho:lo             full -0.008097193356253873 -> -0.008
+  PASS         0.694  C9_a_adapter_human_negrecip_spearman_rho:hi             full 0.6936287226895609 -> 0.694
+  PASS         0.615  C9_b_adapter_gps_trust_spearman_rho:lo                  full 0.6145971882846217 -> 0.615
+  PASS         0.876  C9_b_adapter_gps_trust_spearman_rho:hi                  full 0.8764662126321977 -> 0.876
+  PASS        -0.025  C9_b_adapter_human_trust_spearman_rho:lo                full -0.025465688840866033 -> -0.025
+  PASS         0.586  C9_b_adapter_human_trust_spearman_rho:hi                full 0.5857149498175027 -> 0.586
+  PASS         0.007  C9_b_adapter_human_posrecip_spearman_rho:lo             full 0.006948662611197107 -> 0.007
+  PASS         0.636  C9_b_adapter_human_posrecip_spearman_rho:hi             full 0.6362387900981672 -> 0.636
+  PASS         0.088  C9_a_human_gps_trust_spearman_rho:lo                    full 0.08794003988068244 -> 0.088
+  PASS         0.564  C9_a_human_gps_trust_spearman_rho:hi                    full 0.5639915769409524 -> 0.564
+  PASS         0.095  C9_a_human_gps_patience_q50_spearman_rho:lo             full 0.0946413644242657 -> 0.095
+  PASS         0.628  C9_a_human_gps_patience_q50_spearman_rho:hi             full 0.6279758422642947 -> 0.628
+  PASS         0.173  C9_a_human_gps_negrecip_spearman_rho:lo                 full 0.1728453273811127 -> 0.173
+  PASS         0.586  C9_a_human_gps_negrecip_spearman_rho:hi                 full 0.5858880979252813 -> 0.586
+  PASS        -0.741  C9_a_human_gps_patience_q43_spearman_rho:lo             full -0.7409459380593372 -> -0.741
+  PASS        -0.266  C9_a_human_gps_patience_q43_spearman_rho:hi             full -0.26579331782353854 -> -0.266
+  PASS         0.006  C9_TVD_adapter_minus_base_profile_block:lo              full 0.006169716953512208 -> 0.006
+  PASS         0.093  C9_TVD_adapter_minus_base_profile_block:hi              full 0.09272260519372265 -> 0.093
+  PASS         0.017  C9_TVD_adapter_minus_base_country:lo                    full 0.017346041653487285 -> 0.017
+  PASS         0.079  C9_TVD_adapter_minus_base_country:hi                    full 0.07888155514304301 -> 0.079
+  PASS        -0.122  C9_TVD_persona_minus_base_profile_block:lo              full -0.12158126165639337 -> -0.122
+  PASS        -0.086  C9_TVD_persona_minus_base_profile_block:hi              full -0.08606035054516069 -> -0.086
+  PASS        -0.119  C9_TVD_persona_minus_base_country:lo                    full -0.11863062380201614 -> -0.119
+  PASS        -0.091  C9_TVD_persona_minus_base_country:hi                    full -0.09075109980078375 -> -0.091
+  PASS        -0.084  C9_TVD_adapter_persona_minus_base_country:lo            full -0.08363604968441053 -> -0.084
+  PASS        -0.012  C9_TVD_adapter_persona_minus_base_country:hi            full -0.01244998028538771 -> -0.012
+  PASS        -0.095  C9_TVD_adapter_persona_minus_base_profile_block:lo      full -0.09453081764312539 -> -0.095
+  PASS         0.005  C9_TVD_adapter_persona_minus_base_profile_block:hi      full 0.00548412981330979 -> 0.005
+  PASS        -0.003  C9_TVD_interaction_profile_block:lo                     full -0.0032999105110756164 -> -0.003
+  PASS         0.022  C9_TVD_interaction_profile_block:hi                     full 0.022368632285632302 -> 0.022
+  PASS        -0.001  C9_TVD_interaction_country:lo                           full -0.0007327323228584694 -> -0.001
+  PASS         0.019  C9_TVD_interaction_country:hi                           full 0.019099617928255205 -> 0.019
+  PASS        -0.339  C9_TVD_persona_trust_gps_profile_block:lo               full -0.3386574205085119 -> -0.339
+  PASS         0.381  C9_TVD_persona_trust_gps_profile_block:hi               full 0.38136686616815824 -> 0.381
+  PASS         0.500  C9_TVD_adapter_trust_gps_profile_block:lo               full 0.5002088786337604 -> 0.500
+  PASS         0.865  C9_TVD_adapter_trust_gps_profile_block:hi               full 0.8647856310906544 -> 0.865
+  PASS         0.505  C9_TVD_adapter_persona_trust_gps_profile_block:lo       full 0.5045527062375771 -> 0.505
+  PASS         0.820  C9_TVD_adapter_persona_trust_gps_profile_block:hi       full 0.819536884318551 -> 0.820
+  PASS         0.926  C9_label_recovery_recovery_profile_block:lo             full 0.925674732747101 -> 0.926
+  PASS         0.952  C9_label_recovery_recovery_profile_block:hi             full 0.95191970727685 -> 0.952
+  PASS         0.771  C9_label_recovery_accuracy_profile_block:lo             full 0.770530492898914 -> 0.771
+  PASS         0.856  C9_label_recovery_accuracy_profile_block:hi             full 0.8560726950354609 -> 0.856
+  PASS         0.471  C9_label_recovery_base_accuracy_profile_block:lo        full 0.4714657572037891 -> 0.471
+  PASS         0.506  C9_label_recovery_base_accuracy_profile_block:hi        full 0.5055975274725275 -> 0.506
+  PASS          28.2  C9_label_recovery_mean_margin_shift_profile_block:lo    full 28.2455748023476 -> 28.2
+  PASS          54.1  C9_label_recovery_mean_margin_shift_profile_block:hi    full 54.06282406309061 -> 54.1
   PASS         0.744  B2_cohort1_trust_rho                                    full 0.7441050158009886 -> 0.744
   PASS         0.435  B2_cohort1_risktaking_rho                               full 0.4345677011587392 -> 0.435
   PASS         0.488  B2_cohort1_posrecip_rho                                 full 0.4875617859168625 -> 0.488
@@ -317,6 +374,54 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS         0.448  NZ_GBR_trust_refit_minus_control_sd                     full 0.4477279738153208 -> 0.448
   PASS             4  NZ_blockD_against_beyond_floor                          full 4 -> 4
   PASS             7  NZ_blockD_against_beyond_floor:n                        full 7 -> 7
+  PASS         0.744  C9_a_adapter_gps_trust_spearman_rho                     full 0.7441050158009886 -> 0.744
+  PASS         0.295  C9_a_adapter_human_trust_spearman_rho                   full 0.29519487885908763 -> 0.295
+  PASS         0.389  C9_a_adapter_human_negrecip_spearman_rho                full 0.3888663803581558 -> 0.389
+  PASS         0.803  C9_b_adapter_gps_trust_spearman_rho                     full 0.8032452595902299 -> 0.803
+  PASS         0.340  C9_b_adapter_human_trust_spearman_rho                   full 0.3403774095375282 -> 0.340
+  PASS         0.366  C9_b_adapter_human_posrecip_spearman_rho                full 0.36609229009601163 -> 0.366
+  PASS         0.351  C9_a_human_gps_trust_spearman_rho                       full 0.3507819463576696 -> 0.351
+  PASS         0.388  C9_a_human_gps_patience_q50_spearman_rho                full 0.38805607325176245 -> 0.388
+  PASS         0.416  C9_a_human_gps_negrecip_spearman_rho                    full 0.4160926991329714 -> 0.416
+  PASS        -0.533  C9_a_human_gps_patience_q43_spearman_rho                full -0.5326148610323312 -> -0.533
+  PASS         0.470  C9_TVD_base_mean_tvd_country_equal                      full 0.470046650620059 -> 0.470
+  PASS         0.515  C9_TVD_adapter_mean_tvd_country_equal                   full 0.5154766417741424 -> 0.515
+  PASS         0.365  C9_TVD_persona_mean_tvd_country_equal                   full 0.3649046586151852 -> 0.365
+  PASS         0.045  C9_TVD_adapter_minus_base_profile_block                 full 0.04542999115408338 -> 0.045
+  PASS        -0.105  C9_TVD_persona_minus_base_profile_block                 full -0.10514199200487398 -> -0.105
+  PASS         0.420  C9_TVD_adapter_persona_mean_tvd_country_equal           full 0.41950116386997005 -> 0.420
+  PASS        -0.051  C9_TVD_adapter_persona_minus_base_country               full -0.05054548675008909 -> -0.051
+  PASS         0.009  C9_TVD_interaction_profile_block                        full 0.00916651410070148 -> 0.009
+  PASS         0.028  C9_TVD_persona_trust_gps_profile_block                  full 0.02779353374929098 -> 0.028
+  PASS         0.744  C9_TVD_adapter_trust_gps_profile_block                  full 0.7441050158009886 -> 0.744
+  PASS         0.725  C9_TVD_adapter_persona_trust_gps_profile_block          full 0.7254679523539421 -> 0.725
+  PASS         0.817  C9_W1_patience_Q43_spearman_own_vs_gps                  full 0.8167281126439714 -> 0.817
+  PASS         0.866  C9_W1_posrecip_spearman_own_vs_gps                      full 0.8662709802543639 -> 0.866
+  PASS         0.834  C9_W1_trust_spearman_full_vs_gps                        full 0.8343951464497176 -> 0.834
+  PASS        -0.020  C9_W1_patience_Q43_spearman_full_vs_gps                 full -0.019955396269359375 -> -0.020
+  PASS         0.422  C9_W1_altruism_spearman_full_vs_gps                     full 0.4222269820407136 -> 0.422
+  PASS         0.574  C9_W1_trust_spearman_cross_vs_gps                       full 0.5744830523282998 -> 0.574
+  PASS        -0.195  C9_W1_patience_Q43_spearman_cross_vs_gps                full -0.19503125597842316 -> -0.195
+  PASS         0.285  C9_W1_altruism_spearman_cross_vs_gps                    full 0.28453229265088226 -> 0.285
+  PASS         0.147  C9_W1_trust_cross_var_share                             full 0.14736931509306367 -> 0.147
+  PASS         0.830  C9_W1_negrecip_cross_var_share                          full 0.830201062249742 -> 0.830
+  PASS         1.049  C9_W1_patience_Q43_cross_var_share                      full 1.0493555555879839 -> 1.049
+  PASS         0.287  C9_W1_trust_cross_cov_share                             full 0.28653485237043397 -> 0.287
+  PASS         0.727  C9_W1_negrecip_cross_cov_share                          full 0.726783864776394 -> 0.727
+  PASS         0.985  C9_W1_patience_Q43_cross_cov_share                      full 0.9850948790964692 -> 0.985
+  PASS         0.483  C9_W1_patience_Q43_main_effect_share_64                 full 0.4833063309643195 -> 0.483
+  PASS         0.925  C9_W1_altruism_main_effect_share_64                     full 0.9248610106422523 -> 0.925
+  PASS        -0.066  C9_W1_patience_Q43_spearman_main_plus_2way_vs_gps       full -0.06603127058235175 -> -0.066
+  PASS         0.331  C9_W1_risktaking_spearman_main_plus_2way_vs_gps         full 0.3312920258701776 -> 0.331
+  PASS         0.821  C9_W1_rank_cross_var_share_vs_failure_bank2             full 0.8214285714285715 -> 0.821
+  PASS         0.286  C9_W1_rank_cross_var_share_vs_failure_cohort1           full 0.28571428571428575 -> 0.286
+  PASS        27,636  C9_W1_bank1_label_rows_checked                          full 27636 -> 27636
+  PASS             0  C9_W1_bank1_label_mismatches                            full 0 -> 0
+  PASS             0  C9_W1_bank2_label_mismatches                            full 0 -> 0
+  PASS         0.940  C9_label_recovery_recovery_profile_block                full 0.9397546897546898 -> 0.940
+  PASS         0.816  C9_label_recovery_accuracy_profile_block                full 0.8161976911976913 -> 0.816
+  PASS         0.489  C9_label_recovery_base_accuracy_profile_block           full 0.4893578643578645 -> 0.489
+  PASS          40.3  C9_label_recovery_mean_margin_shift_profile_block       full 40.2823942550505 -> 40.3
   PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
   PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
@@ -325,17 +430,35 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
   PASS             4  design:v5_required                                      VERIFICATION.md V5 (at least 4 of 6 dominant)
   PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS            64  design:cells                                            PREREGISTRATION.md s1 (2^6 sign-profile factorial, 64 units)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
   note  explained (WVS item code): Q43
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q43
   note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q43
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): wave-6
   note  explained (named instrument or model version): wave-7
+  note  explained (named instrument or model version): Wave~7
 
-== discussion.tex: 0 statistics, 0 design constants
+== discussion.tex: 9 statistics, 0 design constants
+  PASS         0.006  C9_TVD_adapter_minus_base_profile_block:lo              full 0.006169716953512208 -> 0.006
+  PASS         0.093  C9_TVD_adapter_minus_base_profile_block:hi              full 0.09272260519372265 -> 0.093
+  PASS        -0.122  C9_TVD_persona_minus_base_profile_block:lo              full -0.12158126165639337 -> -0.122
+  PASS        -0.086  C9_TVD_persona_minus_base_profile_block:hi              full -0.08606035054516069 -> -0.086
+  PASS         0.940  C9_label_recovery_recovery_profile_block                full 0.9397546897546898 -> 0.940
+  PASS         0.816  C9_label_recovery_accuracy_profile_block                full 0.8161976911976913 -> 0.816
+  PASS         0.489  C9_label_recovery_base_accuracy_profile_block           full 0.4893578643578645 -> 0.489
+  PASS         0.045  C9_TVD_adapter_minus_base_profile_block                 full 0.04542999115408338 -> 0.045
+  PASS        -0.105  C9_TVD_persona_minus_base_profile_block                 full -0.10514199200487398 -> -0.105
   note  explained (cross-reference or citation command): \citep{davidov2014,bratt2025}
   note  explained (cross-reference or citation command): \citet{broska2025}
   note  explained (named instrument or model version): Wave~7
@@ -545,8 +668,87 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q43
 
-Statistics: 311 printed, 311 PASS, 0 FAIL.
+== tables/tab_human.tex: 64 statistics, 6 design constants
+  PASS         0.500  C9_a_adapter_gps_trust_spearman_rho:lo                  full 0.5002088786337604 -> 0.500
+  PASS         0.865  C9_a_adapter_gps_trust_spearman_rho:hi                  full 0.8647856310906544 -> 0.865
+  PASS        -0.044  C9_a_adapter_human_trust_spearman_rho:lo                full -0.043646061623232126 -> -0.044
+  PASS         0.547  C9_a_adapter_human_trust_spearman_rho:hi                full 0.5473661876066869 -> 0.547
+  PASS         0.088  C9_a_human_gps_trust_spearman_rho:lo                    full 0.08794003988068244 -> 0.088
+  PASS         0.564  C9_a_human_gps_trust_spearman_rho:hi                    full 0.5639915769409524 -> 0.564
+  PASS         0.085  C9_a_adapter_gps_risktaking_spearman_rho:lo             full 0.08459211972226777 -> 0.085
+  PASS         0.686  C9_a_adapter_gps_risktaking_spearman_rho:hi             full 0.6855238217593994 -> 0.686
+  PASS        -0.260  C9_a_adapter_human_risktaking_spearman_rho:lo           full -0.2596834912760721 -> -0.260
+  PASS         0.426  C9_a_adapter_human_risktaking_spearman_rho:hi           full 0.4255204413440882 -> 0.426
+  PASS        -0.429  C9_a_human_gps_risktaking_spearman_rho:lo               full -0.42911459718819184 -> -0.429
+  PASS         0.312  C9_a_human_gps_risktaking_spearman_rho:hi               full 0.3123890498881549 -> 0.312
+  PASS         0.120  C9_a_adapter_gps_posrecip_spearman_rho:lo               full 0.12011003554792006 -> 0.120
+  PASS         0.695  C9_a_adapter_gps_posrecip_spearman_rho:hi               full 0.694575712077336 -> 0.695
+  PASS        -0.074  C9_a_adapter_human_posrecip_spearman_rho:lo             full -0.0742147912769197 -> -0.074
+  PASS         0.619  C9_a_adapter_human_posrecip_spearman_rho:hi             full 0.618591587344145 -> 0.619
+  PASS        -0.269  C9_a_human_gps_posrecip_spearman_rho:lo                 full -0.26946742081732 -> -0.269
+  PASS         0.386  C9_a_human_gps_posrecip_spearman_rho:hi                 full 0.386170162315793 -> 0.386
+  PASS         0.020  C9_a_adapter_gps_altruism_spearman_rho:lo               full 0.019705177182032498 -> 0.020
+  PASS         0.676  C9_a_adapter_gps_altruism_spearman_rho:hi               full 0.6763677356156965 -> 0.676
+  PASS        -0.170  C9_a_adapter_human_altruism_spearman_rho:lo             full -0.16981229172218448 -> -0.170
+  PASS         0.369  C9_a_adapter_human_altruism_spearman_rho:hi             full 0.36947124335752934 -> 0.369
+  PASS        -0.306  C9_a_human_gps_altruism_spearman_rho:lo                 full -0.30571517659170094 -> -0.306
+  PASS         0.350  C9_a_human_gps_altruism_spearman_rho:hi                 full 0.35001860638180454 -> 0.350
+  PASS        -0.418  C9_a_adapter_gps_negrecip_spearman_rho:lo               full -0.41794182001214747 -> -0.418
+  PASS         0.406  C9_a_adapter_gps_negrecip_spearman_rho:hi               full 0.4062285961335365 -> 0.406
+  PASS        -0.008  C9_a_adapter_human_negrecip_spearman_rho:lo             full -0.008097193356253873 -> -0.008
+  PASS         0.694  C9_a_adapter_human_negrecip_spearman_rho:hi             full 0.6936287226895609 -> 0.694
+  PASS         0.173  C9_a_human_gps_negrecip_spearman_rho:lo                 full 0.1728453273811127 -> 0.173
+  PASS         0.586  C9_a_human_gps_negrecip_spearman_rho:hi                 full 0.5858880979252813 -> 0.586
+  PASS        -0.414  C9_a_adapter_gps_patience_q43_spearman_rho:lo           full -0.4137061784151323 -> -0.414
+  PASS         0.452  C9_a_adapter_gps_patience_q43_spearman_rho:hi           full 0.45208283122682635 -> 0.452
+  PASS        -0.169  C9_a_adapter_human_patience_q43_spearman_rho:lo         full -0.16947625864437202 -> -0.169
+  PASS         0.464  C9_a_adapter_human_patience_q43_spearman_rho:hi         full 0.46430184056483337 -> 0.464
+  PASS        -0.741  C9_a_human_gps_patience_q43_spearman_rho:lo             full -0.7409459380593372 -> -0.741
+  PASS        -0.266  C9_a_human_gps_patience_q43_spearman_rho:hi             full -0.26579331782353854 -> -0.266
+  PASS        -0.313  C9_a_adapter_gps_patience_q50_spearman_rho:lo           full -0.3130980978178783 -> -0.313
+  PASS         0.580  C9_a_adapter_gps_patience_q50_spearman_rho:hi           full 0.5799151500605274 -> 0.580
+  PASS        -0.291  C9_a_adapter_human_patience_q50_spearman_rho:lo         full -0.29063224515074515 -> -0.291
+  PASS         0.316  C9_a_adapter_human_patience_q50_spearman_rho:hi         full 0.31565749510397995 -> 0.316
+  PASS         0.095  C9_a_human_gps_patience_q50_spearman_rho:lo             full 0.0946413644242657 -> 0.095
+  PASS         0.628  C9_a_human_gps_patience_q50_spearman_rho:hi             full 0.6279758422642947 -> 0.628
+  PASS         0.744  C9_a_adapter_gps_trust_spearman_rho                     full 0.7441050158009886 -> 0.744
+  PASS         0.295  C9_a_adapter_human_trust_spearman_rho                   full 0.29519487885908763 -> 0.295
+  PASS         0.351  C9_a_human_gps_trust_spearman_rho                       full 0.3507819463576696 -> 0.351
+  PASS         0.435  C9_a_adapter_gps_risktaking_spearman_rho                full 0.4345677011587392 -> 0.435
+  PASS         0.120  C9_a_adapter_human_risktaking_spearman_rho              full 0.11951219512195126 -> 0.120
+  PASS        -0.059  C9_a_human_gps_risktaking_spearman_rho                  full -0.05871080139372824 -> -0.059
+  PASS         0.488  C9_a_adapter_gps_posrecip_spearman_rho                  full 0.4875617859168625 -> 0.488
+  PASS         0.324  C9_a_adapter_human_posrecip_spearman_rho                full 0.3235556275828539 -> 0.324
+  PASS         0.054  C9_a_human_gps_posrecip_spearman_rho                    full 0.05437160683899198 -> 0.054
+  PASS         0.406  C9_a_adapter_gps_altruism_spearman_rho                  full 0.40620695243497285 -> 0.406
+  PASS         0.128  C9_a_adapter_human_altruism_spearman_rho                full 0.12827161494206304 -> 0.128
+  PASS         0.031  C9_a_human_gps_altruism_spearman_rho                    full 0.03135888501742161 -> 0.031
+  PASS        -0.028  C9_a_adapter_gps_negrecip_spearman_rho                  full -0.02811765659184831 -> -0.028
+  PASS         0.389  C9_a_adapter_human_negrecip_spearman_rho                full 0.3888663803581558 -> 0.389
+  PASS         0.416  C9_a_human_gps_negrecip_spearman_rho                    full 0.4160926991329714 -> 0.416
+  PASS        -0.019  C9_a_adapter_gps_patience_q43_spearman_rho              full -0.01912557249027031 -> -0.019
+  PASS         0.192  C9_a_adapter_human_patience_q43_spearman_rho            full 0.1920661305166976 -> 0.192
+  PASS        -0.533  C9_a_human_gps_patience_q43_spearman_rho                full -0.5326148610323312 -> -0.533
+  PASS         0.177  C9_a_adapter_gps_patience_q50_spearman_rho              full 0.1768900413256624 -> 0.177
+  PASS         0.003  C9_a_adapter_human_patience_q50_spearman_rho            full 0.0033222591362126247 -> 0.003
+  PASS         0.388  C9_a_human_gps_patience_q50_spearman_rho                full 0.38805607325176245 -> 0.388
+  PASS            41  C9_a_adapter_human_risktaking_spearman_rho:n            full 41 -> 41
+  PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
+  PASS            42  design:countries                                        PREREGISTRATION.md s1 (42 GPS x WVS-7 countries)
+  PASS            26  design:profiles_realized                                results/BANK2_TRANSPORT_20261018.md (42 countries in 26 sign profiles)
+  PASS         2,000  design:boot_draws                                       PREREGISTRATION.md s4; bank2_transport.py DRAWS
+  PASS      20261011  design:seed_c3                                          paper_b/analyze_surface.py BOOT_SEED
+  PASS      20260905  design:seed_country                                     paper_b/analyze_surface.py COUNTRY_BOOT_SEED; C8_PERSONA_DESIGN.md E4
+  note  explained (LaTeX length or layout argument): 4pt
+  note  explained (LaTeX length or layout argument): \renewcommand{\arraystretch}{1.15}
+  note  explained (WVS item code): Q43
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q178
+  note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): Wave~7
+
+Statistics: 482 printed, 482 PASS, 0 FAIL.
 Design constants: 0 FAIL.
 Unexplained numerals: 0.
-Distinct claim_ids used: 145.
+Distinct claim_ids used: 211.
 RESULT: PASS

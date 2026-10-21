@@ -23,7 +23,7 @@
 \maketitle
 \thispagestyle{empty}
 
-\noindent This supplement reports the two registered descriptives that the article sends here, the full tables behind several sentences of the article, the items the probe selected, and the provenance of the scoring runs. Every statistic is read from the same numbers table as the article and keeps the article's surface labels (S1 and S2 for the first and second cohorts on the strict battery, H for the retrospective held-out screen, R for the unseeded retrain, and N for the near-zero refits). Sections and tables numbered with an S belong to this supplement. As in the article, every result on surface H is retrospective, because the WVS Wave~7 file existed before the probe and is the only human source.
+\noindent This supplement reports the two registered descriptives that the article sends here, the full tables behind several sentences of the article, the detail of the descriptive follow-up analyses, the items the probe selected, and the provenance of the scoring runs. Every statistic is read from the same numbers table as the article and keeps the article's surface labels (S1 and S2 for the first and second cohorts on the strict battery, H for the retrospective held-out screen, R for the unseeded retrain, N for the near-zero refits, and D for the descriptive follow-up analyses, which were not preregistered). Sections and tables numbered with an S belong to this supplement. As in the article, every result on surface H is retrospective, because the WVS Wave~7 file existed before the probe and is the only human source.
 
 \section{Registered descriptives}\label{sec:s-desc}
 
@@ -256,6 +256,185 @@ Altruism & \cl{20}{PD_adapter_primary_altruism_A:n} & Q96, Q122, Q125, Q135, Q13
 \end{minipage}
 \end{table}
 
+\section{Descriptive follow-up analyses in full}\label{sec:s-follow}
+
+This section gives the detail behind the four descriptive follow-up analyses of the article (surface D). None of them was preregistered, none enters a registered family, and none earns a claim. All of them use the strict battery and the \dc{42}{countries} countries, and every comparison with respondents is retrospective, because the WVS Wave~7 file is the only human source and existed before the study. Human answer shares and country-level human values are used to compute the statistics and are not reported.
+
+\paragraph{Second-cohort adapters against the GPS and the human composite (D).} Table~\ref{tab:s-human2} repeats the first two columns of the article's three-column table for the second-cohort adapters, with each country assigned its profile's adapter. The human--GPS column does not depend on the adapters and is in the article. Positive reciprocity is the only adapter--human interval that excludes zero, at \cl{0.366}{C9_b_adapter_human_posrecip_spearman_rho} \ci{0.007}{0.636}{C9_b_adapter_human_posrecip_spearman_rho}, and its lower limit is close to zero.
+
+\begin{table}[htbp]
+\centering
+\caption{Second-cohort adapters against the GPS and the WVS Wave~7 composite, strict battery (D, descriptive; retrospective). Spearman correlation over countries.}\label{tab:s-human2}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l@{}}
+\toprule
+Surface & Adapter--GPS & Adapter--human \\
+\midrule
+Trust & \cl{0.803}{C9_b_adapter_gps_trust_spearman_rho} \ci{0.615}{0.876}{C9_b_adapter_gps_trust_spearman_rho} & \cl{0.340}{C9_b_adapter_human_trust_spearman_rho} \ci{-0.025}{0.586}{C9_b_adapter_human_trust_spearman_rho} \\
+Risk taking & \cl{0.210}{C9_b_adapter_gps_risktaking_spearman_rho} \ci{-0.199}{0.584}{C9_b_adapter_gps_risktaking_spearman_rho} & \cl{0.213}{C9_b_adapter_human_risktaking_spearman_rho} \ci{-0.172}{0.533}{C9_b_adapter_human_risktaking_spearman_rho} \\
+Positive reciprocity & \cl{0.366}{C9_b_adapter_gps_posrecip_spearman_rho} \ci{-0.068}{0.652}{C9_b_adapter_gps_posrecip_spearman_rho} & \cl{0.366}{C9_b_adapter_human_posrecip_spearman_rho} \ci{0.007}{0.636}{C9_b_adapter_human_posrecip_spearman_rho} \\
+Altruism & \cl{0.364}{C9_b_adapter_gps_altruism_spearman_rho} \ci{-0.057}{0.653}{C9_b_adapter_gps_altruism_spearman_rho} & \cl{0.094}{C9_b_adapter_human_altruism_spearman_rho} \ci{-0.181}{0.331}{C9_b_adapter_human_altruism_spearman_rho} \\
+Negative reciprocity & \cl{0.239}{C9_b_adapter_gps_negrecip_spearman_rho} \ci{-0.237}{0.604}{C9_b_adapter_gps_negrecip_spearman_rho} & \cl{0.167}{C9_b_adapter_human_negrecip_spearman_rho} \ci{-0.219}{0.522}{C9_b_adapter_human_negrecip_spearman_rho} \\
+Patience (Q43) & \cl{0.005}{C9_b_adapter_gps_patience_q43_spearman_rho} \ci{-0.403}{0.470}{C9_b_adapter_gps_patience_q43_spearman_rho} & \cl{0.218}{C9_b_adapter_human_patience_q43_spearman_rho} \ci{-0.121}{0.490}{C9_b_adapter_human_patience_q43_spearman_rho} \\
+Patience (Q50) & \cl{0.161}{C9_b_adapter_gps_patience_q50_spearman_rho} \ci{-0.343}{0.557}{C9_b_adapter_gps_patience_q50_spearman_rho} & \cl{0.037}{C9_b_adapter_human_patience_q50_spearman_rho} \ci{-0.247}{0.332}{C9_b_adapter_human_patience_q50_spearman_rho} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Profile-block intervals over the \dc{26}{profiles_realized} sign profiles (\dc{2,000}{boot_draws} draws, seed \dc{20261011}{seed_c3}). The risk-taking adapter--human column covers \cl{41}{C9_b_adapter_human_risktaking_spearman_rho:n} countries, because one country has no valid answer to the risk item.
+\end{minipage}
+\end{table}
+
+\paragraph{Distance to the survey distributions (D).} Table~\ref{tab:s-tvd-cells} gives the four cells, Table~\ref{tab:s-tvd-dim} gives the mean total variation distance by GPS dimension, and Table~\ref{tab:s-tvd-contrast} gives every paired contrast with both intervals. The dimension columns are point estimates, country-equal within the dimension's items, with no interval. The pooled column averages over the country--item cells instead of countries, and it differs from the country-equal mean only through the one cell that has no valid human answer. The persona prompt is closer to the survey than the base model on every dimension. The adapters are farther than the base model on trust, risk taking, positive reciprocity and negative reciprocity, and closer on patience and altruism. Adding the persona prompt to the adapters moves the distance by \cl{-0.096}{C9_TVD_adapter_persona_minus_adapter_profile_block} \ci{-0.115}{-0.078}{C9_TVD_adapter_persona_minus_adapter_profile_block}, and adding the adapters to the persona prompt moves it by \cl{0.055}{C9_TVD_adapter_persona_minus_persona_profile_block} \ci{0.016}{0.097}{C9_TVD_adapter_persona_minus_persona_profile_block}.
+
+\begin{table}[htbp]
+\centering
+\caption{Distance to the survey answer distributions in four cells (D, descriptive and not preregistered; retrospective). Lower is closer.}\label{tab:s-tvd-cells}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l l l@{}}
+\toprule
+Cell & Mean TVD & Minus base (profile blocks) & Minus base (countries) & Trust--GPS \\
+\midrule
+Base model & \cl{0.470}{C9_TVD_base_mean_tvd_country_equal} & -- & -- & undefined \\
+Country adapters & \cl{0.515}{C9_TVD_adapter_mean_tvd_country_equal} & \cl{0.045}{C9_TVD_adapter_minus_base_profile_block} \ci{0.006}{0.093}{C9_TVD_adapter_minus_base_profile_block} & \ci{0.017}{0.079}{C9_TVD_adapter_minus_base_country} & \cl{0.744}{C9_TVD_adapter_trust_gps_profile_block} \ci{0.500}{0.865}{C9_TVD_adapter_trust_gps_profile_block} \\
+Country-named persona prompt & \cl{0.365}{C9_TVD_persona_mean_tvd_country_equal} & \cl{-0.105}{C9_TVD_persona_minus_base_profile_block} \ci{-0.122}{-0.086}{C9_TVD_persona_minus_base_profile_block} & \ci{-0.119}{-0.091}{C9_TVD_persona_minus_base_country} & \cl{0.028}{C9_TVD_persona_trust_gps_profile_block} \ci{-0.339}{0.381}{C9_TVD_persona_trust_gps_profile_block} \\
+Adapters and persona prompt & \cl{0.420}{C9_TVD_adapter_persona_mean_tvd_country_equal} & \cl{-0.051}{C9_TVD_adapter_persona_minus_base_profile_block} \ci{-0.095}{0.005}{C9_TVD_adapter_persona_minus_base_profile_block} & \ci{-0.084}{-0.012}{C9_TVD_adapter_persona_minus_base_country} & \cl{0.725}{C9_TVD_adapter_persona_trust_gps_profile_block} \ci{0.505}{0.820}{C9_TVD_adapter_persona_trust_gps_profile_block} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Mean total variation distance (TVD) between the model's probabilities over the answer codes and the survey-weighted shares of valid human answers, averaged over items within a country and then over the \dc{42}{countries} countries. The means cover \cl{965}{C9_TVD_base_mean_tvd_pooled:n} country--item cells: the \dc{23}{strict_items} items of the strict battery in each country, less one cell without a valid human answer. Contrasts are paired differences of country means, negative when the cell is closer to the survey than the base model; both intervals use \dc{2,000}{boot_draws} draws (profile blocks: seed \dc{20261011}{seed_c3}; countries: seed \dc{20260905}{seed_country}). Trust--GPS is the Spearman correlation of the trust composite with the GPS over the countries (profile-block interval); it is undefined for the base model, whose trust composite is the same for every country.
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Mean total variation distance to the survey answer shares, by cell and GPS dimension (D, descriptive; retrospective). Lower is closer.}\label{tab:s-tvd-dim}
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X@{}}
+\toprule
+Cell & Trust & Patience & Risk & Pos. recip. & Neg. recip. & Altruism & All (countries) & All (cells) \\
+\midrule
+Base model & \cl{0.413}{C9_TVD_base_trust_mean_tvd_country_equal} & \cl{0.664}{C9_TVD_base_patience_mean_tvd_country_equal} & \cl{0.565}{C9_TVD_base_risktaking_mean_tvd_country_equal} & \cl{0.384}{C9_TVD_base_posrecip_mean_tvd_country_equal} & \cl{0.411}{C9_TVD_base_negrecip_mean_tvd_country_equal} & \cl{0.494}{C9_TVD_base_altruism_mean_tvd_country_equal} & \cl{0.470}{C9_TVD_base_mean_tvd_country_equal} & \cl{0.470}{C9_TVD_base_mean_tvd_pooled} \\
+Country adapters & \cl{0.479}{C9_TVD_adapter_trust_mean_tvd_country_equal} & \cl{0.655}{C9_TVD_adapter_patience_mean_tvd_country_equal} & \cl{0.614}{C9_TVD_adapter_risktaking_mean_tvd_country_equal} & \cl{0.436}{C9_TVD_adapter_posrecip_mean_tvd_country_equal} & \cl{0.508}{C9_TVD_adapter_negrecip_mean_tvd_country_equal} & \cl{0.439}{C9_TVD_adapter_altruism_mean_tvd_country_equal} & \cl{0.515}{C9_TVD_adapter_mean_tvd_country_equal} & \cl{0.515}{C9_TVD_adapter_mean_tvd_pooled} \\
+Country-named persona prompt & \cl{0.315}{C9_TVD_persona_trust_mean_tvd_country_equal} & \cl{0.541}{C9_TVD_persona_patience_mean_tvd_country_equal} & \cl{0.524}{C9_TVD_persona_risktaking_mean_tvd_country_equal} & \cl{0.244}{C9_TVD_persona_posrecip_mean_tvd_country_equal} & \cl{0.352}{C9_TVD_persona_negrecip_mean_tvd_country_equal} & \cl{0.244}{C9_TVD_persona_altruism_mean_tvd_country_equal} & \cl{0.365}{C9_TVD_persona_mean_tvd_country_equal} & \cl{0.365}{C9_TVD_persona_mean_tvd_pooled} \\
+Adapters and persona prompt & \cl{0.375}{C9_TVD_adapter_persona_trust_mean_tvd_country_equal} & \cl{0.558}{C9_TVD_adapter_persona_patience_mean_tvd_country_equal} & \cl{0.559}{C9_TVD_adapter_persona_risktaking_mean_tvd_country_equal} & \cl{0.341}{C9_TVD_adapter_persona_posrecip_mean_tvd_country_equal} & \cl{0.418}{C9_TVD_adapter_persona_negrecip_mean_tvd_country_equal} & \cl{0.304}{C9_TVD_adapter_persona_altruism_mean_tvd_country_equal} & \cl{0.420}{C9_TVD_adapter_persona_mean_tvd_country_equal} & \cl{0.419}{C9_TVD_adapter_persona_mean_tvd_pooled} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Patience covers both patience items. The last two columns average over all items, by countries and pooled over the \cl{965}{C9_TVD_base_mean_tvd_pooled:n} country--item cells.
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Paired contrasts of mean total variation distance (D, descriptive; retrospective). Negative means that the first cell is closer to the survey.}\label{tab:s-tvd-contrast}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l@{}}
+\toprule
+Contrast & Profile-block interval & Country interval \\
+\midrule
+Adapters $-$ base & \cl{0.045}{C9_TVD_adapter_minus_base_profile_block} \ci{0.006}{0.093}{C9_TVD_adapter_minus_base_profile_block} & \ci{0.017}{0.079}{C9_TVD_adapter_minus_base_country} \\
+Persona $-$ base & \cl{-0.105}{C9_TVD_persona_minus_base_profile_block} \ci{-0.122}{-0.086}{C9_TVD_persona_minus_base_profile_block} & \ci{-0.119}{-0.091}{C9_TVD_persona_minus_base_country} \\
+Adapters and persona $-$ base & \cl{-0.051}{C9_TVD_adapter_persona_minus_base_profile_block} \ci{-0.095}{0.005}{C9_TVD_adapter_persona_minus_base_profile_block} & \ci{-0.084}{-0.012}{C9_TVD_adapter_persona_minus_base_country} \\
+Adapters and persona $-$ adapters & \cl{-0.096}{C9_TVD_adapter_persona_minus_adapter_profile_block} \ci{-0.115}{-0.078}{C9_TVD_adapter_persona_minus_adapter_profile_block} & \ci{-0.111}{-0.081}{C9_TVD_adapter_persona_minus_adapter_country} \\
+Adapters and persona $-$ persona & \cl{0.055}{C9_TVD_adapter_persona_minus_persona_profile_block} \ci{0.016}{0.097}{C9_TVD_adapter_persona_minus_persona_profile_block} & \ci{0.027}{0.086}{C9_TVD_adapter_persona_minus_persona_country} \\
+Interaction & \cl{0.009}{C9_TVD_interaction_profile_block} \ci{-0.003}{0.022}{C9_TVD_interaction_profile_block} & \ci{-0.001}{0.019}{C9_TVD_interaction_country} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Differences of country means over \dc{42}{countries} countries with \dc{2,000}{boot_draws} draws (profile blocks: seed \dc{20261011}{seed_c3}; countries: seed \dc{20260905}{seed_country}). The interaction is the adapters' effect with the persona prompt minus the adapters' effect without it. The point estimate is the same under both resampling schemes.
+\end{minipage}
+\end{table}
+
+\paragraph{The decomposition of the main effects (D).} Table~\ref{tab:s-w1-main} gives the own-bit, full and cross-bit correlations with the GPS and the variance ratios for every surface. Table~\ref{tab:s-w1} gives, for each surface, the share of the variance over the \dc{64}{cells} sign profiles that the six main effects carry, the correlation with the GPS of the prediction that adds two-way terms (where the main effects carry less than four fifths of the variance), and the rank correlation of the main-effects prediction with the composites that the second-cohort and first-cohort adapters give at the countries' sign profiles. The main-effects prediction orders the second-cohort composites well on every surface, from \cl{0.748}{C9_W1_bank2_risktaking_spearman_full_vs_observed} for risk taking to \cl{0.957}{C9_W1_bank2_altruism_spearman_full_vs_observed} for altruism. It orders the first-cohort composites less well on risk taking, \cl{0.399}{C9_W1_cohort1_risktaking_spearman_full_vs_observed}, and negative reciprocity, \cl{0.477}{C9_W1_cohort1_negrecip_spearman_full_vs_observed}, where the second-cohort effects transfer worst. The loss of the GPS order is therefore not a poor fit of the decomposition to the second-cohort adapters. It describes what the bits do.
+
+\begin{table}[htbp]
+\centering
+\caption{Own-bit and cross-bit parts of the second-cohort adapters' main effects, evaluated at each country's sign profile (D, descriptive and not preregistered). Spearman correlation with the GPS over the countries, and the cross part's share of the variance of the full prediction.}\label{tab:s-w1-main}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X@{}}
+\toprule
+ & \multicolumn{3}{c}{Spearman with the GPS} & \multicolumn{2}{c}{Cross part of the full prediction} \\
+\cmidrule(lr){2-4}\cmidrule(l){5-6}
+Surface & Own bit only & Full & Cross bits only & Var(cross) / Var(full) & Covariance share \\
+\midrule
+Trust & \cl{0.862}{C9_W1_trust_spearman_own_vs_gps} & \cl{0.834}{C9_W1_trust_spearman_full_vs_gps} & \cl{0.574}{C9_W1_trust_spearman_cross_vs_gps} & \cl{0.147}{C9_W1_trust_cross_var_share} & \cl{0.287}{C9_W1_trust_cross_cov_share} \\
+Risk taking & \cl{0.862}{C9_W1_risktaking_spearman_own_vs_gps} & \cl{0.104}{C9_W1_risktaking_spearman_full_vs_gps} & \cl{-0.097}{C9_W1_risktaking_spearman_cross_vs_gps} & \cl{0.999}{C9_W1_risktaking_cross_var_share} & \cl{0.949}{C9_W1_risktaking_cross_cov_share} \\
+Positive reciprocity & \cl{0.866}{C9_W1_posrecip_spearman_own_vs_gps} & \cl{0.378}{C9_W1_posrecip_spearman_full_vs_gps} & \cl{0.262}{C9_W1_posrecip_spearman_cross_vs_gps} & \cl{0.854}{C9_W1_posrecip_cross_var_share} & \cl{0.911}{C9_W1_posrecip_cross_cov_share} \\
+Altruism & \cl{0.857}{C9_W1_altruism_spearman_own_vs_gps} & \cl{0.422}{C9_W1_altruism_spearman_full_vs_gps} & \cl{0.285}{C9_W1_altruism_spearman_cross_vs_gps} & \cl{0.850}{C9_W1_altruism_cross_var_share} & \cl{0.911}{C9_W1_altruism_cross_cov_share} \\
+Negative reciprocity & \cl{0.866}{C9_W1_negrecip_spearman_own_vs_gps} & \cl{0.386}{C9_W1_negrecip_spearman_full_vs_gps} & \cl{-0.128}{C9_W1_negrecip_spearman_cross_vs_gps} & \cl{0.830}{C9_W1_negrecip_cross_var_share} & \cl{0.727}{C9_W1_negrecip_cross_cov_share} \\
+Patience (Q43) & \cl{0.817}{C9_W1_patience_Q43_spearman_own_vs_gps} & \cl{-0.020}{C9_W1_patience_Q43_spearman_full_vs_gps} & \cl{-0.195}{C9_W1_patience_Q43_spearman_cross_vs_gps} & \cl{1.049}{C9_W1_patience_Q43_cross_var_share} & \cl{0.985}{C9_W1_patience_Q43_cross_cov_share} \\
+Patience (Q50) & \cl{0.817}{C9_W1_patience_Q50_spearman_own_vs_gps} & \cl{0.176}{C9_W1_patience_Q50_spearman_full_vs_gps} & \cl{0.009}{C9_W1_patience_Q50_spearman_cross_vs_gps} & \cl{0.914}{C9_W1_patience_Q50_cross_var_share} & \cl{0.935}{C9_W1_patience_Q50_cross_cov_share} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} For each surface, the full prediction at a country's sign profile is the sum over the six bits of the bit's main effect on the surface times the bit's code (\dc{0.5}{x_code} in absolute value); the own part keeps the surface's own bit and the cross part the other five. Evaluated at the sign profiles of the \dc{42}{countries} countries and correlated with the GPS coordinate of the surface's own dimension. Var(cross) / Var(full) is a ratio of variances and not a share of variance explained, and it exceeds one when the own and cross parts covary negatively; the covariance share is Cov(cross, full) / Var(full). Model quantities and published GPS values only.
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Fit of the main-effects decomposition, by surface (D, descriptive). Spearman correlations over the \dc{42}{countries} countries unless stated.}\label{tab:s-w1}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X@{}}
+\toprule
+Surface & Main-effect share of variance & Main + two-way with GPS & Full vs second-cohort composite & Full vs first-cohort composite \\
+\midrule
+Trust & \cl{0.806}{C9_W1_trust_main_effect_share_64} & -- & \cl{0.920}{C9_W1_bank2_trust_spearman_full_vs_observed} & \cl{0.915}{C9_W1_cohort1_trust_spearman_full_vs_observed} \\
+Risk taking & \cl{0.609}{C9_W1_risktaking_main_effect_share_64} & \cl{0.331}{C9_W1_risktaking_spearman_main_plus_2way_vs_gps} & \cl{0.748}{C9_W1_bank2_risktaking_spearman_full_vs_observed} & \cl{0.399}{C9_W1_cohort1_risktaking_spearman_full_vs_observed} \\
+Positive reciprocity & \cl{0.711}{C9_W1_posrecip_main_effect_share_64} & \cl{0.287}{C9_W1_posrecip_spearman_main_plus_2way_vs_gps} & \cl{0.935}{C9_W1_bank2_posrecip_spearman_full_vs_observed} & \cl{0.934}{C9_W1_cohort1_posrecip_spearman_full_vs_observed} \\
+Altruism & \cl{0.925}{C9_W1_altruism_main_effect_share_64} & -- & \cl{0.957}{C9_W1_bank2_altruism_spearman_full_vs_observed} & \cl{0.975}{C9_W1_cohort1_altruism_spearman_full_vs_observed} \\
+Negative reciprocity & \cl{0.666}{C9_W1_negrecip_main_effect_share_64} & \cl{0.210}{C9_W1_negrecip_spearman_main_plus_2way_vs_gps} & \cl{0.835}{C9_W1_bank2_negrecip_spearman_full_vs_observed} & \cl{0.477}{C9_W1_cohort1_negrecip_spearman_full_vs_observed} \\
+Patience (Q43) & \cl{0.483}{C9_W1_patience_Q43_main_effect_share_64} & \cl{-0.066}{C9_W1_patience_Q43_spearman_main_plus_2way_vs_gps} & \cl{0.871}{C9_W1_bank2_patience_Q43_spearman_full_vs_observed} & \cl{0.826}{C9_W1_cohort1_patience_Q43_spearman_full_vs_observed} \\
+Patience (Q50) & \cl{0.891}{C9_W1_patience_Q50_main_effect_share_64} & -- & \cl{0.948}{C9_W1_bank2_patience_Q50_spearman_full_vs_observed} & \cl{0.946}{C9_W1_cohort1_patience_Q50_spearman_full_vs_observed} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} The main-effect share is over the \dc{64}{cells} sign profiles. Two-way terms are reported only on the four surfaces where the main effects carry less than four fifths of the variance. Model quantities and published GPS values only.
+\end{minipage}
+\end{table}
+
+\paragraph{Held-out label recovery with both intervals (D).} Table~\ref{tab:s-recovery} gives the four recovery quantities with the profile-block and the country interval. The two intervals agree closely on every quantity, and the base model's accuracy interval includes one half under both.
+
+\begin{table}[htbp]
+\centering
+\caption{Held-out synthetic-label recovery of the first-cohort adapters (D, descriptive; a construction check).}\label{tab:s-recovery}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X l l@{}}
+\toprule
+Quantity & Profile-block interval & Country interval \\
+\midrule
+Recovery (adapter margin above base margin) & \cl{0.940}{C9_label_recovery_recovery_profile_block} \ci{0.926}{0.952}{C9_label_recovery_recovery_profile_block} & \ci{0.930}{0.949}{C9_label_recovery_recovery_country} \\
+Accuracy (adapter prefers its own chosen completion) & \cl{0.816}{C9_label_recovery_accuracy_profile_block} \ci{0.771}{0.856}{C9_label_recovery_accuracy_profile_block} & \ci{0.786}{0.848}{C9_label_recovery_accuracy_country} \\
+Base accuracy & \cl{0.489}{C9_label_recovery_base_accuracy_profile_block} \ci{0.471}{0.506}{C9_label_recovery_base_accuracy_profile_block} & \ci{0.476}{0.501}{C9_label_recovery_base_accuracy_country} \\
+Mean margin shift (nats) & \cl{40.3}{C9_label_recovery_mean_margin_shift_profile_block} \ci{28.2}{54.1}{C9_label_recovery_mean_margin_shift_profile_block} & \ci{32.6}{49.5}{C9_label_recovery_mean_margin_shift_country} \\
+\bottomrule
+\end{tabularx}
+\par\smallskip
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Note:} Country-equal means over the \dc{42}{countries} adapters and the held-out pairs of the training split, which the adapters never saw. The margin is the log probability of the chosen completion minus that of the rejected one. Recovery is the share of held-out pairs on which the adapter's margin exceeds the base model's. The intervals use \dc{2,000}{boot_draws} draws (profile blocks: seed \dc{20261011}{seed_c3}; countries: seed \dc{20260905}{seed_country}).
+\end{minipage}
+\end{table}
+
 \section{Provenance of the scoring runs}\label{sec:s-prov}
 
 \paragraph{Specifications.} Each scoring condition has a pinned specification hash that fixes the prompt template, the option order, the leading space before each code and the recode. Every run reproduced its pin before a model was loaded. The strict battery's pin begins \texttt{ed3bb964b606}, and the amended held-out pool's pin begins \texttt{46447de63f7c}. The pre-amendment held-out pin, which Amendment~1 superseded, began \texttt{4d799b02}.
@@ -265,6 +444,8 @@ Altruism & \cl{20}{PD_adapter_primary_altruism_A:n} & Q96, Q122, Q125, Q135, Q13
 \paragraph{The first-cohort scoring run.} The first cohort's scores (surface S1) were persisted by a run whose manifest records a digest of the code bundle rather than a git commit, and none of the tracked source snapshots matches that digest. The commit that produced the run therefore cannot be named. Two properties of the run were verified directly. Its specification hash, which fixes the prompts, equals the strict pin, and the weights of the one adapter checked match the archived manifest byte for byte. A later replay of five selected items on the base model and that adapter, using the same four-bit quantized base model, lands within three units of half-precision rounding of the stored option log probabilities, which is the precision at which they were stored. The same replay on the unquantized model departs by far more. Quantization is therefore the source of the dominant difference between the two configurations, and the stored first-cohort scores are consistent with the quantized model that the adapters were trained on. The full panel was not replayed.
 
 \paragraph{The archive of the development stage.} Before every scoring run, a gate compared the base model's scores on the frozen software stack with the archived scores of the development stage, whose software environment was not pinned. The comparison is report-only by design. The formatted prompts matched the archive exactly, while the log probabilities differed by more than the tolerance used at the development stage. A replay with the same four-bit quantization moved the scores toward the archive without reproducing it, so the remaining cause of that gap is not established. The gap enters no statistic in the article, which uses only scores produced on the frozen stack.
+
+\paragraph{The follow-up runs.} The adapters-plus-persona cell was scored in one run of the first-cohort adapters with the country-named persona prompt on the strict battery (run \texttt{adapter-persona-strict-v1-20261019}, pinned specification \texttt{persona\_strict\_v1}). Three gates passed before any country was scored: the fresh base model reproduced the banked strict base scores, one adapter without the persona prompt reproduced its banked first-cohort rows and differed from the base, and disabling the adapter returned the base. The held-out label recovery was scored in one run of the same adapters (run \texttt{label-recovery-cohort1-v1-20261019}), with the recipe that built the reference cache of the training pairs. Two gates passed before any country was scored: the base model reproduced the banked reference log probabilities on training pairs with a gap of zero, and one adapter changed the log probabilities while disabling it returned the base exactly. All country files were read back from the artifact store by hash. The code of both runs was written and run by the study team, and an independent audit of the two runs is pending.
 
 \paragraph{Configuration.} The configuration file \texttt{paper\_b/config.py} serves both cohorts. Its first-cohort defaults are unchanged when the environment variable \texttt{SCA2\_PB\_UNITS} is unset, and the file is byte-identical to its version at the registration tag.
 
