@@ -342,6 +342,96 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 /* Cohort rows: kind tags and d_margin values */
 .tab-k .klegend { margin: 6px 0 0; font-size: 13px; color: #c4c4c4; max-width: 980px; line-height: 1.45; }
 
+/* Cohort tab (WB6-K, K2): headline dumbbell rows, controls, layer map. Everything below is scoped under .tab-k.
+   Colours: base model = white bar, comparator = --B dot; blue / orange only in the layer map; gold (--delta) only for the
+   log-odds change; notes and footers are neutral. Small labels use --k-mut, 4.5:1 or better on every tab background. */
+.tab-k { --k-mut: #b3b3b3; --k-line: #262626; --k-gut: 22px; overflow-y: auto; padding-bottom: 40px; position: relative; font-family: var(--sans); }
+.tab-k .muted { color: var(--k-mut); }
+.tab-k .k-wrap { max-width: 1152px; }
+.tab-k .k-wrap > * { max-width: none; }
+.tab-k #answer { display: block; padding: 14px 0 10px; } .tab-k #answer .say { font: 19px/1.4 var(--serif); }
+.tab-k #answer .k-def { display: block; margin-top: 4px; font: 13.5px/1.4 var(--sans); color: var(--k-mut); }
+.tab-k .k-controls { display: grid; gap: 10px; padding: 4px 0 12px; border-bottom: 1px solid var(--line); }
+.tab-k .k-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; } .tab-k .k-ctl2 { display: flex; flex-wrap: wrap; gap: 8px 32px; margin: 0 0 10px; }
+.tab-k .k-pick, .tab-k .k-seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.tab-k button { font: 14px/1.3 var(--sans); padding: 6px 12px; border-radius: 6px; }
+.tab-k button .n { color: var(--k-mut); font-size: 12px; margin-left: 2px; } .tab-k button.on .n { color: #4a4a4a; }
+.tab-k button:focus-visible, .tab-k .k-row:focus-visible, .tab-k .k-hrow:focus-visible, .tab-k summary:focus-visible, .tab-k a:focus-visible { outline: 2px solid var(--B); outline-offset: 2px; }
+.tab-k .k-q { margin: 0; font: 15px/1.5 var(--serif); color: #e2e0da; max-width: 980px; }
+.tab-k .k-q .muted { font: 13px/1.5 var(--sans); }
+.tab-k .k-thin, .tab-k .k-thinnote { margin: 0; font: 13.5px/1.5 var(--sans); color: #cfcfcf; max-width: 980px; } .tab-k .k-thin a { color: inherit; text-decoration: underline; }
+.tab-k .k-thinnote { margin: 12px 0 0; padding: 8px 12px; border: 1px solid #444; border-radius: 6px; }
+.tab-k .k-head, .tab-k .k-map { margin-top: 18px; display: block; }
+.tab-k .k-head > header, .tab-k .k-map > header { height: auto; line-height: 1.4; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: center; white-space: normal; }
+.tab-k .cap { font: 12.5px/1.4 var(--sans); letter-spacing: .08em; color: var(--k-mut); }
+.tab-k .k-legend { font: 13px var(--sans); color: #d0d0d0; display: inline-flex; align-items: center; gap: 6px; }
+.tab-k .k-legend i { display: inline-block; flex: none; position: static; transform: none; box-shadow: none; } .tab-k .k-legend .k-lc { margin-left: 16px; }
+.tab-k .k-lb, .tab-k .k-mb { width: 4px; height: 18px; border-radius: 1px; background: #f2f2f2; }
+.tab-k .k-lc, .tab-k .k-mc { width: 13px; height: 13px; border-radius: 50%; background: var(--B); }
+
+/* answer rows. Every row has the same left gutter (the bracket of a matched pair lives in it), so the columns and the axis line up. */
+.tab-k .k-row { display: grid; grid-template-columns: 206px minmax(0, 1fr) 128px 84px 138px; gap: 0 12px; align-items: center; padding: 7px 8px 7px var(--k-gut); border-bottom: 1px solid var(--k-line); cursor: pointer; border-radius: 4px; position: relative; font: 14px/1.35 var(--sans); }
+.tab-k .k-row.k-axis { cursor: default; padding-top: 0; padding-bottom: 4px; color: var(--k-mut); font-size: 12px; line-height: 1.25; align-items: end; }
+.tab-k .k-axis .k-pc, .tab-k .k-axis .k-d { font: 12px/1.25 var(--sans); color: var(--k-mut); } .tab-k .k-axis .k-d { text-align: right; }
+.tab-k .k-row:hover, .tab-k .k-row.hl, .tab-k .k-hrow:hover, .tab-k .k-hrow.hl { background: #1c2028; }
+.tab-k .k-axis:hover { background: none; }
+.tab-k .k-who { min-width: 0; } .tab-k .k-nm { display: flex; gap: 0 8px; align-items: baseline; flex-wrap: wrap; } .tab-k .k-nm b { font-weight: 600; font-size: 15px; } .tab-k .k-nm em { font: 12px var(--sans); color: var(--k-mut); font-style: normal; }
+.tab-k .k-dots { display: inline-flex; align-items: center; gap: 3px; margin-top: 3px; } .tab-k .k-dots i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #cfcfcf; display: inline-block; } .tab-k .k-dots i.p { background: #cfcfcf; } .tab-k .k-dots code { margin-left: 6px; font: 12px var(--mono); color: var(--k-mut); }
+.tab-k .k-same { display: block; font-size: 11.5px; color: var(--k-mut); margin-top: 2px; }
+.tab-k .k-mid { min-width: 0; padding: 0 20px; } .tab-k .k-top { display: block; text-wrap: balance; font-size: 12px; line-height: 1.35; color: var(--k-mut); margin-top: 3px; }
+.tab-k .k-pc { white-space: nowrap; font-size: 14px; } .tab-k .k-pc b { font-weight: 600; } .tab-k .k-pc b.c { color: var(--B); }
+.tab-k .k-d { text-align: right; font: 600 15px var(--sans); font-variant-numeric: tabular-nums; color: var(--delta); }
+.tab-k .k-open { font-size: 12.5px; color: var(--k-mut); text-decoration: none; text-align: right; } .tab-k .k-row:hover .k-open, .tab-k .k-row:focus-visible .k-open { color: var(--text); text-decoration: underline; }
+
+/* the dumbbell: faint tick marks at 0, 25, 50, 75, 100 % on the track */
+.tab-k .k-db { position: relative; height: 24px;
+  background: linear-gradient(#4a4a4a, #4a4a4a) 0 50% / 1px 10px no-repeat, linear-gradient(#4a4a4a, #4a4a4a) 25% 50% / 1px 10px no-repeat, linear-gradient(#4a4a4a, #4a4a4a) 50% 50% / 1px 10px no-repeat, linear-gradient(#4a4a4a, #4a4a4a) 75% 50% / 1px 10px no-repeat, linear-gradient(#4a4a4a, #4a4a4a) 100% 50% / 1px 10px no-repeat; }
+.tab-k .k-db::before { content: ""; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: #2c2c2c; }
+.tab-k .k-db i { position: absolute; display: block; }
+.tab-k .k-mb { top: 3px; transform: translateX(-50%); z-index: 3; box-shadow: 0 0 0 1px #0b0b0b; }
+.tab-k .k-mc { top: 5.5px; transform: translateX(-50%); z-index: 2; box-shadow: 0 0 0 1.5px #0b0b0b; }
+.tab-k .k-ln { top: 10.5px; height: 3px; background: var(--B); z-index: 1; border-radius: 1.5px; }
+.tab-k .k-chev { top: 6px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; z-index: 1; }
+.tab-k .k-chev.r { margin-left: 10px; border-left: 9px solid var(--B); } .tab-k .k-chev.l { margin-left: -19px; border-right: 9px solid var(--B); }
+.tab-k .k-ticks { position: relative; height: 16px; } .tab-k .k-ticks span { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 11.5px; color: var(--k-mut); }
+
+/* matched pair: one block, bracket in the gutter, one sentence below */
+.tab-k .k-group { position: relative; margin: 10px 0 14px; padding: 2px 0 6px; background: #13151a; border-radius: 6px; }
+.tab-k .k-gb { position: absolute; left: 7px; top: 8px; bottom: 40px; width: 8px; border: 2px solid #8a8a8a; border-right: 0; border-radius: 5px 0 0 5px; }
+.tab-k .k-group .k-row { border-bottom-color: #23262d; }
+.tab-k .k-pair { margin: 4px 8px 2px var(--k-gut); font: 14px/1.5 var(--sans); color: #d6d6d6; }
+
+/* layer map */
+.tab-k .k-sub { margin: 0 0 8px; font: 14px/1.5 var(--sans); color: #c4c4c4; max-width: 920px; }
+.tab-k .k-mq { margin: 0 0 12px; font: 15px/1.5 var(--serif); color: #e2e0da; max-width: 980px; } .tab-k .k-mq .muted { font: 13px var(--sans); }
+.tab-k #kmap { position: relative; }
+.tab-k .k-hrow { display: grid; grid-template-columns: 206px minmax(0, 1fr) 22px; gap: 0 12px; align-items: center; padding: 3px 4px 3px var(--k-gut); border-radius: 4px; cursor: pointer; position: relative; }
+.tab-k .k-hrow .k-who { padding-right: 4px; } .tab-k .k-hrow .k-nm b { font-size: 14px; }
+.tab-k .k-cells { display: grid; grid-template-columns: repeat(var(--L, 32), 1fr); gap: 1px; height: 24px; } .tab-k .k-cells i { display: block; }
+.tab-k .k-go { font: 22px/1 var(--sans); color: #8d8d8d; text-align: center; } .tab-k .k-hrow:hover .k-go, .tab-k .k-hrow:focus-visible .k-go, .tab-k .k-hrow.hl .k-go { color: var(--text); }
+.tab-k .k-hrow:not(.k-haxis):hover, .tab-k .k-hrow:not(.k-haxis).hl { box-shadow: inset 3px 0 0 var(--B); }
+.tab-k .k-haxis { cursor: default; padding-top: 0; padding-bottom: 0; color: var(--k-mut); font-size: 12px; } .tab-k .k-haxis:hover { background: none; }
+.tab-k .k-lay { display: block; position: relative; height: 16px; } .tab-k .k-lay span { position: absolute; transform: translateX(-50%); }
+.tab-k .k-hnote .k-lay span { transform: none; font-size: 12px; } .tab-k .k-hnote .k-lay .l { left: 0; } .tab-k .k-hnote .k-lay .r { right: 0; left: auto; }
+.tab-k .k-hnote { margin-bottom: 4px; }
+.tab-k .k-hblk { position: relative; margin-bottom: 0; } .tab-k .k-hblk.m { margin: 8px 0 12px; padding: 2px 0; background: #13151a; border-radius: 6px; }
+.tab-k .k-hblk.m .k-gb { top: 6px; bottom: 6px; }
+.tab-k .k-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 206px minmax(0, 1fr) 22px; gap: 0 12px; padding: 0 4px 0 var(--k-gut); pointer-events: none; z-index: 2; }
+.tab-k .k-gl { position: relative; } .tab-k .k-gl i { position: absolute; top: 0; bottom: 0; width: 1px; background: #ffffff26; }
+.tab-k .k-key { margin-top: 12px; font: 13px/1.45 var(--sans); color: #c4c4c4; max-width: 760px; }
+.tab-k .k-kb { display: grid; grid-template-columns: 240px auto; grid-template-rows: auto auto; gap: 2px 12px; align-items: center; width: max-content; }
+.tab-k .k-kb .bar { display: block; height: 12px; border-radius: 3px; }
+.tab-k .k-kb .ends i { font-style: normal; }
+.tab-k .k-kb .ends { grid-row: 2; display: flex; justify-content: space-between; font: 12px var(--mono); color: #d0d0d0; }
+.tab-k .k-kb .unit { grid-row: 1 / span 2; grid-column: 2; font: 12px var(--sans); color: var(--k-mut); }
+.tab-k .k-key p { margin: 8px 0 0; text-wrap: pretty; }
+.tab-k .k-more { margin-top: 26px; font: 14px/1.5 var(--sans); max-width: 920px; } .tab-k .k-more summary { cursor: pointer; color: var(--text); font-weight: 600; }
+.tab-k .k-more dt { font-weight: 600; margin-top: 8px; } .tab-k .k-more dd { margin: 2px 0 0; color: #c4c4c4; }
+.tab-k .k-tip { position: fixed; z-index: 20; max-width: 340px; padding: 7px 10px; background: #1d1f26; border: 1px solid #555; border-radius: 6px; font: 13px/1.4 var(--sans); color: var(--text); pointer-events: none; box-shadow: 0 4px 14px #0008; }
+.tab-k .k-tip[hidden] { display: none; }
+@media (max-width: 1100px) { .tab-k .k-row { grid-template-columns: 170px minmax(0, 1fr) 118px 70px; } .tab-k .k-open { display: none; } .tab-k .k-hrow, .tab-k .k-grid { grid-template-columns: 170px minmax(0, 1fr) 22px; } }
+@media (prefers-reduced-motion: reduce) { .tab-k *, .tab-k *::before, .tab-k *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
 /* First paint while the default run downloads (index.html); main.ts replaces #app when ready. */
 .boot { max-width: 640px; margin: 18vh auto 0; padding: 0 24px; line-height: 1.55; color: #d8d8d8; font-family: var(--sans); }
 .boot b { font-size: 20px; color: var(--text); }
