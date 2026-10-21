@@ -60,22 +60,30 @@ of payload, built from `d8a232d`. Two later commits change only `index.html`, th
 Public static Hugging Face Space `EconLLM/sca2-workbench`
 (https://huggingface.co/spaces/EconLLM/sca2-workbench). It was made public by Augusto on 2026-10-20.
 
-The current deploy is v1.2.1, 2026-10-21, from `c52480d`:
-- all 143 manifest files are on the Space, with 0 sha256 or size mismatches (checked file by file after upload);
-- stage RUNNING;
-- storage 0.916 GB.
+The current deploy is v1.3, 2026-10-21, from `fa04992`. The viewer fetches array byte ranges, caches them in the
+browser, and loads the attention arrays on demand (`plans/WB5_ACCEPTANCE.md`; verification is card `t_4da518a4`).
+- All 143 manifest files are on the Space, with 0 sha256 or size mismatches. Stage RUNNING; storage 0.916 GB.
+- Live, in a fresh Chromium: the landing page opens in 7.3 s (47 s on v1.2). Reloads and the ladder, matrix and
+  Cohort tabs open in 0.5 to 1.9 s and fetch no `.bin` data.
+- Still slow: the first fetch of the attention and gate arrays, which the 3D tab and a pinned head's attention panel
+  need. That is about 40 MB for the default pair, about 42 s on the CDN. After that, those views are also cached.
 
 Earlier deploys:
 - WB2 on 2026-10-19 from `e86d4c2` (receipt `plans/WB2_DEPLOY_RECEIPT.json`);
 - v1 on 2026-10-20 from `2309ab0`;
-- v1.1 on 2026-10-20 from `67200ce`.
+- v1.1 on 2026-10-20 from `67200ce`;
+- v1.2 to v1.2.2 on 2026-10-21 from `1c2a2dd`, `c52480d` and `3c68a82` (whole-file fetches, uncacheable).
 
-Two Hub pitfalls:
+Three Hub pitfalls:
 - **The 1 GB cap counts every LFS object in the Space's history, not just the current files.** When an upload is
   refused, squash the history (`HfApi.super_squash_history`), then `permanently_delete_lfs_files` for objects the
   current tree no longer references. On 2026-10-21 this freed 0.135 GB.
 - **Do not set `app_file` in the Space README.** For a static Space it re-roots the site at that file's folder, so
   `/sca2/index.html` returns 404 and `/exports` breaks.
+
+- **The Hub serves LFS and xet files uncacheable.** Each file is a 302 redirect with `cache-control: no-store` to a
+  freshly signed CDN URL, so the browser's HTTP cache never helps. The viewer therefore fetches byte ranges (the CDN
+  returns 206 with a readable `Content-Range`) and keeps them in the Cache API itself.
 
 Keep the payload at 0.95 GB or less. Deploy from this worktree's `dist/deploy_bundle.tar.gz`: the bundle includes
 gitignored files, so a fresh clone cannot rebuild it. Augusto invites co-authors and grants access. A static Space has no live
