@@ -17,6 +17,14 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   const base = index.pairs.find((p) => p.file === `pair__${a}__${D.B.m.model.key}__${item}.json`)?.a ?? a;
   const rows = index.pairs.filter((p) => p.a === base && p.item_id === item);
   const name = (k: string) => esc(index.models[k]?.label ?? k);
+  // Short row names: "CAN adapter" / "sign prompt 111111". Long labels were clipped at the same prefix, so an
+  // adapter and a sign prompt on the same base could not be told apart.
+  const kindOf = (k: string): { short: string; kind: "adapter" | "prompt" | "other"; cc?: string; bits?: string } => {
+    const l = index.models[k]?.label ?? k;
+    const ad = l.match(/\+ ([A-Z]{3}) LoRA/); if (ad) return { short: `${ad[1]} adapter`, kind: "adapter", cc: ad[1] };
+    const sp = l.match(/sign prompt ([01](?:_[01]){5})/); if (sp) { const bits = sp[1].replace(/_/g, ""); return { short: `sign prompt ${bits}`, kind: "prompt", bits }; }
+    return { short: l, kind: "other" };
+  };
   root.className = "tab-k v3";
   let alive = true;
 
@@ -38,11 +46,18 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
 
   // ---------------- the real map (≥ 3 adapters share the base and the item)
   document.querySelector("#frame .illus")?.remove();
+  const nAd = rows.filter((r) => kindOf(r.b).kind === "adapter").length, nSp = rows.filter((r) => kindOf(r.b).kind === "prompt").length;
+  const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  const who = [nAd ? plural(nAd, "adapter") : "", nSp ? plural(nSp, "sign prompt") : "", rows.length - nAd - nSp ? plural(rows.length - nAd - nSp, "other model") : ""].filter(Boolean).join(" and ");
   root.innerHTML = `
-    <section id="answer" data-obj="answer"><span class="say">${name(base)} vs ${rows.length} adapters on <code>${esc(item)}</code>: <b>who moves the answer, and in which layers</b></span></section>
-    <div class="k-work real"><section class="obj" data-obj="cohort"><header><span class="cap">Change in push by layer · adapter − base · rows sorted by d_margin</span></header><div id="kmap"></div><div class="foot" id="kfoot"></div></section>
+    <section id="answer" data-obj="answer"><span class="say">${name(base)} vs ${who} on <code>${esc(item)}</code>: <b>who moves the answer, and in which layers</b></span></section>
+    <div class="k-work real"><section class="obj" data-obj="cohort"><header><span class="cap">Change in push by layer · adapter − base · rows sorted by d_margin</span></header><div id="kmap"></div><div class="foot" id="kfoot"></div>${nSp ? `<p class="klegend" data-obj="cohort-legend">An <b>adapter</b> learns a country's six preference signs (trust, risk taking, patience, altruism, positive and negative reciprocity) in its weights. A <b>sign prompt</b> gives the unchanged base model the same six signs in words. Rows marked “= CAN's signs” carry exactly that adapter's profile, so the pair compares weights with words on the same information.</p>` : ""}</section>
       <section class="obj" data-obj="dmargin"><header><span class="cap">d_margin · adapter − base</span></header><div id="kdm"></div></section></div>`;
-  Promise.all(rows.map((r) => loadPair(r.file).then((P) => ({ r, P })))).then((got) => {
+  // Country → six signs, from the story data shipped in the same bundle; optional, rows still draw without it.
+  const signs = fetch("/sca2/sca2_data.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
+    const m = new Map<string, string>(); for (const c of d?.countries ?? []) if (c?.cc && Array.isArray(c.bits)) m.set(c.cc, c.bits.join("")); return m;
+  }).catch(() => new Map<string, string>());
+  Promise.all([Promise.all(rows.map((r) => loadPair(r.file).then((P) => ({ r, P })))), signs]).then(([got, bitsOf]) => {
     if (!alive) return;
     const ok = got.filter(({ P }) => P.t.d_attn_attr && P.t.d_mlp_attr) as { r: (typeof rows)[number]; P: Pair }[];
     const L = D.A.m.model.n_layers;
@@ -50,12 +65,19 @@ export function mountCohort(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const host = root.querySelector<HTMLElement>("#kmap")!, W = host.clientWidth, rh = Math.min(28, Math.max(10, (innerHeight - 360) / data.length)), lab = 220, cw = (W - lab) / L;
     const m = Math.max(...data.flatMap((x) => x.lay.map(Math.abs))) || 1, md = Math.max(...data.map((x) => Math.abs(x.d))) || 1;
     let o = "";
-    data.forEach((x, i) => { o += `<text x="0" y="${i * rh + rh * 0.7}">${name(x.b)}</text>`; x.lay.forEach((v, l) => (o += `<rect x="${lab + l * cw}" y="${i * rh}" width="${cw - 1}" height="${rh - 1}" fill="${diverging(v, m)}"><title>${name(x.b)} · layer ${l}: ${sgn(v)}</title></rect>`)); });
+    const shown = new Map<string, string>(); for (const x of data) { const k = kindOf(x.b); if (k.kind === "adapter" && k.cc && bitsOf.get(k.cc)) shown.set(bitsOf.get(k.cc)!, k.cc); }
+    const rowName = (b: string) => { const k = kindOf(b);
+      if (k.kind === "adapter") { const bits = k.cc ? bitsOf.get(k.cc) : undefined; return esc(k.short) + (bits ? ` <tspan fill="#8a8a8a">· signs ${bits}</tspan>` : ""); }
+      if (k.kind === "prompt") { const cc = shown.get(k.bits!); return esc(k.short) + (cc ? ` <tspan fill="#8a8a8a">= ${esc(cc)}'s signs</tspan>` : ""); }
+      return name(b); };
+    data.forEach((x, i) => { o += `<text x="0" y="${i * rh + rh * 0.7}"><title>${name(x.b)}</title>${rowName(x.b)}</text>`; x.lay.forEach((v, l) => (o += `<rect x="${lab + l * cw}" y="${i * rh}" width="${cw - 1}" height="${rh - 1}" fill="${diverging(v, m)}"><title>${name(x.b)} · layer ${l}: ${sgn(v)}</title></rect>`)); });
     for (let l = 0; l < L; l += 5) o += `<text x="${lab + l * cw}" y="${data.length * rh + 14}">L${l}</text>`;
     host.innerHTML = `<svg width="${W}" height="${data.length * rh + 20}">${o}</svg>`;
     root.querySelector("#kfoot")!.innerHTML = `pair <code>d_attn_attr + d_mlp_attr</code> · ±${fmt(m, 3)}, square-root scale · blue toward “${esc(D.A.m.item.j_plus)}”, orange toward “${esc(D.A.m.item.j_minus)}”`;
     const dh = root.querySelector<HTMLElement>("#kdm")!, W2 = dh.clientWidth; let o2 = `<line x1="${W2 / 2}" x2="${W2 / 2}" y1="0" y2="${data.length * rh}" stroke="#555"/>`;
-    data.forEach((x, i) => (o2 += `<rect x="${x.d >= 0 ? W2 / 2 : W2 / 2 - (W2 / 2 - 10) * -x.d / md}" y="${i * rh + 1}" width="${(W2 / 2 - 10) * Math.abs(x.d) / md}" height="${rh - 2}" fill="${C.delta}"><title>${sgn(x.d)}</title></rect>`));
+    data.forEach((x, i) => { const w = (W2 / 2 - 44) * Math.abs(x.d) / md, x0 = x.d >= 0 ? W2 / 2 : W2 / 2 - w;
+      o2 += `<rect x="${x0}" y="${i * rh + 1}" width="${w}" height="${rh - 2}" fill="${C.delta}"><title>${sgn(x.d)}</title></rect>`;
+      o2 += `<text x="${x.d >= 0 ? x0 + w + 4 : x0 - 4}" y="${i * rh + rh * 0.7}" text-anchor="${x.d >= 0 ? "start" : "end"}" fill="#d8d8d8" font-size="12">${sgn(x.d, 3)}</text>`; });
     dh.innerHTML = `<svg width="${W2}" height="${data.length * rh}">${o2}</svg>`;
     ctx.ready();
   }).catch((e) => { (window as any).__ready = "error: " + String(e); });

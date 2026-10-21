@@ -3,24 +3,35 @@
 // Copy: design/layout-v2/COPY.md L01–L37 with the PM rulings (K2, K10, K11, K24; DPO training data).
 
 import type { Bundle } from "./data";
-import type { Tab } from "./main";
 import { A_COL, B_COL, C, dAttr, esc, isBank, labelPlus, learnText, lm, makeRamp, mix, rampU, roleOf, segmentsOf, sgn, short } from "./common";
+import { TEACHING } from "./main";
 
-export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | null, extra?: Record<string, string>) => void }): () => void {
+export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: import("./main").Tab | null, extra?: Record<string, string>) => void }): () => void {
   void nav;
   const L = D.A.m.model.n_layers, T = D.A.m.tokens.length, it = D.A.m.item, bank = isBank(D.A);
   const adapter = !!D.B.m.model.adapter;
   const nameA = roleOf(D, "A") ? "A · original" : `A · ${short(D.A.m.model.label, 18)}`;
   const nameB = roleOf(D, "B") ? "B · fine-tuned" : `B · ${short(D.B.m.model.label, 18)}`;
   const lp = labelPlus(D.A);
+  // Model facts for the copy, all read from the run manifest (never typed): the Paper B base or the teaching model.
+  const M = D.A.m.model as typeof D.A.m.model & { d_model?: number; d_ffn?: number; n_heads: number };
+  const H = M.n_heads, dModel = M.d_model ?? 0, dFfn = M.d_ffn ?? 0, n = (v: number) => v.toLocaleString("en-US");
+  const teach = (M.key ?? "").startsWith("smol");
+  const modelName = esc(M.label.split(" [")[0]);
+  const nf4 = /nf4_dequant/.test(M.key ?? "");
+  const adB = D.B.m.model.adapter as unknown as { country?: string; r?: number; target_modules?: string[] } | string | null;
+  const ccB = adB && typeof adB === "object" ? adB.country : undefined;
+  const spB = D.B.m.model.label.match(/sign prompt ([01](?:_[01]){5})/)?.[1]?.replace(/_/g, "");
+  const teachHref = `?a=${TEACHING.a}&b=${TEACHING.b}&item=${TEACHING.item}`;
   app.innerHTML = `<div class="wrap">
-<nav class="lnav" data-obj="nav"><span class="brand" title="SCA2 = Synthetic Cultural Agents from Aggregate Anchors">SCA2 workbench</span><span class="sp"></span><a href="/sca2/index.html">SCA2 story</a><a href="#s1">How it works</a><a href="#s4">Limits</a><a href="#" data-learn="terms">Terms</a><a class="open" href="#" data-go="c">Open the workbench →</a></nav>
+<nav class="lnav" data-obj="nav"><span class="brand" title="SCA2 = Synthetic Cultural Agents from Aggregate Anchors">SCA2 workbench</span><span class="sp"></span><a href="/sca2/index.html">Paper B story</a><a href="#s1">How it works</a><a href="#s4">Limits</a><a href="#" data-learn="terms">Terms</a><a class="open" href="#" data-go="c">Open the workbench →</a></nav>
 <div class="hero3">
   <div class="hl">
     <h1 data-obj="h1">Where does a language model's <em>survey answer</em> come from?</h1>
-    <div data-obj="lede"><p class="lede">We ask a small language model a ${bank ? "question about an everyday scenario" : "survey question"}. Its answer is a probability for each response code. We split that answer into the contributions of the model's parts, check that they add up, and compare a model before and after a fine-tune, part by part.</p>
+    <div data-obj="lede"><p class="lede">We ask a language model a ${bank ? "question about an everyday scenario" : "survey question"}. Its answer is a probability for each response code. We split that answer into the contributions of the model's parts, check that they add up, and compare a model before and after a fine-tune, part by part.</p>
+    <p class="small2">${teach ? `This page is showing the <b>teaching example</b>: ${modelName}, a small model from the development stage, chosen so every number can be checked quickly. <a href="?" class="u">Show the Paper B model instead</a>.` : `Model here: <b>${modelName}</b>, the base of the Paper B country adapters${ccB ? `, against its <b>${esc(ccB)}</b> adapter` : spB ? `, against the same model with the sign prompt ${spB}` : ""}. <a href="${teachHref}" class="u">Teaching example on a small model</a>.`}</p>
     <p class="small2">For readers who know regression and survey items. No machine-learning background assumed. SCA2 is <i>Synthetic Cultural Agents from Aggregate Anchors</i> (arXiv:2610.06562).</p></div>
-    <div class="cta3" data-obj="cta"><a class="p" href="#" data-go="c">Open the workbench</a><a href="#s1">How it works ↓</a></div>
+    <div class="cta3" data-obj="cta"><a class="p" href="#" data-go="c">Open the workbench</a><a href="/sca2/index.html">Read the Paper B story</a><a href="#s1">How it works ↓</a></div>
   </div>
   <figure class="hf" data-obj="hero"><div class="cap">The margin, layer by layer · real data</div><svg id="hero" viewBox="0 0 560 330" width="100%"></svg><figcaption id="heroCap"></figcaption></figure>
 </div>
@@ -28,8 +39,8 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
 <section class="s" id="s1"><div class="sn"><b>1</b>what is inside the model</div><div>
   <h2>A running total, written to by many small parts</h2>
   <div class="prose">
-    <p>The model cuts the prompt into tokens (word pieces). Each token gets a list of 576 numbers. We call that list the <b>running state</b>. Every layer reads it and adds to it. Nothing is overwritten, like a ledger where each layer posts new entries. This model has ${L} layers.</p>
-    <p>Each layer adds two kinds of entries. <b>Attention heads</b> (9 per layer) let a token look back at earlier tokens: each head picks which earlier words to read from and adds a summary. The <b>MLP</b> (a small neural network, 1,536 hidden units per layer) then transforms each token on its own. After the last layer, the final state at the last position is turned into a score for every possible next token.</p>
+    <p>The model cuts the prompt into tokens (word pieces). Each token gets a list of ${n(dModel)} numbers. We call that list the <b>running state</b>. Every layer reads it and adds to it. Nothing is overwritten, like a ledger where each layer posts new entries. This model has ${L} layers.</p>
+    <p>Each layer adds two kinds of entries. <b>Attention heads</b> (${H} per layer) let a token look back at earlier tokens: each head picks which earlier words to read from and adds a summary. The <b>MLP</b> (a small neural network, ${n(dFfn)} hidden units per layer) then transforms each token on its own. After the last layer, the final state at the last position is turned into a score for every possible next token.</p>
     <p>Because everything is added, the final score can be split into the parts that added to it. The split is exact for the margin when the final rescaling is held fixed (see section 2). That is the property the whole workbench rests on.</p>
   </div>
   <div class="cols">
@@ -46,9 +57,9 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
     <p><b>The answer.</b> At the answer position the model gives a score to every possible next token. We keep only the scores for the response codes and turn them into probabilities. This is the same form as a multinomial logit: the scores play the part of the linear index, and the probabilities are the choice shares. (This is Eq. 6 of the SCA2 paper (arXiv:2610.06562).) The <b>margin</b> is the gap between the scores of two codes. It equals the log of their odds, and positive means the model leans toward the first.</p>
     <div class="eq">P(code j | prompt) = exp(z<sub>j</sub>) / Σ<sub>k ∈ codes</sub> exp(z<sub>k</sub>)        margin = z<sub>j₊</sub> − z<sub>j₋</sub></div>
     <p class="eqnote">z is the model's raw score for a code. The probability is that code's share of exp(score) among the response codes.</p>
-    <p><b>The split.</b> Direct logit attribution (DLA) gives each part a share of the margin, like splitting a logit index into its β·x terms. Each part's entry is read straight through the model's last steps, with the final rescaling held fixed. Then the margin is the sum of an embedding term, 270 head terms and 46,080 neuron terms, with nothing left over. This is the direct effect only: a part that changes what a later layer does gets no credit for that path (see Limits).</p>
-    <p><b>The checks.</b> Every run uses 64-bit arithmetic (float64) and has to pass three tests. (1) The parts add up to the final state, to within 1e-3. (2) The parts add up to the margin, to within 1e-2. (3) Our code reproduces the Hugging Face reference implementation to within 1e-10 (relative), once the reference's own 32-bit rounding steps are switched off. If a check fails, the check glyph in the frame turns into a red banner that cannot be dismissed. The numbers are in the table below.</p>
-    <p><b>Before and after.</b> The same prompt goes through two models. A is ${esc(D.A.m.model.label)}. B is ${esc(D.B.m.model.label)}${adapter ? ": A plus a small add-on (a LoRA adapter) trained with DPO on made-up everyday scenarios, preferring the answer that matches the USA's direction on the Global Preferences Survey (e.g. more trusting, more patient)" : ""}. For every layer and token, we store how far B's vector is from A's, and also how far the weights moved.</p>
+    <p><b>The split.</b> Direct logit attribution (DLA) gives each part a share of the margin, like splitting a logit index into its β·x terms. Each part's entry is read straight through the model's last steps, with the final rescaling held fixed. Then the margin is the sum of an embedding term, ${n(L * H)} head terms and ${n(L * dFfn)} neuron terms, with nothing left over. This is the direct effect only: a part that changes what a later layer does gets no credit for that path (see Limits).</p>
+    <p><b>The checks.</b> Every run uses 64-bit arithmetic (float64)${nf4 ? ", on the 4-bit (NF4) weights the adapters were trained on, dequantized" : ""}, and has to pass closure tests before it is shown: the parts add up to the final state and to the margin, and our forward pass matches the Hugging Face reference implementation. If a check fails, the check glyph in the frame turns into a red banner that cannot be dismissed. The tolerances and this run's values are in the table below.</p>
+    <p><b>Before and after.</b> The same prompt goes through two models. A is ${esc(D.A.m.model.label)}. B is ${esc(D.B.m.model.label)}${ccB && adB && typeof adB === "object" ? `: A plus a small add-on (a rank-${adB.r ?? "?"} LoRA adapter on the attention weights) for ${esc(ccB)}, trained with DPO on synthetic everyday scenarios labelled with ${esc(ccB)}'s six preference signs from the Global Preferences Survey (trust, risk taking, patience, altruism, positive and negative reciprocity). The cohort has one such adapter per country, 42 in all` : adapter ? ": A plus a small add-on (a LoRA adapter) trained with DPO on made-up everyday scenarios, preferring the answer that matches the USA's direction on the Global Preferences Survey (e.g. more trusting, more patient)" : spB ? `: the same weights as A, with the six signs ${spB} written into the prompt. No weight changes` : ""}. For every layer and token, we store how far B's vector is from A's, and also how far the weights moved.</p>
   </div>
   <p class="prose story" id="s2b"></p>
   <div class="cols">
@@ -60,20 +71,22 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
 
 <section class="s" id="s3"><div class="sn"><b>3</b>the three views</div><div>
   <h2>Four views of the same model run</h2>
-  <div class="prose"><p>All three views draw the same saved numbers from the same run. Pick by the question you have. <b>Which parts decided the answer?</b> Start with the ladder. <b>Where, in the prompt and in depth, did the fine-tune change things?</b> Use the matrix. <b>What does the whole run look like?</b> Use the 3D object. Hover anything to compare A and B.</p></div>
+  <div class="prose"><p>All four views draw the same saved numbers. Pick by the question you have. <b>Which parts decided the answer?</b> Start with the ladder. <b>Where, in the prompt and in depth, did the fine-tune change things?</b> Use the matrix. <b>What does the whole run look like?</b> Use the 3D object. <b>Do weights and words move the answer alike?</b> Use Cohort: one base against several adapters and sign prompts on the same item. Hover anything to compare A and B.</p></div>
   <div class="shots">
-    <a href="#" data-go="c"><img src="/screens/v3/ladder-1440.png" alt="the ladder"><h3>The ladder</h3><p>Every attention head and MLP at the answer position, one face at a time (B − A by default; A and B one press away). Each face re-sums to its margin. Gold rings mark the five largest changes.</p></a>
-    <a href="#" data-go="b"><img src="/screens/v3/matrix-1440.png" alt="the matrix"><h3>The matrix</h3><p>One layer-by-token map of the attention writes, showing the change ‖B − A‖ by default, with the margin by layer on the same rows. Template text is squeezed, not dropped.</p></a>
-    <a href="#" data-go="a"><img src="/screens/v3/object-1440.png" alt="the 3D object"><h3>The 3D object</h3><p>The whole run as 3D blocks (token by layer by size): A next to the change ‖B − A‖, with the margin between them and a prompt map below. The fourth view, Cohort, waits for exports of more adapters.</p></a>
+    <a href="#" data-go="c"><img src="/screens/v4/ladder-1440.png" alt="the ladder"><h3>The ladder</h3><p>Every attention head and MLP at the answer position, one face at a time (B − A by default; A and B one press away). Each face re-sums to its margin. Gold rings mark the five largest changes.</p></a>
+    <a href="#" data-go="b"><img src="/screens/v4/matrix-1440.png" alt="the matrix"><h3>The matrix</h3><p>One layer-by-token map of the attention writes, showing the change ‖B − A‖ by default, with the margin by layer on the same rows. Template text is squeezed, not dropped.</p></a>
+    <a href="#" data-go="a"><img src="/screens/v4/object-1440.png" alt="the 3D object"><h3>The 3D object</h3><p>The whole run as 3D blocks (token by layer by size): A next to the change ‖B − A‖, with the margin between them and a prompt map below.</p></a>
+    <a href="#" data-go="k"><img src="/screens/v4/cohort-1440.png" alt="the cohort view"><h3>Cohort</h3><p>One base against every exported adapter and sign prompt on the same item, layer by layer, sorted by how far each moves the margin.</p></a>
   </div>
-  <p class="muted small">Thumbnails are screenshots of this app (viewer/screens/v3), default pair and prompt.</p>
+  <p class="muted small">Thumbnails are screenshots of this app (viewer/screens/v4) at the default pair and prompt.</p>
 </div></section>
 
 <section class="s" id="s4"><div class="sn"><b>4</b>limits</div><div>
   <h2>What this does not show</h2>
   <div class="lim">
     <div><b>Direct effect only</b>DLA credits each part for what it adds straight to the answer. A head that changes what a later layer does gets no credit for that indirect path. In regression terms, it is a direct effect with the mediators held out. A large DLA does not show that the part causes the answer; that needs ablation or patching. The clamped run is the one such intervention here: it switches off the Quadrant III neurons and runs the model again (the purple ticks).</div>
-    <div><b>A 135M stand-in</b>SmolLM2-135M is a small model, chosen so that every run can be done in float64 and checked. The paper's models are larger. Patterns here show the method. They are not findings about those larger models.</div>
+    ${teach ? `<div><b>A 135M stand-in</b>SmolLM2-135M is a small model, chosen so that every run can be done in float64 and checked. The paper's models are larger. Patterns here show the method. They are not findings about those larger models.</div>` : `<div><b>Re-run on CPU, not the scoring run</b>These captures run the Paper B base and adapters again on CPU in 64-bit arithmetic${nf4 ? " from the 4-bit (NF4) weights" : ""}. The Paper B scores came from separate GPU runs; the archive check in the frame compares each capture with its archived score.</div>
+    <div><b>Featured pairs only</b>The workbench ships a curated set of adapter and sign-prompt pairs on a few items, not every country on every item. Nothing here is a cohort statistic; those are on the Paper B story page.</div>`}
     <div><b>Norms hide direction</b>Block heights are the lengths of vectors. Two writes of equal length can point in unrelated directions. Only the answer-position numbers (DLA) say which way a write pushes the answer.</div>
     <div><b>Only the top 16 attention weights are kept</b>For each head and token we keep the 16 largest attention weights. Attention lines and prompt shading use only those. The “covered” figure says how much of the head's total attention they account for.</div>
     <div><b>One question at a time</b>Each view shows one prompt. Nothing here averages over questions, so nothing here is a statistic about a population.</div>
@@ -113,13 +126,13 @@ export function mountLanding(app: HTMLElement, D: Bundle, nav: { go: (t: Tab | n
   // ILLUSTRATION: the running state as a vertical bus; layers add attention + MLP entries
   {
     let s = ""; const bx = 230;
-    s += `<rect x="${bx - 9}" y="20" width="18" height="250" rx="4" fill="#1a2233" stroke="#3a4a6a"/><text x="${bx}" y="292" fill="#8fa6cf" font-size="11" text-anchor="middle">running state h (576 numbers)</text>`;
+    s += `<rect x="${bx - 9}" y="20" width="18" height="250" rx="4" fill="#1a2233" stroke="#3a4a6a"/><text x="${bx}" y="292" fill="#8fa6cf" font-size="11" text-anchor="middle">running state h (${n(dModel)} numbers)</text>`;
     s += `<text x="${bx}" y="14" fill="#bbb" font-size="11" text-anchor="middle">→ final rescaling → scores for ${it.codes.slice(0, 4).map((c) => `“${esc(c)}”`).join(" ")}</text>`;
     ([[210, "layer 0"], [130, "layer 1"], [50, `layer ${L - 1}`]] as const).forEach(([y, name], i) => {
       s += `<text x="20" y="${y + 24}" fill="#999" font-size="11">${name}</text>`;
-      for (let h = 0; h < 9; h++) s += `<rect x="${78 + h * 13}" y="${y + 6}" width="10" height="${10 + ((h * 7 + i * 3) % 5) * 3}" fill="#3c4658" stroke="#5a6780"/>`;
-      s += `<text x="78" y="${y + 50}" fill="#8fa6cf" font-size="10">9 attention heads</text><path d="M196 ${y + 18} L${bx - 10} ${y + 18}" stroke="#8fa6cf" marker-end="url(#ar)"/>`;
-      s += `<rect x="282" y="${y + 4}" width="120" height="26" fill="#2b2a26" stroke="#6e6a5e"/><text x="342" y="${y + 21}" fill="#a8a49a" font-size="10" text-anchor="middle">MLP · 1,536 neurons</text><path d="M281 ${y + 17} L${bx + 10} ${y + 17}" stroke="#a8a49a" marker-end="url(#ar2)"/>`;
+      for (let h = 0; h < Math.min(H, 9); h++) s += `<rect x="${78 + h * 13}" y="${y + 6}" width="10" height="${10 + ((h * 7 + i * 3) % 5) * 3}" fill="#3c4658" stroke="#5a6780"/>`;
+      s += `<text x="78" y="${y + 50}" fill="#8fa6cf" font-size="10">${H} attention heads${H > 9 ? " (9 drawn)" : ""}</text><path d="M196 ${y + 18} L${bx - 10} ${y + 18}" stroke="#8fa6cf" marker-end="url(#ar)"/>`;
+      s += `<rect x="282" y="${y + 4}" width="120" height="26" fill="#2b2a26" stroke="#6e6a5e"/><text x="342" y="${y + 21}" fill="#a8a49a" font-size="10" text-anchor="middle">MLP · ${n(dFfn)} neurons</text><path d="M281 ${y + 17} L${bx + 10} ${y + 17}" stroke="#a8a49a" marker-end="url(#ar2)"/>`;
       s += `<text x="${bx + 14}" y="${y + 44}" fill="#666" font-size="12">+</text>`; if (i === 1) s += `<text x="${bx}" y="${y - 20}" fill="#555" font-size="14" text-anchor="middle">⋮</text>`;
     });
     s = `<defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="#8fa6cf"/></marker><marker id="ar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="#a8a49a"/></marker></defs>` + s;

@@ -22,7 +22,10 @@ import { mountMatrix } from "./tab-b";
 import { mountObject } from "./tab-a";
 import { mountCohort } from "./tab-k";
 
-export const DEFAULT = { a: "smol_inst", b: "smol_inst_usa_e3", item: "wvs_Q81" };
+// Default: the Paper B base against the CAN cohort-1 adapter on wvs_Q43. The SmolLM2-135M pair stays reachable
+// as the teaching example (TEACHING; landing link).
+export const DEFAULT = { a: "llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27", b: "llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_can", item: "wvs_Q43" };
+export const TEACHING = { a: "smol_inst", b: "smol_inst_usa_e3", item: "wvs_Q81" };
 export type Tab = "c" | "b" | "a" | "k";
 const SHARED = ["tab", "a", "b", "item", "learn", "fail"];
 
@@ -44,6 +47,7 @@ let index: IndexFile;
 let D: Bundle | null = null;
 let unmount: (() => void) | null = null;
 let ac: AbortController | null = null;
+let routeSeq = 0;   // only the newest route() may draw or report an error
 const memory: Partial<Record<Tab, URLSearchParams>> = {};   // per-tab keys, kept while you visit other tabs
 
 const url = () => new URLSearchParams(location.search);
@@ -133,11 +137,16 @@ async function route() {
   if (ac) ac.abort();
   ac = new AbortController();
   W.__ready = false;
+  const seq = ++routeSeq;
+  // While the next pair loads, the old figures stay visible only greyed out, so they are never read as the new pair.
+  for (const el of app.querySelectorAll<HTMLElement>("#view, #status, #answer")) el.classList.add("stale");
   document.querySelector<HTMLDialogElement>("dialog#learn")?.close();
   const p = url(), tab = p.get("tab") as Tab | null;
   const { a, b, item } = shared(p);
   try {
-    D = await loadBundle(a, b, item);
+    const got = await loadBundle(a, b, item);
+    if (seq !== routeSeq) return;
+    D = got;
     if (!tab || !(tab in TABS)) {
       app.className = "landing";
       unmount = mountLanding(app, D, { go });
@@ -158,10 +167,13 @@ async function route() {
     }
     if (p.get("learn")) openLearn(D, p.get("learn")!);
   } catch (e) {
-    const pre = document.createElement("pre");
-    pre.className = "err";
-    pre.textContent = String(e);
-    app.prepend(pre);
+    if (seq !== routeSeq) return;
+    // Never leave the previous pair's figures under the new selection: clear everything and say why.
+    D = null;
+    app.className = "wb";
+    app.innerHTML = `<div class="loadfail" role="alert" data-obj="loadfail"><b>This pair could not be loaded, so nothing is shown.</b>
+      <pre class="err">${esc(String(e))}</pre>
+      <p>No figure from another pair is left on screen. Reload the page, or <a href="?tab=c">open the default view</a>.</p></div>`;
     W.__ready = "error: " + String(e);
   }
 }

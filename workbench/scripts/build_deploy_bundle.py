@@ -20,8 +20,12 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent.parent
 MAX_BYTES = 950_000_000
-SCRATCH = Path.home() / '.hermes/profiles/engineer/cache/scratch/wb1'
-IMAGES = ('ladder-1440.png', 'matrix-1440.png', 'object-1440.png', 'cohort-illustration.png')
+# Resolved, so a symlinked scratch root (macOS /var -> /private/var) cannot trip the symlink guard.
+SCRATCH = Path(os.environ.get('SCA2_BUNDLE_SCRATCH', Path.home() / '.hermes/cache/scratch/wb-bundle')).resolve()
+# Landing thumbnails (v4, the default pair) and the Cohort empty-state illustration (v3).
+IMAGES = ('v4/ladder-1440.png', 'v4/matrix-1440.png', 'v4/object-1440.png', 'v4/cohort-1440.png',
+          'v3/cohort-illustration.png')
+PIN = r'export const {}\s*=\s*\{{\s*a:\s*"([^"]+)",\s*b:\s*"([^"]+)",\s*item:\s*"([^"]+)"\s*\}}'
 
 
 def sha256(p: Path) -> str:
@@ -142,7 +146,7 @@ def build_bundle(args) -> int:
         for name in ('index.html', 'sca2_data.json'):
             copy(dist / 'sca2' / name, 'sca2/' + name, 'story')
         for name in IMAGES:
-            copy(viewer / 'screens/v3' / name, 'screens/v3/' + name, 'image')
+            copy(viewer / 'screens' / name, 'screens/' + name, 'image')
         story = read_json(stage / 'sca2/sca2_data.json')
         public_metadata(story)
         export = story['export']
@@ -157,16 +161,27 @@ def build_bundle(args) -> int:
             story['featured'], adapter_index, base)
         prompt_selected = {(base, f['prompt_' + side], f['item'])
                            for f in prompt_features for side in ('x', 'y')}
-        # Follow the actual viewer default; refuse a changed/unrecognizable declaration.
+        # Follow the actual viewer default (required) and teaching pair (optional); each must exist in
+        # exactly one export folder, and is shipped from there. Refuse a changed/unrecognizable declaration.
         main = (viewer / 'src/main.ts').read_text()
-        default = re.search(r'export const DEFAULT\s*=\s*\{\s*a:\s*"([^"]+)",\s*b:\s*"([^"]+)",\s*item:\s*"([^"]+)"\s*\}', main)
+        default = re.search(PIN.format('DEFAULT'), main)
         if not default:
             raise ValueError('Cannot resolve viewer DEFAULT from src/main.ts')
+        teaching = re.search(PIN.format('TEACHING'), main)
+        roots = {w / 'exports': set(), source_dir: selected, prompt_source_dir: prompt_selected}
+        for pin in [default] + ([teaching] if teaching else []):
+            homes = [root for root in roots
+                     if any((r['a'], r['b'], r['item_id']) == pin.groups()
+                            for r in read_json(root / 'index.json')['pairs'])]
+            if len(homes) != 1:
+                raise ValueError(f'Viewer pin {pin.groups()} found in {len(homes)} export folders, need exactly 1')
+            roots[homes[0]] = roots[homes[0]] | {pin.groups()}
         curated = {'models': {}, 'runs': [], 'pairs': []}
         source_indexes = []
         schemas = set()
-        for root, wanted in [(w / 'exports', {default.groups()}), (source_dir, selected),
-                             (prompt_source_dir, prompt_selected)]:
+        for root, wanted in roots.items():
+            if not wanted:
+                continue
             index_path = root / 'index.json'
             index = read_json(index_path)
             schemas.add(index['schema'])

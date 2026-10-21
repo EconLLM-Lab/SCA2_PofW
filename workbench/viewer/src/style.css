@@ -333,3 +333,11 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 #app.wb { padding-bottom: 40px; box-sizing: border-box; }
 .v3 .tnext { margin-left: 6px; font: 11px var(--mono); color: var(--muted); }
 #mleg { font: 11px var(--mono); color: var(--muted); }
+
+/* Loading and failure (main.ts route): stale figures are greyed and inert; a failed load clears the page. */
+.stale { opacity: .22; pointer-events: none; transition: opacity .12s; }
+.loadfail { max-width: 760px; margin: 64px auto; padding: 20px 24px; border: 1px solid var(--bad); border-radius: 8px; line-height: 1.5; }
+.loadfail pre.err { white-space: pre-wrap; overflow-wrap: anywhere; padding: 8px 0; }
+.loadfail a { color: inherit; text-decoration: underline; }
+/* Cohort rows: kind tags and d_margin values */
+.tab-k .klegend { margin: 6px 0 0; font-size: 13px; color: #c4c4c4; max-width: 980px; line-height: 1.45; }

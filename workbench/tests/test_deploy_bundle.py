@@ -16,7 +16,7 @@ SPEC = importlib.util.spec_from_file_location(
 )
 builder = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(builder)
-SCRATCH = Path.home() / '.hermes/profiles/engineer/cache/scratch/wb1'
+SCRATCH = builder.SCRATCH
 
 
 def put(path, data):
@@ -59,11 +59,13 @@ def fixture(monkeypatch):
         put(w / 'viewer/public/sca2/sca2_data.json', story)
         (w / 'viewer/public/sca2/index.html').write_text('<h1>Story</h1>')
         (w / 'viewer/src').mkdir()
-        (w / 'viewer/src/main.ts').write_text('export const DEFAULT = { a: "smol_inst", b: "smol_inst_usa_e3", item: "wvs_Q81" };')
-        for name in ['ladder', 'matrix', 'object']:
-            p = w / f'viewer/screens/v3/{name}-1440.png'
+        (w / 'viewer/src/main.ts').write_text('export const DEFAULT = { a: "BASE", b: "BASE_arg", item: "wvs_Q57" };\n'
+                                              'export const TEACHING = { a: "smol_inst", b: "smol_inst_usa_e3", item: "wvs_Q81" };')
+        for name in ['ladder', 'matrix', 'object', 'cohort']:
+            p = w / f'viewer/screens/v4/{name}-1440.png'
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(b'synthetic image')
+        (w / 'viewer/screens/v3').mkdir(parents=True, exist_ok=True)
         (w / 'viewer/screens/v3/not-allowed.png').write_bytes(b'not shipped')
         (w / 'viewer/screens/v3/cohort-illustration.png').write_bytes(b'synthetic cohort')
         for folder, pairs in [('', [('smol_inst', 'smol_inst_usa_e3', 'wvs_Q81')]),
@@ -135,7 +137,8 @@ def test_real_archive_closure_and_manifest(fixture):
         assert files['exports/' + name] == source.read_bytes()
         binary = json.loads(files['exports/' + name])['bin']
         assert files['exports/' + binary] == (source.parent / binary).read_bytes()
-    assert 'screens/v3/ladder-1440.png' in files and 'screens/v3/cohort-illustration.png' in files
+    assert 'screens/v4/ladder-1440.png' in files and 'screens/v4/cohort-1440.png' in files
+    assert 'screens/v3/cohort-illustration.png' in files and 'screens/v3/ladder-1440.png' not in files
     assert not any('unused' in x or 'stale' in x or 'not-allowed' in x for x in files)
     assert len(manifest['source_indexes']) == 3
     assert manifest['story_sources'][0]['sha256'] == 'a' * 64
@@ -151,7 +154,7 @@ def test_fail_closed(fixture, monkeypatch, failure):
         p = next(root.glob(f'{prefix}__*wvs_Q57.json'))
         (p.with_suffix('.bin') if failure == 'binary' else p).unlink()
     elif failure == 'image':
-        (w / 'viewer/screens/v3/object-1440.png').unlink()
+        (w / 'viewer/screens/v4/object-1440.png').unlink()
     elif failure in {'absolute', 'traversal'}:
         p = next(root.glob('run__*wvs_Q57.json'))
         data = json.loads(p.read_text())
@@ -223,3 +226,26 @@ def test_compressed_limit_measured_separately(fixture, monkeypatch):
         builder.build_bundle(args)
     assert out.read_bytes() == before
     assert report.read_bytes() == previous_manifest
+
+
+def test_viewer_pins_resolve_to_their_export_folder(fixture):
+    """DEFAULT lives in the adapter folder and TEACHING in the root folder; both ship, each from its own home."""
+    w, args, _ = fixture
+    assert builder.build_bundle(args) == 0
+    with tarfile.open(w / 'dist/deploy_bundle.tar.gz') as tar:
+        index = json.loads(tar.extractfile('exports/index.json').read())
+    pairs = {(r['a'], r['b'], r['item_id']) for r in index['pairs']}
+    assert ('BASE', 'BASE_arg', 'wvs_Q57') in pairs and ('smol_inst', 'smol_inst_usa_e3', 'wvs_Q81') in pairs
+
+
+@pytest.mark.parametrize('pin', ['missing', 'teaching-missing'])
+def test_unresolvable_viewer_pin_fails_closed(fixture, pin):
+    w, args, _ = fixture
+    main = w / 'viewer/src/main.ts'
+    if pin == 'missing':
+        main.write_text('export const DEFAULT = { a: "BASE", b: "BASE_nowhere", item: "wvs_Q57" };')
+    else:
+        main.write_text('export const DEFAULT = { a: "BASE", b: "BASE_arg", item: "wvs_Q57" };\n'
+                        'export const TEACHING = { a: "smol_inst", b: "smol_gone", item: "wvs_Q81" };')
+    with pytest.raises(ValueError, match='Viewer pin'):
+        builder.build_bundle(args)
