@@ -14,7 +14,7 @@
 // disposal (disposeScene, renderLists.dispose) is in scene.ts / tab-a.ts and runs on every rebuild
 // and whenever the 3D tab is left.
 
-import { loadBundle, loadIndex, type Bundle, type IndexFile } from "./data";
+import { ensureHeavy, loadBundle, loadIndex, type Bundle, type IndexFile } from "./data";
 import { checkLine, checksOf, esc, openLearn, roleOf } from "./common";
 import { mountLanding } from "./landing";
 import { mountLadder } from "./tab-c";
@@ -145,6 +145,9 @@ async function route() {
   const { a, b, item } = shared(p);
   try {
     const got = await loadBundle(a, b, item);
+    // The 3D object draws the attention and gate arrays (~20 MB per Llama run), so it waits for them. The ladder
+    // and the matrix draw without them and fill their attention panels in when they arrive ("sca2:heavy").
+    if (tab === "a") await ensureHeavy(got);
     if (seq !== routeSeq) return;
     D = got;
     if (!tab || !(tab in TABS)) {
@@ -164,6 +167,11 @@ async function route() {
         mode: (on) => { const c = app.querySelector<HTMLElement>("#clampchip"); if (c) c.hidden = !on; },
       };
       unmount = TABS[tab](view, D, ctx);
+      if (tab === "c" || tab === "b") {
+        const D0 = D;
+        ensureHeavy(D0).then(() => { if (seq === routeSeq) document.dispatchEvent(new Event("sca2:heavy")); })
+          .catch((e) => { if (seq === routeSeq) console.error(`attention arrays failed to load: ${e}`); });
+      }
     }
     if (p.get("learn")) openLearn(D, p.get("learn")!);
   } catch (e) {

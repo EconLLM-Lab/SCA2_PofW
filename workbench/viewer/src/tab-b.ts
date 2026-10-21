@@ -199,6 +199,7 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   $("work").classList.toggle("pinned", !!pin);
   drawer(); draw();
   const ro_ = new ResizeObserver(() => draw()); ro_.observe($("work"));
+  document.addEventListener("sca2:heavy", () => drawer(), { signal: ctx.signal });
   requestAnimationFrame(() => { draw(); ctx.ready(); });
   return () => { ro_.disconnect(); tip.hidden = true; };
 }

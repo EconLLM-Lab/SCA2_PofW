@@ -95,27 +95,94 @@ export class Tensor {
   sum(): number { let s = 0; for (const v of this.data) s += v; return s; }
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
+async function fetchText(url: string): Promise<string> {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  return r.json() as Promise<T>;
+  return r.text();
+}
+async function fetchJson<T>(url: string): Promise<T> { return JSON.parse(await fetchText(url)) as T; }
+
+// ---------------- Arrays: byte ranges of the immutable .bin files, cached in the browser.
+// The Hub serves each .bin through a no-store redirect with a freshly signed URL, so the HTTP cache never reuses a
+// download and every page load used to refetch ~45 MB. Instead: (1) fetch only the byte ranges a view needs
+// (HTTP Range; the .bin files themselves are unchanged), and (2) keep each range in the Cache API under a key that
+// includes the SHA-256 of the run's manifest text, so a changed export can never be served from a stale entry.
+// Every array is still checked against the manifest's byte count.
+
+/** Heavy arrays: drawn only by the 3D object and by the attention shading / pin inspector. Loaded on demand. */
+export const HEAVY = new Set(["attn_topk_idx", "attn_topk_val", "attn_topk_mass", "g_last", "u_last", "c_last"]);
+const RANGE_CACHE = "sca2-ranges-v1";
+const GAP = 64 * 1024;   // merge wanted arrays separated by less than this into one request
+const CHUNK = 2 * 1024 * 1024;   // and split long spans into requests of at most this size, fetched in parallel
+                                 // (the CDN serves each request at roughly 0.5-1 MB/s; parallel requests add up)
+const fullFile = new Map<string, Promise<ArrayBuffer>>();   // servers that ignore Range (plain dev servers)
+
+async function sha256hex(text: string): Promise<string> {
+  try {
+    const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return [...new Uint8Array(d)].map((x) => x.toString(16).padStart(2, "0")).join("");
+  } catch { return ""; }   // no SubtleCrypto (insecure context): run without the persistent cache
+}
+async function openCache(): Promise<Cache | null> {
+  try { return "caches" in self ? await caches.open(RANGE_CACHE) : null; } catch { return null; }
+}
+async function getRange(bin: string, start: number, end: number, ver: string): Promise<ArrayBuffer> {
+  const want = end - start, key = `/__sca2-range/${ver}/${encodeURIComponent(bin)}/${start}-${end}`;
+  const cache = ver ? await openCache() : null;
+  if (cache) {
+    try { const hit = await cache.match(key); if (hit) { const b = await hit.arrayBuffer(); if (b.byteLength === want) return b; } } catch { /* fall through */ }
+  }
+  let buf: ArrayBuffer;
+  if (fullFile.has(bin)) buf = (await fullFile.get(bin)!).slice(start, end);
+  else {
+    const r = await fetch(`/exports/${bin}`, { headers: { Range: `bytes=${start}-${end - 1}` } });
+    if (!r.ok) throw new Error(`${bin}: HTTP ${r.status}`);
+    if (r.status === 206) {
+      const cr = r.headers.get("content-range");   // "bytes s-e/total", when the header is exposed
+      const m = cr?.match(/bytes (\d+)-(\d+)/);
+      if (m && (+m[1] !== start || +m[2] !== end - 1)) throw new Error(`${bin}: asked for bytes ${start}-${end - 1}, got ${cr}`);
+      buf = await r.arrayBuffer();
+    } else {   // 200: the server ignored Range and sent the whole file; keep it for the other ranges of this file
+      const whole = r.arrayBuffer(); fullFile.set(bin, whole); buf = (await whole).slice(start, end);
+    }
+  }
+  if (buf.byteLength !== want) throw new Error(`${bin}: got ${buf.byteLength} bytes for range ${start}-${end - 1}`);
+  if (cache) cache.put(key, new Response(buf.slice(0))).catch(() => { /* quota: just do not cache */ });
+  return buf;
 }
 
-async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>): Promise<Record<string, Tensor>> {
-  const r = await fetch(`/exports/${binName}`);
-  if (!r.ok) throw new Error(`${binName}: HTTP ${r.status}`);
-  const buf = await r.arrayBuffer();
-  const out: Record<string, Tensor> = {};
-  for (const [name, m] of Object.entries(arrays)) {
-    const n = m.shape.reduce((a, b) => a * b, 1);
-    const data = m.dtype === "uint16" ? new Uint16Array(buf, m.offset, n) : new Float32Array(buf, m.offset, n);
-    if (data.byteLength !== m.nbytes) throw new Error(`${name}: ${data.byteLength} bytes, manifest says ${m.nbytes}`);
-    out[name] = new Tensor(data, m.shape, m.desc);
+async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>, ver: string, only?: (name: string) => boolean): Promise<Record<string, Tensor>> {
+  const pick = Object.entries(arrays).filter(([k]) => !only || only(k)).sort((x, y) => x[1].offset - y[1].offset);
+  const groups: { start: number; end: number; items: [string, ArrayMeta][] }[] = [];
+  for (const it of pick) {
+    const [, m] = it, g = groups[groups.length - 1];
+    if (g && m.offset - g.end <= GAP) { g.end = Math.max(g.end, m.offset + m.nbytes); g.items.push(it); }
+    else groups.push({ start: m.offset, end: m.offset + m.nbytes, items: [it] });
   }
+  const span = async (start: number, end: number): Promise<ArrayBuffer> => {
+    if (end - start <= CHUNK) return getRange(binName, start, end, ver);
+    const cuts: number[] = []; for (let a = start; a < end; a += CHUNK) cuts.push(a);
+    const parts = await Promise.all(cuts.map((a) => getRange(binName, a, Math.min(a + CHUNK, end), ver)));
+    const whole = new Uint8Array(end - start); let o = 0;
+    for (const q of parts) { whole.set(new Uint8Array(q), o); o += q.byteLength; }
+    return whole.buffer;
+  };
+  const bufs = await Promise.all(groups.map((g) => span(g.start, g.end)));
+  const out: Record<string, Tensor> = {};
+  groups.forEach((g, gi) => {
+    for (const [name, m] of g.items) {
+      const n = m.shape.reduce((a, b) => a * b, 1);
+      const own = bufs[gi].slice(m.offset - g.start, m.offset - g.start + m.nbytes);   // own buffer: alignment-safe
+      const data = m.dtype === "uint16" ? new Uint16Array(own, 0, n) : new Float32Array(own, 0, n);
+      if (data.byteLength !== m.nbytes) throw new Error(`${name}: ${data.byteLength} bytes, manifest says ${m.nbytes}`);
+      out[name] = new Tensor(data, m.shape, m.desc);
+    }
+  });
   return out;
 }
 
-export interface Run { m: RunManifest; t: Record<string, Tensor>; clientCheck: ClientCheck }
+export interface Run { m: RunManifest; t: Record<string, Tensor>; clientCheck: ClientCheck;
+  /** cache version: SHA-256 of the manifest text */ ver: string; /** set once the HEAVY arrays are requested */ heavy?: Promise<void> }
 export interface Pair { m: PairManifest; t: Record<string, Tensor> }
 
 /** Closure recomputed in the browser from the float32 arrays that are drawn. Python passes
@@ -143,16 +210,28 @@ function clientCheck(m: RunManifest, t: Record<string, Tensor>): ClientCheck {
 
 export const loadIndex = () => fetchJson<IndexFile>("/exports/index.json");
 
+/** A run with its core arrays only; the HEAVY ones arrive through ensureHeavy(). */
 export async function loadRun(file: string): Promise<Run> {
-  const m = await fetchJson<RunManifest>(`/exports/${file}`);
-  const t = await fetchArrays(m.bin, m.arrays);
-  return { m, t, clientCheck: clientCheck(m, t) };
+  const text = await fetchText(`/exports/${file}`);
+  const m = JSON.parse(text) as RunManifest, ver = await sha256hex(text);
+  const t = await fetchArrays(m.bin, m.arrays, ver, (k) => !HEAVY.has(k));
+  return { m, t, ver, clientCheck: clientCheck(m, t) };
 }
 
 export async function loadPair(file: string): Promise<Pair> {
-  const m = await fetchJson<PairManifest>(`/exports/${file}`);
-  return { m, t: await fetchArrays(m.bin, m.arrays) };
+  const text = await fetchText(`/exports/${file}`);
+  const m = JSON.parse(text) as PairManifest;
+  return { m, t: await fetchArrays(m.bin, m.arrays, await sha256hex(text)) };
 }
+
+export const hasHeavy = (r: Run) => [...HEAVY].every((k) => !(k in r.m.arrays) || k in r.t);
+function ensureHeavyRun(r: Run): Promise<void> {
+  if (!r.heavy) r.heavy = fetchArrays(r.m.bin, r.m.arrays, r.ver, (k) => HEAVY.has(k)).then((t) => { Object.assign(r.t, t); })
+    .catch((e) => { r.heavy = undefined; throw e; });
+  return r.heavy;
+}
+/** Load the HEAVY arrays of A and B (once per run; later calls return the same promise). */
+export const ensureHeavy = (D: Bundle) => Promise.all([ensureHeavyRun(D.A), ensureHeavyRun(D.B)]).then(() => undefined);
 
 /** A, B and their pair export for one item. Cached, so switching tabs does not refetch. */
 export interface Bundle { A: Run; B: Run; P: Pair; key: string }

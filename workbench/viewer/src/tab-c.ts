@@ -265,6 +265,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
   ctx.mode(clamp);
   strip(); drawer(); ladder(); prompt();
   const ro_ = new ResizeObserver(() => ladder()); ro_.observe($("work"));
+  document.addEventListener("sca2:heavy", () => { prompt(); if (pin) drawer(); }, { signal: ctx.signal });
   requestAnimationFrame(() => { ladder(); ctx.ready(); });
   return () => { ro_.disconnect(); tip.hidden = true; };
 }

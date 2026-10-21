@@ -126,7 +126,7 @@ export function compareRows(D: Bundle, s: Slice, clamp = false): Row[] {
     rows.push({ label: "Write size ‖o‖", tip: "Length of the vector this head adds to the running state. It says how much, not which way.\nhead_norm · d_head_norm", a: a.head_norm.get(s.l, s.h, s.t), b: b.head_norm.get(s.l, s.h, s.t), d: { v: p.d_head_norm.get(s.l, s.h, s.t), how: "len", src: "‖o_B − o_A‖, d_head_norm" } });
     if (s.t === ro) { const ha = clamp ? a.head_attr_clamped : a.head_attr, hb = clamp ? b.head_attr_clamped : b.head_attr;
       rows.push({ label: `Push (DLA)${cl}`, tip: `Push on the margin (DLA). How far this head's write moves the margin, read straight through the model's last steps.\n${clamp ? "head_attr_clamped" : "head_attr"}`, a: ha.get(s.l, s.h), b: hb.get(s.l, s.h), d: dla(dd.head(s.l, s.h)) }); }
-    rows.push({ label: "Top-16 coverage", tip: "Attention covered by the top 16. Share of this head's attention that the 16 largest weights cover (1 = all of it).\nattn_topk_mass", a: a.attn_topk_mass.get(s.l, s.h, s.t), b: b.attn_topk_mass.get(s.l, s.h, s.t), d: calc(a.attn_topk_mass.get(s.l, s.h, s.t), b.attn_topk_mass.get(s.l, s.h, s.t)) });
+    if (a.attn_topk_mass && b.attn_topk_mass) rows.push({ label: "Top-16 coverage", tip: "Attention covered by the top 16. Share of this head's attention that the 16 largest weights cover (1 = all of it).\nattn_topk_mass", a: a.attn_topk_mass.get(s.l, s.h, s.t), b: b.attn_topk_mass.get(s.l, s.h, s.t), d: calc(a.attn_topk_mass.get(s.l, s.h, s.t), b.attn_topk_mass.get(s.l, s.h, s.t)) });
   } else if (s.kind === "mlp") {
     rows.push({ label: "Write size ‖m‖", tip: "Length of the vector this MLP adds to the running state.\nmlp_norm · d_mlp_norm", a: a.mlp_norm.get(s.l, s.t), b: b.mlp_norm.get(s.l, s.t), d: { v: p.d_mlp_norm.get(s.l, s.t), how: "len", src: "‖m_B − m_A‖, d_mlp_norm" } });
     rows.push({ label: "Quadrant III (count)", tip: "Quadrant III neurons (count). Neurons whose two input signals are both below −0.05 at this token.\nq3_count", a: a.q3_count.get(s.l, s.t), b: b.q3_count.get(s.l, s.t), d: calc(a.q3_count.get(s.l, s.t), b.q3_count.get(s.l, s.t)), int: true });
@@ -140,7 +140,9 @@ export function compareRows(D: Bundle, s: Slice, clamp = false): Row[] {
   return rows;
 }
 export function topKeys(r: Run, l: number, h: number, t: number, n = 5) {
-  const out: { key: number; w: number }[] = [], K = r.t.attn_topk_idx.shape[3];
+  const out: { key: number; w: number }[] = [];
+  if (!r.t.attn_topk_idx || !r.t.attn_topk_val) return out;   // heavy arrays not loaded yet (data.ts ensureHeavy)
+  const K = r.t.attn_topk_idx.shape[3];
   for (let k = 0; k < K && out.length < n; k++) { const key = r.t.attn_topk_idx.get(l, h, t, k); if (key !== 65535) out.push({ key, w: r.t.attn_topk_val.get(l, h, t, k) }); }
   return out;
 }
@@ -166,7 +168,8 @@ export function inspectorHTML(D: Bundle, s: Slice, o: { pinned?: boolean; clamp?
   if (s.kind === "head") {
     const ka = topKeys(D.A, s.l, s.h, s.t), kb = topKeys(D.B, s.l, s.h, s.t);
     const col = (ks: { key: number; w: number }[]) => ks.map((k) => `<div class="kk"><span class="bar" style="width:${(k.w * 100).toFixed(0)}%"></span><span class="num">${k.w.toFixed(2)}</span> · #${k.key} “${esc(tokText(tk[k.key].text))}”</div>`).join("");
-    html += `<div class="sub">Where this head looks${s.t === ro ? " from the answer position" : " from this token"}: its largest attention weights (weight · token number)</div><div class="two"><div><i>A</i>${col(ka)}</div><div><i>B</i>${col(kb)}</div></div>`;
+    if (!(D.A.t.attn_topk_idx && D.B.t.attn_topk_idx)) html += `<div class="sub">Where this head looks: the attention weights are still loading; this panel fills in when they arrive.</div>`;
+    else html += `<div class="sub">Where this head looks${s.t === ro ? " from the answer position" : " from this token"}: its largest attention weights (weight · token number)</div><div class="two"><div><i>A</i>${col(ka)}</div><div><i>B</i>${col(kb)}</div></div>`;
     const dw = D.P.t.d_weight_head;
     html += `<div class="sub" title="Frobenius norm: the square root of the sum of squared differences. 0 means untouched. k and v are shared by 3 heads.">How far this head's weights moved, B vs A (q, k, v, o): <span class="num">${[0, 1, 2, 3].map((j) => fmt(dw.get(s.l, s.h, j), 2)).join(", ")}</span></div>`;
   }
