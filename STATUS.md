@@ -1,6 +1,6 @@
 # SCA2 status
 
-**Last verified: 2026-10-19 evening (MST) by the `sca` profile (checkpoint assembly card `t_5b53fef3`)**: git, the claim lock, the numbers table, the board cards and the W2 run status. The Hub inventory below dates from 2026-10-19 and was not recounted. Commands are in
+**Last verified: 2026-10-20 morning (MST) by the orchestrator (`default`), after the checkpoint assembly card `t_5b53fef3`**: git, the claim lock, the numbers table (Amendment C9.1), the board cards and the finished W2 queue. The Hub inventory below dates from 2026-10-19 and was not recounted. Commands are in
 [How to re-verify](#how-to-re-verify). This file is the single status page for every person and agent working on
 SCA2. It indexes the evidence; it is not the evidence. When it disagrees with git or the Hub, git and the Hub win:
 fix this file in the same commit.
@@ -20,7 +20,7 @@ fix this file in the same commit.
 | Stream | State | Where |
 |---|---|---|
 | **Paper A** (preprint) | Posted: arXiv:2610.06562 v1, 2026-10-05. Frozen. | tag `arxiv-2610.06562-v1` (`5664026`); [misc/arxiv-submission-2026-10-05/](misc/arxiv-submission-2026-10-05/) |
-| **Paper B** (the journal version of the preprint, for SMR) | Compute and analysis done through Amendment C9. C9-4 experiment A ran on 42 countries and fills the adapter+persona TVD cell; those rows still owe an independent cross-family audit. Experiment B has no banked rows. The manuscript is drafted without the C9 rows. Waiting on the decisions listed under [Open after the checkpoint](#open-after-the-checkpoint). | code `feat/paper-b-cohort`; manuscript `paper/paper-b-draft` |
+| **Paper B** (the journal version of the preprint, for SMR) | Compute and analysis done through Amendment C9. C9-4 experiment A ran on 42 countries and fills the adapter+persona TVD cell; those rows still owe an independent cross-family audit. Experiment B ran on 42 adapters and is banked by Amendment C9.1 (8 rows). Both experiments still owe the cross-family audit. The manuscript is drafted without the C9 rows; adding them is open. Waiting on the decisions listed under [Open after the checkpoint](#open-after-the-checkpoint). | code `feat/paper-b-cohort`; manuscript `paper/paper-b-draft` |
 | **Workbench** (Adapter-Brain-Vizualization) | SCA2-specific viewer that reads Paper B artifacts, one way only: Paper B claims never depend on workbench results, and its compute stays separate. Private precomputed Space deployed 2026-10-19 (verified bundle; no human data, no weights, no inference). Its analyses (W2 prompt route, W3 mechanisms) are not Paper B evidence; see `workbench/AUDIT.md` §17 on its branch. | worktree `.worktrees/adapter-brain-vizualization`, branch `Adapter-Brain-Vizualization`; [workbench README](https://github.com/EconLLM-Lab/SCA2_PofW/blob/Adapter-Brain-Vizualization/workbench/README.md) |
 | **Phase 3** (activation engineering, latent space) | Not started. | — |
 
@@ -33,14 +33,14 @@ the checkpoint commit and its merge sit on top (`git log -3` on each branch).
 | Item | State |
 |---|---|
 | Git heads entering final assembly | `feat/paper-b-cohort` `16de598` (C9-4 experiment A admitted); `paper/paper-b-draft` `a75bf1a` (merge of `16de598`); `Adapter-Brain-Vizualization` `e27e279` (checkpoint documentation; later W2/W3b files remain local and unpushed) |
-| Numbers table | 554 rows, sha256 `02c5d0cf9281f2927b8222386160412f1276437bf9dca8f70eafdc042dda9dd1`; the 271 earlier rows are unchanged and pinned by a test |
+| Numbers table | 562 rows, sha256 `71ee7c8c68eb856bf7215165dd836aef7cc3f67993a6523790cee4b22ce186a4` (Amendment C9.1 appended 8 label-recovery rows); the 271 C8 rows and the 554 C9 rows are unchanged and pinned by tests |
 | Amendment C9 (2026-10-20) | 283 descriptive, not preregistered rows: C9-1 human agreement, C9-2 TVD (all four cells, the adapter+persona cell filled by the 2026-10-19 C9-4 run), W1 cross-talk decomposition. No claim earned. Coauthor sign-off pending. In [the claim lock](planning/TWO_PAPER_CLAIM_LOCK.md) |
 | Verifier record | [VERIFICATION_C9.md](planning/sprint_2026-10-11/paper-b-tier1/results/c9/VERIFICATION_C9.md) (cross-family): C9-1 ACCEPT, the original three-cell C9-2 ACCEPT, W1 ACCEPT as descriptive, 96 headline values recomputed with 0 mismatches; insights I1 and I2 both WEAK. [C9_GPU_VERIFICATION.md](planning/sprint_2026-10-11/paper-b-tier1/results/c9/C9_GPU_VERIFICATION.md) BLOCKED the first C9-4 attempt because it executed neither experiment. The later genuine experiment A and the resulting fourth TVD cell still owe a cross-family audit and are not quotable until it passes |
 | Private Space | https://huggingface.co/spaces/EconLLM/sca2-workbench (static, private, built from workbench commit `e86d4c2`; 94 of 94 bundle files present with 0 sha256 mismatches against the WB1 manifest, stage RUNNING, 27 routes load with 0 errors). Moved to the EconLLM organization on 2026-10-19 and re-verified file by file; a temporary duplicate under the user account was deleted. Co-author access still needs invites from EconLLM (Augusto) |
-| Hub runs added | `adapter-persona-strict-v1-20261019`: 42 of 42 countries, gates G1/G2/G3 passed before any scoring, about one compute unit (balance 181.82 → 180.75). `label-recovery-cohort1-v1-20261019`: experiment B, scoring the 42 cohort-1 adapters on the 132 held-out pairs, gates passed (base reproduces the banked cohort-1 reference log-probs with max gap 0, ARG adapter effect 71 nats, switchback exact); no rows banked yet |
-| Workbench cards | WB1 PASS (independent verifier), WB2 deployed and verified. W2 prompt-route queue: RUNNING, 343 of 598 units at the 2026-10-19 21:33 MST assembly snapshot (the first queue was aborted by its watchdog at 36 of 598); no failed units, unverified, nothing uploaded. W3: verifier BLOCK, no W3 number is quotable. W3b produced a post-checkpoint run, figure and report, but its independent audit BLOCKED an unregistered p<0.05 classifier; no W3b number is accepted |
+| Hub runs added | `adapter-persona-strict-v1-20261019`: 42 of 42 countries, gates G1/G2/G3 passed before any scoring, about one compute unit (balance 181.82 → 180.75). `label-recovery-cohort1-v1-20261019`: experiment B, scoring the 42 cohort-1 adapters on the 132 held-out pairs, gates passed (base reproduces the banked cohort-1 reference log-probs with max gap 0, ARG adapter effect 71 nats, switchback exact); 42 of 42 adapters scored and read back; banked by Amendment C9.1. Both runs together: 181.82 → 178.87, about three compute units; session stopped |
+| Workbench cards | WB1 PASS (independent verifier), WB2 deployed and verified. W2 prompt-route queue: FINISHED 2026-10-19 23:32 MST, 598 of 598 units, no failed unit, every unit manifest `pass: true` with sha256 per payload file (17 GB, local); code not yet committed, unverified, nothing uploaded. W3: verifier BLOCK, no W3 number is quotable. W3b produced a post-checkpoint run, figure and report, but its independent audit BLOCKED an unregistered p<0.05 classifier; no W3b number is accepted |
 | Brief | [COAUTHOR_BRIEF.md](planning/checkpoint_2026-10-20/COAUTHOR_BRIEF.md): two pages, every number by claim id (25 ids, 49 values, 0 mismatches against the table); refreshed after experiment A and the Space transfer without adding an unaudited C9-4 number |
-| Gate | V and A are done. Final assembly starts from code `16de598`, manuscript merge `a75bf1a` and workbench checkpoint `e27e279`; all three matched origin before the final documentation commits. C9-4 experiment A is banked but awaits cross-family audit; experiment B has no banked rows. W2 is allowed to remain running and unverified. W3 and W3b remain blocked and are not Paper B evidence. See the assembly recheck below |
+| Gate | V and A are done. Final assembly starts from code `16de598`, manuscript merge `a75bf1a` and workbench checkpoint `e27e279`; all three matched origin before the final documentation commits. C9-4 experiment A is banked but awaits cross-family audit; experiment B is banked by Amendment C9.1 and shares that audit. W2 finished and is unverified. W3 and W3b remain blocked and are not Paper B evidence. See the assembly recheck below |
 
 ### Assembly recheck, 2026-10-19 evening
 
@@ -49,8 +49,8 @@ The orchestrator later ran genuine experiment A on all 42 countries. Those outpu
 `build_numbers_table.py` only knew three TVD cells and raised `KeyError('adapter_persona')`. The fix adds the fourth
 cell and its interaction contrast; the table was rebuilt to 554 rows, the 271 earlier rows stayed byte-identical, and
 the claim lock and this file were updated. The current main-worktree `paper_b` suite is green (611 passed). The new
-rows remain unquotable until an independent cross-family audit accepts the genuine run. Experiment B has no banked
-rows.
+rows remain unquotable until an independent cross-family audit accepts the genuine run. Experiment B finished later
+(42 of 42) and is banked by Amendment C9.1, under the same audit.
 
 W2's live `RUN_STATUS.json` said running, 343 of 598 done, no failed units and PID 61988 at the 21:33 MST snapshot.
 The workbench tree is intentionally dirty while W2 runs and while the post-checkpoint W3b artifacts await disposition;
@@ -103,8 +103,8 @@ preregistered evaluation of the sign compiler as a scoring instrument: what hold
 The held-out result is a *retrospective* screen against WVS-7, never "transport". Pre-piloting is untested, and no
 human route exists in 2026.
 
-[NUMBERS_TABLE.csv](planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv): 554 rows, sha256
-`02c5d0cf9281f2927b8222386160412f1276437bf9dca8f70eafdc042dda9dd1`. It replaces the 271-row table `51ddcce1…97855`;
+[NUMBERS_TABLE.csv](planning/sprint_2026-10-11/paper-b-tier1/NUMBERS_TABLE.csv): 562 rows, sha256
+`71ee7c8c68eb856bf7215165dd836aef7cc3f67993a6523790cee4b22ce186a4`. It replaces the 271-row table `51ddcce1…97855`;
 those 271 rows are unchanged and a test pins it. The 283 `C9_` rows are all descriptive and not preregistered.
 A rebuilt table needs a new dated amendment and an update here; `paper_b/test_status_doc.py` fails until both match.
 
@@ -167,11 +167,11 @@ Targets are proposals for Augusto. "Blocked by" names the decision or card that 
 | Overleaf page count (project "… (1)") | Augusto | 2026-10-21 | none |
 | Invite co-authors to the EconLLM Hugging Face organization and grant access to the transferred private Space | Augusto | 2026-10-20 | none |
 | Confirm the definition of "recursive generalization" | Augusto | 2026-10-21 | none |
-| Cross-family audit of the genuine C9-4 experiment A; finish experiment B, then bank any accepted B rows through a new dated amendment | verifier, then `engineer` | 2026-10-22 | experiment B completion; a verifier from a different model family than the orchestrator |
+| Cross-family audit of the genuine C9-4 experiments A and B (B banked by Amendment C9.1) | verifier | 2026-10-21 | a verifier from a different model family than the orchestrator |
 | C9 section in the manuscript, via the writer profile | writer | 2026-10-23 | sign-off |
 | Novelty audit "LM evaluation for social-science measurement" | `sca` | 2026-10-23 | none |
 | Space landing footer wording contradicts the journal-version framing | `engineer` | 2026-10-21 | none |
-| W2 prompt-route queue: finish, commit its code, independent verifier | `engineer`, verifier | 2026-10-21 | the queue |
+| W2 prompt-route queue (finished 598/598): commit its code, independent verifier | `engineer`, verifier | 2026-10-21 | none |
 | Upload the W2 prompt-route captures to the Hub; weights-versus-prompt analysis of the risk inversion | `engineer` | 2026-10-21 | W2 verified |
 | Resolve the W3b audit BLOCK: owner decision on removing the unregistered p<0.05 classifier (recommended) or labelling it as dated exploratory output; package the renderer/report; complete the existing verifier lane; repeat W3 with the prompt route | Augusto, `engineer`, verifier | 2026-10-22 | Augusto's scope decision; W2 for the prompt-route repeat |
 | Clean the workbench tree: untracked W3 debris (`analysis/out/_discarded_W3/`, stubs), uncommitted W2 code, WB1 findings F1 to F5, and the full-suite failure P1 | `engineer` | 2026-10-22 | W2 and W3b finished |
