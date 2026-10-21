@@ -8,6 +8,7 @@ No model loading, inference, weight copying, or source-capture rewriting occurs.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -20,11 +21,24 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent.parent
 MAX_BYTES = 950_000_000
+# Kept free by the light-run allocator, so the copy of the next wave still fits under the cap.
+RESERVE = 1_000_000
 # Resolved, so a symlinked scratch root (macOS /var -> /private/var) cannot trip the symlink guard.
 SCRATCH = Path(os.environ.get('SCA2_BUNDLE_SCRATCH', Path.home() / '.hermes/cache/scratch/wb-bundle')).resolve()
 # Landing thumbnails (v4, the default pair) and the Cohort empty-state illustration (v3).
 IMAGES = ('v4/ladder-1440.png', 'v4/matrix-1440.png', 'v4/object-1440.png', 'v4/cohort-1440.png',
           'v3/cohort-illustration.png')
+Q57_ITEM = 'wvs_Q57'
+# A light run keeps only the arrays the Ladder, the Matrix and the Cohort read for the compared model.
+# Dropped: neuron_attr (drawn by the 3D object only; its per-layer sums equal mlp_attr, which is kept,
+# so the browser re-sum of the answer still closes), q3_write_norm (no view reads it), and the six
+# heavy arrays (attn_topk_idx, attn_topk_val, attn_topk_mass, g_last, u_last, c_last).
+LIGHT_ARRAYS = ('attn_attr', 'attn_norm', 'head_attr', 'head_attr_clamped', 'head_norm',
+                'mlp_attr', 'mlp_attr_clamped', 'mlp_norm', 'q3_count',
+                'resid_norm', 'running_margin', 'running_margin_clamped')
+# A pair capture for a *new* Q57 comparator ships without this array: 540,672 of its 617,232 bytes,
+# read only by the Matrix per-head panel. Existing (v1.4) pairs stay byte-identical.
+PAIR_DROP = ('d_head_norm',)
 PIN = r'export const {}\s*=\s*\{{\s*a:\s*"([^"]+)",\s*b:\s*"([^"]+)",\s*item:\s*"([^"]+)"\s*\}}'
 
 
@@ -92,6 +106,31 @@ def select_prompt_features(featured, adapter_index, base):
     return kept, dropped
 
 
+def compact_capture(capture: dict, keep, data: bytes, *, light: bool = True) -> tuple[dict, bytes]:
+    """A derived capture: only the arrays named in `keep`, re-packed from offset 0.
+
+    The array bytes are copied unchanged and only their offsets move, so every value is identical to
+    its source. `bin` points at the new, shorter binary, or is None when no array is kept.
+    """
+    unpacked = copy.deepcopy(capture)
+    arrays, blob, offset = {}, bytearray(), 0
+    for name, meta in capture['arrays'].items():
+        if name not in keep:
+            continue
+        chunk = data[meta['offset']:meta['offset'] + meta['nbytes']]
+        if len(chunk) != meta['nbytes']:
+            raise ValueError(f'Array {name} runs past the source binary')
+        arrays[name] = dict(meta, offset=offset)
+        blob += chunk
+        offset += meta['nbytes']
+    unpacked['arrays'] = arrays
+    unpacked['bin'] = None if not arrays else capture['bin']
+    if light and arrays:
+        # Only a derived capture that actually carries the light arrays is a light capture.
+        unpacked['light'] = True
+    return unpacked, bytes(blob)
+
+
 def build_bundle(args) -> int:
     w = Path(args.workbench).resolve()
     viewer = w / 'viewer'
@@ -129,6 +168,14 @@ def build_bundle(args) -> int:
                 raise ValueError(f'Source changed while copying: {source}')
             entries[name] = dict(file=name, bytes=target.stat().st_size,
                                  sha256=digest, kind=kind, **metadata)
+
+        def write_bytes(payload_bytes: bytes, name, kind, **metadata):
+            """Register a file this build derives (never a byte copy of a source file)."""
+            target = stage / safe_relative(name)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(payload_bytes)
+            entries[name] = dict(file=name, bytes=len(payload_bytes),
+                                 sha256=hashlib.sha256(payload_bytes).hexdigest(), kind=kind, **metadata)
 
         # Never reuse a prior Vite output. npm failure propagates, no stale fallback.
         dist = viewer / 'dist'
@@ -176,6 +223,23 @@ def build_bundle(args) -> int:
             if len(homes) != 1:
                 raise ValueError(f'Viewer pin {pin.groups()} found in {len(homes)} export folders, need exactly 1')
             roots[homes[0]] = roots[homes[0]] | {pin.groups()}
+        # ---- Q57 panel (WB7-Q): every comparator of the base on the trust item, for the Cohort tab.
+        # A comparator already selected above keeps its full capture. A new one gets its pair in full
+        # and a derived run capture: the light arrays if the byte budget allows, else its numbers only
+        # (`arrays: {}`, `bin: null`). Allocation order: country adapters first, then sign prompts,
+        # largest |d_margin| first within each group.
+        legacy_runs = {(a, item) for wanted in roots.values() for a, _, item in wanted}
+        legacy_runs |= {(b, item) for wanted in roots.values() for _, b, item in wanted}
+        q57_rank, q57_full = {}, []
+        for group, root in enumerate((source_dir, prompt_source_dir)):
+            for row in read_json(root / 'index.json')['pairs']:
+                if row['item_id'] != Q57_ITEM:
+                    continue
+                q57_rank[(row['b'], row['item_id'])] = (group, -abs(row['d_margin']), row['b'])
+                if (row['b'], row['item_id']) in legacy_runs:
+                    q57_full.append(row['b'])
+                roots.setdefault(root, set()).add((row['a'], row['b'], row['item_id']))
+        derived = []   # run captures shipped at a reduced tier: numbers now, upgraded to light if it fits
         curated = {'models': {}, 'runs': [], 'pairs': []}
         source_indexes = []
         schemas = set()
@@ -234,6 +298,28 @@ def build_bundle(args) -> int:
                 source_digest = capture.get('provenance', {}).get('source_digest')
                 if source_digest:
                     metadata['source_digest'] = source_digest
+                if name.startswith('run__') and (row['model'], row['item_id']) not in legacy_runs:
+                    # A new Q57 comparator: its numbers now; the light arrays are added once the byte
+                    # budget is known, so a build that does not fit never writes a file it then drops.
+                    data = (root / binary).read_bytes()
+                    numbers, _ = compact_capture(capture, (), data)
+                    body = json.dumps(numbers, separators=(',', ':')).encode()
+                    write_bytes(body, 'exports/' + name, 'capture', **metadata)
+                    derived.append({'name': name, 'binary': binary, 'capture': capture, 'data': data,
+                                    'metadata': metadata, 'model': row['model'], 'item_id': row['item_id'],
+                                    'numbers_bytes': len(body)})
+                    continue
+                if name.startswith('pair__') and (row['b'], row['item_id']) not in legacy_runs:
+                    # A new Q57 pair: same numbers, minus the per-head array (PAIR_DROP). The freed
+                    # bytes below buy light runs; the Matrix per-head panel states what is not shipped.
+                    data = (root / binary).read_bytes()
+                    reduced, blob = compact_capture(
+                        capture, tuple(n for n in capture['arrays'] if n not in PAIR_DROP), data,
+                        light=False)
+                    write_bytes(json.dumps(reduced, separators=(',', ':')).encode(),
+                                'exports/' + name, 'capture', **metadata)
+                    write_bytes(blob, 'exports/' + binary, 'capture-binary')
+                    continue
                 copy(root / name, 'exports/' + name, 'capture', **metadata)
                 copy(root / binary, 'exports/' + binary, 'capture-binary')
                 length = (stage / 'exports' / binary).stat().st_size
@@ -246,6 +332,35 @@ def build_bundle(args) -> int:
         index_target = Path(temp) / 'index.json'
         index_target.write_text(json.dumps(curated, indent=1) + '\n')
         copy(index_target, 'exports/index.json', 'curated-index')
+        # ---- byte budget: upgrade the derived run captures to the light arrays, in `q57_rank` order
+        # (adapters first, then sign prompts). Anything that does not fit keeps its numbers only. The
+        # curated index is already counted, and RESERVE stays free for the copy of the next wave.
+        budget = limit - RESERVE - sum(e['bytes'] for e in entries.values())
+        upgraded = []
+        for d in sorted(derived, key=lambda d: q57_rank[(d['model'], d['item_id'])]):
+            light, blob = compact_capture(d['capture'], LIGHT_ARRAYS, d['data'])
+            if not blob:
+                continue   # nothing kept: it would stay a numbers-only capture
+            body = json.dumps(light, separators=(',', ':')).encode()
+            extra = len(blob) + len(body) - d['numbers_bytes']
+            if extra > budget:
+                continue
+            write_bytes(body, 'exports/' + d['name'], 'capture', **d['metadata'])
+            write_bytes(blob, 'exports/' + d['binary'], 'capture-binary')
+            budget -= extra
+            upgraded.append((d, extra, len(blob) + len(body)))
+        lit = {d['name'] for d, _, _ in upgraded}
+        q57_report = None
+        if q57_rank:
+            q57_report = {'item': Q57_ITEM, 'comparators': len(q57_rank),
+                          'shipped_full': sorted(q57_full),
+                          'shipped_light': sorted(d['model'] for d, _, _ in upgraded),
+                          'numbers_only': sorted(d['model'] for d in derived if d['name'] not in lit),
+                          'light_arrays': list(LIGHT_ARRAYS),
+                          'pairs_without': list(PAIR_DROP),
+                          'light_run_bytes': {d['model']: size for d, _, size in upgraded},
+                          'upgrade_bytes': sum(extra for _, extra, _ in upgraded),
+                          'budget_left_bytes': budget}
         files = sorted(entries.values(), key=lambda e: e['file'])
         payload = sum(e['bytes'] for e in files)
         if payload > limit:
@@ -277,10 +392,20 @@ def build_bundle(args) -> int:
                         source_indexes=source_indexes, story_sources=story['sources'],
                         prompt_features_kept=prompt_features,
                         prompt_features_dropped=dropped_prompt_features,
-                        selection_rule='story BASE versus all featured adapters; matching sign prompts only for the largest saved adapter-margin gap per sign bit; default country units; viewer DEFAULT; exact run/pair/binary closure',
+                        selection_rule=('story BASE versus all featured adapters; matching sign prompts only for the largest '
+                                        'saved adapter-margin gap per sign bit; default country units; viewer DEFAULT; '
+                                        'every Q57 comparator of the base (all country adapters, then all sign prompts, '
+                                        'largest |d_margin| first): its pair without the per-head array (d_head_norm) and '
+                                        'a light run (no heavy arrays) while the byte budget allows, its numbers only '
+                                        'otherwise; v1.4 captures stay byte-identical; exact run/pair/binary closure'),
+                        q57=q57_report,
                         deploy_status='NOT DEPLOYED')
         manifest_tmp = Path(temp) / 'manifest.json'
         manifest_tmp.write_text(json.dumps(manifest, indent=1) + '\n')
+        if q57_report:
+            print(f'Q57: {q57_report["comparators"]} comparators; full {len(q57_report["shipped_full"])}, '
+                  f'light {len(q57_report["shipped_light"])}, numbers only {len(q57_report["numbers_only"])}; '
+                  f'{q57_report["budget_left_bytes"]} bytes of headroom left')
         out.parent.mkdir(parents=True, exist_ok=True)
         # Cross-filesystem safe publication after verification. Existing successful
         # output stays untouched on validation/build failure (not a fallback).

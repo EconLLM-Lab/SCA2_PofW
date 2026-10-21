@@ -49,12 +49,26 @@ def main():
     run_ids = {(r["model"], r["item_id"]) for r in index["runs"]}
     array_names = set()
     jsons = 0
+    # Frozen capture-array contract. No embedding matrix/tokenizer/LoRA weights.
+    allowed = set("resid_norm attn_norm mlp_norm head_norm attn_topk_idx attn_topk_val attn_topk_mass q3_count q3_write_norm g_last u_last c_last head_attr neuron_attr attn_attr mlp_attr running_margin running_margin_clamped head_attr_clamped mlp_attr_clamped d_resid_norm d_attn_norm d_mlp_norm d_head_norm d_weight_head d_weight_mlp d_head_attr d_mlp_attr d_attn_attr d_head_attr_clamped d_mlp_attr_clamped".split())
+    # A light capture (the byte-budget tier of `build_deploy_bundle.py`) never carries a heavy array.
+    heavy = set("attn_topk_idx attn_topk_val attn_topk_mass g_last u_last c_last".split())
+    light_runs = 0
+    numbers_only_runs = 0
     for row in index["runs"] + index["pairs"]:
         rel = "exports/" + row["file"]
         assert rel in entries
         m = json.loads((site / rel).read_text())
-        binary = "exports/" + m["bin"]
-        assert binary in entries
+        if m.get("light"):
+            assert m["arrays"], rel
+            assert not (set(m["arrays"]) & heavy), (rel, set(m["arrays"]) & heavy)
+        if m["arrays"]:
+            assert m["bin"] and "exports/" + m["bin"] in entries
+            binary = "exports/" + m["bin"]
+        else:
+            # Numbers only: every field but the arrays is the source export's.
+            assert m["bin"] is None, rel
+            binary = None
         assert m["kind"] in ("run", "pair")
         assert m["schema"] == "sca2-workbench/capture@1.1"
         array_names.update(m["arrays"])
@@ -66,9 +80,11 @@ def main():
             assert (m["b"], m["item_id"]) in run_ids
             for ref in m.get("runs", {}).values():
                 assert "exports/" + ref in entries
+        elif m.get("light"):
+            light_runs += 1
+        elif m["kind"] == "run" and not m["arrays"]:
+            numbers_only_runs += 1
         jsons += 1
-    # Frozen capture-array contract. No embedding matrix/tokenizer/LoRA weights.
-    allowed = set("resid_norm attn_norm mlp_norm head_norm attn_topk_idx attn_topk_val attn_topk_mass q3_count q3_write_norm g_last u_last c_last head_attr neuron_attr attn_attr mlp_attr running_margin running_margin_clamped head_attr_clamped mlp_attr_clamped d_resid_norm d_attn_norm d_mlp_norm d_head_norm d_weight_head d_weight_mlp d_head_attr d_mlp_attr d_attn_attr d_head_attr_clamped d_mlp_attr_clamped".split())
     assert array_names <= allowed, array_names - allowed
     assert all(not p.endswith((".safetensors", ".pt", ".pth", ".gguf")) for p in entries)
     for rel, entry in entries.items():
@@ -83,7 +99,8 @@ def main():
                 assert private not in text, (rel, private)
     result = {"pass": True, "archive_bytes": manifest["archive_bytes"], "payload_bytes": payload,
               "files": len(entries), "runs": len(index["runs"]), "pairs": len(index["pairs"]),
-              "capture_manifests": jsons, "array_names": sorted(array_names),
+              "capture_manifests": jsons, "light_runs": light_runs,
+              "numbers_only_runs": numbers_only_runs, "array_names": sorted(array_names),
               "archive_sha256": manifest["archive_sha256"]}
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(result, indent=2) + "\n")
