@@ -18,8 +18,12 @@ Rule: the plain term comes first on screen. The technical term sits in a tooltip
 | attention head | head | The part of a layer that chooses which earlier words to read. |
 | MLP block | MLP, feed-forward network | The part of a layer that transforms what was read. The short label "MLP" keeps a tooltip. |
 | accounting check | conservation gate, closure gate, residual_closure, dla_gap | The parts add up to the total. Raw gate names stay in tooltips and tables. |
-| clamped run | clamp, Quadrant III clamp | The model run again with one group of neurons switched off (output set to zero). Code: neurons whose gate and up signals are both below −0.05 (hooks.clamp_quadrant_iii). The term "clamped run" stays because main.ts uses it. |
-| Quadrant III neurons | q3_count | The group of neurons that the clamped run switches off. |
+| clamped run | clamp, Quadrant III clamp | The model run again with one group of neurons switched off (output set to zero). Code: neurons whose gate and up signals are both below −0.05 (hooks.clamp_quadrant_iii). The term "clamped run" stays because main.ts uses it. It tests whether the answer depends on that group. Every place with a purple tick, the clamped run button or a clamped check links the "What is the clamped run?" pop-up (key clamp). |
+| Quadrant III neurons | q3_count | The MLP neurons whose gate and up inputs are both below −0.05 at a token. The clamped run switches this group off. |
+| expected answer (average answer) | E[recode], Σ code × P(code) | The answer codes added up, each one times its probability. Used as the headline for a question with more than two ordered answers. Paper B scores items this way. |
+| end answers | j_plus, j_minus (first and last answer code) | The two answers the log-odds compares, for example "1" and "10". If both are near zero the log-odds can move against the expected answer. |
+| read off after a layer | running_margin | The answer the model would give if it stopped after this layer. Rough in the middle layers. A line near 0 early means no readable preference yet, not neutral. |
+| human reference (unused until WB7-H) | help key groundTruth | Survey shares beside model probabilities. Descriptive. Not an accuracy test. Sign-prompt rows have none. |
 | token | token | A word piece. |
 | template text | chat template | The fixed chat wrapper around the question. |
 | embedding term | embed_attr | What the words' starting vectors contribute, before layer 0. |
@@ -27,3 +31,5 @@ Rule: the plain term comes first on screen. The technical term sits in a tooltip
 | top-16 attention share | attn_topk_mass | Share of a head's attention on its 16 largest weights. |
 
 Words retired from visible text: "push on the margin", "write size", "DLA" (alone), "residual" (alone), "conservation gates", "fine-tune" (as the name of B), "margin" (alone).
+
+WB7-W: the headline for a question with more than two answers leads with the expected answer (ordered items) or the most likely answer (other items), then the end-answer log-odds that the charts split. Ordered means: response_type "scale_*" (recorded), or a four-code item with text labels at both ends (assumed: wvs_Q81). Three-code items (wvs_Q43, wvs_Q99) are not treated as ordered.

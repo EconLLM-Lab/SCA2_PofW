@@ -1,0 +1,219 @@
+# WB7-W parity allow-list (E9). Generated from parity.json: v1.4 build (8831) vs WB7-W build (8832), 33 parity URLs,
+# innerText of #app minus <select> lists, number-token multiset (numdiff pattern). Only the answer strip changes.
+# Rule: tokens only in OLD must be empty on every URL. Tokens only in NEW must be listed below.
+# Source of every new number: the run export's readout.probs / margin (no new data, nothing typed by hand).
+
+UNCHANGED (6): the landing page, tab=k (Cohort, own headline), and every two-answer item (wvs_Q57, four URLs).
+  /
+  /?tab=k
+  /?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_bgd&item=wvs_Q57
+  /?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_chn&item=wvs_Q57
+  /?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp001111&item=wvs_Q57
+  /?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp101111&item=wvs_Q57
+
+CHANGED (27): every item with more than two answer codes on tabs c, b, a (the headline changes) :
+  ordered (expected answer first): wvs_Q106, wvs_Q50, wvs_Q176 (response_type scale_1_10); wvs_Q81 (4 codes, text labels at both ends: ASSUMED ordered)
+  not ordered (most likely answer first): wvs_Q43, wvs_Q99 (3 codes, not assumed ordered)
+  new tokens: expected answers A and B (1 decimal), the modal answer codes and their percentages, the scale ends (1, 10 or 4),
+  the end-answer line (A and B log-odds, change; values already shown in the bars, so counts rise and some gain a trailing comma),
+  and '1%' in the warning when both end answers are below 1%.
+
+/?tab=c
+    item wvs_Q43 (default) | Most likely answer: A “2” (Don't mind) (91%) → B “1” (Good thing) (66%)
+    new tokens: 2x1, 91%x1, 1x1, 66%x1, 3x1, 0.63x1, 15.20,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      15.20,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=b
+    item wvs_Q43 (default) | Most likely answer: A “2” (Don't mind) (91%) → B “1” (Good thing) (66%)
+    new tokens: 2x1, 91%x1, 1x1, 66%x1, 3x1, 0.63x1, 15.20,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      15.20,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=a
+    item wvs_Q43 (default) | Most likely answer: A “2” (Don't mind) (91%) → B “1” (Good thing) (66%)
+    new tokens: 2x1, 91%x1, 1x1, 66%x1, 3x1, 0.63x1, 15.20,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      15.20,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_grc&item=wvs_Q106
+    item wvs_Q106 | Average answer on the 1–10 scale: A 5.4 → B 5.7 (higher = a higher answer code)
+    new tokens: 1x2, 5.4x1, 5.7x1, 5x2, 44%x1, 49%x1, 4.99x1, 1.92,x1, 1%x1
+      5: end-answer line repeats a value that the A/B bars already show (count +2)
+      44%: end-answer line repeats a value that the A/B bars already show (count +1)
+      49%: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.99: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.92,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_nga&item=wvs_Q106
+    item wvs_Q106 | Average answer on the 1–10 scale: A 5.4 → B 5.4 (higher = a higher answer code)
+    new tokens: 1x2, 10x4, 5.4x2, 5x2, 44%x1, 47%x1, 4.99x1, 5.08,x1, 1%x1
+      5: end-answer line repeats a value that the A/B bars already show (count +2)
+      44%: end-answer line repeats a value that the A/B bars already show (count +1)
+      47%: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.99: end-answer line repeats a value that the A/B bars already show (count +1)
+      5.08,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_irn&item=wvs_Q43
+    item wvs_Q43 | Most likely answer: A “2” (Don't mind) (91%) → B “2” (Don't mind) (50%)
+    new tokens: 2x2, 91%x1, 50%x1, 3x1, 0.63x1, 7.36,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      7.36,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_can&item=wvs_Q43
+    item wvs_Q43 | Most likely answer: A “2” (Don't mind) (91%) → B “1” (Good thing) (66%)
+    new tokens: 2x1, 91%x1, 1x1, 66%x1, 3x1, 0.63x1, 15.20,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      15.20,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp110111&item=wvs_Q43
+    item wvs_Q43 | Most likely answer: A “2” (Don't mind) (91%) → B “2” (Don't mind) (84%)
+    new tokens: 2x2, 91%x1, 84%x1, 3x1, 0.63x1, 0.90,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.90,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp111111&item=wvs_Q43
+    item wvs_Q43 | Most likely answer: A “2” (Don't mind) (91%) → B “2” (Don't mind) (93%)
+    new tokens: 2x2, 91%x1, 93%x1, 3x1, 0.63x1, 1.38,x1
+      3: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.63: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.38,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_irn&item=wvs_Q50
+    item wvs_Q50 | Average answer on the 1–10 scale: A 6.3 → B 6.5 (higher = closer to “Completely satisfied”)
+    new tokens: 1x3, 10x4, 6.3x1, 6.5x1, 6x1, 53%x1, 7x1, 52%x1, 2.51x1, 2.74,x1, 1%x1
+      6: end-answer line repeats a value that the A/B bars already show (count +1)
+      53%: end-answer line repeats a value that the A/B bars already show (count +1)
+      7: end-answer line repeats a value that the A/B bars already show (count +1)
+      52%: end-answer line repeats a value that the A/B bars already show (count +1)
+      2.51: end-answer line repeats a value that the A/B bars already show (count +1)
+      2.74,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q50
+    item wvs_Q50 | Average answer on the 1–10 scale: A 6.3 → B 7.1 (higher = closer to “Completely satisfied”)
+    new tokens: 1x2, 10x1, 6.3x1, 7.1x1, 6x1, 53%x1, 7x1, 86%x1, 2.51x1, 0.13,x1, 1%x1
+      6: end-answer line repeats a value that the A/B bars already show (count +1)
+      53%: end-answer line repeats a value that the A/B bars already show (count +1)
+      7: end-answer line repeats a value that the A/B bars already show (count +1)
+      86%: end-answer line repeats a value that the A/B bars already show (count +1)
+      2.51: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.13,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_tha&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “0” (Don't belong) (64%)
+    new tokens: 2x2, 56%x1, 0x1, 64%x1, 0.88x1, -1.83,x1
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      -1.83,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_egy&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (52%)
+    new tokens: 2x2, 56%x1, 52%x1, 0x1, 0.88x1, 0.99,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.99,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp100011&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (69%)
+    new tokens: 2x2, 56%x1, 69%x1, 0x1, 0.88x1, 1.28,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.28,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp100111&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (73%)
+    new tokens: 2x2, 56%x1, 73%x1, 0x1, 0.88x1, 1.48,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.48,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_gbr&item=wvs_Q81
+    item wvs_Q81 | Average answer on the 1–4 scale: A 2.1 → B 1.9 (higher = closer to “None at all”)
+    new tokens: 2x2, 1x1, 4x2, 2.1x1, 1.9x1, 80%x1, 82%x1, 4.11x1, 5.66,x1
+      2: end-answer line repeats a value that the A/B bars already show (count +2)
+      80%: end-answer line repeats a value that the A/B bars already show (count +1)
+      82%: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.11: end-answer line repeats a value that the A/B bars already show (count +1)
+      5.66,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q81
+    item wvs_Q81 | Average answer on the 1–4 scale: A 2.1 → B 1.0 (higher = closer to “None at all”)
+    new tokens: 2x1, 1x2, 4x2, 2.1x1, 1.0x1, 80%x1, 100%x1, 4.11x1, 22.37,x1
+      2: end-answer line repeats a value that the A/B bars already show (count +1)
+      80%: end-answer line repeats a value that the A/B bars already show (count +1)
+      100%: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.11: end-answer line repeats a value that the A/B bars already show (count +1)
+      22.37,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp111101&item=wvs_Q81
+    item wvs_Q81 | Average answer on the 1–4 scale: A 2.1 → B 1.7 (higher = closer to “None at all”)
+    new tokens: 2x1, 1x5, 4x3, 2.1x1, 1.7x1, 80%x1, 52%x1, 4.11x1, 1.84,x1
+      2: end-answer line repeats a value that the A/B bars already show (count +1)
+      80%: end-answer line repeats a value that the A/B bars already show (count +1)
+      52%: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.11: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.84,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp111111&item=wvs_Q81
+    item wvs_Q81 | Average answer on the 1–4 scale: A 2.1 → B 1.5 (higher = closer to “None at all”)
+    new tokens: 2x1, 1x5, 4x3, 2.1x1, 1.5x1, 80%x1, 56%x1, 4.11x1, 3.60,x1
+      2: end-answer line repeats a value that the A/B bars already show (count +1)
+      80%: end-answer line repeats a value that the A/B bars already show (count +1)
+      56%: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.11: end-answer line repeats a value that the A/B bars already show (count +1)
+      3.60,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_phl&item=wvs_Q176
+    item wvs_Q176 | Average answer on the 1–10 scale: A 5.6 → B 5.9 (higher = closer to “Completely disagree”)
+    new tokens: 1x3, 10x4, 5.6x1, 5.9x1, 5x1, 40%x1, 6x1, 80%x1, 5.76x1, 11.27,x1, 1%x1
+      5: end-answer line repeats a value that the A/B bars already show (count +1)
+      40%: end-answer line repeats a value that the A/B bars already show (count +1)
+      6: end-answer line repeats a value that the A/B bars already show (count +1)
+      80%: end-answer line repeats a value that the A/B bars already show (count +1)
+      5.76: end-answer line repeats a value that the A/B bars already show (count +1)
+      11.27,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q176
+    item wvs_Q176 | Average answer on the 1–10 scale: A 5.6 → B 6.2 (higher = closer to “Completely disagree”)
+    new tokens: 1x3, 10x4, 5.6x1, 6.2x1, 5x1, 40%x1, 6x1, 85%x1, 5.76x1, 15.59,x1, 1%x1
+      5: end-answer line repeats a value that the A/B bars already show (count +1)
+      40%: end-answer line repeats a value that the A/B bars already show (count +1)
+      6: end-answer line repeats a value that the A/B bars already show (count +1)
+      85%: end-answer line repeats a value that the A/B bars already show (count +1)
+      5.76: end-answer line repeats a value that the A/B bars already show (count +1)
+      15.59,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp111110&item=wvs_Q176
+    item wvs_Q176 | Average answer on the 1–10 scale: A 5.6 → B 5.1 (higher = closer to “Completely disagree”)
+    new tokens: 1x4, 10x3, 5.6x1, 5.1x1, 5x2, 40%x1, 22%x1, 5.76x1, -0.56,x1, 1%x1
+      5: end-answer line repeats a value that the A/B bars already show (count +2)
+      40%: end-answer line repeats a value that the A/B bars already show (count +1)
+      22%: end-answer line repeats a value that the A/B bars already show (count +1)
+      5.76: end-answer line repeats a value that the A/B bars already show (count +1)
+      -0.56,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp111111&item=wvs_Q176
+    item wvs_Q176 | Average answer on the 1–10 scale: A 5.6 → B 4.8 (higher = closer to “Completely disagree”)
+    new tokens: 1x4, 10x3, 5.6x1, 4.8x1, 5x2, 40%x1, 25%x1, 5.76x1, -0.08,x1, 1%x1
+      5: end-answer line repeats a value that the A/B bars already show (count +2)
+      40%: end-answer line repeats a value that the A/B bars already show (count +1)
+      25%: end-answer line repeats a value that the A/B bars already show (count +1)
+      5.76: end-answer line repeats a value that the A/B bars already show (count +1)
+      -0.08,: end-answer line: same value as the A/B bar, followed by a comma
+      1%: warning "below 1%" (both end answers)
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_chn&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (66%)
+    new tokens: 2x2, 56%x1, 66%x1, 0x1, 0.88x1, 1.92,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.92,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27_usa&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (100%)
+    new tokens: 2x2, 56%x1, 100%x1, 0x1, 0.88x1, 20.41,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      20.41,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp101111&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (77%)
+    new tokens: 2x2, 56%x1, 77%x1, 0x1, 0.88x1, 1.88,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      1.88,: end-answer line: same value as the A/B bar, followed by a comma
+/?tab=c&a=llama31_8b_nf4_dequant_float64_cpu_45cc5d4b_46079e27&b=llama31_8b_nf4_dequant_float64_cpu_843a4cf0_46079e27_base_sp111111&item=wvs_Q99
+    item wvs_Q99 | Most likely answer: A “2” (Active member) (56%) → B “2” (Active member) (95%)
+    new tokens: 2x2, 56%x1, 95%x1, 0x1, 0.88x1, 4.37,x1
+      0: end-answer line repeats a value that the A/B bars already show (count +1)
+      0.88: end-answer line repeats a value that the A/B bars already show (count +1)
+      4.37,: end-answer line: same value as the A/B bar, followed by a comma
+
+Not in the 33: the pop-up text (dialogs sit outside #app). Pop-up numbers are computed from the open pair at run time.

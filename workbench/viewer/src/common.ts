@@ -62,6 +62,55 @@ export const short = (s: string, n = 48) => (s.length > n ? s.slice(0, n - 1).tr
 /** "(original)" / "(fine-tuned)" only when B is A plus an adapter (COPY C06). Otherwise registry labels only. */
 export const roleOf = (D: Bundle, k: "A" | "B") => (D.B.m.model.adapter && D.A.m.model.model_id === D.B.m.model.model_id ? (k === "A" ? " (original)" : " (fine-tuned)") : "");
 export const isBank = (r: Run) => r.m.item.kind === "bank";
+
+// ------------------------------------------------------------------ answers on a scale (WB7-W)
+// Which items run along one scale? The item records `meta.response_type` ("scale_1_10", "single_choice_4", ...).
+// It does not record "ordered". Rule used here: a recorded `scale_*` type is ordered. A four-code item whose end
+// answers carry text labels is assumed ordered (wvs_Q81, "A great deal" ... "None at all"). Three-code items
+// (wvs_Q43, wvs_Q99) are not assumed ordered. Two-code items keep the two-answer headline.
+type ItemInfo = Run["m"]["item"];
+export const isOrdered = (it: ItemInfo): boolean => {
+  if (it.codes.length < 3 || !it.codes.every((c) => Number.isFinite(Number(c)))) return false;
+  const t = String(it.meta?.response_type ?? "");
+  if (t.startsWith("scale_")) return true;
+  const ends = [it.labels[0], it.labels[it.labels.length - 1]].map((l) => String(l));
+  return t === "single_choice_4" && ends.every((l) => !Number.isFinite(Number(l)));
+};
+/** The lowest and highest answer codes of an ordered item, with their labels. */
+export function scaleEnds(it: ItemInfo) {
+  const nums = it.codes.map(Number), iLo = nums.indexOf(Math.min(...nums)), iHi = nums.indexOf(Math.max(...nums));
+  return { lo: it.codes[iLo], hi: it.codes[iHi], loLab: String(it.labels[iLo]), hiLab: String(it.labels[iHi]) };
+}
+/** Expected answer: the sum of code × probability over all codes (the probabilities add to 1). */
+export const expectedAnswer = (it: ItemInfo, probs: Record<string, number>) => it.codes.reduce((s, c) => s + Number(c) * (probs[c] ?? 0), 0);
+export function modalAnswer(it: ItemInfo, probs: Record<string, number>) {
+  let best = it.codes[0]; for (const c of it.codes) if ((probs[c] ?? 0) > (probs[best] ?? 0)) best = c;
+  return { code: best, p: probs[best] ?? 0, label: String(it.labels[it.codes.indexOf(best)]) };
+}
+export const pct = (p: number) => `${(p * 100).toFixed(p > 0 && p < 0.01 ? 1 : 0)}%`;
+const named = (code: string, label: string) => (label && label !== code ? `“${code}” (${short(label, 28)})` : `“${code}”`);
+/** Odds factor of a log-odds change, as words: +1 ≈ odds × 2.7. */
+export const ODDS_RULE = "+1 ≈ odds × 2.7, +5 ≈ odds × 150, −1 ≈ odds ÷ 2.7";
+
+/** Real numbers of the pair now open, used by the worked examples in the pop-ups. Read from the export, never typed. */
+function worked(D: Bundle) {
+  const M = D.A.m.model, L = M.n_layers, H = M.n_heads, ro = D.A.m.readout.position, tk = D.A.m.tokens;
+  const dd = dAttr(D, false);
+  let best = { l: 0, h: -1, v: 0 };
+  for (let l = 0; l < L; l++) for (let h = -1; h < H; h++) { const v = h < 0 ? dd.mlp(l) : dd.head(l, h); if (Math.abs(v) > Math.abs(best.v)) best = { l, h, v }; }
+  const kmid = Math.round(L / 2), rmA = D.A.t.running_margin, rmB = D.B.t.running_margin;
+  const dn = D.P.t["d_attn_norm"];
+  let mx = { l: 0, t: 0, v: 0 };
+  if (dn) for (let l = 0; l < L; l++) for (let t = 0; t < tk.length; t++) { const v = dn.get(l, t); if (v > mx.v) mx = { l, t, v }; }
+  const rn = D.A.t.resid_norm, rnB = D.B.t.resid_norm, drn = D.P.t["d_resid_norm"];
+  return {
+    part: best.h < 0 ? `the MLP block of layer ${best.l}` : `head ${best.h} of layer ${best.l}`, partV: best.v,
+    partToward: best.v >= 0 ? labelPlus(D.A) : labelMinus(D.A), dMargin: dd.margin, kmid, L,
+    midA: rmA.get(kmid), midB: rmB.get(kmid), endA: rmA.get(L), endB: rmB.get(L),
+    mxL: mx.l, mxTok: tokText(tk[mx.t].text), mxT: mx.t, mxV: mx.v, hasMx: !!dn && mx.v > 0,
+    rA: rn ? rn.get(L, ro) : NaN, rB: rnB ? rnB.get(L, ro) : NaN, rD: drn ? drn.get(L, ro) : NaN,
+  };
+}
 /** The question (or scenario) text, from the tokens of the exported `question` segment (PM ruling K10). */
 export function questionText(r: Run): string | null {
   const s = r.m.segments?.find((g) => g.kind === "question");
@@ -240,28 +289,55 @@ export const checkLine = (c: Check) => c.relative
   ? `${c.who} ${c.k} rel ${relFmt(c.v)} ${c.ok ? "<" : "≥"} ${tauStr(c.thr)}${c.simulated ? " (simulated with ?fail · not data)" : ""}`
   : `${c.who} ${c.k} = ${isNaN(c.v) ? "fails" : fmt(c.v, 2)}${isNaN(c.thr) ? "" : (c.ok ? " < " : " ≥ ") + c.thr}${c.simulated ? " (simulated with ?fail · not data)" : ""}`;
 
-// ------------------------------------------------------------------ the answer card (S01–S08)
+// ------------------------------------------------------------------ the answer card ("details")
 export function readoutHTML(D: Bundle): string {
-  const it = D.A.m.item, codes = it.codes, lp = labelPlus(D.A), lmn = labelMinus(D.A);
+  const it = D.A.m.item, codes = it.codes, lp = labelPlus(D.A), lmn = labelMinus(D.A), n = codes.length, many = n > 2, ord = isOrdered(it);
   const bars = (r: Run, col: string) => codes.map((c) => {
     const p = r.m.readout.probs[c], pc = r.m.readout.probs_clamped[c];
     return `<div class="pr"><span>${esc(c)}</span><div class="trk"><div style="width:${(p * 100).toFixed(1)}%;background:${col}"></div><i style="left:${(pc * 100).toFixed(1)}%" title="clamped run (Quadrant III neurons switched off): ${pc.toFixed(3)}"></i></div><span class="num">${p.toFixed(3)}</span></div>`;
   }).join("");
   const ok = checksOf(D).every((c) => c.ok);
+  const prA = D.A.m.readout.probs, prB = D.B.m.readout.probs, ma = modalAnswer(it, prA), mb = modalAnswer(it, prB);
+  const shown = `A gives ${esc(named(ma.code, ma.label))} the highest probability (${pct(ma.p)}). B gives ${esc(named(mb.code, mb.label))} (${pct(mb.p)}).`;
+  let scaleBlock = "";
+  if (many) {
+    const e = ord ? scaleEnds(it) : null, eA = expectedAnswer(it, prA), eB = expectedAnswer(it, prB);
+    scaleBlock = `<h4>How to read a question with many answers</h4><ul>
+      ${e ? `<li><b>Average answer</b> (expected answer): each answer code times its probability, added up. Here A ${eA.toFixed(2)}, B ${eB.toFixed(2)}, on the ${esc(e.lo)}–${esc(e.hi)} scale. Higher means closer to “${esc(short(e.hiLab, 40))}” (${esc(e.hi)}). Paper B scores each item this way (E[recode]).</li>` : `<li>This question has no scale of answers in the export, so no average is shown. Read the most likely answer and the bars.</li>`}
+      <li><b>Most likely answer</b>: the answer with the highest probability. ${shown}</li>
+      <li><b>Log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”</b>: compares only ${ord ? "the two end answers" : "the first and last answer codes"}. Here A ${D.A.m.readout.margin.toFixed(2)}, B ${D.B.m.readout.margin.toFixed(2)}. ${ODDS_RULE}.</li></ul>
+      <p>The log-odds can move against the average answer. A question with ${n} answers has ${n - 2} answers in the middle that the log-odds ignores. If both end answers have a probability near zero, a small change in a tiny number gives a big change in the log-odds.</p>
+      <p>Why use the ends at all? The log-odds is a difference of two answer scores. A difference of two scores is linear in the model's internal state. This lets the Ladder split it exactly into a part for each head and each layer, which the line “the parts add up” checks. An average answer cannot be split in that way.</p>`;
+  } else {
+    scaleBlock = `<h4>How to read a question with two answers</h4><p>The two probabilities add to 100%, so the log-odds and the probability tell the same story. Paper B scores each item as the expected answer (E[recode]): the answer code times its probability, added up. With two answers this is a simple function of the one probability.</p>`;
+  }
   return `<div class="card"><div class="card-h"><span>The model's answer · ${esc(it.item_id)}</span>${lm("eq6", "learn more")}</div>
+    <h4>What this card shows</h4>
+    <p>The answer of the model to this survey question, as a probability for each answer code. Each bar is one probability, from 0% to 100%. The bars of one model add to 100%. A model gives probabilities. It does not say what people say.</p>
     <div class="q" title="Equivalently logit(“${esc(it.j_plus)}”) − logit(“${esc(it.j_minus)}”): the shared normaliser of the softmax cancels. Called the margin in the code.">Log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” (the margin) = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Positive means the model leans toward “${esc(short(lp, 60))}” over “${esc(short(lmn, 60))}”.</div>
-    <div class="q">Answer codes: ${codes.map((c, i) => `<b>${esc(c)}</b> ${esc(short(String(it.labels[i]), isBank(D.A) ? 70 : 40))}`).join(" · ")}</div>
+    <div class="q">Answer codes: ${codes.map((c, i) => { const lab = String(it.labels[i]); return lab === c ? `<b>${esc(c)}</b>` : `<b>${esc(c)}</b> = ${esc(short(lab, isBank(D.A) ? 70 : 40))}`; }).join(" · ")}</div>
     <div class="two"><div><i title="${esc(D.A.m.model.label)}" style="color:${A_COL}">A · log-odds ${D.A.m.readout.margin.toFixed(3)}</i>${bars(D.A, A_COL)}</div><div><i title="${esc(D.B.m.model.label)}" style="color:${B_COL}">B · log-odds ${D.B.m.readout.margin.toFixed(3)}</i>${bars(D.B, B_COL)}</div></div>
-    <div class="sub">Change from the base, B − A: log-odds <span class="num">${sgn(D.P.m.d_margin)}</span> · P(“${esc(short(lp, 30))}”) <span class="num">${sgn(D.P.m.d_probs[it.j_plus])}</span>. <span style="color:var(--q3)">Purple tick</span>: the result of the clamped run (Quadrant III neurons switched off).</div>
+    <div class="sub">Change from the base, B − A: log-odds <span class="num">${sgn(D.P.m.d_margin)}</span> · P(“${esc(short(lp, 30))}”) <span class="num">${sgn(D.P.m.d_probs[it.j_plus])}</span>. <span style="color:var(--q3)">Purple tick</span>: the result of the clamped run (Quadrant III neurons switched off). ${lm("clamp", "What is the clamped run?")}</div>
+    <h4>How to read the bars</h4>
+    <ul><li>Bar length = probability. Grey is A (the base model). Teal is B.</li>
+    <li>The number at the right of each bar is the same probability, from 0 to 1.</li>
+    <li>The purple tick marks the probability of that answer in the clamped run, on the same 0% to 100% scale as the bar. A tick far from the end of the bar means the probability changed a lot when these neurons were switched off. A tick near the end means it changed little. This tests one small group of neurons. It does not test the whole model.</li>
+    <li>Example from this page: ${shown}</li></ul>
+    ${scaleBlock}
+    <h4>What the log-odds scale means</h4><p>${ODDS_RULE}. Zero means even odds between the two answers. The change B − A is a difference of two log-odds, so it uses the same scale.</p>
+    <h4>What this card does not show</h4><p>It does not show why B differs from A (use the Ladder). It does not show what any group of people would answer. The probabilities are not a survey result.</p>
     <div class="cons ${ok ? "ok" : "bad"}">${ok ? "✓ The parts add up to the total: every accounting check passes for A and B" : "✗ An accounting check failed. Do not read these figures as measurements until the export is fixed."} ${lm("conservation", "see the accounting checks")}</div></div>`;
 }
 
 // ------------------------------------------------------------------ learn-more pop-ups (P01–P14)
 export const lm = (key: string, text: string, topic?: string) => { const t = `Learn more: ${topic ?? TOPIC[key] ?? key}`; return `<button class="lm" data-learn="${key}" title="${esc(t)}" aria-label="${esc(t)}">${esc(text)}</button>`; };
-const TOPIC: Record<string, string> = { eq6: "the answer as a probability", head: "attention heads", tstar: "the answer position", norm: "the size of a vector", dla: "contribution to the answer (DLA)", conservation: "the accounting checks", delta: "what the adapter changed", mlp: "MLP blocks", segments: "template text", clamp: "the clamped run", models: "the two models", terms: "the glossary", resid: "the running state", scale: "heights and colours" };
+const TOPIC: Record<string, string> = { eq6: "the answer as a probability", head: "attention heads", tstar: "the answer position", norm: "the size of a vector", dla: "contribution to the answer (DLA)", conservation: "the accounting checks", delta: "what the adapter changed", mlp: "MLP blocks", segments: "template text", clamp: "the clamped run", models: "the two models", terms: "the glossary", resid: "the running state", scale: "heights and colours", groundTruth: "the human reference" };
 
 export const GLOSSARY: [string, string][] = [
-  ["log-odds (margin)", "The log of the odds of the first answer code over the second: log[P(first) / P(second)]. It equals the gap between their scores. Positive means the model leans toward the first. The code and the paper call it the margin. Economists know log-odds from logit."],
+  ["log-odds (margin)", "The log of the odds of the first answer code over the second: log[P(first) / P(second)]. It equals the gap between their scores. Positive means the model leans toward the first. The code and the paper call it the margin. Economists know log-odds from logit. Scale: +1 is odds × 2.7, +5 is odds × 150, −1 is odds ÷ 2.7."],
+  ["expected answer (average answer)", "The answer codes added up, each one times its probability: Σ code × P(code). On a 1–10 question it is the average answer of the model. Paper B scores an item this way (E[recode]). Unlike the log-odds of the two end answers, it uses every answer."],
+  ["end answers", "The first and the last answer code of a question, for example “1” and “10” on a 1–10 scale. The log-odds in the charts compares only these two. If both are near zero, the log-odds can move against the expected answer."],
+  ["read off after a layer", "The answer that the model would give if it stopped after this layer. The charts show it as log-odds for each layer. Mid-layer readings are rough and only the last layers are close to the real answer. A line near 0 early means no readable preference yet, not neutral."],
   ["logit", "The model's raw score for one answer, before it is turned into a probability. Only differences between scores matter. Like the utility index in a multinomial logit."],
   ["Eq. 6", "The step that turns the scores of the response codes into probabilities (a softmax over the codes only). Eq. 6 of the SCA2 paper (arXiv:2610.06562)."],
   ["answer position (t*)", "The last position of the prompt, where the model is about to write its answer. Every probability, log-odds and contribution is read here. Also called the readout position."],
@@ -277,7 +353,8 @@ export const GLOSSARY: [string, string][] = [
   ["sign prompt", "The same six signs written into the prompt, instead of into an adapter. The weights do not change."],
   ["base model", "The unchanged model that we start from. In the viewer it is A."],
   ["DPO (direct preference optimization)", "Training from pairs of answers, one preferred and one not. Here the pairs are made-up everyday scenarios, preferring the answer that matches a country's direction on the Global Preferences Survey (for example, more trusting, more patient). Not survey responses."],
-  ["Quadrant III and clamped run", "Quadrant III neurons are the neurons whose two input signals are both below −0.05. The clamped run switches them off: it sets their output to zero while the model runs, then measures again. Later layers can still respond."],
+  ["clamped run", "A second run of the same model on the same prompt, with the Quadrant III neurons switched off: their output is set to zero while the model runs, then the answer is measured again. It tests whether the answer depends on that group. Later layers can still respond. The purple tick on a bar is its result."],
+  ["Quadrant III", "The MLP neurons whose gate input and up input are both below −0.05 at a token. The clamped run switches this group off. The count at a token is q3_count."],
   ["size of the change ‖B − A‖ vs change B − A", "‖B − A‖ is the length of the difference of two vectors: never negative. B − A is the signed difference of two numbers."],
   ["top-16 attention", "For each head and token only the 16 largest attention weights are kept. “Covered” says how much of the attention they account for."],
   ["token", "A word piece. The model reads and writes tokens, not words."],
@@ -338,7 +415,7 @@ function relativeTable(D: Bundle, cA: Conservation, cB: Conservation): string {
       ${main.map((k) => row(k, ra.checks[k], rb.checks[k])).join("\n      ")}
       <tr><td>Added up again in this browser from the float32 arrays drawn: |log-odds − sum of contributions| (|margin − ΣDLA|)</td><td class="num">${notGated ? "not gated here" : "1e-2"}</td><td class="num">${fmt(D.A.clientCheck.dlaGap, 2)}</td><td class="num">${fmt(D.B.clientCheck.dlaGap, 2)}</td></tr>
       ${pairRow}</table>
-      <details><summary>show the clamped run and the rows that are for information only</summary><table class="lt">
+      <details><summary>show the clamped run and the rows that are for information only</summary><p>${lm("clamp", "What is the clamped run?")}</p><table class="lt">
       ${clamped.map((k) => row(k, ra.checks[k], rb.checks[k])).join("\n      ")}
       <tr><td>Our code vs the reference code as shipped (relative gap). For information only.</td><td class="num">none</td><td class="num">${fmt(cA.hf_logits_max_rel_gap, 2)}</td><td class="num">${fmt(cB.hf_logits_max_rel_gap, 2)}</td></tr>
       <tr><td>Eq. 6 vs the full-answer calculation (absolute gap). A test checks this, and each export also records the gap.</td><td class="num">none</td><td class="num">${fmt(cA.eq6_teacher_forced_max_abs_gap, 2)}</td><td class="num">${fmt(cB.eq6_teacher_forced_max_abs_gap, 2)}</td></tr>
@@ -360,6 +437,7 @@ export function learnText(D: Bundle, key: string): [string, string] {
   const M = D.A.m.model as typeof D.A.m.model & { d_model: number; d_ffn: number; n_heads: number; n_kv_heads?: number };
   const n = (v: number) => (v ?? 0).toLocaleString("en-US");
   const fill = (t: string) => t.replace("{d_model}", n(M.d_model)).replace("{d_ffn}", n(M.d_ffn)).replace("{n_heads}", String(M.n_heads)).replace("{n_layers}", String(M.n_layers));
+  const W = worked(D);
   const L: Record<string, [string, string]> = {
     eq6: ["The answer as a probability (Eq. 6)", `<p>The model's answer to a question is a set of probabilities, one for each response code. They work like the predicted choice shares of a multinomial logit. Every other number in the workbench explains how the model got to these probabilities.</p><p>The model reads the whole prompt. At the answer position (t* = ${ro}) it gives a score to every possible next token. We keep only the scores for the response codes (${it.codes.map(esc).join(", ")}) and turn them into probabilities with a softmax. This is the same form as a multinomial logit, restricted to the response codes. It is Eq. 6 of the SCA2 paper (arXiv:2610.06562). We also compute the same probabilities a second way, by scoring each full answer token by token: a test checks this; each export also records the gap. Here the largest gap is ${fmt(Math.max(cA.eq6_teacher_forced_max_abs_gap, cB.eq6_teacher_forced_max_abs_gap), 2)}.</p><p>The <b>log-odds</b> of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” (called the <b>margin</b> in the code) is log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Equivalently, it is the gap between their two scores (logits), because the softmax's shared normaliser cancels. Positive means the model leans toward “${lp}”. Every “contribution to the answer” figure in the workbench splits this one number into parts.</p>`],
     head: ["What is an attention head?", `<p>An attention head is the part of a layer that chooses which earlier words to read when the model works on a word. You can think of it as a weighted lookup of context.</p><p>When the model works on a word, an attention head looks back at the earlier words and takes a weighted average of what it finds there. The weights (the attention weights, A[q,k]) are positive and add to 1, like kernel weights. The head then adds a summary, a list of ${n(M.d_model)} numbers, to the running state. This model has ${M.n_heads} heads in each layer. They share ${M.n_kv_heads ?? M.n_heads} sets of key and value inputs.</p><p>The block height is the <b>size of that summary</b>, ‖o_h‖. It says how much the head adds, not in which direction. “Where this head looks” lists the stored 16 largest attention weights. At the answer position the head also has a contribution to the answer (direct logit attribution, DLA): how much its addition moves the log-odds, read straight through the model's last steps.</p>${ref("o_h = softmax(q kᵀ/√64 + causal) v<sub>kv(h)</sub> W_O[:,h]ᵀ. Arrays: <code>head_norm</code>, <code>attn_topk_idx/_val</code>, <code>head_attr</code>.")}`],
@@ -371,7 +449,7 @@ export function learnText(D: Bundle, key: string): [string, string] {
       <tr><td>The parts add up to the final running state (largest gap in any of its numbers, at any token)</td><td>1e-3</td><td>${fmt(cA.residual_closure_inf, 2)}</td><td>${fmt(cB.residual_closure_inf, 2)}</td></tr>
       <tr><td>The contributions add up to the log-odds (absolute gap)</td><td>1e-2</td><td>${fmt(cA.dla_gap, 2)}</td><td>${fmt(cB.dla_gap, 2)}</td></tr>
       <tr><td>Our code gives the same scores as the Hugging Face reference code, with its float32 rounding steps switched off (relative gap)</td><td>1e-10</td><td>${fmt(cA.hf64_logits_max_rel_gap, 2)}</td><td>${fmt(cB.hf64_logits_max_rel_gap, 2)}</td></tr></table>
-      <details><summary>show all six checks</summary><table class="lt">
+      <details><summary>show all six checks</summary><p>${lm("clamp", "What is the clamped run?")}</p><table class="lt">
       <tr><td>Same log-odds check, clamped run (Quadrant III neurons switched off)</td><td>1e-2</td><td>${fmt(cA.dla_gap_clamped, 2)}</td><td>${fmt(cB.dla_gap_clamped, 2)}</td></tr>
       <tr><td>Our code vs the reference code as shipped (relative gap). For information only.</td><td>none</td><td>${fmt(cA.hf_logits_max_rel_gap, 2)}</td><td>${fmt(cB.hf_logits_max_rel_gap, 2)}</td></tr>
       <tr><td>Eq. 6 vs the full-answer calculation (absolute gap). A test checks this, and each export also records the gap.</td><td>none</td><td>${fmt(cA.eq6_teacher_forced_max_abs_gap, 2)}</td><td>${fmt(cB.eq6_teacher_forced_max_abs_gap, 2)}</td></tr>
@@ -380,15 +458,90 @@ export function learnText(D: Bundle, key: string): [string, string] {
       </table></details>
       <p>Each run uses float64 arithmetic. If the parts failed to add up to the whole, the status line next to the answer would turn red, and the figures should not be read as measurements until the export is fixed.</p>`}`],
     delta: ["What the adapter changed: ‖B − A‖ and B − A", `<p>To see what the adapter (or the sign prompt) did, the workbench compares B with A in two ways. One is the size of the change in a part. The other is the signed change in a single number, which says which way the number moved.</p><p>For the same prompt, token and layer, the pair export stores <b>‖B − A‖</b>: the length of the difference between B's vector and A's vector. It is computed from both float64 runs and is exact. It is not the difference of two lengths: ‖B − A‖ is not ‖B‖ − ‖A‖. It is never negative, so it says how much changed and not in which direction.</p><p><b>B − A</b> with a sign is a difference between two single numbers, such as two contributions to the answer, like the change in a coefficient. For the contribution to the answer it comes from the pair export (<code>d_head_attr</code>, <code>d_mlp_attr</code>). Other signed changes are computed on this page and shown in italics.</p><p>‖W<sub>B</sub> − W<sub>A</sub>‖ shows where the weights moved.${mlpZero ? " In this pair every MLP weight change is exactly 0, so any MLP change is downstream of changed attention." : ""}</p>`],
-    mlp: ["What is an MLP block?", `<p>The MLP block is the part of a layer that transforms what the attention heads read, one word at a time. You can think of it as a small network that re-codes each word's running state.</p><p>After attention, each layer runs a small feed-forward neural network (an MLP, a multilayer perceptron) on every token separately. It has ${n(M.d_ffn)} hidden units, called neurons, per layer. Nothing moves between tokens here. The block height is the size of what it adds, ‖m‖.</p><p>Each neuron multiplies two input signals: a “gate” g̃ (passed through SiLU) and an “up” signal u. <b>Quadrant III</b> neurons are those where both g̃ and u are below −0.05 (counted in <code>q3_count</code>). In the clamped run we switch these neurons off: we set their outputs to zero in every layer and position and run the model again. The purple ticks show what that does to the answer probabilities.</p>${ref("m = Σ_i SiLU(g̃_i) u_i W_down[:, i]")}`],
+    mlp: ["What is an MLP block?", `<p>The MLP block is the part of a layer that transforms what the attention heads read, one word at a time. You can think of it as a small network that re-codes each word's running state.</p><p>After attention, each layer runs a small feed-forward neural network (an MLP, a multilayer perceptron) on every token separately. It has ${n(M.d_ffn)} hidden units, called neurons, per layer. Nothing moves between tokens here. The block height is the size of what it adds, ‖m‖.</p><p>Each neuron multiplies two input signals: a “gate” g̃ (passed through SiLU) and an “up” signal u. <b>Quadrant III</b> neurons are those where both g̃ and u are below −0.05 (counted in <code>q3_count</code>). In the clamped run we switch these neurons off: we set their outputs to zero in every layer and position and run the model again. The purple ticks show what that does to the answer probabilities. ${lm("clamp", "What is the clamped run?")}</p>${ref("m = Σ_i SiLU(g̃_i) u_i W_down[:, i]")}`],
     segments: ["Template text and collapsed parts of the prompt", `<p>Most of the prompt is fixed wrapper text around the question. The workbench folds that text away and keeps the question and the answer options in view.</p><p>Most of the ${D.A.m.tokens.length} tokens are the chat template and fixed instructions. The prompt is split into labelled parts (message markers, instructions, the ${isBank(D.A) ? "scenario" : "question"}, the options, the answer cue, the answer position). The question, the options and the answer position are open by default. A collapsed part draws nothing: it is a gap with a label, never a summary block. A grey pill in the text is one collapsed part.</p><p>${D.A.m.segments ? "The parts come from the export (<code>manifest.segments</code>, contract @1.1): the exporter knows how the prompt was built." : "This is an @1 export without <code>segments</code>, so the prompt is shown as one part."}</p>`],
-    clamp: ["Quadrant III and the clamped run", `<p>The clamped run is a what-if experiment. We switch off one group of neurons in the MLP blocks and measure the answer again. It shows whether the answer depends on that group.</p><p>A neuron here has two input signals, a gate and an up signal. Quadrant III neurons have both below −0.05. The clamped run sets their outputs to zero in every layer and at every position, while the model runs, and records the new answer probabilities (the purple ticks). It is like re-estimating with a group of terms switched off, except that later layers respond to the change. The neurons were not chosen for being large or small. Whether this group matters for the answer is a hypothesis to test, not something this page shows.</p>`],
+    "howto-c": ["How to read the Ladder", `<p>The Ladder shows which parts of the model pushed the answer, and by how much. It has the ladder, a line chart and the prompt. The strip at the top gives the answer. Press <b>details</b> there to read it.</p>
+      <h4>1 · The ladder (centre)</h4><ul>
+      <li><b>What it shows.</b> One cell for each attention head and each MLP block, read at the answer position (t*, where the model is about to write its answer). Each row is one layer, with layer 0 at the bottom. The wide cell at the right of a row is the MLP block. The bottom row (emb) is the embedding term: what the words themselves contribute.</li>
+      <li><b>Unit.</b> Contribution to the answer (DLA), in log-odds of “${lp}” over “${lmn}”. Log-odds: ${ODDS_RULE}.</li>
+      <li><b>Colour.</b> Blue pushes the answer toward “${lp}”. Orange pushes it toward “${lmn}”. Grey is about zero. The colour deepens with size. The key under the chart gives the largest value.</li>
+      <li><b>The switch.</b> <b>A</b> is the base model. <b>B</b> is the model compared with it. <b>Change (B − A)</b> is the default: how much each cell moved. The <span style="color:var(--delta)">gold rings</span> mark the five largest changes on every face. Click a cell to pin it. A drawer then compares A and B for that cell.</li>
+      <li><b>Example from this page.</b> On the Change face, all cells plus the embedding term add up to ${sgn(W.dMargin)}, the change in log-odds. The largest cell is ${W.part}: ${sgn(W.partV)}, toward “${esc(short(W.partToward, 40))}”.</li>
+      <li><b>Does not show.</b> Why a part moved. A contribution is the direct effect only. A head that changes what a later layer does gets no credit for that path.</li></ul>
+      <h4>2 · The line under the ladder</h4><ul><li>It reads “all cells + embedding term = total ✓”. It says that the parts add up to the log-odds of the face shown. This is an accounting check. It is not a test that the answer is right. ${lm("conservation", "see the accounting checks")}</li></ul>
+      <h4>3 · Log-odds by layer (right)</h4><ul>
+      <li><b>What it shows.</b> The log-odds the model would give if it stopped after this layer and answered. We call this “read off after each layer” (the final rescaling is held fixed). The rows match the ladder.</li>
+      <li><b>Unit and position.</b> Log-odds. The zero line is even odds between “${lp}” and “${lmn}”. A line to the right of zero leans toward “${lp}”. A line to the left leans toward “${lmn}”.</li>
+      <li><b>Colour.</b> Grey is A. Teal is B. The dot at the top is the last layer.</li>
+      <li><b>Read the early layers with care.</b> A reading in the middle layers is rough. Only the last layers are close to the real answer. A line near 0 in the early layers means “no readable preference yet”. It does not mean “neutral”.</li>
+      <li><b>Example from this page.</b> After ${W.kmid} of ${W.L} layers, A reads ${W.midA.toFixed(2)} and B reads ${W.midB.toFixed(2)}. After the last layer, the readings are the real log-odds: A ${W.endA.toFixed(2)}, B ${W.endB.toFixed(2)}.</li>
+      <li><b>Does not show.</b> The steps inside a layer. It does not show the probability of any answer.</li></ul>
+      <h4>4 · The prompt (left)</h4><ul><li>The text that the model reads. The question and the options are open. The fixed template text is folded in one line. Pin or hover a head, and each word is shaded by the attention that the head gives it from t*. The shade is a share of that head's attention (the 16 largest weights are kept). It does not measure how important a word is.</li></ul>
+      <h4>5 · The clamped run switch</h4><ul><li>The <b>clamped run</b> button (key C) redraws the tab with the clamped run. Every number is then from that run, and a chip in the top bar says so. ${lm("clamp", "What is the clamped run?")}</li></ul>
+      <p>More: ${lm("segments", "template text and the parts of the prompt")} ${lm("dla", "what is a contribution to the answer (DLA)?")} ${lm("resid", "the running state")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>C</code> clamped run · <code>/</code> find a word in the prompt · <code>Esc</code> unpin · <code>[ ]</code> step the pinned head through its layer · <code>?</code> this help.</p>`],
+    "howto-b": ["How to read the Matrix", `<p>The Matrix shows where in the prompt, and in which layers, the internal numbers of the model are large. By default it shows where B changed them most. The strip at the top gives the answer. Press <b>details</b> there to read it.</p>
+      <h4>1 · The map</h4><ul>
+      <li><b>What it shows.</b> One cell for each layer (rows, layer 0 at the bottom) and each token (columns). The brightness is the size ‖v‖ of a vector at that place (its usual length). The first switch picks the vector: the attention addition ‖a‖, the running state ‖h‖, or the MLP block addition ‖m‖.</li>
+      <li><b>The second switch.</b> <b>A</b>, <b>B</b>, or the <b>size of the change ‖B − A‖</b> (default): how far B's vector is from A's. It is exact, never negative, and has its own gold scale.</li>
+      <li><b>Colour.</b> Brighter is larger. The scale is linear from 0 and clipped at the 99th percentile. The footer prints the clip value and the maximum. Compare brightness only inside one map.</li>
+      <li><b>Position.</b> The white frame is the answer position (t*). Template text (the fixed chat wrapper) is squeezed to 2 px columns. It is never dropped.</li>
+      <li><b>Unit.</b> A size in the units of the internal numbers of the model. It has no direction. It is not a probability.</li>
+      <li><b>Example from this page.</b> ${W.hasMx ? `The largest ‖B − A‖ of the attention addition is ${fmt(W.mxV, 3)}, in layer ${W.mxL} at token ${W.mxT} (“${esc(W.mxTok)}”).` : "This export has no attention-addition change, so no example is shown."}</li>
+      <li><b>Does not show.</b> Which way a change pushes the answer. It shows how much a vector moved. Use the Ladder for the direction.</li></ul>
+      <h4>2 · Log-odds by layer (right)</h4><ul>
+      <li><b>What it shows.</b> The log-odds the model would give if it stopped after each layer and answered (“read off after each layer”). Grey is A. Teal is B. The dashed line is 0 = even odds. Log-odds: ${ODDS_RULE}.</li>
+      <li><b>Read the early layers with care.</b> Mid-layer readings are rough. Only the last layers are close to the real answer. A line near 0 early means “no readable preference yet”, not “neutral”.</li>
+      <li><b>Example from this page.</b> After ${W.kmid} of ${W.L} layers, A reads ${W.midA.toFixed(2)} and B reads ${W.midB.toFixed(2)}. After the last layer: A ${W.endA.toFixed(2)}, B ${W.endB.toFixed(2)}.</li></ul>
+      <p>Hover a cell for A, B and ‖B − A‖. Click to pin it and open the drawer. ${lm("norm", "the size of a vector")} ${lm("delta", "size of the change ‖B − A‖ vs change B − A")} ${lm("resid", "the running state")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>Esc</code> unpin · <code>?</code> this help.</p>`],
+    "howto-a": ["How to read the 3D object", `<p>The 3D object draws the whole run as blocks: one block for each part of the model, at each token and each layer. It gives the overall shape of where the activity of the model sits. The strip at the top gives the answer. Press <b>details</b> there to read it.</p>
+      <h4>1 · The two scenes</h4><ul>
+      <li><b>Position.</b> Left to right: the tokens of the prompt (template text is folded into labelled gaps). Front to back: the layers, with layer 0 nearest. Each layer has a thin bar for the running state, ${M.n_heads} slivers for the heads and a block for the MLP block.</li>
+      <li><b>Height.</b> The size ‖v‖ of a vector. The scale is logarithmic and shared by A and B. On a log scale, equal steps in height mean equal ratios, so small values stay visible next to large ones.</li>
+      <li><b>The Show switch.</b> By default the left scene is <b>A</b> and the right scene is <b>‖B − A‖</b>, the size of the change, on its own gold scale. A and B look almost the same on a log scale, so the change is the useful second scene. You can also see A next to B, or A alone.</li>
+      <li><b>Colour.</b> Outside the answer column, colour only names the kind of block. In the answer column (the white frame at t*), blue and orange show the contribution toward “${lp}” or “${lmn}”.</li>
+      <li><b>Camera.</b> The buttons move the view: answer position, whole, above, layer stack.</li>
+      <li><b>Example from this page.</b> After the last layer, at t*, the size of the running state is ${Number.isFinite(W.rA) ? `${fmt(W.rA, 4)} in A and ${fmt(W.rB, 4)} in B. The size of the change ‖B − A‖ is ${fmt(W.rD, 4)}` : "not stored in this export"}.</li>
+      <li><b>Does not show.</b> Exact values (hover a block for them). It shows no direction outside the answer column.</li></ul>
+      <h4>2 · The small charts</h4><ul>
+      <li><b>Log-odds by layer</b> (between the scenes): the log-odds the model would give if it stopped after each layer and answered (“read off after each layer”). Grey is A. Teal is B. Log-odds: ${ODDS_RULE}. Mid-layer readings are rough, and a line near 0 early means “no readable preference yet”. After ${W.kmid} of ${W.L} layers, A reads ${W.midA.toFixed(2)} and B reads ${W.midB.toFixed(2)}. At the end, A ${W.endA.toFixed(2)} and B ${W.endB.toFixed(2)}.</li>
+      <li><b>Prompt map</b> (below): every token (columns) by layer (rows). The brightness is the size of the running state, or of its change. The scale is logarithmic and clipped at the 99th percentile. Click a band to open or fold that part of the prompt.</li></ul>
+      <h4>3 · The clamped run</h4><ul><li>The <b>clamped run</b> button redraws the scenes with the Quadrant III neurons switched off. ${lm("clamp", "What is the clamped run?")}</li></ul>
+      <p>Hover a block for A, B and the change. Click to pin it and open the drawer. ${lm("scale", "heights and colours")} ${lm("segments", "template text")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>Esc</code> unpin · <code>?</code> this help.</p>`],
+    "howto-k": ["How to read the Cohort view", `<p>The Cohort view compares the base model with every country adapter and sign prompt saved for one survey question. A country adapter carries the six preference signs of a country in the weights. A sign prompt carries the same six signs in words, with the weights unchanged.</p>
+      <h4>1 · The rows</h4><ul>
+      <li><b>What it shows.</b> Pick a question at the top. Each row compares one adapter or sign prompt with the base model on that question.</li>
+      <li><b>Position.</b> The arrow goes from the probability of the base model to the probability of the comparator, for the named answer. The scale is 0% to 100%. The row also gives the most likely answer before and after.</li>
+      <li><b>The number at the right.</b> The change in log-odds of the named answer over the opposite one. Log-odds: ${ODDS_RULE}. Log-odds compare only those two answers, so they can move differently from the percentage of one answer. On a question with many answers, they can even move against the average answer.</li>
+      <li><b>Matched pairs.</b> An adapter and a sign prompt with the same six signs are bracketed together, with one sentence that compares weights with words.</li>
+      <li><b>Example from the pair now open.</b> The probability of “${esc(it.j_plus)}” goes from ${pct(D.A.m.readout.probs[it.j_plus])} in the base model to ${pct(D.B.m.readout.probs[it.j_plus])} in B. The log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” change by ${sgn(D.P.m.d_margin)}.</li></ul>
+      <h4>2 · The map (where in the model)</h4><ul>
+      <li><b>What it shows.</b> For each layer, how much the contribution of that layer to the answer changes from the base model (pair export <code>d_attn_attr + d_mlp_attr</code>). Hover a square for the number.</li>
+      <li><b>Unit and colour.</b> Log-odds. The colour key beside the map gives the scale. Zero is the middle of the key.</li>
+      <li>Click a row, or its link, to open that pair in the Ladder.</li></ul>
+      <h4>3 · What it does not show</h4><ul>
+      <li>Questions with fewer than three comparators are listed but not drawn.</li>
+      <li>Every number comes from the saved runs (<code>exports/index.json</code> and the pair exports). None comes from survey respondents.</li>
+      <li>A row is one model run on one question. The order of the rows is not a ranking of countries. The adapters were trained on six preference signs, not on the answers to this question.</li></ul>`],
+    clamp: ["What is the clamped run?", `<p>The clamped run is a second run of the same model on the same prompt, with one small group of neurons switched off. It tests whether the answer depends on that group.</p>
+      <h4>Which neurons?</h4><p>Each neuron in an MLP block has two input signals, a “gate” and an “up” signal. The <b>Quadrant III</b> neurons are those where both signals are below −0.05 (counted in <code>q3_count</code>). The neurons were chosen by this rule. They were not chosen for being large or small.</p>
+      <h4>What does the run do?</h4><p>While the model runs, it sets the output of these neurons to zero, in every layer and at every token. Then it measures the answer again. Later layers can still respond to the change. It is like re-estimating a model with a group of terms switched off, except that the other parts adapt.</p>
+      <h4>Where do I see it?</h4><ul><li><b>Purple tick</b> on a probability bar: the probability of that answer in the clamped run.</li>
+      <li><b>Clamped run</b> button (key C): redraws the tab with the numbers of the clamped run. A chip in the top bar says so.</li>
+      <li><b>Clamped checks</b> in the accounting table: the same checks, run on the clamped run.</li></ul>
+      <h4>Example from this page</h4><p>The probability of “${esc(it.j_plus)}” is ${pct(D.A.m.readout.probs[it.j_plus])} in the normal run of A and ${pct(D.A.m.readout.probs_clamped[it.j_plus])} in the clamped run of A. For B it is ${pct(D.B.m.readout.probs[it.j_plus])} and ${pct(D.B.m.readout.probs_clamped[it.j_plus])}.</p>
+      <h4>Why run it?</h4><p>A large move of the tick shows that the answer changes when this group is switched off. A small move shows that it changes little.</p>
+      <h4>What it does not show</h4><p>It does not say why the answer moves, or what these neurons encode. It does not test other groups of neurons. Whether this group matters is a question to test, and this run is the test.</p>`],
+    groundTruth: ["Human reference: how to read it", `<p><b>Descriptive display of one survey wave (World Values Survey, wave 7). Not an accuracy test. The adapters were trained on six above/below signs from an independent cross-country preference survey (the Global Preferences Survey), not on these answers.</b></p>
+      <h4>What it shows</h4><p>For one country and one question, the share of respondents who chose each answer in the survey, beside the probability that the model gives to the same answer. Both are on a scale from 0% to 100%. Each set adds to 100%.</p>
+      <h4>How to read it</h4><ul>
+      <li>A model probability is the weight that the model gives to an answer. A survey share is the share of respondents who chose it. The two are different kinds of number. Read them side by side. Do not call one the error of the other.</li>
+      <li>The text reads “In the World Values Survey (wave 7), X% of respondents in the country chose this answer”. The model never says what people say. It gives a probability.</li>
+      <li>Two summary numbers can appear: the survey share at the most likely answer of the model, and the distance between the two sets of shares (total variation distance: half the sum of the gaps, from 0 for identical sets to 1 for no overlap).</li>
+      <li>A country or a question without data reads “no data”. It never reads 0%. The number of respondents (n) is shown.</li>
+      <li><b>Sign-prompt rows have no human reference.</b> A six-sign profile is not a country.</li></ul>
+      <h4>What it does not show</h4><p>One survey wave only. It does not test whether an adapter is right. It gives no average across questions or countries. It does not show what any person would answer.</p>`],
     models: ["The two models: A and B", `<p><b>A</b> is the base model: the unchanged model we start from. <b>B</b> is what we compare it with. B is the base plus a country adapter, or the base with a sign prompt (the six signs written into the prompt, with the weights unchanged).</p><p><b>A</b> is ${esc(D.A.m.model.label)} (<code>${esc(D.A.m.model.model_id)}</code>${D.A.m.model.adapter ? " plus an adapter" : ""}). <b>B</b> is ${esc(D.B.m.model.label)} (<code>${esc(D.B.m.model.model_id)}</code>${D.B.m.model.adapter ? " plus a LoRA adapter" : ""}).${D.B.m.model.adapter ? " The adapter is a small add-on to the weights (LoRA). It was trained with direct preference optimization (DPO) on made-up everyday scenarios, preferring the answer that matches that country's direction on the Global Preferences Survey (for example, more trusting or more patient). It was not trained on survey responses." : ""} The prompt, the ${isBank(D.A) ? "scenario" : "question"} and the answer position are the same for both. Only the model differs.${mlpZero ? " In this pair the adapter changed only attention weights." : ""}</p>`],
     answer: [`The model's answer · ${it.item_id}`, readoutHTML(D)],
-    "howto-c": ["How to read the ladder", `<p>The ladder shows every part of the model that helped decide the answer, and how hard each part pushed it toward one response code or the other.</p><p>Each cell is one part of the model, read at the answer position (t*, the last position of the prompt, where the model is about to write its answer): ${M.n_heads} attention heads, then the MLP block, for each of the ${D.A.m.model.n_layers} layers, with layer 0 at the bottom. Its colour is that part's contribution to the answer (DLA): blue toward “${lp}”, orange toward “${lmn}”. The cells plus the embedding term add up to the log-odds; the line under the ladder adds up the face shown.</p><p>The switch shows one face at a time: <b>A</b>, <b>B</b>, or <b>Change (B − A)</b> (the default: how the adapter changed each contribution). The <span style="color:var(--delta)">gold rings</span> mark the five largest changes, B − A, on every face. Click a cell to pin it: a thick white outline marks it, the drawer on the right compares A and B for it, and the prompt shades by where that head looks.</p><p>The chart on the right is the log-odds you would read off the running state after each layer (final rescaling held fixed), for A and B.</p><p>More: ${lm("segments", "template text and the parts of the prompt")} ${lm("dla", "what is a contribution to the answer (DLA)?")} ${lm("resid", "the running state")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>C</code> clamped run · <code>/</code> find a word in the prompt · <code>Esc</code> unpin · <code>[ ]</code> step the pinned head through its layer · <code>?</code> this help.</p>`],
-    "howto-b": ["How to read the matrix", `<p>The matrix shows where in the prompt, and at which layers, the model's internal activity is large. By default it shows where the adapter changed that activity most.</p><p>One map, one face at a time. Each cell is one layer (rows, layer 0 at the bottom) at one token (columns). Its brightness is the size of a vector there: by default the <b>attention addition</b> ‖a‖ of that layer (<code>attn_norm</code>), or the running state ‖h‖ or the MLP block addition ‖m‖. Brighter means larger. It shows where activity is large, not which way it pushes the answer.</p><p>The switch shows <b>A</b>, <b>B</b>, or the <b>size of the change ‖B − A‖</b> (the default: how far B's vector is from A's, exact, from the pair export; never negative, its own gold scale). Colour is linear and clipped at the 99th percentile; the footer prints the clip value and the maximum. Template text is squeezed to 2 px columns, never dropped. The white frame is the answer position (t*).</p><p>The column on the right is the log-odds you would read off the running state after each layer, for A and B, on the map's rows. Hover a cell for A, B and ‖B − A‖; click to pin it and open the drawer. ${lm("norm", "the size of a vector")} ${lm("delta", "size of the change ‖B − A‖ vs change B − A")} ${lm("resid", "the running state")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>Esc</code> unpin · <code>?</code> this help.</p>`],
-    "howto-a": ["How to read the 3D object", `<p>This view draws the whole run as blocks: one block for each part of the model, at each word and each layer. It gives you the overall shape of where the model's activity sits.</p><p>Left to right: the tokens of the prompt (template text is collapsed into labelled gaps). Front to back: the layers, layer 0 nearest. Height: the size of a vector, on a log scale shared by A and B. Each layer has a thin bar for the running state, ${M.n_heads} slivers for the heads and a block for the MLP block.</p><p>By default the left scene is <b>A</b> and the right scene is <b>‖B − A‖</b>, the size of the change, on its own gold scale. Under log heights A and B look almost the same, so the change is the useful second scene; the switch also offers A next to B, or A alone. The <b>answer position (t*)</b> column (white frame, lit floor) is where the model is about to answer; only there do blue and orange show a contribution toward one answer or the other.</p><p>The small chart between the scenes is the log-odds, read off after each layer, for A and B. The prompt map below shows every token; click a band to open or collapse that part. Hover a block for A, B and the change; click to pin it and open the drawer. ${lm("scale", "heights and colours")} ${lm("segments", "template text")}</p><p><b>Keys.</b> <code>1 2 3 4</code> tabs · <code>A</code> the full answer card · <code>Esc</code> unpin · <code>?</code> this help.</p>`],
-    "howto-k": ["Cohort · one base model vs many adapters and sign prompts", `<p>The Cohort view compares the base model with every country adapter and sign prompt saved for one survey question. A country adapter carries a country's six preference signs in the weights; a sign prompt carries the same six signs in words, with the weights unchanged.</p><p><b>How to read it.</b> Pick a question at the top. Each row shows the base model's probability of the named answer and the comparator's (an arrow from one to the other), the most likely answer before and after, and the change in log-odds of the named answer over the opposite one. Log-odds compare only those two answers, so they can move differently from one answer's percentage. An adapter and a sign prompt with the same six signs are bracketed together, with one sentence comparing weights and words.</p><p><b>Where in the model.</b> The map below shows, layer by layer, how much each layer's contribution to the answer changes from the base model (pair export <code>d_attn_attr + d_mlp_attr</code>). Hover a square for the number. Click a row, or its link, to open that pair in the Ladder.</p><p>Questions with fewer than three comparators are listed but not drawn. Every number on this tab comes from the saved runs (<code>exports/index.json</code> and the pair exports); none comes from survey respondents.</p>`],
     terms: ["Glossary: plain words and technical terms", `<dl class="terms">${GLOSSARY.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(fill(v))}</dd>`).join("")}</dl>`],
     resid: ["The running state (residual stream)", `<p>The running state is the model's working memory for each word: a long list of numbers that every layer adds to. It works like a running total in a ledger.</p><p>Each token has a running state: a list of ${n(M.d_model)} numbers that travels up through the layers. Each layer adds to it: state after = state before + attention addition + MLP addition. Nothing is overwritten. Because the parts only add, their contributions can be summed. (In the technical literature this is called the residual stream. This “residual” is not a regression residual. It is a running total.) The bar height is the state's size ‖h<sup>l</sup><sub>t</sub>‖.</p><p>At the answer position, h<sup>l</sup>·w is the log-odds you would get by reading the answer off the state after l layers, with the final rescaling held fixed. It is the line in the charts. Its last point is the log-odds.</p>${ref("Arrays: <code>resid_norm</code>, <code>running_margin</code>.")}`],
     scale: ["Heights and colours", `<p>Sizes are drawn on one shared scale, so you can compare A and B by eye.</p><p>One scale per quantity, shared by A and B, so equal height means equal value. The scale is logarithmic with the median as its knee, so small values stay visible next to large ones. Heatmap colours are clipped at the 99th percentile so one extreme token does not wash out the rest; each colour key prints the clip value. The change maps have their own scale (gold). Outside the answer column, colours only name the kind of block. Inside it, blue and orange show the direction of the contribution.</p>`],
@@ -408,21 +561,27 @@ export function openLearn(D: Bundle, key: string) {
   dlg.classList.toggle("pop", !!strip);
   if (strip) { const r = strip.getBoundingClientRect(); dlg.style.margin = "0"; dlg.style.left = `${Math.round(r.left)}px`; dlg.style.top = `${Math.round(r.bottom + 6)}px`; }
   else { dlg.style.margin = ""; dlg.style.left = ""; dlg.style.top = ""; }
+  // A pop-over under a tall answer strip must still fit the window: its body scrolls inside.
+  const lb = dlg.querySelector<HTMLElement>(".lm-b");
+  if (lb) lb.style.maxHeight = strip ? `${Math.max(240, innerHeight - Math.round(strip.getBoundingClientRect().bottom) - 90)}px` : "";
   if (!dlg.open) dlg.showModal();
 }
 
 // ------------------------------------------------------------------ v3: the answer strip (SYSTEM §3), shared by every workbench tab
-/** One sentence, two margin bars (each value inside its own group), P(j₊) A → B, and the full card on demand (key A). */
+/** The headline, two margin bars (each value inside its own group), P(j₊) A → B, and the full card on demand (key A).
+ * Two answers: one sentence, unchanged. More than two: the expected answer first (an ordered item), or the most
+ * likely answer (any other item), then the end-answer log-odds that the charts split (WB7-W). */
 export function answerStrip(D: Bundle, clamp = false): string {
   const it = D.A.m.item, jp = `“${it.j_plus}” (${short(labelPlus(D.A), 30)})`, jm = `“${it.j_minus}” (${short(labelMinus(D.A), 30)})`;
   const a = clamp ? D.A.m.readout.margin_clamped : D.A.m.readout.margin, b = clamp ? D.B.m.readout.margin_clamped : D.B.m.readout.margin;
   const dd = dAttr(D, clamp), d = dd.margin;
-  const pA = (clamp ? D.A.m.readout.probs_clamped : D.A.m.readout.probs)[it.j_plus], pB = (clamp ? D.B.m.readout.probs_clamped : D.B.m.readout.probs)[it.j_plus];
+  const prA = clamp ? D.A.m.readout.probs_clamped : D.A.m.readout.probs, prB = clamp ? D.B.m.readout.probs_clamped : D.B.m.readout.probs;
+  const pA = prA[it.j_plus], pB = prB[it.j_plus];
   const mx = Math.max(Math.abs(a), Math.abs(b)) || 1, neg = a < 0 || b < 0;
   const bar = (v: number, col: string) => { const w = 72 * Math.abs(v) / mx; const left = neg ? 72 + (v < 0 ? -w : 0) : 0;
     return `<span class="trk2${neg ? " two" : ""}"><i style="left:${left.toFixed(1)}px;width:${w.toFixed(1)}px;background:${col}"></i>${neg ? `<b style="left:72px"></b>` : ""}</span>`; };
   const dsrc = dd.marginExported ? `from the pair export (${clamp ? "d_margin_clamped" : "d_margin"})` : "computed in this browser from A and B";
-  const n = it.codes.length;
+  const n = it.codes.length, many = n > 2, ord = isOrdered(it);
   const pTip = `Probability of answer “${it.j_plus}”, A → B.\nP is over all ${n} codes; the log-odds compares only “${it.j_plus}” with “${it.j_minus}”, so P is not sigmoid(log-odds).`;
   const archiveA = D.A.m.archive_parity, archiveB = D.B.m.archive_parity;
   const hasUlp = archiveA?.max_fp16_ulp != null && archiveB?.max_fp16_ulp != null;
@@ -432,12 +591,39 @@ export function answerStrip(D: Bundle, clamp = false): string {
   const parityPlain = ulpMax == null ? (archiveA && archiveB ? "compared with the archived Paper B run (details on hover)" : "")
     : ulpMax <= 4 ? "✓ matches the archived Paper B run" : "differs from the archived Paper B run (report only)";
   const parityTip = hasUlp ? `Archive check (A2 F5): this capture against the archived Paper B score, using the log-probability of each full answer. The gap is in ulps (units in the last place: the smallest step of the number format the archive used, fp16). The limit is ≤4 ulp, and it is report only: it does not fail the page. Probability gaps are descriptive only.\nA: ${Object.entries(archiveA!.options ?? {}).map(([c, v]) => `${c}: |Δlogp|=${v.abs_logprob_gap_nats} nats, ${v.fp16_ulp} ulp`).join("; ")}\nB: ${Object.entries(archiveB!.options ?? {}).map(([c, v]) => `${c}: |Δlogp|=${v.abs_logprob_gap_nats} nats, ${v.fp16_ulp} ulp`).join("; ")}` : "Legacy probability-gap metadata; no ulp result was exported.";
-  return `<span class="say" title="Log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” (the margin) = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Change from the base: ${dsrc}.&#10;P is over all ${n} codes; the log-odds compares only “${esc(it.j_plus)}” with “${esc(it.j_minus)}”.">B leans further toward <b>${esc(d >= 0 ? jp : jm)}</b> than A: change in log-odds <span class="num ${dd.marginExported ? "" : "calc"}">${sgn(d, 3)}</span>${clamp ? ` <span class="clampw">clamped run</span>` : ""}</span>
-    <span class="minis"><span class="mini" title="A's log-odds (margin), ${esc(D.A.m.model.label)}"><span style="color:${A_COL}">A</span>${bar(a, A_COL)}<span class="num">${a.toFixed(2)}</span></span>
-    <span class="mini" title="B's log-odds (margin), ${esc(D.B.m.model.label)}"><span style="color:${B_COL}">B</span>${bar(b, B_COL)}<span class="num">${b.toFixed(2)}</span></span>
+  const clampTag = clamp ? ` <span class="clampw">clamped run</span> ${lm("clamp", "What is the clamped run?")}` : "";
+  const numd = `<span class="num ${dd.marginExported ? "" : "calc"}">${sgn(d, 3)}</span>`;
+  let say: string;
+  if (!many) {
+    say = `<span class="say" title="Log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” (the margin) = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Change from the base: ${dsrc}.&#10;P is over all ${n} codes; the log-odds compares only “${esc(it.j_plus)}” with “${esc(it.j_minus)}”.">B leans further toward <b>${esc(d >= 0 ? jp : jm)}</b> than A: change in log-odds ${numd}${clampTag}</span>`;
+  } else {
+    const ma = modalAnswer(it, prA), mb = modalAnswer(it, prB);
+    const modalLine = (lead: string) => `${lead}A ${esc(named(ma.code, ma.label))} (${pct(ma.p)}) → B ${esc(named(mb.code, mb.label))} (${pct(mb.p)})`;
+    const endsWord = ord ? "the two end answers" : "the first and last answer codes";
+    const lowEnds = [prA, prB].some((p) => p[it.j_plus] < 0.01 && p[it.j_minus] < 0.01);
+    let head: string, subs = "";
+    if (ord) {
+      const e = scaleEnds(it), eA = expectedAnswer(it, prA), eB = expectedAnswer(it, prB), dE = eB - eA;
+      const dir = /^\d+$/.test(e.hiLab) ? "higher = a higher answer code" : `higher = closer to “${esc(short(e.hiLab, 40))}”`;
+      head = `<span class="say" title="Expected answer = the sum of (answer code × its probability) over all ${n} codes. A: ${eA.toFixed(3)}. B: ${eB.toFixed(3)}. Paper B scores items as this expected answer.">Average answer on the ${esc(e.lo)}–${esc(e.hi)} scale: A <b>${eA.toFixed(1)}</b> → B <b>${eB.toFixed(1)}</b> <span class="say-dir">(${dir})</span>${clampTag}</span>`;
+      subs += `<span class="say-sub">${modalLine("Most likely answer: ")}</span>`;
+      const mv = Number(mb.code) - Number(ma.code);
+      if (dE * d > 1e-3 || mv * d > 0) {
+        subs += `<span class="say-sub say-warn">The two numbers move in opposite directions. Average answer: ${dE >= 0 ? `up, toward “${esc(e.hi)}”` : `down, toward “${esc(e.lo)}”`}. Log-odds of the end answers: toward “${esc(d >= 0 ? it.j_plus : it.j_minus)}”. The average uses every answer. The log-odds use only “${esc(it.j_plus)}” and “${esc(it.j_minus)}”.</span>`;
+      }
+    } else {
+      head = `<span class="say" title="Most likely answer = the answer code with the highest probability. All ${n} probabilities are in details.">${modalLine("Most likely answer: ")}${clampTag}</span>`;
+    }
+    subs += `<span class="say-sub" title="Log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” (the margin) = log[P(“${esc(it.j_plus)}”) / P(“${esc(it.j_minus)}”)]. Change from the base: ${dsrc}.">The charts below split the log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}” (${endsWord}): A <span class="num">${a.toFixed(2)}</span> → B <span class="num">${b.toFixed(2)}</span>, change ${numd}</span>`;
+    if (lowEnds) subs += `<span class="say-sub say-warn">${ord ? "Both end answers are below 1% here, so this number can move against the average answer." : "Both of these answers are below 1% here, so this number can move against the most likely answer."}</span>`;
+    say = `<span class="sayw">${head}${subs}</span>`;
+  }
+  return `${say}
+    <span class="minis"><span class="mini" title="A's log-odds (margin)${many ? ` of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”` : ""}, ${esc(D.A.m.model.label)}"><span style="color:${A_COL}">A</span>${bar(a, A_COL)}<span class="num">${a.toFixed(2)}</span></span>
+    <span class="mini" title="B's log-odds (margin)${many ? ` of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”` : ""}, ${esc(D.B.m.model.label)}"><span style="color:${B_COL}">B</span>${bar(b, B_COL)}<span class="num">${b.toFixed(2)}</span></span>
     <span class="mini" title="${esc(pTip)}">P(“${esc(it.j_plus)}”) <span class="num">${pA.toFixed(2)} → ${pB.toFixed(2)}</span></span></span>
     ${D.A.m.weights ? `<span class="mini" title="${esc(`Weights: ${D.A.m.weights}${parityText}.\n${parityTip}`)}">${esc(parityPlain)}</span>` : ""}
-    <span class="sp"></span><button class="details" data-learn="answer" title="The full answer card: the answer codes, their probabilities and the clamped run (key A)">details</button>`;
+    <span class="sp"></span><button class="details" data-learn="answer" title="How to read the numbers on this page: the answer codes, their probabilities, the expected answer and the clamped run (key A)">details</button>`;
 }
 
 /** The pin drawer's chrome (same component on the ladder, the matrix and the object). */

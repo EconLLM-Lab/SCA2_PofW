@@ -32,7 +32,7 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
           <span class="seg" id="qty">${QTY.map(([k, t, tip]) => `<button data-q="${k}" title="${esc(tip)}">${esc(t)}</button>`).join("")}</span><span class="sp"></span>
           <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}" title="${FACE_TIP[k]}">${t}</button>`).join("")}</span></header>
         <canvas id="cv"></canvas><div class="foot" id="bfoot"></div></section>
-      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="The log-odds you would get by reading the answer off the running state after each layer, with the final rescaling held fixed (running_margin: h^l·w at the answer position)">Log-odds by layer</span><span class="sp"></span><span id="mleg"></span></header>
+      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="If the model stopped after each layer and answered, this is the log-odds it would give (read off the running state, final rescaling held fixed; running_margin: h^l·w at the answer position). Early and middle layers are rough. A line near 0 early means no readable preference yet, not neutral.">Log-odds by layer</span><span class="sp"></span><span id="mleg"></span></header>
         <svg id="mc"></svg><div class="foot" id="mfoot"></div></section>
       <aside id="drawer" class="obj" data-obj="drawer" hidden></aside>
     </div>
@@ -132,7 +132,7 @@ export function mountMatrix(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const close = Math.abs(X(ends[0].v) - X(ends[1].v)) < 56;
     ends.sort((p, q) => p.v - q.v).forEach((e, i) => { const x = Math.max(pl + 18, Math.min(Wm - pr - 18, X(e.v))); o += `<text x="${x}" y="${close ? OY + BAND - 18 + i * 12 : OY + BAND - 6}" text-anchor="middle" style="fill:${e.col}">${e.n} ${e.v.toFixed(2)}</text>`; });
     const svg = $("mc"); svg.setAttribute("width", String(Wm)); svg.setAttribute("height", String(yAx + 22)); svg.style.marginTop = `-${OY}px`; svg.innerHTML = o;
-    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”, if read off after each layer · dashed: 0 = even odds</span>`;
+    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”, if the model stopped after each layer and answered · dashed: 0 = even odds</span>`;
     $("mleg").innerHTML = `<i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B`;
   }
 

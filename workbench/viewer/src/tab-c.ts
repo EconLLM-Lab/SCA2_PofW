@@ -12,7 +12,7 @@ import type { Bundle, Run } from "./data";
 import type { Ctx } from "./main";
 import {
   A_COL, B_COL, CHANGE_FOOT, answerStrip, cmpTable, checksOf, checkLine, dAttr, diverging, esc, faceTainted, failedWho, fmt, inspectorHTML,
-  isBank, labelMinus, labelPlus, mix, openLearn, segmentsOf, sgn, short, tokText, topKeys,
+  isBank, labelMinus, labelPlus, lm, mix, openLearn, segmentsOf, sgn, short, tokText, topKeys,
 } from "./common";
 
 type Sel = { l: number; h: number } | null;   // h = -1: MLP; l = -1: embedding term
@@ -33,9 +33,9 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
         <div id="ptext" class="ptext"></div><div class="foot" id="pkey"></div></section>
       <section class="obj" id="ladder" data-obj="ladder"><header><span class="cap" title="Contribution to the answer: every attention head and MLP block, read at the answer position (t*)">Contributions to the answer</span><span class="sp"></span>
           <span class="seg" id="faces">${FACES.map(([k, t]) => `<button data-face="${k}" title="${FACE_TIP[k]}">${t}</button>`).join("")}</span>
-          <button id="clamp" class="tog" title="Clamped run (key C): run the model again with the Quadrant III neurons switched off (set to zero)">clamped run</button></header>
+          <button id="clamp" class="tog" title="Clamped run (key C): run the model again with the Quadrant III neurons switched off (set to zero), to test whether the answer depends on them">clamped run</button>${lm("clamp", "what is this?")}</header>
         <svg id="lad"></svg><div class="foot" id="lfoot"></div></section>
-      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="The log-odds you would get by reading the answer off the running state after each layer, with the final rescaling held fixed (running_margin: h^l·w at the answer position)">Log-odds by layer</span></header>
+      <section class="obj" id="mchart" data-obj="margin"><header><span class="cap" title="If the model stopped after each layer and answered, this is the log-odds it would give (read off the running state, final rescaling held fixed; running_margin: h^l·w at the answer position). Early and middle layers are rough. A line near 0 early means no readable preference yet, not neutral. Press ? for how to read it.">Log-odds by layer</span></header>
         <svg id="mc"></svg><div class="foot" id="mfoot"></div></section>
       <aside id="drawer" class="obj" data-obj="drawer" hidden></aside>
     </div>
@@ -157,7 +157,7 @@ export function mountLadder(root: HTMLElement, D: Bundle, ctx: Ctx): () => void 
     const hl = (pin || hov)?.l ?? -9;
     if (hl >= 0) o += `<rect x="1" y="${y(hl)}" width="${W - 2}" height="${s}" class="rowhl"/>`;
     const svg = $("mc"); svg.setAttribute("width", String(W)); svg.setAttribute("height", String(g.Hsvg)); svg.innerHTML = o;
-    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”, if read off after each layer${clamp ? " · clamped run" : ""}</span><span><i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B</span>`;
+    $("mfoot").innerHTML = `<span>log-odds of “${esc(it.j_plus)}” over “${esc(it.j_minus)}”, if the model stopped after each layer and answered${clamp ? " · clamped run" : ""}</span><span><i class="ln" style="background:${A_COL}"></i>A <i class="ln" style="background:${B_COL}"></i>B</span>`;
   }
 
   // ---------------- hover tooltip (A, B, B − A of one cell; 3 rows max) and pinning

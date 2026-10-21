@@ -436,3 +436,10 @@ button.lnk { font: 11px var(--mono); color: var(--text); background: none; borde
 .boot { max-width: 640px; margin: 18vh auto 0; padding: 0 24px; line-height: 1.55; color: #d8d8d8; font-family: var(--sans); }
 .boot b { font-size: 20px; color: var(--text); }
 .boot a { color: inherit; text-decoration: underline; }
+
+/* WB7-W: many-option headline (answer strip) and headed sections in the pop-ups */
+#answer .sayw { display: flex; flex-direction: column; gap: 3px; }
+#answer .say-sub { font: 12px/1.45 var(--sans); color: var(--muted); } #answer .say-warn { color: var(--delta); }
+#answer .say-dir { font: 12px var(--sans); color: var(--muted); }
+dialog#learn h4 { margin: 16px 0 4px; font: 600 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+dialog#learn ul { margin: 4px 0 8px; padding-left: 18px; } dialog#learn li { margin: 4px 0; }
