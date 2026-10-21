@@ -22,6 +22,7 @@ import {
   FOV, LAYOUT, TensorScene, disposeScene, gapLines, layerStrip, layoutX, makeScale, tokenStrip,
   type ColorMode, type HeightScale, type Scales, type XLayout,
 } from "./scene";
+import { NO_3D, NO_3D_NUMBERS, notShippedPanel } from "./notshipped";
 
 const W_ = window as any;
 let gl: { canvas: HTMLCanvasElement; renderer: THREE.WebGLRenderer; camera: THREE.PerspectiveCamera; controls: OrbitControls } | null = null;
@@ -48,6 +49,16 @@ function ensureGL() {
 interface Panel { scene: THREE.Scene; ts: TensorScene; label: string; run: Run }
 
 export function mountObject(root: HTMLElement, D: Bundle, ctx: Ctx): () => void {
+  // WB7-Q: the 3D object draws the heavy arrays, which the sample ships only for the featured pairs.
+  // Say so in one sentence, before any WebGL context is created, and never request a missing array.
+  if (D.A.tier !== "full" || D.B.tier !== "full") {
+    const missing = D.A.tier === "full" ? D.B : D.A;
+    root.className = "tab-a v3";
+    root.innerHTML = `<section id="answer" data-obj="answer">${answerStrip(D)}</section>`
+      + notShippedPanel(missing.tier === "numbers" ? NO_3D_NUMBERS : NO_3D, "The 3D object needs the full capture");
+    requestAnimationFrame(() => ctx.ready());
+    return () => { root.innerHTML = ""; };
+  }
   const { canvas, renderer, camera, controls } = ensureGL();
   const L = D.A.m.model.n_layers, H = D.A.m.model.n_heads, T = D.A.m.tokens.length, ro = D.A.m.readout.position;
   const failing = checksOf(D).filter((c) => !c.ok);

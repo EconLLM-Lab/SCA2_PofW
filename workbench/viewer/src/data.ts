@@ -52,7 +52,9 @@ export interface RunManifest {
              margin: number; margin_clamped: number; embed_attr: number; embed_attr_clamped: number; eps_q3: number };
   conservation: Conservation;
   arrays: Record<string, ArrayMeta>;
-  bin: string;
+  bin: string | null;
+  /** true on a capture the bundle builder derived: the light arrays only (no heavy ones). */
+  light?: boolean;
   provenance: Record<string, unknown>;
 }
 
@@ -64,7 +66,7 @@ export interface PairManifest {
   conservation?: { d_attr_gap: number; d_attr_gap_float32: number; d_attr_gap_clamped: number; d_attr_gap_float32_clamped: number;
                    thresholds: Record<string, number>; pass: boolean; relative?: RelativeConservation;
                    legacy_absolute_applicable?: boolean };
-  arrays: Record<string, ArrayMeta>; bin: string;
+  arrays: Record<string, ArrayMeta>; bin: string | null;
 }
 
 export interface IndexFile {
@@ -248,6 +250,7 @@ async function fetchArrays(binName: string, arrays: Record<string, ArrayMeta>, v
 }
 
 export interface Run { m: RunManifest; t: Record<string, Tensor>; clientCheck: ClientCheck;
+  /** which arrays this capture ships (see tierOf) */ tier: Tier;
   /** cache version: SHA-256 of the manifest text */ ver: string; /** set once the HEAVY arrays are requested */ heavy?: Promise<void>;
   /** the abort signal of the request behind `heavy`, if it was a prefetch */ heavySignal?: AbortSignal }
 export interface Pair { m: PairManifest; t: Record<string, Tensor> }
@@ -262,7 +265,11 @@ export interface ClientCheck { dlaSum: number; dlaGap: number; headSumVsAttn: nu
   pass: boolean | null }
 
 function clientCheck(m: RunManifest, t: Record<string, Tensor>): ClientCheck {
-  const dlaSum = m.readout.embed_attr + t.head_attr.sum() + t.neuron_attr.sum();
+  // A numbers-only or light capture may not carry every array the sum needs; the fallbacks below keep
+  // the same total, and a capture with no arrays at all has nothing to check on this page.
+  if (!t.head_attr || !t.attn_attr) return { dlaSum: NaN, dlaGap: NaN, headSumVsAttn: NaN, pass: null };
+  const neurons = t.neuron_attr ? t.neuron_attr.sum() : t.mlp_attr.sum();
+  const dlaSum = m.readout.embed_attr + t.head_attr.sum() + neurons;
   const dlaGap = Math.abs(m.readout.margin - dlaSum);
   let headSumVsAttn = 0;
   const [L, H] = t.head_attr.shape;
@@ -277,22 +284,37 @@ function clientCheck(m: RunManifest, t: Record<string, Tensor>): ClientCheck {
 
 export const loadIndex = () => fetchJson<IndexFile>("/exports/index.json");
 
-/** A run with its core arrays only; the HEAVY ones arrive through ensureHeavy(). */
+/** What a capture ships. `full`: the 3D object and the attention panels draw. `light`: the Ladder, the
+ * Matrix and the Cohort draw (no heavy arrays). `numbers`: index.json only; the run's own arrays are
+ * not in the public sample. Read from the array table, so the tier is never guessed from a flag. */
+export type Tier = "full" | "light" | "numbers";
+export function tierOf(m: RunManifest): Tier {
+  if (m.arrays.attn_topk_val && m.arrays.g_last) return "full";
+  if (m.arrays.head_attr && m.arrays.running_margin) return "light";
+  return "numbers";
+}
+
+/** A run with its core arrays only; the HEAVY ones arrive through ensureHeavy() (full captures only). */
 export async function loadRun(file: string): Promise<Run> {
   const text = await fetchText(`/exports/${file}`);
   const m = JSON.parse(text) as RunManifest, ver = await sha256hex(text);
-  const t = await fetchArrays(m.bin, m.arrays, ver, (k) => !HEAVY.has(k));
-  return { m, t, ver, clientCheck: clientCheck(m, t) };
+  const t = m.bin ? await fetchArrays(m.bin, m.arrays, ver, (k) => !HEAVY.has(k)) : {};
+  return { m, t, ver, tier: tierOf(m), clientCheck: clientCheck(m, t) };
 }
 
-export async function loadPair(file: string): Promise<Pair> {
+/** `only`: fetch just these arrays (the Cohort reads the two layer arrays of each pair, not all of it). */
+export async function loadPair(file: string, only?: readonly string[]): Promise<Pair> {
   const text = await fetchText(`/exports/${file}`);
   const m = JSON.parse(text) as PairManifest;
-  return { m, t: await fetchArrays(m.bin, m.arrays, await sha256hex(text)) };
+  if (!m.bin) return { m, t: {} };
+  const want = only ? new Set(only) : null;
+  return { m, t: await fetchArrays(m.bin, m.arrays, await sha256hex(text), want ? (k) => want.has(k) : undefined) };
 }
 
 export const hasHeavy = (r: Run) => [...HEAVY].every((k) => !(k in r.m.arrays) || k in r.t);
 function ensureHeavyRun(r: Run, opts?: FetchOpts): Promise<void> {
+  // A light or numbers-only capture has no heavy arrays to request: never ask for one.
+  if (!r.m.bin || tierOf(r.m) !== "full") return Promise.resolve();
   // A pending request that belongs to an aborted prefetch is not reused: start again (finished chunks are cached).
   if (r.heavy && r.heavySignal?.aborted) r.heavy = undefined;
   if (!r.heavy) {
