@@ -23,8 +23,8 @@ Where to start:
 - **The workbench** (`/`): one model against another, on one survey question. You can see which layers move the answer.
   The **Cohort** tab puts the unchanged model against several adapters and sign prompts at once.
 
-Every number and figure on this site is a saved output of the real models: there is no live inference and no human
-survey data. The first visit downloads a few megabytes of saved model data, and your browser keeps a copy for later
+Every number and figure on this site is a saved output of the real models: there is no live inference. The only human data are country-level World Values Survey
+(wave 7) answer shares, rounded to whole percent and shown as a descriptive reference; no respondent rows are shipped. The first visit downloads a few megabytes of saved model data, and your browser keeps a copy for later
 visits.
 
 ## Built with Llama
