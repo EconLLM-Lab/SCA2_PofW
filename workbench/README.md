@@ -60,7 +60,24 @@ of payload, built from `d8a232d`. Two later commits change only `index.html`, th
 Public static Hugging Face Space `EconLLM/sca2-workbench`
 (https://huggingface.co/spaces/EconLLM/sca2-workbench). It was made public by Augusto on 2026-10-20.
 
-The current deploy is v1.4, 2026-10-21, from `7b3a563`. It has a loading card with real download progress, an
+The current deploy is v1.5, 2026-10-21, from `890ead3`. It adds the clamped-run and how-to-read text (WB7-W), Q57 across all 42 adapters and 26 sign
+prompts in the Cohort tab (WB7-Q), a many-option headline for 10-point items, and a **human reference panel**: country-level
+World Values Survey wave 7 shares, rounded to whole percent, as a descriptive reference (WB7-H, 56 cells; no respondent rows). Records:
+`plans/WB7_PLAN.md`, `WB7H_ACCEPTANCE.md`, `WB7I_ACCEPTANCE.md`, `WB7_DATA_RIGHTS.md` (WB7-R: permitted with attribution) and
+`WB7_VERIFICATION.md` (`t_ab5d175a`, GLM cross-family): PASS-WITH-NOTES, with N1 (the story intro still said "no human means or
+distributions") fixed before deploy. Augusto confirmed the WB7-R ruling in writing on 2026-10-21 ("ship human layer").
+- All 376 manifest files are on the Space (377 with its README, plus `.gitattributes`), with 0 sha256 or size mismatches (203 small non-LFS files
+  re-downloaded and hashed). Stage RUNNING; private False; storage 0.949 GB. Archive sha256 `a94e5373...`; payload 949,436,992 B. The v1.4 identity check
+  holds: 138 of 143 files identical, the 5 changed files are on the allowed list (two assets, `exports/index.json`, `index.html`, `sca2/index.html`).
+- Live, in a fresh Chromium: the cold landing page opens in 3.6 s, with the card showing "Downloading saved model data · 0.3 of 5.7 MB · 5%".
+  Reloads and the Matrix open in 0.5 s; the Ladder in 1.8 s; Cohort in 1.6 s; Cohort Q57 (68 comparators) in 8.9 s cold and 0.8 s again. Q57 China
+  Ladder: log-odds change +5.33 (A -1.03, B 4.30; P("1") 0.26 to 0.99), human panel shows 64% for "Most people can be trusted". Q176 USA
+  headline: average answer 5.6 to 6.2, most likely answer "5" (40%) to "6" (85%); human panel mode "5" (19%), mean 5.5. 0 console errors; `/sca2/index.html` returns 200.
+  One earlier run of the check timed out waiting on a page for 400 s and was not reproduced in three later runs; treat a cold Cohort Q57 as seconds, not as guaranteed.
+- Attribution on the Space: the WVS-7 citation, both GPS citations with the CC BY-NC-SA 4.0 notice, and "Built with Llama" with the license line, in the Space README and in both footers.
+- The human file `human_ref/human_reference.json` is gitignored and never committed; the build takes it with `--human-reference`.
+
+Previous deploy, v1.4, 2026-10-21, from `7b3a563`. It has a loading card with real download progress, an
 interactive Cohort tab, plain language for social scientists, pop-up model sizes read from the manifest, and a plain
 frame. Records: `plans/WB6L_ACCEPTANCE.md`, `WB6P_ACCEPTANCE.md`, `WB6K_ACCEPTANCE.md`; verifier `plans/WB6_VERIFICATION.md`
 (`t_fb8b00a6`, DeepSeek): PASS-WITH-NOTES, with F1 and N5 fixed before deploy.
@@ -93,11 +110,13 @@ inference.
 
 ## Data policy
 
-The bundle carries precomputed captures and model-only scores. It carries no human respondent rows, no country-level
-human means or distributions, no adapter or base-model weights, no tokenizer and no inference runtime. GPS signs and
-public survey item text are not licensed human responses. Privacy is checked structurally (an allowlist of story fields
-in `tests/test_sca2_story_data.py`), not by a banned-substring search. Live adapter chat is deferred to its own card with
-a cost and data-rights check. The Space went public on 2026-10-20, ahead of co-author review; the data-rights check for that is open in the main repo STATUS.
+The bundle carries precomputed captures, model-only scores and one human reference file: country-level World Values Survey wave 7 answer
+shares (`exports/human_reference.json`, 56 country-question cells, rounded to whole percent, with n and the source). It carries no respondent
+rows, no microdata, no adapter or base-model weights, no tokenizer and no inference runtime. WB7-R (`plans/WB7_DATA_RIGHTS.md`) ruled the
+WVS wording, the binary GPS signs, the WVS aggregates and the Llama outputs "permitted with attribution"; Augusto confirmed in writing on
+2026-10-21. Privacy is checked structurally (an allowlist of story fields in `tests/test_sca2_story_data.py`), not by a banned-substring
+search. Live adapter chat is deferred to its own card with a cost and data-rights check. The Space went public on 2026-10-20, ahead of
+co-author review. Augusto sends the courtesy emails to the WVSA Secretariat and the GPS team himself.
 
 ## Status of the audit
 
