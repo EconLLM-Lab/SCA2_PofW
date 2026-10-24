@@ -24,6 +24,28 @@ fix this file in the same commit.
 | **Workbench** (Adapter-Brain-Vizualization) | SCA2-specific viewer that reads Paper B artifacts, one way only: Paper B claims never depend on workbench results, and its compute stays separate. Public precomputed Space (made public by Augusto 2026-10-20 evening), redeployed 2026-10-21 as v1.5: the C9 step, the W2 prompt-route captures, a landing page on the Paper B model, Q57 for all 68 comparators and a descriptive human reference of country-level WVS-7 shares (56 cells, whole percent, no respondent rows). No weights, no inference. Data-rights result (WB7-R, `workbench/plans/WB7_DATA_RIGHTS.md`): WVS wording, GPS signs, WVS aggregates and Llama outputs are all "permitted with attribution"; Augusto confirmed in writing 2026-10-21; attribution is on the Space. Its analyses (W2 prompt route, W3 mechanisms) are not Paper B evidence; see `workbench/AUDIT.md` §17 on its branch. | worktree `.worktrees/adapter-brain-vizualization`, branch `Adapter-Brain-Vizualization`; [workbench README](https://github.com/EconLLM-Lab/SCA2_PofW/blob/Adapter-Brain-Vizualization/workbench/README.md) |
 | **Phase 3** (activation engineering, latent space) | Not started. | — |
 
+## Checkpoint 2026-10-26 (internal presentation): in progress
+
+Augusto chose on 2026-10-24 to present a finished, verified checkpoint on Monday 2026-10-26: Paper B positioned as
+an evaluation of a measurement instrument that locates where the chain anchor → instrument → respondents holds and
+fails (option A), with the manuscript rewritten to that framing, and workbench v1.6 fixing the footer that called
+Paper B an extension. Cards on board `sca2-paper-b`, target Sunday 2026-10-25 20:00 MST; specs and shared rules in
+[planning/checkpoint_2026-10-26/](planning/checkpoint_2026-10-26/).
+
+| Card | Profile, route | Gated on |
+|---|---|---|
+| `t_aca427d2` N1 novelty audit | `sca`, Opus | none |
+| `t_e8eda272` M1 framing rewrite (abstract, introduction, discussion, conclusion) | `writer`, Sonnet | N1 |
+| `t_b9f18724` M2 body pass (no number changes) | `writer`, Sonnet | M1 |
+| `t_c8662397` MV manuscript check | `verifier`, GLM via openrouter (cross-family) | M2 |
+| `t_3b259669` E1 workbench v1.6 candidate (wording, bundle path fix N3, tree hygiene; W3b files untouched) | `engineer`, Sonnet (Codex seat at its spend cap) | none |
+| `t_3a5c9a4c` EV workbench check | `verifier`, GLM via openrouter | E1 |
+| `t_5066d83f` ED deploy v1.6 | `sca`, Opus | EV PASS |
+| `t_7979b64d` R readiness fan-in | `sca`, Opus | N1, MV, ED |
+
+The rewrite changes no number and earns no claim; the claim lock is unchanged. The PM commits the manuscript after
+MV and R, then merges, pushes and uploads a new Overleaf project.
+
 ## Checkpoint 2026-10-20 (co-author review)
 
 Assembled by card `t_5b53fef3` on 2026-10-19 evening for the 08:00 MST 2026-10-20 co-author meeting. The sections below
@@ -171,11 +193,11 @@ Targets are proposals for Augusto. "Blocked by" names the decision or card that 
 | Overleaf page count (project "… (1)") | Augusto | 2026-10-21 | none |
 | Invite co-authors to the EconLLM Hugging Face organization and grant access to the transferred private Space | Augusto | 2026-10-20 | none |
 | Confirm the definition of "recursive generalization" | Augusto | 2026-10-21 | none |
-| Optional: the label-fidelity finding in the abstract, introduction and conclusion (C9 is in results and discussion only) | Augusto, writer | before co-author sharing | Augusto's go |
+| The C9 results in the abstract, introduction and conclusion: approved 2026-10-24 as part of the option-A rewrite, cards M1 `t_e8eda272` and M2 `t_b9f18724` | writer, verifier | 2026-10-25 | N1 |
 | Optional v1.2 of workbench step 4: supporting text at 14 px or more, recovery-dot jitter (WB3.1-V N1, N2) | `engineer`, verifier | before projection | Augusto's look at v1.1 |
 | `build_deploy_bundle.py`: drop the hard-coded engineer scratch path; resolve symlinked scratch (WB3.1-V N3) | `engineer` | with the next bundle build | none |
 | Novelty audit "LM evaluation for social-science measurement" | `sca` | 2026-10-23 | none |
-| Space landing footer wording contradicts the journal-version framing | `engineer` | 2026-10-21 | none |
+| Space landing footer wording contradicts the journal-version framing: card E1 `t_3b259669` (v1.6) | `engineer` | 2026-10-25 | none |
 | Upload the W2 prompt-route captures to the Hub (17 GB, local only); weights-versus-prompt analysis of the risk inversion | `engineer` | 2026-10-21 | none |
 | Resolve the W3b audit BLOCK: owner decision on removing the unregistered p<0.05 classifier (recommended) or labelling it as dated exploratory output; package the renderer/report; complete the existing verifier lane; repeat W3 with the prompt route | Augusto, `engineer`, verifier | 2026-10-22 | Augusto's scope decision; W2 for the prompt-route repeat |
 | Clean the workbench tree: WB1 findings F1 to F5 (W2 code committed, W3 stubs quarantined in `_discarded_W3/`) | `engineer` | 2026-10-22 | W3b finished |
@@ -216,6 +238,7 @@ Every Markdown file under `planning/` must appear here, by itself or through its
 - [paper-b-tier1/results/](planning/sprint_2026-10-11/paper-b-tier1/results/): result notes, one per analysis
 - [paper-b-tier1/results/c9/](planning/sprint_2026-10-11/paper-b-tier1/results/c9/): C9 outputs (human agreement, TVD, W1 decomposition), the cross-family verification `VERIFICATION_C9.md` and the C9-4 audit `C9_GPU_VERIFICATION.md` (BLOCK); descriptive, not preregistered. Nothing in that folder is a C9-4 result
 - [planning/checkpoint_2026-10-20/](planning/checkpoint_2026-10-20/): the co-author brief `COAUTHOR_BRIEF.md`, the shared sprint rules `common_rules.md`, and `cards/` (texts of the 2026-10-19 sprint cards, exported as dated records)
+- [planning/checkpoint_2026-10-26/](planning/checkpoint_2026-10-26/): the shared rules and positioning for the 2026-10-26 checkpoint (`common_rules.md`), the card specs (`cards/`), and the novelty audit and readiness report when those cards finish
 - [paper_b/RUNBOOK.md](paper_b/RUNBOOK.md) and [paper_b/README.md](paper_b/README.md): how to run
 
 ### Record (dated; each opens with a "Record, not status" banner)
