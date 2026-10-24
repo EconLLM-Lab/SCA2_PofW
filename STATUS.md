@@ -1,6 +1,6 @@
 # SCA2 status
 
-**Last verified: 2026-10-20 evening (MST) by the orchestrator (`default`)**: git, the claim lock (Amendment C9.1 and its audit note), the numbers table, the manuscript commit, the deployed Space (file-by-file) and the board cards. The Hub inventory below dates from 2026-10-19 and was not recounted. Commands are in
+**Last verified: 2026-10-24 afternoon (MST) by the orchestrator (`default`)**: git (all branches match origin), the full `paper_b` suite (613 passed), the manuscript build and both number audits, and the board (one scheduled W3b card). The Space was checked file-by-file on 2026-10-21 (v1.5) and not re-checked; the Hub inventory below dates from 2026-10-19 and was not recounted. Merged workbench worktrees `wb6-cohort`, `wb6-words` and `wb7-words` were removed on 2026-10-24; their branches stay local and are ancestors of `Adapter-Brain-Vizualization`. Commands are in
 [How to re-verify](#how-to-re-verify). This file is the single status page for every person and agent working on
 SCA2. It indexes the evidence; it is not the evidence. When it disagrees with git or the Hub, git and the Hub win:
 fix this file in the same commit.
@@ -147,8 +147,11 @@ checks every value below against the table.
 
 ## Manuscript
 
-`paper/paper-b-draft`, `misc/paper_b/`: main text 40 pages and supplement 9 pages at `ae1099f`, with number audits
-311/311 and 297/297 and an independent check showing 0 mismatches. Overleaf review copy: a new project per
+`paper/paper-b-draft`, `misc/paper_b/`: main text 48 pages and supplement 13 pages at `a467da0` (the C9 results,
+sections 5.8 to 5.11). Re-checked 2026-10-24: both number audits PASS (0 unexplained numerals; 211 and 263 claim ids),
+0 overfull boxes, 0 undefined references, and the `pdftotext` anonymity grep (author names, "arXiv", the preprint id,
+"earlier study") is empty in both PDFs. The abstract, introduction and conclusion do not yet mention the C9 results.
+The earlier build at `ae1099f` (40 + 9 pages) had audits 311/311 and 297/297. Overleaf review copy: a new project per
 version. The current one is "Synthetic Cultural Agents as Scoring Instruments… (1)", uploaded 2026-10-19; Augusto
 has still to confirm the page count. The older Overleaf projects are untouched. The preprint is disclosed only on
 the title page and in `submission/COVER_LETTER_DRAFT.md`; the manuscript never cites it.
