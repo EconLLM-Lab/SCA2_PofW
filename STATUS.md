@@ -28,7 +28,7 @@ fix this file in the same commit.
 
 Augusto chose on 2026-10-24 to present a finished, verified checkpoint on Monday 2026-10-26: Paper B positioned as
 an evaluation of a measurement instrument that locates where the chain anchor → instrument → respondents holds and
-fails (option A), with the manuscript rewritten to that framing, and workbench v1.6 fixing the footer that called
+fails (option A), with the manuscript rewritten to that framing, every result and table replicated from the banked inputs (no GPU re-scoring), and workbench v1.6 fixing the footer that called
 Paper B an extension. Cards on board `sca2-paper-b`, target Sunday 2026-10-25 20:00 MST; specs and shared rules in
 [planning/checkpoint_2026-10-26/](planning/checkpoint_2026-10-26/).
 
@@ -41,7 +41,10 @@ Paper B an extension. Cards on board `sca2-paper-b`, target Sunday 2026-10-25 20
 | `t_3b259669` E1 workbench v1.6 candidate (wording, bundle path fix N3, tree hygiene; W3b files untouched) | `engineer`, Sonnet (Codex seat at its spend cap) | none |
 | `t_3a5c9a4c` EV workbench check | `verifier`, GLM via openrouter | E1 |
 | `t_5066d83f` ED deploy v1.6 | `sca`, Opus | EV PASS |
-| `t_7979b64d` R readiness fan-in | `sca`, Opus | N1, MV, ED |
+| `t_bfaf8f2a` RP1 replicate results and tables, model-only surfaces (re-run from banked Hub scores, rebuild the table rows, compare) | `engineer`, Sonnet | none |
+| `t_536cff76` RP2 replicate results and tables, human-criterion surfaces (reads `data/`, so the ASU seat) | `engineer`, Sonnet | none |
+| `t_6bded1bd` RV replication check (coverage, re-derived model-only rows, mutation test; never opens `data/`) | `verifier`, GLM via openrouter | RP1, RP2 |
+| `t_7979b64d` R readiness fan-in | `sca`, Opus | N1, MV, ED, RV |
 
 The rewrite changes no number and earns no claim; the claim lock is unchanged. The PM commits the manuscript after
 MV and R, then merges, pushes and uploads a new Overleaf project.
