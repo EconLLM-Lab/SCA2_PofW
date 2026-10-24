@@ -21,9 +21,17 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent.parent
 MAX_BYTES = 950_000_000
-# Resolved, so a symlinked scratch root (macOS /var -> /private/var) cannot trip the symlink guard.
-SCRATCH = Path(os.environ.get('SCA2_BUNDLE_SCRATCH', Path.home() / '.hermes/cache/scratch/wb-bundle')).resolve()
-# Landing thumbnails (v4, the default pair) and the Cohort empty-state illustration (v3).
+
+
+def resolve_scratch(arg, workbench: Path) -> Path:
+    """Stage dir: --scratch, else $SCA2_BUNDLE_SCRATCH, else <workbench>/dist/.bundle-scratch (gitignored).
+
+    Resolved, so a symlinked scratch root (macOS /var -> /private/var) cannot trip the symlink guard.
+    """
+    chosen = arg or os.environ.get('SCA2_BUNDLE_SCRATCH') or Path(workbench) / 'dist/.bundle-scratch'
+    return Path(chosen).expanduser().resolve()
+
+
 IMAGES = ('v4/ladder-1440.png', 'v4/matrix-1440.png', 'v4/object-1440.png', 'v4/cohort-1440.png',
           'v3/cohort-illustration.png')
 Q57_ITEM = 'wvs_Q57'
@@ -179,8 +187,9 @@ def build_bundle(args) -> int:
     # An output under the input/build tree could destroy inputs or ship itself.
     if out.is_relative_to(viewer) or out.is_relative_to(w / 'exports'):
         raise ValueError('Output must not be inside viewer or exports')
-    SCRATCH.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='deploy-', dir=SCRATCH) as temp:
+    scratch = resolve_scratch(getattr(args, 'scratch', None), w)
+    scratch.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='deploy-', dir=scratch) as temp:
         stage = Path(temp) / 'site'
         stage.mkdir()
         entries = {}
@@ -495,6 +504,8 @@ if __name__ == '__main__':
     ap.add_argument('--workbench', type=Path, default=HERE)
     ap.add_argument('--out', type=Path)
     ap.add_argument('--max-bytes', type=int, default=MAX_BYTES)
+    ap.add_argument('--scratch', type=Path, default=None,
+                    help='staging dir (default: $SCA2_BUNDLE_SCRATCH, else <workbench>/dist/.bundle-scratch)')
     ap.add_argument('--human-reference', type=Path, default=None,
                     help='WB7-H: copy this aggregate file into the bundle as exports/human_reference.json (off by default)')
     args = ap.parse_args()

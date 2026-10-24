@@ -16,7 +16,7 @@ SPEC = importlib.util.spec_from_file_location(
 )
 builder = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(builder)
-SCRATCH = builder.SCRATCH
+SCRATCH = Path(tempfile.gettempdir()).resolve()
 
 
 def put(path, data):
@@ -249,3 +249,29 @@ def test_unresolvable_viewer_pin_fails_closed(fixture, pin):
                         'export const TEACHING = { a: "smol_inst", b: "smol_gone", item: "wvs_Q81" };')
     with pytest.raises(ValueError, match='Viewer pin'):
         builder.build_bundle(args)
+
+
+def test_scratch_resolution_order_and_symlink(tmp_path, monkeypatch):
+    """--scratch beats the env var, which beats the repo-relative default; symlinks resolve."""
+    w = tmp_path / 'wb'
+    real = tmp_path / 'real'
+    real.mkdir()
+    link = tmp_path / 'link'
+    link.symlink_to(real)
+    monkeypatch.delenv('SCA2_BUNDLE_SCRATCH', raising=False)
+    # default: inside the workbench tree, never a home or profile path
+    assert builder.resolve_scratch(None, w) == (w / 'dist/.bundle-scratch').resolve()
+    monkeypatch.setenv('SCA2_BUNDLE_SCRATCH', str(link))
+    assert builder.resolve_scratch(None, w) == real
+    assert builder.resolve_scratch(tmp_path / 'arg', w) == (tmp_path / 'arg').resolve()
+    assert builder.resolve_scratch(link, w) == real
+    assert '.hermes' not in builder.resolve_scratch(None, w).parts
+
+
+def test_build_uses_scratch_argument(fixture, tmp_path):
+    w, args, _ = fixture
+    scratch = tmp_path / 'named-scratch'
+    args.scratch = scratch
+    builder.build_bundle(args)
+    assert scratch.is_dir()
+    assert not list(scratch.iterdir()), 'temporary stage must be cleaned up'
