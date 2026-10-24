@@ -60,7 +60,20 @@ of payload, built from `d8a232d`. Two later commits change only `index.html`, th
 Public static Hugging Face Space `EconLLM/sca2-workbench`
 (https://huggingface.co/spaces/EconLLM/sca2-workbench). It was made public by Augusto on 2026-10-20.
 
-The current deploy is v1.5, 2026-10-21, from `890ead3`. It adds the clamped-run and how-to-read text (WB7-W), Q57 across all 42 adapters and 26 sign
+**v1.6 deploy**, 2026-10-24, from `4984189` (Space commit `77e3e612`). It changes one sentence: the landing footer now
+says that Paper B is the journal version in preparation, evaluating the method as a scoring instrument on a 42-country
+cohort; the arXiv:2610.06562 citation is kept. Every data file, including `sca2/sca2_data.json` and all of `exports/`,
+is byte-identical to v1.5; only the JS asset (+63 B) and `index.html` differ. Records: `plans/WB8_CANDIDATE.md` (E1),
+`plans/WB8_VERIFICATION.md` (`t_3a5c9a4c`, GLM cross-family): PASS-WITH-NOTES, notes not about data; deploy record
+`plans/WB8_DEPLOY.md` (`t_5066d83f`).
+- All 376 manifest files are on the Space (378 with `README.md` and `.gitattributes`), with 0 missing and 0 sha256 or
+  size mismatches (173 LFS files by `lfs.sha256`; 203 small files re-downloaded and hashed). Archive sha256
+  `2fabb433...`; payload 949,437,055 B. Stage RUNNING; private False; storage 0.944 GB; no `app_file`.
+- Live, in three fresh Chromium contexts: the cold landing page is ready in 2.3 to 3.0 s, shows the new footer
+  sentence, and logs 0 console errors, page errors or failed requests. `/sca2/index.html` and `/exports/index.json`
+  return 200.
+
+Previous deploy, v1.5, 2026-10-21, from `890ead3`. It adds the clamped-run and how-to-read text (WB7-W), Q57 across all 42 adapters and 26 sign
 prompts in the Cohort tab (WB7-Q), a many-option headline for 10-point items, and a **human reference panel**: country-level
 World Values Survey wave 7 shares, rounded to whole percent, as a descriptive reference (WB7-H, 56 cells; no respondent rows). Records:
 `plans/WB7_PLAN.md`, `WB7H_ACCEPTANCE.md`, `WB7I_ACCEPTANCE.md`, `WB7_DATA_RIGHTS.md` (WB7-R: permitted with attribution) and
