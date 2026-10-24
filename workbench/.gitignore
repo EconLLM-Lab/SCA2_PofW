@@ -23,3 +23,10 @@ viewer/screens/**/*.png
 !viewer/screens/v2/final/*.png
 design/layout-v3/shots/
 !viewer/screens/v3/final/*.png
+
+# verifier iteration folders (local evidence; the curated record is plans/*_VERIFICATION.md). Anchored to this dir.
+/viewer/screens/sca2/verified/
+/viewer/screens/sca2/wb3v/
+/viewer/screens/sca2/wb31v/
+/viewer/screens/sca2/wb4v/
+/analysis/out/w3v_*
