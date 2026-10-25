@@ -107,7 +107,7 @@ is not an equivalent validation environment.
 |---|---|---|
 | `paper/paper-b-draft` | see [Checkpoint](#checkpoint-2026-10-20-co-author-review) | **The single merged branch to pull.** It holds the manuscript in `misc/paper_b/` (worktree `../SCA2_PofW-paper-b-draft`) plus all of `feat/paper-b-cohort`. |
 | `feat/paper-b-cohort` | code branch (this worktree) | Paper B code, results, claim lock. Merged into the branch above after every commit. |
-| `Adapter-Brain-Vizualization` | see [Checkpoint](#checkpoint-2026-10-20-co-author-review) | Workbench. Not merged anywhere. |
+| `Adapter-Brain-Vizualization` | `df014ba` (= origin) | Workbench, v1.6 live. Not merged anywhere. Pushed at the 2026-10-24 checkpoint per the 2026-10-19 decision. |
 | `main` | local `2e4989b`, origin `305d820` | Local main is 1 commit ahead (the arXiv upload package), unpushed. Paper B is not merged to main. Untouched at the checkpoint. |
 | tags | `arxiv-2610.06562-v1`, `prereg-heldout-2026-10-14` | |
 
