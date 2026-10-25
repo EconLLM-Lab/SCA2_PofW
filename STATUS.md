@@ -20,34 +20,47 @@ fix this file in the same commit.
 | Stream | State | Where |
 |---|---|---|
 | **Paper A** (preprint) | Posted: arXiv:2610.06562 v1, 2026-10-05. Frozen. | tag `arxiv-2610.06562-v1` (`5664026`); [misc/arxiv-submission-2026-10-05/](misc/arxiv-submission-2026-10-05/) |
-| **Paper B** (the journal version of the preprint, for SMR) | Compute and analysis done through Amendment C9. C9-4 experiment A ran on 42 countries and fills the adapter+persona TVD cell. Experiment B ran on 42 adapters and is banked by Amendment C9.1 (8 rows). The cross-family audit of both (card `t_b4030219`, Codex) ACCEPTED them on 2026-10-20; all C9 rows are descriptive and quotable as such. The manuscript carries the C9 results since `a467da0` (sections 5.8 to 5.11, a discussion paragraph, supplement Tables S9 to S15; both number audits PASS; abstract, introduction and conclusion not yet updated). Waiting on the decisions listed under [Open after the checkpoint](#open-after-the-checkpoint). | code `feat/paper-b-cohort`; manuscript `paper/paper-b-draft` |
-| **Workbench** (Adapter-Brain-Vizualization) | SCA2-specific viewer that reads Paper B artifacts, one way only: Paper B claims never depend on workbench results, and its compute stays separate. Public precomputed Space (made public by Augusto 2026-10-20 evening), redeployed 2026-10-21 as v1.5: the C9 step, the W2 prompt-route captures, a landing page on the Paper B model, Q57 for all 68 comparators and a descriptive human reference of country-level WVS-7 shares (56 cells, whole percent, no respondent rows). No weights, no inference. Data-rights result (WB7-R, `workbench/plans/WB7_DATA_RIGHTS.md`): WVS wording, GPS signs, WVS aggregates and Llama outputs are all "permitted with attribution"; Augusto confirmed in writing 2026-10-21; attribution is on the Space. Its analyses (W2 prompt route, W3 mechanisms) are not Paper B evidence; see `workbench/AUDIT.md` §17 on its branch. | worktree `.worktrees/adapter-brain-vizualization`, branch `Adapter-Brain-Vizualization`; [workbench README](https://github.com/EconLLM-Lab/SCA2_PofW/blob/Adapter-Brain-Vizualization/workbench/README.md) |
+| **Paper B** (the journal version of the preprint, for SMR) | Compute and analysis done through Amendment C9; replicated from the banked inputs on 2026-10-24 (571 of 562 table rows in two scopes, 9 `RO_` rows shared; 0 mismatches, cross-family verifier PASS-WITH-NOTES, `planning/checkpoint_2026-10-26/replication/`). The manuscript was rewritten to the chain framing (option A) on 2026-10-24 at `e3c2fe9`: 47 pages plus a 15-page supplement, both number audits PASS, anonymity clean. No claim is earned; the claim lock is unchanged. Waiting on the decisions under [Open after the checkpoint](#open-after-the-checkpoint) and on N1/N3 in the checkpoint section. | code `feat/paper-b-cohort`; manuscript `paper/paper-b-draft` |
+| **Workbench** (Adapter-Brain-Vizualization) | SCA2-specific viewer that reads Paper B artifacts, one way only: Paper B claims never depend on workbench results, and its compute stays separate. Public precomputed Space (made public by Augusto 2026-10-20 evening), v1.6 since 2026-10-24 (Space commit `77e3e61`; the footer now calls Paper B the journal version, not an extension; data byte-identical to v1.5). v1.5 was deployed 2026-10-21: the C9 step, the W2 prompt-route captures, a landing page on the Paper B model, Q57 for all 68 comparators and a descriptive human reference of country-level WVS-7 shares (56 cells, whole percent, no respondent rows). No weights, no inference. Data-rights result (WB7-R, `workbench/plans/WB7_DATA_RIGHTS.md`): WVS wording, GPS signs, WVS aggregates and Llama outputs are all "permitted with attribution"; Augusto confirmed in writing 2026-10-21; attribution is on the Space. Its analyses (W2 prompt route, W3 mechanisms) are not Paper B evidence; see `workbench/AUDIT.md` §17 on its branch. | worktree `.worktrees/adapter-brain-vizualization`, branch `Adapter-Brain-Vizualization`; [workbench README](https://github.com/EconLLM-Lab/SCA2_PofW/blob/Adapter-Brain-Vizualization/workbench/README.md) |
 | **Phase 3** (activation engineering, latent space) | Not started. | — |
 
-## Checkpoint 2026-10-26 (internal presentation): in progress
+## Checkpoint 2026-10-26 (internal presentation): assembled 2026-10-24
 
 Augusto chose on 2026-10-24 to present a finished, verified checkpoint on Monday 2026-10-26: Paper B positioned as
 an evaluation of a measurement instrument that locates where the chain anchor → instrument → respondents holds and
-fails (option A), with the manuscript rewritten to that framing, every result and table replicated from the banked inputs (no GPU re-scoring), and workbench v1.6 fixing the footer that called
-Paper B an extension. Cards on board `sca2-paper-b`, target Sunday 2026-10-25 20:00 MST; specs and shared rules in
-[planning/checkpoint_2026-10-26/](planning/checkpoint_2026-10-26/).
+fails (option A), with the manuscript rewritten to that framing, every result and table replicated from the banked
+inputs (no GPU re-scoring), and workbench v1.6 fixing the footer that called Paper B an extension. All cards are done;
+specs and shared rules are in [planning/checkpoint_2026-10-26/](planning/checkpoint_2026-10-26/) and the readiness
+verdict in its `READINESS.md`.
 
-| Card | Profile, route | Gated on |
+| Card | Profile, route | Result |
 |---|---|---|
-| `t_aca427d2` N1 novelty audit | `sca`, Opus | none |
-| `t_e8eda272` M1 framing rewrite (abstract, introduction, discussion, conclusion) | `writer`, Sonnet | N1 |
-| `t_b9f18724` M2 body pass (no number changes) | `writer`, Sonnet | M1 |
-| `t_c8662397` MV manuscript check | `verifier`, GLM via openrouter (cross-family) | M2 |
-| `t_3b259669` E1 workbench v1.6 candidate (wording, bundle path fix N3, tree hygiene; W3b files untouched) | `engineer`, Sonnet (Codex seat at its spend cap) | none |
-| `t_3a5c9a4c` EV workbench check | `verifier`, GLM via openrouter | E1 |
-| `t_5066d83f` ED deploy v1.6 | `sca`, Opus | EV PASS |
-| `t_bfaf8f2a` RP1 replicate results and tables, model-only surfaces (re-run from banked Hub scores, rebuild the table rows, compare) | `engineer`, Sonnet | none |
-| `t_536cff76` RP2 replicate results and tables, human-criterion surfaces (reads `data/`, so the ASU seat) | `engineer`, Sonnet | none |
-| `t_6bded1bd` RV replication check (coverage, re-derived model-only rows, mutation test; never opens `data/`) | `verifier`, GLM via openrouter | RP1, RP2 |
-| `t_7979b64d` R readiness fan-in | `sca`, Opus | N1, MV, ED, RV |
+| `t_aca427d2` N1 novelty audit | `sca`, Opus | `partly novel`: the instrument is new; distribution matching, country personas, survey-design use, the measurement framing and entanglement are published and must be cited, not claimed |
+| `t_e8eda272` M1 framing rewrite | `writer`, Sonnet | done; new title in `main.tex` and `title_page.tex` |
+| `t_b9f18724` M2 body pass | `writer`, Sonnet | done; no number, interval or table changed |
+| `t_c8662397` MV manuscript check | `verifier`, GLM via openrouter | `PASS-WITH-WORDING`; W1-W3 fixed by the PM, N2 and N4 applied |
+| `t_3b259669` E1 workbench v1.6 candidate | `engineer`, Sonnet | done (Codex seat at its spend cap); W3b files untouched |
+| `t_3a5c9a4c` EV workbench check | `verifier`, GLM via openrouter | `PASS-WITH-NOTES`, none about data |
+| `t_5066d83f` ED deploy v1.6 | `sca`, Opus | live at Space commit `77e3e61`, 376 of 376 files, data byte-identical to v1.5 |
+| `t_bfaf8f2a` RP1 replication, model-only | `engineer`, Sonnet | `REPRODUCED-WITH-NOTES`: every model-only row rebuilt from re-run files, 0 mismatches |
+| `t_536cff76` RP2 replication, human surfaces | `engineer`, Sonnet (ASU seat) | `REPRODUCED-WITH-NOTES`: every human-criterion row rebuilt, 0 mismatches, the re-run result files byte-identical to the tracked ones |
+| `t_6bded1bd` RV replication check | `verifier`, GLM via openrouter (no `data/`) | `PASS-WITH-NOTES`: coverage exact (the two scopes share the `RO_` rows), independent re-derivation, mutation test caught, nothing leaked |
+| `t_7979b64d` R readiness fan-in | `sca`, Opus | `ready` |
 
-The rewrite changes no number and earns no claim; the claim lock is unchanged. The PM commits the manuscript after
-MV and R, then merges, pushes and uploads a new Overleaf project.
+**Replication, what it does and does not show.** Every table row is rebuilt from the banked Hub scores and the local
+data by re-running the producers, and each matches the tracked 562-row table with 0 mismatches. It does **not**
+re-make the scores themselves: no GPU re-scoring ran, so the rescore sensitivity stays unquantified as
+`provenance/ARCHIVE_PROVENANCE_20261018.md` already records. Five row families have no recorded producer command
+(`B2_*`, `RO_*`, `PX_*`, `C9_W1_*`, `C9_label_recovery_*`): the defaults reproduce the banked numbers, but the
+original invocations are still not on record, and `factorial/bank_robustness.csv` is not regenerated by any recorded
+command (the numbers table does not read it). One supplement value, `C9_W1_altruism_spearman_cross_vs_gps`, is
+fp-degenerate: the cross part is invariant to the own bit, so tied countries are ordered by residuals near 1e-16 and
+an independent implementation reads about 0.30 where the tracked chain reads 0.2845.
+
+**Owed by Augusto:** read the four "intended use" sentences (abstract, `introduction.tex`, `discussion.tex`
+§Intended use, `conclusion.tex`) — MV judged them inside the lock because each carries its own bound; and decide
+whether 11,526 main-text words stand against the outline's 9,000–10,000 target. The PM then merges, pushes and
+uploads a new Overleaf project.
 
 ## Checkpoint 2026-10-20 (co-author review)
 
@@ -172,14 +185,16 @@ checks every value below against the table.
 
 ## Manuscript
 
-`paper/paper-b-draft`, `misc/paper_b/`: main text 48 pages and supplement 13 pages at `a467da0` (the C9 results,
-sections 5.8 to 5.11). Re-checked 2026-10-24: both number audits PASS (0 unexplained numerals; 211 and 263 claim ids),
-0 overfull boxes, 0 undefined references, and the `pdftotext` anonymity grep (author names, "arXiv", the preprint id,
-"earlier study") is empty in both PDFs. The abstract, introduction and conclusion do not yet mention the C9 results.
-The earlier build at `ae1099f` (40 + 9 pages) had audits 311/311 and 297/297. Overleaf review copy: a new project per
-version. The current one is "Synthetic Cultural Agents as Scoring Instruments… (1)", uploaded 2026-10-19; Augusto
-has still to confirm the page count. The older Overleaf projects are untouched. The preprint is disclosed only on
-the title page and in `submission/COVER_LETTER_DRAFT.md`; the manuscript never cites it.
+`paper/paper-b-draft`, `misc/paper_b/`: the option-A rewrite is committed at `e3c2fe9`. Main text 47 pages and
+supplement 15 pages; abstract 150 words. Verified on 2026-10-24 after the PM pass: latexmk exit 0, 0 overfull boxes,
+0 undefined references, both number audits PASS and byte-stable, and the `pdftotext` anonymity grep (author names,
+"arXiv", the preprint id, "earlier study") empty on both PDFs. No claim, interval or table value changed in the
+rewrite; the claim lock is untouched. What changed and why is in `misc/paper_b/REWRITE_LOG.md`, and the independent
+review in `misc/paper_b/MANUSCRIPT_REVIEW_2026-10-25.md`. The title is now "Synthetic Cultural Agents as Measurement
+Instruments: A Preregistered Evaluation from Cross-National Anchor to Survey Respondents", with the cover letter
+matching it. Overleaf review copy: a new project per version; the next one is built from `e3c2fe9`. The older
+Overleaf projects are untouched. The preprint is disclosed only on the title page and in
+`submission/COVER_LETTER_DRAFT.md`; the manuscript never cites it.
 
 ## Open after the checkpoint
 
