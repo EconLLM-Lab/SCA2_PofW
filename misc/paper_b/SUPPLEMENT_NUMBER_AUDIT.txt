@@ -2,7 +2,7 @@ Paper B number audit (card T10). Table: planning/sprint_2026-10-11/paper-b-tier1
 Table sha256 71ee7c8c68eb856bf7215165dd836aef7cc3f67993a6523790cee4b22ce186a4, 562 rows. Rule: a printed number passes only if it equals the
 table value rounded to the printed precision (p to 3 decimals, t to 2, percentages to 1).
 
-== supplement.tex: 525 statistics, 54 design constants
+== supplement.tex: 551 statistics, 59 design constants
   PASS        -0.154  PD_face_valid_trust_A:lo                                full -0.15432651431830105 -> -0.154
   PASS         0.379  PD_face_valid_trust_A:hi                                full 0.37924414129987694 -> 0.379
   PASS        -0.076  PD_jev_majority_trust_A:lo                              full -0.0759579012610154 -> -0.076
@@ -253,6 +253,10 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS          54.1  C9_label_recovery_mean_margin_shift_profile_block:hi    full 54.06282406309061 -> 54.1
   PASS          32.6  C9_label_recovery_mean_margin_shift_country:lo          full 32.612234792117604 -> 32.6
   PASS          49.5  C9_label_recovery_mean_margin_shift_country:hi          full 49.52614735524891 -> 49.5
+  PASS         0.045  PD_adapter_secondary_risktaking_A:lo                    full 0.04496694539573593 -> 0.045
+  PASS         0.229  PD_adapter_secondary_risktaking_A:hi                    full 0.2289147465625959 -> 0.229
+  PASS         0.017  PD_adapter_secondary_risktaking_A_bonf:lo               full 0.016856075633086547 -> 0.017
+  PASS         0.253  PD_adapter_secondary_risktaking_A_bonf:hi               full 0.25283844833699126 -> 0.253
   PASS            56  SCR_absA_n_kept:n                                       full 56 -> 56
   PASS            26  SCR_absA_n_kept                                         full 26 -> 26
   PASS         0.115  SCR_absA_A_kept                                         full 0.11507311463352304 -> 0.115
@@ -528,6 +532,28 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS  a1dbceea1a33da05f0432e14e0ff174ba239916b1a5beb9944e9aa0910cd40a5  HASH_pool_git_blob_lf                                   string value a1dbceea1a33da05f0432e14e0ff174ba239916b1a5beb9944e9aa0910cd40a5
   PASS  0f5cd2bbd88ef6eaca9cca9ded24e8a5e056276be055b21c1d92b941dd7d3849  HASH_overrides                                          string value 0f5cd2bbd88ef6eaca9cca9ded24e8a5e056276be055b21c1d92b941dd7d3849
   PASS  782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21  HASH_selection_amended_20261016                         string value 782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21
+  PASS          60.7  SCR_share_a_pos:pct                                     full 0.6071428571428571 x100 -> 60.7
+  PASS           174  SCR_cells_not_fielded                                   full 174 -> 174
+  PASS         0.070  SCR_secondary_A                                         full 0.0699187912034242 -> 0.070
+  PASS           185  SCR_secondary_A:n                                       full 185 -> 185
+  PASS         0.034  SCR_secondary_null_q95                                  full 0.03370605779210698 -> 0.034
+  PASS         0.143  PD_adapter_secondary_risktaking_A                       full 0.14316919391779825 -> 0.143
+  PASS            50  PD_adapter_secondary_risktaking_A:n                     full 50 -> 50
+  PASS            34  SCR_A_wave6:n                                           full 34 -> 34
+  PASS         0.043  SCR_A_wave6                                             full 0.043288820949758285 -> 0.043
+  PASS         0.047  SCR_A_wave7                                             full 0.04653488274177928 -> 0.047
+  PASS         0.176  RO_heldout_reverse_abs_t_corr                           full 0.17556760314041014 -> 0.176
+  PASS         0.546  RO_heldout_para_a_abs_t_corr                            full 0.5457780974512061 -> 0.546
+  PASS         0.271  RO_heldout_para_b_abs_t_corr                            full 0.271013646810046 -> 0.271
+  PASS         0.821  C9_W1_rank_cross_var_share_vs_failure_bank2             full 0.8214285714285715 -> 0.821
+  PASS         0.286  C9_W1_rank_cross_var_share_vs_failure_cohort1           full 0.28571428571428575 -> 0.286
+  PASS        -0.668  FX_adapter64_risktaking_bit_on_negrecip                 full -0.668121933702964 -> -0.668
+  PASS         0.495  FX_adapter64_trust_bit_on_patience_Q50                  full 0.4952240907448883 -> 0.495
+  PASS         0.418  FX_adapter64_trust_bit_on_posrecip                      full 0.4179696432724498 -> 0.418
+  PASS        -0.858  FX_signprompt64_trust_bit_on_risktaking                 full -0.8580191944471127 -> -0.858
+  PASS         1.774  FX_signprompt64_trust_bit_on_patience_Q50               full 1.7742222298011894 -> 1.774
+  PASS             4  NZ_blockD_against_beyond_floor                          full 4 -> 4
+  PASS             7  NZ_blockD_against_beyond_floor:n                        full 7 -> 7
   PASS          0.15  design:abs_a_cut                                        PREREGISTRATION.md s8 (item-level descriptive drops |a_i| < 0.15)
   PASS            30  design:face_valid_registered                            PREREGISTRATION.md s6 (face-valid route: 30 assigned items)
   PASS            95  design:ci_level                                         PREREGISTRATION.md s4 (95 percent interval)
@@ -582,6 +608,11 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   PASS      20261011  design:seed_c3                                          paper_b/analyze_surface.py BOOT_SEED
   PASS      20260905  design:seed_country                                     paper_b/analyze_surface.py COUNTRY_BOOT_SEED; C8_PERSONA_DESIGN.md E4
   PASS           526  design:train_rows                                       paper_b/config.py TRAIN_ROWS (526 training pairs)
+  PASS           223  design:pool_items                                       PREREGISTRATION.md s2 (pool of 223 items)
+  PASS             5  design:jev_runs                                         PREREGISTRATION.md s6 (five runs)
+  PASS             3  design:jev_majority                                     PREREGISTRATION.md s6 (at least three of five runs)
+  PASS            12  design:repaired_items                                   PREREGISTRATION.md s11 (12 repaired items)
+  PASS            28  design:ceiling_countries                                PREREGISTRATION.md s7 (28 countries with both waves)
   note  explained (cross-reference or citation command): \documentclass[12pt]{article}
   note  explained (cross-reference or citation command): \usepackage[margin=1.25in]{geometry}
   note  explained (LaTeX length or layout argument): 2em
@@ -699,6 +730,8 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (WVS item code): Q50
   note  explained (WVS item code): Q43
   note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q50
+  note  explained (WVS item code): Q50
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
   note  explained (named instrument or model version): Wave~7
@@ -715,16 +748,20 @@ table value rounded to the printed precision (p to 3 decimals, t to 2, percentag
   note  explained (named instrument or model version): \texttt{d1ab226}
   note  explained (named instrument or model version): \texttt{adapter-persona-strict-v1-20261019}
   note  explained (named instrument or model version): \texttt{label-recovery-cohort1-v1-20261019}
+  note  explained (named instrument or model version): Wave~7
+  note  explained (named instrument or model version): wave-6
+  note  explained (named instrument or model version): wave-7
   note  explained (section or amendment number of a cited document): Section~8
   note  explained (section or amendment number of a cited document): Section~6
   note  explained (section or amendment number of a cited document): Amendment~2
   note  explained (section or amendment number of a cited document): Amendment~2
   note  explained (section or amendment number of a cited document): Amendment~1
   note  explained (section or amendment number of a cited document): Amendment~1
+  note  explained (section or amendment number of a cited document): Amendment~1
   note  explained (formula constant in math mode): $a_i>0$
 
-Statistics: 525 printed, 525 PASS, 0 FAIL.
+Statistics: 551 printed, 551 PASS, 0 FAIL.
 Design constants: 0 FAIL.
 Unexplained numerals: 0.
-Distinct claim_ids used: 263.
+Distinct claim_ids used: 281.
 RESULT: PASS

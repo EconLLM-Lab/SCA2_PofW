@@ -15,7 +15,7 @@
 §renewcommand{§thesection}{S§arabic{section}}
 §renewcommand{§thetable}{S§arabic{table}}
 
-§title{Online Supplement§§[0.6em]§large Synthetic Cultural Agents as Scoring Instruments: A Preregistered Held-Out Evaluation of Survey Item Screening}
+§title{Online Supplement§§[0.6em]§large Synthetic Cultural Agents as Measurement Instruments: A Preregistered Evaluation from Cross-National Anchor to Survey Respondents}
 §author{}
 §date{}
 
@@ -23,7 +23,7 @@
 §maketitle
 §thispagestyle{empty}
 
-§noindent This supplement reports the two registered descriptives that the article sends here, the full tables behind several sentences of the article, the detail of the descriptive follow-up analyses, the items the probe selected, and the provenance of the scoring runs. Every statistic is read from the same numbers table as the article and keeps the article's surface labels (S1 and S2 for the first and second cohorts on the strict battery, H for the retrospective held-out screen, R for the unseeded retrain, N for the near-zero refits, and D for the descriptive follow-up analyses, which were not preregistered). Sections and tables numbered with an S belong to this supplement. As in the article, every result on surface H is retrospective, because the WVS Wave~7 file existed before the probe and is the only human source.
+§noindent This supplement reports the two registered descriptives that the article sends here, the full tables behind several sentences of the article, the detail of the descriptive follow-up analyses, the items the probe selected, the provenance of the scoring runs, and the design detail and robustness numbers that the article summarizes. Every statistic is read from the same numbers table as the article and keeps the article's surface labels (S1 and S2 for the first and second cohorts on the strict battery, H for the retrospective held-out screen, R for the unseeded retrain, N for the near-zero refits, and D for the descriptive follow-up analyses, which were not preregistered). Sections and tables numbered with an S belong to this supplement. As in the article, every result on surface H is retrospective, because the WVS Wave~7 file existed before the probe and is the only human source.
 
 §section{Registered descriptives}§label{sec:s-desc}
 
@@ -455,5 +455,27 @@ Mean margin shift (nats) & «v|C9_label_recovery_mean_margin_shift_profile_block
 §item Overrides file:§newline «h|HASH_overrides|64»
 §item Frozen primary and secondary selection:§newline «h|HASH_selection_amended_20261016|64»
 §end{itemize}}
+
+§section{Design detail and robustness numbers that the article summarizes}§label{sec:s-design}
+
+§paragraph{The item pool.} The pool was built from WVS Wave~7 variable labels, value labels and questionnaire text alone. An item enters if it is a substantive question outside the battery used to develop the adapters, below the demographic block, with two to eleven contiguous ordinal response codes. A text review excluded items whose code order is not monotone or that test factual knowledge, confirmed the ordinal reading of others, and repaired wording that did not extract from the questionnaire, recording a reason for every change. The result is §dc{223}{pool_items} items that no adapter was built for.
+
+§paragraph{The two questionnaire readers.} The face-valid rule assigns an item to a dimension when exactly one dimension's construct words occur in its wording and reads the direction from the response labels; a person could only confirm, flip or abstain, with a written reason. The typed decision model returns calibrated probabilities, given the item wording, the response options and the six GPS construct definitions used to generate the training data. Because single calls were unstable near the decision threshold, the comparator of record is §dc{5}{jev_runs} independent runs, and an item is assigned only when at least §dc{3}{jev_majority} runs agree on dimension and sign. Neither reader saw any model score or human response.
+
+§paragraph{The wording repairs of Amendment~1.} The §dc{12}{repaired_items} repaired items had sentences cut off mid-clause, a stripped country placeholder, grid rows truncated to a pronoun, or follow-ups that refer to a question absent from a standalone prompt. Each was repaired from its own response options or variable labels, under the pool rule and override mechanism already registered.
+
+§paragraph{The country-named prompt run.} The persona run first rescored the base model, and those scores reproduced the banked base-model scores of the second cohort's run exactly, so the persona column and the adapter columns share one software stack. The first-cohort values of the second-bank check reproduce the banked run exactly.
+
+§paragraph{The primary screen: positive items and unfielded cells (H).} Of the selected items, «pct|SCR_share_a_pos|1»§% have a positive item agreement. The human data contain «v|SCR_cells_not_fielded|0» item--country cells that were never fielded; they enter as missing.
+
+§paragraph{The registered reliability checks in full (H).} The secondary rule keeps every imprint item above the fixed threshold. It gives $A=$ «v|SCR_secondary_A|3» over «n|SCR_secondary_A» items, with a null ninety-fifth percentile of «v|SCR_secondary_null_q95|3». Under the secondary rule, risk taking alone has an interval above zero, at «v|PD_adapter_secondary_risktaking_A|3» «ci|PD_adapter_secondary_risktaking_A|3» over «n|PD_adapter_secondary_risktaking_A» items, and its Bonferroni interval stays above zero, «ci|PD_adapter_secondary_risktaking_A_bonf|3». The exploratory comparison on the «n|SCR_A_wave6» items fielded in both waves gives $A=$ «v|SCR_A_wave6|3» against wave-6 country means and «v|SCR_A_wave7|3» against wave-7 means over the §dc{28}{ceiling_countries} countries with both waves, so the small signal does not depend on one wave.
+
+§paragraph{Readout variants: item membership (H).} The correlation of $|t|$ over the pool between the original readout and each variant is «v|RO_heldout_reverse_abs_t_corr|3» for reversed options, «v|RO_heldout_para_a_abs_t_corr|3» for the first paraphrase and «v|RO_heldout_para_b_abs_t_corr|3» for the second. The membership counts are in the article. The primary rule is a top-quartile cut on $|t|$, so small shifts reorder the items near the cut.
+
+§paragraph{The cross-talk ratio across surfaces (D).} Across the seven surfaces, the rank correlation between Var(cross)/Var(full) and the adapters' failure to order countries like the GPS is «v|C9_W1_rank_cross_var_share_vs_failure_bank2|3» against second-cohort composites and «v|C9_W1_rank_cross_var_share_vs_failure_cohort1|3» against first-cohort composites. The comparison rests on trust set against six other surfaces and is not a graded relation; we claim no dose--response.
+
+§paragraph{Cross effects between bits and surfaces in the factorial (F).} The article gives two examples of a bit that moves another surface by more than its own. Further cross effects on the trained route: the risk-taking bit moves the negative-reciprocity surface by «v|FX_adapter64_risktaking_bit_on_negrecip|3», and the trust bit moves patience Q50 by «v|FX_adapter64_trust_bit_on_patience_Q50|3» and positive reciprocity by «v|FX_adapter64_trust_bit_on_posrecip|3». Under prompting, the trust bit alone moves risk taking by «v|FX_signprompt64_trust_bit_on_risktaking|3» and patience Q50 by «v|FX_signprompt64_trust_bit_on_patience_Q50|3». The own effects are in the factorial table of the article.
+
+§paragraph{Dropped dimensions in the near-zero refits (N).} On the dimensions with no training pairs, «v|NZ_blockD_against_beyond_floor|0» of «n|NZ_blockD_against_beyond_floor» surfaces moved against their intended direction beyond the declared floor, as expected when a dimension has no training pairs. This is a loss-of-signal check and bears on neither side.
 
 §end{document}

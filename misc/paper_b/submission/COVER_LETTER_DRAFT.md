@@ -4,8 +4,8 @@
 
 Dear Editor,
 
-We submit "Synthetic Cultural Agents as Scoring Instruments: A Preregistered Held-Out Evaluation of Survey Item
-Screening" for consideration in *Sociological Methods & Research*.
+We submit "Synthetic Cultural Agents as Measurement Instruments: A Preregistered Evaluation from Cross-National
+Anchor to Survey Respondents" for consideration in *Sociological Methods & Research*.
 
 The article evaluates a scoring instrument for new survey items, built by compiling the signs of declared
 country-level preference benchmarks into fine-tuned language-model policies, against an existing cross-national
