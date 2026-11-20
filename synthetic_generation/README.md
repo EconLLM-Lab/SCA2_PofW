@@ -104,7 +104,7 @@ A deterministic export lives at [`outputs/gps_sign_relabel_all/`](outputs/gps_si
 ## Getting started
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.11+
 - A personal Hugging Face token in `HF_TOKEN` with permission to call the configured Inference Endpoints.
 - Hugging Face Inference Endpoint URLs. The repository includes lab defaults, but you can override them in `.env` or with CLI flags.
 - Endpoint hourly-rate defaults are configured for the current lab Hugging Face endpoints:
