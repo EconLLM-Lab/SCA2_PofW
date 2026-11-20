@@ -1,0 +1,30 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_trust_general",
+    "m_trust_in_group",
+    "m_trust_out_group",
+    "m_trust_institution",
+    "m_patience_child_qualities",
+    "m_patience_work_values",
+    "m_patience_financial",
+    "m_risktaking_economic_values",
+    "m_risktaking_rule_breaking",
+    "m_posrecip_child_tolerance",
+    "m_posrecip_religion",
+    "m_posrecip_charitable_confidence",
+    "m_negrecip_moral_clarity",
+    "m_negrecip_justifiability",
+    "m_negrecip_punitiveness",
+    "m_altruism_membership"
+  ],
+  "aux": [
+    "gps_trust",
+    "gps_patience",
+    "gps_risktaking",
+    "gps_posrecip",
+    "gps_negrecip",
+    "gps_altruism"
+  ],
+  "outcome": null
+}

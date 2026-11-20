@@ -1,0 +1,12 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_negrecip_moral_clarity",
+    "m_negrecip_justifiability",
+    "m_negrecip_punitiveness"
+  ],
+  "aux": [
+    "gps_negrecip"
+  ],
+  "outcome": null
+}

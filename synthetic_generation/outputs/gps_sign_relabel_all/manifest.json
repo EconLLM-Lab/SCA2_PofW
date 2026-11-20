@@ -1,0 +1,1402 @@
+{
+  "run_id": "gps_sign_relabel_all_20260816_004545Z",
+  "timestamp": "2026-08-16T00:45:45.772175+00:00",
+  "labeling_rule": "deterministic_sign",
+  "source_run_id": "usa_mex_dpo_anchored_110_b6_c4_06232026_20260623_185531Z",
+  "source_checkpoint": "checkpoint_raw_pairs.jsonl",
+  "n_triplets": 658,
+  "n_countries": 76,
+  "n_rows": 50008,
+  "countries": [
+    "AFG",
+    "ARE",
+    "ARG",
+    "AUS",
+    "AUT",
+    "BGD",
+    "BIH",
+    "BOL",
+    "BRA",
+    "BWA",
+    "CAN",
+    "CHE",
+    "CHL",
+    "CHN",
+    "CMR",
+    "COL",
+    "CRI",
+    "CZE",
+    "DEU",
+    "DZA",
+    "EGY",
+    "ESP",
+    "EST",
+    "FIN",
+    "FRA",
+    "GBR",
+    "GEO",
+    "GHA",
+    "GRC",
+    "GTM",
+    "HRV",
+    "HTI",
+    "HUN",
+    "IDN",
+    "IND",
+    "IRN",
+    "IRQ",
+    "ISR",
+    "ITA",
+    "JOR",
+    "JPN",
+    "KAZ",
+    "KEN",
+    "KHM",
+    "KOR",
+    "LKA",
+    "LTU",
+    "MAR",
+    "MDA",
+    "MEX",
+    "MWI",
+    "NGA",
+    "NIC",
+    "NLD",
+    "PAK",
+    "PER",
+    "PHL",
+    "POL",
+    "PRT",
+    "ROU",
+    "RUS",
+    "RWA",
+    "SAU",
+    "SRB",
+    "SUR",
+    "SWE",
+    "THA",
+    "TUR",
+    "TZA",
+    "UGA",
+    "UKR",
+    "USA",
+    "VEN",
+    "VNM",
+    "ZAF",
+    "ZWE"
+  ],
+  "gps_vectors": {
+    "AFG": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "DZA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "ARG": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "AUS": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "AUT": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "BGD": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "BOL": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "BIH": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "BWA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "BRA": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "KHM": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "CMR": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "CAN": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "CHL": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "CHN": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "COL": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "CRI": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "HRV": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "CZE": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "EGY": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "EST": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "FIN": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "FRA": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "GEO": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "DEU": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "GHA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "GRC": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "GTM": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "HTI": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "HUN": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "IND": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "IDN": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "IRN": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "IRQ": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "ISR": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "ITA": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "JPN": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "JOR": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "KAZ": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "KEN": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "LTU": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "MWI": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "MEX": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "MDA": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "MAR": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "NLD": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "NIC": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "NGA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "PAK": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "PER": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "PHL": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "POL": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "PRT": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "ROU": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "RUS": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "RWA": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "SAU": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "SRB": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "ZAF": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "KOR": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "ESP": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "LKA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "SUR": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "SWE": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "CHE": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "TZA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "THA": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "TUR": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "UGA": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "UKR": {
+      "trust": -1,
+      "risktaking": -1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "ARE": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "GBR": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": -1,
+      "negrecip": 1
+    },
+    "USA": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": 1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": 1
+    },
+    "VEN": {
+      "trust": 1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": 1,
+      "posrecip": 1,
+      "negrecip": -1
+    },
+    "VNM": {
+      "trust": 1,
+      "risktaking": -1,
+      "patience": 1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    },
+    "ZWE": {
+      "trust": -1,
+      "risktaking": 1,
+      "patience": -1,
+      "altruism": -1,
+      "posrecip": -1,
+      "negrecip": -1
+    }
+  },
+  "per_country_sign": {
+    "AFG": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "ARE": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "ARG": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "AUS": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "AUT": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "BGD": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "BIH": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "BOL": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "BRA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "BWA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "CAN": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "CHE": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CHL": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CHN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "CMR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "COL": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CRI": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "CZE": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "DEU": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "DZA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "EGY": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "ESP": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "EST": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "FIN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "FRA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "GBR": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "GEO": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "GHA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "GRC": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "GTM": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "HRV": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "HTI": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "HUN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "IDN": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "IND": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "IRN": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "IRQ": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "ISR": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "ITA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "JOR": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "JPN": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "KAZ": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "KEN": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "KHM": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "KOR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "LKA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "LTU": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "MAR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "MDA": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "MEX": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "MWI": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "NGA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "NIC": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "NLD": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PAK": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PER": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PHL": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "POL": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "PRT": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "ROU": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "RUS": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "RWA": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "SAU": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "SRB": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "SUR": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "SWE": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "THA": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "TUR": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "TZA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "UGA": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "UKR": {
+      "trust": "B",
+      "risktaking": "B",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "USA": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "A"
+    },
+    "VEN": {
+      "trust": "A",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "A",
+      "posrecip": "A",
+      "negrecip": "B"
+    },
+    "VNM": {
+      "trust": "A",
+      "risktaking": "B",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    },
+    "ZAF": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "A",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "A"
+    },
+    "ZWE": {
+      "trust": "B",
+      "risktaking": "A",
+      "patience": "B",
+      "altruism": "B",
+      "posrecip": "B",
+      "negrecip": "B"
+    }
+  },
+  "per_country_counts": {
+    "AFG": 658,
+    "ARE": 658,
+    "ARG": 658,
+    "AUS": 658,
+    "AUT": 658,
+    "BGD": 658,
+    "BIH": 658,
+    "BOL": 658,
+    "BRA": 658,
+    "BWA": 658,
+    "CAN": 658,
+    "CHE": 658,
+    "CHL": 658,
+    "CHN": 658,
+    "CMR": 658,
+    "COL": 658,
+    "CRI": 658,
+    "CZE": 658,
+    "DEU": 658,
+    "DZA": 658,
+    "EGY": 658,
+    "ESP": 658,
+    "EST": 658,
+    "FIN": 658,
+    "FRA": 658,
+    "GBR": 658,
+    "GEO": 658,
+    "GHA": 658,
+    "GRC": 658,
+    "GTM": 658,
+    "HRV": 658,
+    "HTI": 658,
+    "HUN": 658,
+    "IDN": 658,
+    "IND": 658,
+    "IRN": 658,
+    "IRQ": 658,
+    "ISR": 658,
+    "ITA": 658,
+    "JOR": 658,
+    "JPN": 658,
+    "KAZ": 658,
+    "KEN": 658,
+    "KHM": 658,
+    "KOR": 658,
+    "LKA": 658,
+    "LTU": 658,
+    "MAR": 658,
+    "MDA": 658,
+    "MEX": 658,
+    "MWI": 658,
+    "NGA": 658,
+    "NIC": 658,
+    "NLD": 658,
+    "PAK": 658,
+    "PER": 658,
+    "PHL": 658,
+    "POL": 658,
+    "PRT": 658,
+    "ROU": 658,
+    "RUS": 658,
+    "RWA": 658,
+    "SAU": 658,
+    "SRB": 658,
+    "SUR": 658,
+    "SWE": 658,
+    "THA": 658,
+    "TUR": 658,
+    "TZA": 658,
+    "UGA": 658,
+    "UKR": 658,
+    "USA": 658,
+    "VEN": 658,
+    "VNM": 658,
+    "ZAF": 658,
+    "ZWE": 658
+  },
+  "per_dimension_triplet_counts": {
+    "trust": 110,
+    "risktaking": 109,
+    "patience": 110,
+    "altruism": 110,
+    "posrecip": 109,
+    "negrecip": 110
+  },
+  "near_zero_threshold": 0.1,
+  "near_zero_labeled_rows": 12388,
+  "notes": [
+    "Shared A/B bank is reused for every country; only chosen/rejected are flipped.",
+    "z == 0 is labeled A (non-negative). Magnitude is discarded.",
+    "source_qc_status is the original USA/MEX scorer label for that pair, not a new score.",
+    "No Hugging Face / LLM calls were made for this export."
+  ]
+}

@@ -1,0 +1,7 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# The held-out freeze (paper_b/heldout/FREEZE.json) recorded the CRLF bytes of this file; check it out as CRLF
+# everywhere so its sha256 reproduces.
+paper_b/heldout/pool_skeleton.csv text eol=crlf
+paper_b/heldout/pool_skeleton_at_prereg_tag.csv -text

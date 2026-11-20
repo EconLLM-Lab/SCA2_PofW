@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite Paper A (arXiv:2610.06562)."
+title: "Synthetic Cultural Agents from Aggregate Anchors"
+type: software
+authors:
+  - family-names: "Gonzalez-Bonorino"
+    given-names: "Augusto"
+  - family-names: "Biriukova"
+    given-names: "Kseniia"
+  - family-names: "Capra"
+    given-names: "C. Monica"
+repository-code: "https://github.com/EconLLM-Lab/SCA2_PofW"
+license: MIT
+preferred-citation:
+  type: article
+  title: "Synthetic Cultural Agents from Aggregate Anchors"
+  authors:
+    - family-names: "Gonzalez-Bonorino"
+      given-names: "Augusto"
+    - family-names: "Biriukova"
+      given-names: "Kseniia"
+    - family-names: "Capra"
+      given-names: "C. Monica"
+  journal: "arXiv preprint"
+  notes: "arXiv:2610.06562"
+  url: "https://arxiv.org/abs/2610.06562"
+  year: 2026

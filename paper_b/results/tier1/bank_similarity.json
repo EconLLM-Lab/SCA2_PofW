@@ -1,0 +1,77 @@
+{
+ "n": {
+  "bank1": 658,
+  "bank2": 658
+ },
+ "flags": [],
+ "counts": {
+  "trust": {
+   "bank1": 110,
+   "bank2": 110,
+   "share_diff_pts": 0.0
+  },
+  "risktaking": {
+   "bank1": 109,
+   "bank2": 110,
+   "share_diff_pts": 0.15
+  },
+  "patience": {
+   "bank1": 110,
+   "bank2": 110,
+   "share_diff_pts": 0.0
+  },
+  "altruism": {
+   "bank1": 110,
+   "bank2": 110,
+   "share_diff_pts": 0.0
+  },
+  "posrecip": {
+   "bank1": 109,
+   "bank2": 109,
+   "share_diff_pts": 0.0
+  },
+  "negrecip": {
+   "bank1": 110,
+   "bank2": 109,
+   "share_diff_pts": -0.15
+  }
+ },
+ "lengths": {
+  "prompt": {
+   "median1": 92.0,
+   "median2": 92.0,
+   "ks_d": 0.074,
+   "ks_p": 0.0495
+  },
+  "response_a": {
+   "median1": 49.0,
+   "median2": 48.0,
+   "ks_d": 0.041,
+   "ks_p": 0.6281
+  },
+  "response_b": {
+   "median1": 46.0,
+   "median2": 45.0,
+   "ks_d": 0.067,
+   "ks_p": 0.1012
+  }
+ },
+ "ab_length": {
+  "bank1": 3.0,
+  "bank2": 3.0
+ },
+ "near_dups": {
+  "bank1": 0.003,
+  "bank2": 0.0046
+ },
+ "overlap_bank2_with_bank1": 0.0015,
+ "vocabulary_jaccard": 0.5807,
+ "thresholds": {
+  "share_pts": 3.0,
+  "median_rel": 0.15,
+  "ab_words": 5.0,
+  "dup_pts": 5.0,
+  "overlap": 0.05
+ },
+ "verdict": "similar"
+}

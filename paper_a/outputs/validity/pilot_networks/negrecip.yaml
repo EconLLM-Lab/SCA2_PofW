@@ -1,0 +1,12 @@
+name: pilot_adapter_gps_sign_negrecip
+delta: 0.0
+restrictions:
+- id: r_mean_order_adapter_negrecip
+  type: mean_order
+  theta: 0.0
+  params:
+    group: is_usa
+    direction: 1
+    min_count: 1
+_note: 'direction=1 = sign(GPS negrecip: USA - MEX = 0.1262). PILOT ONLY (n=2 countries).
+  Augusto owns direction/threshold.'

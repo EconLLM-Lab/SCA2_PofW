@@ -1,0 +1,8 @@
+{
+ "model": "jev-1.13.0",
+ "tau": 0.5,
+ "items": 23,
+ "dimension_agreement": 0.5217391304347826,
+ "abstained": 10,
+ "sign_agreement_when_dimension_agrees": 1.0
+}

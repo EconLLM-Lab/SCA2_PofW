@@ -1,0 +1,13 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_trust_general",
+    "m_trust_in_group",
+    "m_trust_out_group",
+    "m_trust_institution"
+  ],
+  "aux": [
+    "gps_trust"
+  ],
+  "outcome": null
+}

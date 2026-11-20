@@ -1,0 +1,35 @@
+{
+  "frozen_at": "2026-10-17T22:39:57.692303+00:00",
+  "selection_path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/paper_b/heldout/selection_amended_20261016.csv",
+  "selection_sha256": "782b7d2123f9758ea5641c56ddac6bf778fa4a01e3b6e7ce11402d224480bf21",
+  "pool_path": "/Users/bonorinoa/Desktop/Github_Repositories/SCA2_PofW/paper_b/heldout/pool_skeleton.csv",
+  "pool_sha256": "19241f6f103c51d64e295045162bb370920223b7ffad7c5f3c8991f5c101bd44",
+  "code_revision": "357adde4aa174bb28396deb311563336ff4cde1e",
+  "run_ids": {
+    "heldout_v1": "bank2-heldout-v1-20261016",
+    "heldout_reverse": "bank2-heldout-reverse-20261016",
+    "heldout_para_a": "bank2-heldout-para-a-20261016",
+    "heldout_para_b": "bank2-heldout-para-b-20261016",
+    "signprompt_heldout_v1": "bank2-signprompt-heldout-v1-20261016",
+    "strict_v1": "bank2-strict-v1-20261016"
+  },
+  "selected_items": 56,
+  "n_items": 223,
+  "rubric": {},
+  "scoring_code_revision": "2126045d6a85482584a4be5972111023a04e0115",
+  "spec_sha256": {
+    "strict_v1": "ed3bb964b606a163c792a68eea2ea9e6cc679bb724ead6726c173f36d9a1fbf6",
+    "heldout_v1": "46447de63f7cc161c016bdc38a3a7c9e8d351be308c44cf1ccd28d9091d13b38",
+    "heldout_reverse": "d30bc4aa67d15430e52e09fdd2f8dd621a4b6aeee1559b6e26abf61a22d87e6c",
+    "heldout_para_a": "cbd63283b4d99f6b41a6119148821a56093acb2296845f0662c4185c2f115f47",
+    "heldout_para_b": "0680dffbf3d5c67bdf040a93d8454fc3de1ec08e04afdd8fd49360a6d8b30934",
+    "signprompt_heldout_v1": "46447de63f7cc161c016bdc38a3a7c9e8d351be308c44cf1ccd28d9091d13b38"
+  },
+  "readout_robustness": {
+    "criterion": "preregistration sections 8-9: share of selected items whose (d_i, s_i) is unchanged",
+    "heldout_reverse": "39/56 = 0.696",
+    "heldout_para_a": "39/56 = 0.696",
+    "heldout_para_b": "30/56 = 0.536",
+    "note": "no variant triggers the section 9 adverse condition; membership churn is large (18/29/16 of 56)"
+  }
+}

@@ -1,0 +1,224 @@
+question_id,dimension,sign,lexicon_hits,code1_label,codeN_label,review,review_reason,variable_label
+Q1,none,0,,Very important,Not at all important,,,Important in life: Family
+Q2,none,0,,Very important,Not at all important,,,Important in life: Friends
+Q3,none,0,,Very important,Not at all important,,,Important in life: Leisure time
+Q4,none,0,,Very important,Not at all important,,,Important in life: Politics
+Q5,none,0,,Very important,Not at all important,,,Important in life: Work
+Q6,none,0,,Very important,Not at all important,,,Important in life: Religion
+Q7,none,0,,Important,Not mentioned,,,Important child qualities: good manners
+Q8,none,0,,Important,Not mentioned,,,Important child qualities: independence
+Q9,none,0,,Important,Not mentioned,,,Important child qualities: hard work
+Q10,none,0,,Important,Not mentioned,,,Important child qualities: feeling of responsibility
+Q11,none,0,,Important,Not mentioned,,,Important child qualities: imagination
+Q15,none,0,,Important,Not mentioned,,,Important child qualities: religious faith
+Q16,altruism,-1,altruism,Important,Not mentioned,flip,"code 1 'Important' (mentioned) = more unselfishness, so higher code = less altruism",Important child qualities: unselfishness
+Q17,none,0,,Important,Not mentioned,,,Important child qualities: obedience
+Q18,none,0,,Mentioned,Not mentioned,,,Neighbors: Drug addicts
+Q19,none,0,,Mentioned,Not mentioned,,,Neighbors: People of a different race
+Q20,none,0,,Mentioned,Not mentioned,,,Neighbors: People who have AIDS
+Q21,none,0,,Mentioned,Not mentioned,,,Neighbors: Immigrants/foreign workers
+Q22,none,0,,Mentioned,Not mentioned,,,Neighbors: Homosexuals
+Q23,none,0,,Mentioned,Not mentioned,,,Neighbors: People of a different religion
+Q24,none,0,,Mentioned,Not mentioned,,,Neighbors: Heavy drinkers
+Q25,none,0,,Mentioned,Not mentioned,,,Neighbors: Unmarried couples living together
+Q26,none,0,,Mentioned,Not mentioned,,,Neighbors: People who speak a different language
+Q27,none,0,,Agree strongly,Strongly disagree,,,One of main goals in life has been to make my parents proud
+Q28,none,0,,Agree strongly,Strongly disagree,,,Pre-school child suffers with working mother
+Q29,none,0,,Agree strongly,Strongly disagree,,,Men make better political leaders than women do
+Q30,none,0,,Agree strongly,Strongly disagree,,,University is more important for a boy than for a girl
+Q31,none,0,,Agree strongly,Strongly disagree,,,Men make better business executives than women do
+Q32,none,0,,Agree strongly,Strongly disagree,,,Being a housewife just as fulfilling
+Q33,none,0,,Agree strongly,Disagree strongly,,,Jobs scarce: Men should have more right to a job than women
+Q34,none,0,,Agree strongly,Disagree strongly,,,Jobs scarce: Employers should give priority to (nation) people than immigrants
+Q35,none,0,,Strongly agree,Disagree strongly,,,Problem if women have more income than husband
+Q36,none,0,,Agree strongly,Disagree strongly,,,Homosexual couples are as good parents as other couples
+Q37,none,0,,Agree strongly,Disagree strongly,,,Duty towards society to have children
+Q38,none,0,patience;altruism,Agree strongly,Disagree strongly,,,It is children duty to take care of ill parent
+Q39,none,0,,Strongly agree,Strongly disagree,,,People who don't work turn lazy
+Q40,none,0,,Strongly agree,Strongly disagree,,,Work is a duty towards society
+Q41,none,0,,Agree strongly,Disagree strongly,,,Work should  always come first even if it means less spare time
+Q42,none,0,,The entire way our society is organized must be radically changed by revolutionary action,Our present society must be valiantly defended against all subversive forces,,,Basic kinds of attitudes concerning society
+Q44,none,0,patience,Good thing,Bad thing,none,matches only the battery title 'Future changes'; whether more emphasis on technology is patient is not readable from the wording,Future changes: More emphasis on technology
+Q45,none,0,patience,Good thing,Bad thing,none,matches only the battery title 'Future changes'; respect for authority is not a patience construct,Future changes: Greater respect for authority
+Q46,none,0,,Very happy,Not at all happy,,,Feeling of happiness
+Q47,none,0,,Very good,Very poor,,,State of health (subjective)
+Q48,none,0,,None at all,A great deal,,,How much freedom of choice and control
+Q49,none,0,,Completely dissatisfied,Completely satisfied,,,Satisfaction with your life
+Q51,none,0,,Often,Never,,,Frequency you/family (last 12 month): Gone without enough food to eat
+Q52,none,0,,Often,Never,,,Frequency you/family (last 12 month): Felt unsafe from crime in your own home
+Q53,none,0,,Often,Never,,,Frequency you/family (last 12 month): Gone without needed medicine or treatment
+Q54,none,0,,Often,Never,,,Frequency you/family (last 12 month): Gone without a cash income
+Q55,none,0,,Often,Never,,,"In the last 12 month, how often have you or your family: Gone without a safe she"
+Q65,trust,-1,trust,A great deal,None at all,,,Confidence: Armed Forces
+Q66,trust,-1,trust,A great deal,None at all,,,Confidence: The Press
+Q67,trust,-1,trust,A great deal,None at all,,,Confidence: Television
+Q68,trust,-1,trust,A great deal,None at all,,,Confidence: Labor Unions
+Q72,trust,-1,trust,A great deal,None at all,,,Confidence: The Political Parties
+Q74,trust,-1,trust,A great deal,None at all,,,Confidence: The Civil Services
+Q75,trust,-1,trust,A great deal,None at all,,,Confidence: Universities
+Q76,trust,-1,trust,A great deal,None at all,,,Confidence: Elections
+Q77,trust,-1,trust,A great deal,None at all,,,Confidence: Major Companies
+Q78,trust,-1,trust,A great deal,None at all,,,Confidence: Banks
+Q79,trust,-1,trust,A great deal,None at all,,,Confidence: The Environmental Protection Movement
+Q80,trust,-1,trust,A great deal,None at all,,,Confidence: The Women's Movement
+Q82,trust,-1,trust,A great deal,None at all,,,Confidence: Major regional organization (combined from country-specific)
+Q83,trust,-1,trust,A great deal,None at all,,,Confidence: The United Nations (UN)
+Q84,trust,-1,trust,A great deal,None at all,,,Confidence: International Monetary Found (IMF)
+Q85,trust,-1,trust,A great deal,None at all,,,Confidence: International Criminal Court (ICC)
+Q86,trust,-1,trust,A great deal,None at all,,,Confidence: North Atlantic Treaty Organization (NATO)
+Q87,trust,-1,trust,A great deal,None at all,,,Confidence: The World Bank (WB)
+Q88,trust,-1,trust,A great deal,None at all,,,Confidence: The World Health Organization (WHO)
+Q89,trust,-1,trust,A great deal,None at all,,,Confidence: The World Trade Organization (WTO)
+Q90,none,0,,Being effective,Being democratic,,,International organizations: being effective vs being democratic
+Q94,none,0,,Don't belong,Active member,,,Active/Inactive membership: Church or religious organization
+Q95,none,0,,Don't belong,Active member,,,"Active/Inactive membership: Sport or recreational organization, football/basebal"
+Q96,none,0,,Don't belong,Active member,,,"Active/Inactive membership: Art, music or educational organization"
+Q97,none,0,,Not a member,Active member,,,Active/Inactive membership: labor union
+Q98,none,0,,Not a member,Active member,,,Active/Inactive membership: political party
+Q100,none,0,,Not a member,Active member,,,Active/Inactive membership: Professional association
+Q102,none,0,,Don't belong,Active member,,,Active/Inactive membership: consumer organization
+Q104,none,0,,Don't belong,Active member,,,Active/Inactive membership: womenâs group
+Q105,none,0,,Don't belong,Active member,,,Active/Inactive membership: other organization
+Q108,none,0,,The government should take more responsibility to ensure that everyone is provided for,People should take more responsibility to provide for themselves,,,Government's vs individual's responsibility
+Q110,none,0,,"In the long run, hard work usually brings a better life",Hard work doesn't generally bring success - it's more a matter of luck and connections,,,Success: hard work vs luck
+Q112,none,0,,1 There is no corruption in my country,10 There is abundant corruption in my country,,,Perceptions of corruption in the country
+Q113,none,0,,None of them,All of them,,,Involved in corruption: State authorities
+Q114,none,0,,None of them,All of them,,,Involved in corruption: Business executives
+Q115,none,0,,None of them,All of them,,,Involved in corruption: Local authorities
+Q116,none,0,,None of them,All of them,,,Involved in corruption: Civil service providers
+Q117,none,0,,None of them,All of them,,,Involved in corruption: Journalists and media
+Q118,none,0,,Never,Always,,,"Frequency ordinary people pay a bribe, give a gift or do a favor to local offici"
+Q119,none,0,,Hard to say,Strongly disagree,,,"Degree of agreement: On the whole, women are less corrupt than men"
+Q120,none,0,risktaking,No risk at all,Very high risk,none,"perceived risk of being punished for bribery, a belief about enforcement, not willingness to take risks",Risk to be held accountable for giving or receiving a bribe
+Q121,none,0,,Rather bad,Very good,,,Impact of immigrants on the development of the country
+Q122,none,0,,Disagree,Agree,,,Immigration in your country: Fills useful jobs in the workforce
+Q123,none,0,,Disagree,Agree,,,Immigration in your country: Strengthens cultural diversity
+Q124,none,0,,Disagree,Agree,,,Immigration in your country: Increases the crime rate
+Q125,none,0,,Disagree,Agree,,,Immigration in your country: Gives asylum to political refugees
+Q126,none,0,risktaking,Disagree,Agree,none,"belief that immigration raises terrorism risk, an opinion about immigration, not risk preference",Immigration in your country: Increases the risks of terrorism
+Q127,none,0,altruism,Disagree,Agree,none,"belief that immigration helps poor people, an opinion about immigration, not the respondent's altruism",Immigration in your country: Helps poor people establish new lives
+Q128,none,0,,Disagree,Agree,,,Immigration in your country: Increases unemployment
+Q129,none,0,,Disagree,Agree,,,Immigration in your country: Leads to social conflict
+Q130,none,0,,Let anyone come who wants to,Prohibit people coming here from other countries,,,Immigration policy preference
+Q131,none,0,risktaking,Very Secure,Not at all secure,none,"perceived neighbourhood safety describes the environment, not the respondent's risk preference",Secure in neighborhood
+Q132,none,0,,Very Frequently,Not at all frequently,,,Frequency in your neighborhood: Robberies
+Q133,none,0,,Very Frequently,Not at all frequently,,,Frequency in your neighborhood: Alcohol consumed in the streets
+Q134,none,0,,Very Frequently,Not at all frequently,,,Frequency in your neighborhood: Police or military interfere with peopleâs pri
+Q135,none,0,,Very Frequently,Not at all frequently,,,Frequency in your neighborhood: Racist behavior
+Q136,none,0,,Very Frequently,Not at all frequently,,,Frequency in your neighborhood: Drug sale in streets
+Q137,none,0,negrecip,Very Frequently,Not at all frequently,none,"reported frequency of street violence describes the neighbourhood, not the respondent's reciprocity",Frequency in your neighborhood: Street violence and fights
+Q138,none,0,,Very Frequently,Not at all frequently,,,Frequency in your neighborhood: Sexual harassment
+Q139,risktaking,1,risktaking,Yes,No,,,Things done for reasons of security: Didnât carry much money
+Q140,risktaking,1,risktaking,Yes,No,,,Things done for reasons of security: Preferred not to go out at night
+Q141,risktaking,1,risktaking,Yes,No,,,"Things done for reasons of security: Carried a knife, gun or other weapon"
+Q142,none,0,,Very much,Not at all,,,Worries: Losing my job or not finding a job
+Q143,none,0,,Very much,Not at all,,,Worries: Not being able to give one's children a good education
+Q144,none,0,,Yes,No,,,Respondent was victim of a crime during the past year
+Q145,none,0,,Yes,No,,,Respondent's family was victim of a crime during last year
+Q146,none,0,,Very much,Not at all,,,Worries: A war involving my country
+Q147,none,0,,Very much,Not at all,,,Worries: A terrorist attack
+Q148,none,0,,Very much,Not at all,,,Worries: A civil war
+Q149,none,0,,Freedom,Equality,,,Freedom and Equality - Which more important
+Q150,risktaking,-1,risktaking,Freedom,Security,flip,"code 1 Freedom, code 2 Security; choosing security = less risk-taking, so higher code = less",Freedom and security - Which more important
+Q151,none,0,,Yes,No,,,Willingness to fight for country
+Q152,none,0,,A high level of economic growth,Trying to make our cities and countryside more beautiful,,,Aims of country: first choice
+Q153,none,0,,A high level of economic growth,Trying to make our cities and countryside more beautiful,,,Aims of country: second choice
+Q154,none,0,,Maintaining order in the nation,Protecting freedom of speech,,,Aims of respondent: first choice
+Q155,none,0,,Maintaining order in the nation,Protecting freedom of speech,,,Aims of respondent: second choice
+Q156,none,0,,A stable economy,The fight against crime,,,Most important: first choice
+Q157,none,0,,A stable economy,The fight against crime,,,Most important: second choice
+Q158,none,0,,Completely disagree,Completely agree,,,"Science and technology are making our lives healthier, easier, and more comforta"
+Q159,none,0,,Completely disagree,Completely agree,,,"Because of science and technology, there will be more opportunities for the next"
+Q160,none,0,,Completely disagree,Completely agree,,,We depend too much on science and not enough on faith
+Q161,none,0,,Completely disagree,Completely agree,,,One of the bad effects of science is that it breaks down peopleâs ideas of rig
+Q162,none,0,,Completely disagree,Completely agree,,,It is not important for me to know about science in my daily life
+Q163,none,0,,A lot worse off,A lot better off,,,"The world is better off, or worse off, because of science and technology"
+Q164,none,0,,Not at all important,Very important,,,Importance of God
+Q165,none,0,,Yes,No,,,Believe in: God
+Q166,none,0,,Yes,No,,,Believe in: life after death
+Q167,none,0,,Yes,No,,,Believe in: hell
+Q168,none,0,,Yes,No,,,Believe in: heaven
+Q169,none,0,,Strongly agree,Strongly disagree,,,"Whenever science and religion conflict,  religion is always right"
+Q170,none,0,,Strongly agree,Strongly disagree,,,The only acceptable religion  is my religion
+Q171,none,0,,More than once a week,"Never, practically never",,,How often do you attend religious services
+Q172,none,0,,Several times a day,"Never, practically never",,,How often do you pray
+Q173,none,0,,A religious person,An atheist,,,Religious person
+Q175,none,0,,Make sense of life after death,Make sense of life in this world,,,Meaning of religion: To make sense of life after death vs To make sense of life
+Q180,none,0,,Never justifiable,Always justifiable,,,Justifiable: Cheating on taxes
+Q181,none,0,,Never justifiable,Always justifiable,,,Justifiable: Someone accepting a bribe in the course of their duties
+Q182,none,0,,Never justifiable,Always justifiable,,,Justifiable: Homosexuality
+Q183,none,0,,Never justifiable,Always justifiable,,,Justifiable: Prostitution
+Q184,none,0,,Never justifiable,Always justifiable,,,Justifiable: Abortion
+Q185,none,0,,Never justifiable,Always justifiable,,,Justifiable: Divorce
+Q186,none,0,,Never justifiable,Always justifiable,,,Justifiable: Sex before marriage
+Q187,none,0,,Never justifiable,Always justifiable,,,Justifiable: Suicide
+Q188,none,0,,Never justifiable,Always justifiable,,,Justifiable: Euthanasia
+Q189,negrecip,1,negrecip,Never justifiable,Always justifiable,,,Justifiable: For a man to beat his wife
+Q190,negrecip,1,negrecip,Never justifiable,Always justifiable,,,Justifiable: Parents beating children
+Q191,negrecip,1,negrecip,Never justifiable,Always justifiable,,,Justifiable: Violence against other people
+Q192,none,0,,Never justifiable,Always justifiable,,,"Justifiable: Terrorism as a political, ideological or religious mean"
+Q193,none,0,,Never justifiable,Always justifiable,,,Justifiable: Having casual sex
+Q194,negrecip,1,negrecip,Never justifiable,Always justifiable,,,Justifiable: Political violence
+Q196,none,0,,Definitely should have the right,Definitely should not have the right,,,Government has the right: Keep people under video surveillance in public areas
+Q197,none,0,,Definitely should have the right,Definitely should not have the right,,,Government has the right: Monitor all e-mails and any other information exchange
+Q198,none,0,,Definitely should have the right,Definitely should not have the right,,,Government has the right: Collect information about anyone living in [COUNTRY] w
+Q199,none,0,,Very interested,Not at all interested,,,Interest in politics
+Q200,none,0,,Frequently,Never,,,How often discusses political matters with friends
+Q201,none,0,,Daily,Never,,,Information source: Daily newspaper
+Q202,none,0,,Daily,Never,,,Information source: TV news
+Q203,none,0,,Daily,Never,,,Information source: Radio news
+Q204,none,0,,Daily,Never,,,Information source: Mobile phone
+Q205,none,0,,Daily,Never,,,Information source: Email
+Q206,none,0,,Daily,Never,,,Information source: Internet
+Q207,none,0,,Daily,Never,,,"Information source: Social media (Facebook, Twitter, etc.)"
+Q208,none,0,,Daily,Never,,,Information source: Talk with friends or colleagues
+Q209,none,0,,Have done,Would never do,,,Political action: Signing a petition
+Q210,none,0,,Have done,Would never do,,,Political action: Joining in boycotts
+Q211,none,0,,Have done,Would never do,,,Political action: Attending lawful/peaceful demonstrations
+Q212,none,0,,Have done,Would never do,,,Political action: Joining unofficial strikes
+Q213,altruism,-1,altruism,Have done,Would never do,flip,"code 1 'Have done' (donated) = more altruism, so higher code = less",Social activism: Donating to a group or campaign
+Q214,none,0,,Have done,Would never do,,,Social activism: Contacting a government official
+Q215,none,0,,Have done,Would never do,,,Social activism: Encouraging others to take action about political issues
+Q216,none,0,,Have done,Would never do,,,Social activism: Encouraging others to vote
+Q217,none,0,,Have done,Would never do,,,Political actions online: Searching information about politics and political eve
+Q218,none,0,,Have done,Would never do,,,Political actions online: Signing an electronic petition
+Q219,none,0,,Have done,Would never do,,,Political actions online: Encouraging other people to take any form of political
+Q220,none,0,,Have done,Would never do,,,"Political actions online: Organizing political activities, events, protests"
+Q221,none,0,,Always,Not allowed to vote,,,Vote in elections: local level
+Q222,none,0,,Always,Not allowed to vote,,,Vote in elections: national level
+Q224,none,0,,Very often,Not at all often,,,How often in country's elections: Votes are counted fairly
+Q225,none,0,,Very often,Not at all often,,,How often in country's elections: Opposition candidates are prevented from runni
+Q226,none,0,,Very often,Not at all often,,,How often in country's elections: TV news favors the governing party
+Q227,none,0,,Very often,Not at all often,,,How often in country's elections: Voters are bribed
+Q228,none,0,,Very often,Not at all often,,,How often in country's elections: Journalists provide fair coverage of elections
+Q229,none,0,,Very often,Not at all often,,,How often in country's elections: Election officials are fair
+Q230,none,0,,Very often,Not at all often,,,How often in country's elections: Rich people buy elections
+Q231,none,0,negrecip,Very often,Not at all often,none,"reported frequency of voter intimidation describes elections, not the respondent's reciprocity",How often in country's elections: Voters are threatened with  violence at the po
+Q232,none,0,,Very often,Not at all often,,,How often in country's elections: Voters are offered a genuine choice in the ele
+Q233,none,0,,Very often,Not at all often,,,How often in country's elections: Women have equal opportunities to run the offi
+Q234,none,0,trust,Very important,Not at all important,none,importance of honest elections is a democratic value; 'honest' does not make it a trust item,Some people think that having honest elections makes a lot of difference in thei
+Q235,none,0,,Very good,Very bad,,,Political system: Having a strong leader who does not have to bother with parlia
+Q236,none,0,,Very good,Very bad,,,"Political system: Having experts, not government, make decisions according to wh"
+Q237,none,0,,Very good,Very bad,,,Political system: Having the army rule
+Q238,none,0,,Very good,Very bad,,,Political system: Having a democratic political system
+Q239,none,0,,Very good,Very bad,,,Political system: Having a system governed by religious law in which there are n
+Q240,none,0,,Left,Right,,,Left-right political scale
+Q241,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: Governments tax the rich and subsidize the poor
+Q242,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: Religious authorities interpret the laws
+Q243,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: People choose their leaders in free elections
+Q244,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: People receive state aid for unemployment
+Q245,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: The army takes over when government is incompetent
+Q246,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: Civil rights protect peopleâs liberty against oppression
+Q247,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: The state makes people's incomes equal
+Q248,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: People obey their rulers
+Q249,none,0,,It is against democracy (spontaneous),An essential characteristic of democracy,,,Democracy: Women have the same rights as men
+Q250,none,0,,Not at all important,Absolutely important,,,Importance of democracy
+Q251,none,0,,Not at all democratic,Completely democratic,,,How democratically is this country being governed today
+Q252,none,0,,Not satisfied at all,Completely satisfied,,,Satisfaction with the political system performance
+Q253,none,0,,A great deal of respect,No respect at all,,,Respect for individual human rights nowadays
+Q254,none,0,,Very proud,I am not [nationality],,,National pride
+Q255,none,0,,Very close,Not close at all,,,"Feel close to your village, town or city"
+Q256,none,0,,Very close,Not close at all,,,"Feel close to your district, region"
+Q257,none,0,,Very close,Not close at all,,,Feel close to your country
+Q258,none,0,,Very close,Not close at all,,,Feel close to your continent
+Q259,none,0,,Very close,Not close at all,,,Feel close to the world

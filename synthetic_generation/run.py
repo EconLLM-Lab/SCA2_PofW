@@ -1,0 +1,560 @@
+"""CLI entrypoint for the SCA 2.0 synthetic data generation pipeline."""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import json
+import logging
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Sequence
+
+import pandas as pd
+from dotenv import load_dotenv
+
+from sca2_datagen.config import CONFIG, CostTracker
+from sca2_datagen.export import export_sample_runs, summarize_qc
+from sca2_datagen.profiles import load_cultural_profiles
+from sca2_datagen.utils import compact_error_message, log_banner, setup_logging
+from sca2_datagen import generate, score
+
+
+LOGGER = logging.getLogger("sca2_datagen.run")
+
+
+SCORING_CHECKPOINT_COLUMNS = [
+    "qc_status",
+    "failure_reason",
+    "mono_pass",
+    "dist_pass",
+    "m_chosen",
+    "m_rejected",
+    "m_diff_signed",
+    "m_diff_abs",
+    "z_value",
+    "contamination_ratio",
+    "contamination_category",
+]
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Create the CLI parser."""
+
+    parser = argparse.ArgumentParser(description="SCA 2.0 synthetic data generation pipeline")
+    parser.add_argument("--scenarios-per-dim", type=int, default=CONFIG.scenarios_per_dim)
+    parser.add_argument("--scenario-batch-size", type=int, default=CONFIG.scenario_batch_size)
+    parser.add_argument("--concurrency", type=int, default=CONFIG.concurrency)
+    parser.add_argument("--max-retries", type=int, default=CONFIG.max_retries)
+    parser.add_argument("--retry-backoff-min-s", type=float, default=CONFIG.retry_backoff_min_s)
+    parser.add_argument("--retry-backoff-max-s", type=float, default=CONFIG.retry_backoff_max_s)
+    parser.add_argument("--retry-jitter-s", type=float, default=CONFIG.retry_jitter_s)
+    parser.add_argument("--request-timeout-s", type=float, default=CONFIG.request_timeout_s)
+    parser.add_argument(
+        "--stage-cache",
+        type=Path,
+        default=None,
+        help=(
+            "Append-only JSONL of finished facet/scenario/triplet requests. A rerun with the "
+            "same file reuses them, so a killed run loses no paid work. Off by default."
+        ),
+    )
+    parser.add_argument("--error-rate-window", type=int, default=CONFIG.error_rate_window)
+    parser.add_argument(
+        "--max-error-rate-for-continue",
+        type=float,
+        default=CONFIG.max_error_rate_for_continue,
+    )
+    parser.add_argument(
+        "--sample-size-policy",
+        choices=["fail_fast", "skip_unavailable", "degrade_to_feasible"],
+        default=CONFIG.sample_size_policy,
+    )
+    parser.add_argument(
+        "--countries",
+        nargs="+",
+        default=None,
+        help=(
+            "Space-separated ISO3 country codes. Defaults to MEX USA for new runs; "
+            "defaults to checkpoint countries when --resume is used."
+        ),
+    )
+    parser.add_argument("--sample-sizes", type=str, default="")
+    parser.add_argument(
+        "--use-anchors",
+        nargs="?",
+        const=True,
+        default=False,
+        type=parse_bool_arg,
+        help="Add curated scenario anchors to hf-generator triplet prompts. Accepts True/False.",
+    )
+    parser.add_argument(
+        "--labeling",
+        choices=["deterministic_sign", "llm"],
+        default="deterministic_sign",
+        help=(
+            "Country labeling of fixed A/B pairs. 'deterministic_sign' (default) assigns "
+            "chosen=A iff z>=0 with no model call. 'llm' is the legacy selector ablation and "
+            "requires the generator endpoint."
+        ),
+    )
+    parser.add_argument(
+        "--skip-scoring",
+        action="store_true",
+        help=(
+            "Stop after the raw-pair checkpoint and write generation_manifest.json with the "
+            "config actually used. For sign-rule banks: relabel.py reads the raw checkpoint "
+            "and never filters on scorer QC, so the scorer endpoint is not needed."
+        ),
+    )
+    parser.add_argument("--estimate-only", action="store_true")
+    parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
+    parser.add_argument("--gps-path", type=Path, default=None)
+    parser.add_argument("--wvs-path", type=Path, default=None)
+    parser.add_argument(
+        "--teacher-endpoint-url",
+        default=None,
+        help="Override HF_TEACHER_ENDPOINT_URL for this run. Keep tokens in HF_TOKEN, not CLI args.",
+    )
+    parser.add_argument(
+        "--generator-endpoint-url",
+        default=None,
+        help="Override HF_GENERATOR_ENDPOINT_URL for this run. Keep tokens in HF_TOKEN, not CLI args.",
+    )
+    parser.add_argument(
+        "--scorer-endpoint-url",
+        default=None,
+        help="Override HF_SCORER_ENDPOINT_URL for this run. Keep tokens in HF_TOKEN, not CLI args.",
+    )
+    parser.add_argument(
+        "--resume",
+        type=Path,
+        default=None,
+        help="Path to checkpoint_raw_pairs.jsonl to skip generation and resume from scoring",
+    )
+    return parser
+
+
+def parse_sample_sizes(raw: str) -> list[int]:
+    """Parse comma-separated sample sizes."""
+
+    if not raw.strip():
+        return []
+    sample_sizes = [int(part.strip()) for part in raw.split(",") if part.strip()]
+    if any(sample_size <= 0 for sample_size in sample_sizes):
+        raise ValueError("--sample-sizes must contain positive integers.")
+    return sample_sizes
+
+
+def parse_bool_arg(raw: str | bool) -> bool:
+    """Parse permissive CLI booleans while keeping bare flags supported."""
+
+    if isinstance(raw, bool):
+        return raw
+    normalized = raw.strip().lower()
+    if normalized in {"1", "true", "yes", "y", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "n", "off"}:
+        return False
+    raise argparse.ArgumentTypeError("expected a boolean value: true or false")
+
+
+def normalize_countries(countries: Sequence[str] | None) -> list[str] | None:
+    """Normalize country codes while preserving order."""
+
+    if countries is None:
+        return None
+    normalized = [country.strip().upper() for country in countries if country.strip()]
+    return list(dict.fromkeys(normalized))
+
+
+def validate_endpoint_url(raw_url: str) -> str:
+    """Validate and normalize an OpenAI-compatible endpoint base URL."""
+
+    url = raw_url.strip()
+    if not url.startswith(("https://", "http://")):
+        raise ValueError("endpoint URLs must start with https:// or http://")
+    if not url.endswith("/"):
+        url = f"{url}/"
+    if not url.endswith("/v1/"):
+        raise ValueError("endpoint URLs must end with /v1/ for LiteLLM OpenAI-compatible routing")
+    return url
+
+
+def apply_endpoint_url_overrides(args: argparse.Namespace) -> None:
+    """Apply per-run endpoint URL CLI overrides to the process environment."""
+
+    endpoint_args = {
+        "HF_TEACHER_ENDPOINT_URL": args.teacher_endpoint_url,
+        "HF_GENERATOR_ENDPOINT_URL": args.generator_endpoint_url,
+        "HF_SCORER_ENDPOINT_URL": args.scorer_endpoint_url,
+    }
+    for env_name, raw_url in endpoint_args.items():
+        if raw_url:
+            os.environ[env_name] = validate_endpoint_url(raw_url)
+
+
+def persist_scored_checkpoint(
+    df_raw: pd.DataFrame,
+    df_scored: pd.DataFrame,
+    checkpoint_path: Path,
+) -> None:
+    """Write raw rows enriched with scoring/QC fields back to the checkpoint."""
+
+    if len(df_raw) != len(df_scored):
+        raise ValueError(
+            "Cannot persist scored checkpoint because raw/scored row counts differ: "
+            f"raw={len(df_raw)} scored={len(df_scored)}"
+        )
+
+    enriched = df_raw.reset_index(drop=True).copy()
+    scored = df_scored.reset_index(drop=True)
+    scoring_columns = [
+        column
+        for column in scored.columns
+        if column in SCORING_CHECKPOINT_COLUMNS
+        or column.startswith("m_chosen_")
+        or column.startswith("m_rejected_")
+    ]
+    for column in scoring_columns:
+        enriched[column] = scored[column].to_list()
+
+    if "reasoning" in scored.columns:
+        enriched["score_reasoning"] = scored["reasoning"].to_list()
+    for column in ("selection_reasoning", "generation_reasoning"):
+        if column in scored.columns:
+            enriched[column] = scored[column].to_list()
+
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    enriched.to_json(checkpoint_path, orient="records", lines=True)
+
+
+def log_cost_summary(cost_summary: dict) -> None:
+    """Log a compact, user-facing endpoint cost summary."""
+
+    runtime_cost = cost_summary.get("endpoint_runtime_cost", {})
+    missing = runtime_cost.get("missing_rate_envs", [])
+    invalid = runtime_cost.get("invalid_rate_envs", [])
+    if missing:
+        LOGGER.warning(
+            "Hourly endpoint cost rates are not configured for %s. Dollar costs for those endpoints "
+            "will be reported as $0.00. Add them to .env when you want cost estimates.",
+            ", ".join(missing),
+        )
+    if invalid:
+        LOGGER.warning(
+            "Hourly endpoint cost rates are invalid for %s. Dollar costs for those endpoints "
+            "will fall back to config defaults until fixed.",
+            ", ".join(invalid),
+        )
+
+    endpoints = runtime_cost.get("endpoints", {})
+    if endpoints:
+        role_costs = [
+            f"{details.get('role', alias)}={details.get('cost_usd', 0.0):.4f}"
+            for alias, details in endpoints.items()
+        ]
+        LOGGER.info(
+            "Approx endpoint runtime cost: total=$%.4f (%s)",
+            float(runtime_cost.get("total_cost_usd", 0.0)),
+            ", ".join(role_costs),
+        )
+
+
+def _format_cost(value: float | int | None) -> str:
+    return f"${float(value or 0.0):,.2f}"
+
+
+def _format_int(value: float | int | None) -> str:
+    return f"{int(value or 0):,}"
+
+
+def format_estimate_summary(estimate: dict) -> str:
+    """Return a readable budget summary for --estimate-only runs."""
+
+    sample_sizes = estimate.get("sample_sizes") or []
+    runtime_cost = estimate.get("endpoint_runtime_cost", {})
+    endpoint_rows = []
+    for alias, details in runtime_cost.get("endpoints", {}).items():
+        endpoint_rows.append(
+            "  - "
+            f"{details.get('role', alias)} ({alias}): "
+            f"{_format_cost(details.get('cost_usd'))} "
+            f"@ ${float(details.get('hourly_rate_usd', 0.0) or 0.0):.2f}/hr"
+        )
+
+    stage_rows = []
+    for stage_name, stage in estimate.get("stage_estimates", {}).items():
+        stage_rows.append(
+            "  - "
+            f"{stage_name}: calls={_format_int(stage.get('calls'))}, "
+            f"input_tokens={_format_int(stage.get('input_tokens'))}, "
+            f"output_tokens={_format_int(stage.get('output_tokens'))}, "
+            f"token_cost={_format_cost(stage.get('cost_usd'))}"
+        )
+
+    drivers = estimate.get("major_cost_drivers", {})
+    warning = ""
+    max_requested = estimate.get("max_requested_sample_size")
+    expected_pass = estimate.get("expected_qc_passed_per_country")
+    if max_requested and expected_pass and expected_pass < max_requested:
+        warning = (
+            "\n\nBudget note:\n"
+            f"  - Expected QC-passed rows per country ({expected_pass}) is below "
+            f"the largest requested sample size ({max_requested}). Consider a larger "
+            "`--scenarios-per-dim` or accept that larger nested exports may be skipped."
+        )
+
+    return "\n".join(
+        [
+            "",
+            "SCA 2.0 generator budget estimate",
+            "=================================",
+            f"Countries: {', '.join(estimate.get('countries', []))}",
+            f"GPS dimensions: {estimate.get('gps_dimension_count')}",
+            f"Scenarios per dimension: {estimate.get('scenarios_per_dim')}",
+            f"Scenario batch size: {estimate.get('scenario_batch_size')}",
+            f"Use anchors: {estimate.get('use_anchors')}",
+            f"Raw pairs per country: {_format_int(estimate.get('raw_pairs_per_country'))}",
+            f"Raw pairs total: {_format_int(estimate.get('raw_pairs_total'))}",
+            f"Expected QC-passed per country: {_format_int(expected_pass)} "
+            f"(assumed pass rate {float(estimate.get('estimated_qc_pass_rate', 0.0)):.0%})",
+            f"Nested sample sizes: {', '.join(str(size) for size in sample_sizes) if sample_sizes else 'auto'}",
+            "",
+            "LLM calls and token estimate:",
+            *stage_rows,
+            f"  - total: calls={_format_int(estimate.get('total_llm_calls'))}, "
+            f"input_tokens={_format_int(estimate.get('total_input_tokens'))}, "
+            f"output_tokens={_format_int(estimate.get('total_output_tokens'))}",
+            "",
+            "Endpoint runtime cost estimate:",
+            *(endpoint_rows or ["  - no endpoint runtime costs available"]),
+            f"  - total estimated cost: {_format_cost(estimate.get('total_cost_usd'))}",
+            f"  - rough cost per country: {_format_cost(estimate.get('rough_cost_per_country_usd'))}",
+            f"  - estimated runtime: {estimate.get('estimated_runtime', {}).get('human_readable')}",
+            "",
+            "Major cost drivers:",
+            f"  - scenarios_per_dim={drivers.get('scenarios_per_dim')}",
+            f"  - countries={drivers.get('countries')}",
+            f"  - selection/scoring scale: {drivers.get('selection_and_scoring_calls_scale_with')}",
+            f"  - nested sample sizes add LLM calls: {drivers.get('nested_sample_sizes_add_llm_calls')}",
+            warning,
+        ]
+    )
+
+
+async def async_main(argv: Sequence[str] | None = None) -> int:
+    """Run the CLI."""
+
+    load_dotenv(override=False)
+    setup_logging()
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    try:
+        apply_endpoint_url_overrides(args)
+        sample_sizes = sorted(parse_sample_sizes(args.sample_sizes))
+    except ValueError as exc:
+        parser.error(str(exc))
+
+    overrides = {
+        "scenarios_per_dim": args.scenarios_per_dim,
+        "scenario_batch_size": args.scenario_batch_size,
+        "concurrency": args.concurrency,
+        "max_retries": args.max_retries,
+        "retry_backoff_min_s": args.retry_backoff_min_s,
+        "retry_backoff_max_s": args.retry_backoff_max_s,
+        "retry_jitter_s": args.retry_jitter_s,
+        "request_timeout_s": args.request_timeout_s,
+        "error_rate_window": args.error_rate_window,
+        "max_error_rate_for_continue": args.max_error_rate_for_continue,
+        "sample_size_policy": args.sample_size_policy,
+        "use_anchors": args.use_anchors,
+        "labeling": args.labeling,
+        "stage_cache_path": str(args.stage_cache) if args.stage_cache else None,
+    }
+    config = CONFIG.with_overrides(**overrides)
+    if config.scenarios_per_dim <= 0:
+        parser.error("--scenarios-per-dim must be a positive integer.")
+    if config.scenario_batch_size <= 0:
+        parser.error("--scenario-batch-size must be a positive integer.")
+    if config.concurrency <= 0:
+        parser.error("--concurrency must be a positive integer.")
+    if config.error_rate_window <= 0:
+        parser.error("--error-rate-window must be a positive integer.")
+
+    countries = normalize_countries(args.countries)
+    tracker = CostTracker()
+
+    checkpoint_path = args.output_dir / "checkpoint_raw_pairs.jsonl"
+    scenario_bank_path = args.output_dir / "checkpoint_scenario_bank.json"
+    scenario_bank: dict[str, list[dict[str, str]]]
+    df_raw: pd.DataFrame | None = None
+
+    if args.resume:
+        df_raw = pd.read_json(args.resume, orient="records", lines=True)
+        if "country" not in df_raw.columns:
+            raise SystemExit("Resume checkpoint is missing a required 'country' column.")
+        df_raw["country"] = df_raw["country"].astype(str).str.strip().str.upper()
+        checkpoint_countries = sorted(df_raw["country"].dropna().unique().tolist())
+        if not checkpoint_countries:
+            raise SystemExit("Resume checkpoint contains no country rows.")
+        if countries is None:
+            countries = checkpoint_countries
+        else:
+            missing_from_args = sorted(set(checkpoint_countries) - set(countries))
+            if missing_from_args:
+                parser.error(
+                    "Resume checkpoint contains countries not listed in --countries: "
+                    f"{', '.join(missing_from_args)}. Include them or omit --countries."
+                )
+            missing_from_checkpoint = sorted(set(countries) - set(checkpoint_countries))
+            if missing_from_checkpoint:
+                LOGGER.warning(
+                    "Ignoring --countries entries absent from resume checkpoint: %s",
+                    ", ".join(missing_from_checkpoint),
+                )
+                countries = [country for country in countries if country in checkpoint_countries]
+    else:
+        countries = countries or CONFIG.default_countries
+
+    log_banner(LOGGER, "SCA 2.0 Synthetic Data Generation")
+    LOGGER.info(
+        "Configuration: countries=%s | scenarios_per_dim=%d | use_anchors=%s | models=%s/%s/%s | labeling=%s",
+        countries,
+        config.scenarios_per_dim,
+        config.use_anchors,
+        config.teacher_model,
+        config.generator_model,
+        config.scorer_model,
+        config.labeling,
+    )
+
+    if args.estimate_only:
+        estimate = tracker.estimate_run(config, countries, sample_sizes=sample_sizes or None)
+        print(format_estimate_summary(estimate), flush=True)
+        LOGGER.debug("Raw estimate JSON: %s", json.dumps(estimate, indent=2))
+        log_cost_summary(estimate)
+        if sample_sizes and estimate["expected_qc_passed_per_country"] < max(sample_sizes):
+            LOGGER.warning(
+                "Estimated QC-passed rows per country (%s) may be below the largest requested sample size (%s).",
+                estimate["expected_qc_passed_per_country"],
+                max(sample_sizes),
+        )
+        return 0
+
+    cultural_profiles, _ = load_cultural_profiles(
+        countries,
+        gps_path=args.gps_path,
+        wvs_path=args.wvs_path,
+    )
+
+    if args.resume:
+        if scenario_bank_path.exists():
+            scenario_bank = json.loads(scenario_bank_path.read_text())
+        else:
+            sibling_scenario_bank = args.resume.with_name("checkpoint_scenario_bank.json")
+            scenario_bank = (
+                json.loads(sibling_scenario_bank.read_text()) if sibling_scenario_bank.exists() else {}
+        )
+        LOGGER.info("Resumed from checkpoint: %s (%d pairs)", args.resume, len(df_raw))
+    else:
+        try:
+            df_raw, scenario_bank = await generate.run_teacher_pipeline(
+                cultural_profiles,
+                countries,
+                config=config,
+                tracker=tracker,
+                use_anchors=config.use_anchors,
+            )
+        except Exception as exc:
+            raise SystemExit(
+                "Generation failed before a raw-pair checkpoint could be written. "
+                "If the error is a 503/cold-start or rate-limit response, retry with the default "
+                "--max-retries or a larger retry budget after the endpoint has finished waking up. "
+                f"Last error: {compact_error_message(exc)}"
+            ) from None
+    LOGGER.info("Generated %s raw pairs", len(df_raw))
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    df_raw.to_json(checkpoint_path, orient="records", lines=True)
+    LOGGER.info("Checkpoint saved: %s (%d pairs)", checkpoint_path, len(df_raw))
+    scenario_bank_path.write_text(json.dumps(scenario_bank, indent=2))
+    LOGGER.info("Scenario bank saved: %s", scenario_bank_path)
+
+    if args.skip_scoring:
+        gen_manifest = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "countries": list(countries),
+            "resumed_from": str(args.resume) if args.resume else None,
+            "raw_pair_count": int(len(df_raw)),
+            "scenarios_per_dim_observed": {k: len(v) for k, v in scenario_bank.items()},
+            "config": config.snapshot(),
+            "cost_summary": tracker.summary(),
+            "scoring": "skipped (--skip-scoring)",
+        }
+        manifest_path = checkpoint_path.parent / "generation_manifest.json"
+        manifest_path.write_text(json.dumps(gen_manifest, indent=2, default=str))
+        LOGGER.info("Scoring skipped. Generation manifest: %s", manifest_path)
+        return 0
+
+    try:
+        df_final, qc_stats = await score.run_scoring_qc_export(
+            df_raw,
+            cultural_profiles,
+            config=config,
+            tracker=tracker,
+        )
+    except Exception as exc:
+        resume_hint = (
+            f" Resume with --resume {checkpoint_path} after fixing the endpoint issue."
+            if checkpoint_path.exists()
+            else ""
+        )
+        raise SystemExit(
+            "Scoring/export failed. Raw generation is checkpointed when available."
+            f"{resume_hint} Last error: {compact_error_message(exc)}"
+        ) from None
+    persist_scored_checkpoint(df_raw, df_final, checkpoint_path)
+    LOGGER.info("Scored checkpoint updated: %s (%d pairs)", checkpoint_path, len(df_final))
+    summarize_qc(df_final, qc_stats)
+
+    if df_final.empty:
+        raise SystemExit("No QC-passed rows were generated.")
+
+    export_sizes = sample_sizes
+    LOGGER.info("Exporting final datasets for sample_sizes=%s", export_sizes or "auto")
+    cost_summary = tracker.summary()
+    exports = export_sample_runs(
+        df_final=df_final,
+        sample_sizes=export_sizes,
+        cultural_profiles=cultural_profiles,
+        config=config,
+        output_dir=args.output_dir,
+        cost_summary=cost_summary,
+        scenario_bank=scenario_bank,
+        qc_stats=qc_stats,
+        raw_pair_count=len(df_raw),
+        git_cwd=Path.cwd(),
+    )
+    if not exports:
+        LOGGER.warning(
+            "No datasets were exported. Requested sizes may have been skipped under sample_size_policy=%s.",
+            config.sample_size_policy,
+        )
+    else:
+        exported_sizes = sorted(
+            int(entry["manifest"].stem.split("_")[-1]) for entry in exports
+        )
+        LOGGER.info("Exported sample sizes: %s", exported_sizes)
+        log_cost_summary(cost_summary)
+    return 0
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the async CLI from synchronous entrypoints."""
+
+    return asyncio.run(async_main(argv))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

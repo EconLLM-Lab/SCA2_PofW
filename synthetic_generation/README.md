@@ -1,0 +1,303 @@
+# SCA 2.0 — Synthetic Data Generation Pipeline
+
+> **EconLLM Lab** · Arizona State University
+> Part of the [Synthetic Cultural Agents](https://www.econllm-lab.com/) research project
+
+## What is this project?
+
+This folder contains the data generation pipeline for **SCA 2.0** (Synthetic Cultural Agents, second generation). The goal is to create synthetic preference datasets that can be used to fine-tune open-source language models so they behave in ways that reflect the cultural preferences of specific populations — not just WEIRD (Western, Educated, Industrialized, Rich, Democratic) ones.
+
+**The big idea:** The Global Preferences Survey (GPS) by Falk et al. (2018) measured six economic preferences — trust, risk-taking, patience, altruism, positive reciprocity, and negative reciprocity — across 76 countries. We treat these country-level scores as declared *aggregate anchors* and render them into synthetic preference data. A student model is then fine-tuned on this data using Direct Preference Optimization (DPO), a pairwise-preference estimator with reference-policy regularization. The protocol's scientific value is established empirically, not assumed: Paper A ([arXiv:2610.06562](https://arxiv.org/abs/2610.06562)) specifies five rejection points — anchor transmission, policy encoding, anchor relevance (permuted-anchor placebo), external transport, and operator robustness. The pipeline deliberately makes no identification claim about individual preferences or full population distributions.
+
+**Where this fits in the research agenda:**
+
+| Paper | Focus | Status |
+|-------|-------|--------|
+| **Paper A** | **Aggregate-anchor construction protocol (this pipeline)** | [arXiv:2610.06562](https://arxiv.org/abs/2610.06562) |
+| Paper B | Preregistered evaluation, 42 countries | In preparation. Manuscript to be added with its preprint. |
+| cvprofiles | Construct-validity instrument (validation lane) | Separate repository |
+
+If you're new to the lab, start by reading:
+- The [lab mission document](https://www.econllm-lab.com/) for context on what we do and why
+- Falk et al. (2018), "Global Evidence on Economic Preferences," *QJE* — the GPS paper
+- Capra, Gonzalez-Bonorino & Pantoja (2025), "LLMs Model Non-WEIRD Populations" — SCA 1.0
+- The SCA 2.0 project overview in the repository [`README.md`](../README.md)
+
+---
+
+## Pipeline architecture
+
+The pipeline has five blocks that run sequentially. Each block is a self-contained module.
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   Block A    │───▶│   Block B    │───▶│   Block C    │───▶│   Block D    │───▶│   Block E    │
+│   Config     │    │  Profiles    │    │  Generation  │    │ Scoring / QC │    │   Export     │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+```
+
+### Block A — Configuration
+Defines target countries, GPS dimensions, Hugging Face endpoint role aliases, hyperparameters, WVS item mappings, and cost tracking. This is where you set `scenarios_per_dim` and configure quality control thresholds.
+
+**Key design decision:** We use three dedicated Hugging Face Inference Endpoints:
+- `hf-teacher`: Facet decomposition and scenario generation
+- `hf-generator`: Fixed triplet generation + profile-based selection (as of v1)
+- `hf-scorer`: Quality control scoring only
+
+### Block B — Data ingestion and profile construction
+Loads the GPS dataset (`country_gps.dta`), extracts the 6-dimensional cultural state vector z_c for each target country, and builds a deterministic quantitative profile (anonymized — no country name appears in the profile text).
+
+**Key file:** `country_gps.dta` — contains GPS z-scores for 76 countries. Download from [the GPS site](https://www.briq-institute.org/global-preferences/home). The page may need a browser. Place it at `data/GPS/GPS_dataset_country_level/country_gps.dta`.
+
+The public copy of `outputs/gps_sign_relabel_all/` ships sign labels only (`chosen_option`, `per_country_sign`). Continuous z-scores are not in that copy. Code that needs a real z reads the file above and raises a clear error if it is absent. The redaction list is `PUBLIC_REDACTIONS.md`.
+
+The profile text documents the country's disposition for human readers; country labeling of fixed A/B pairs is the deterministic sign rule (no model call) unless `--labeling llm` is used (see Block C, Stage 2b).
+
+### Block C — Generation engine
+
+**Anchor Usage (v1):** Anchors are now used as *positive structural exemplars* rather than negative constraints. The generator is instructed to emulate facet logic and core tradeoff style while varying surface context.
+Four-step architecture:
+1. **Facet decomposition** (Stage 0): For each of the 6 GPS dimensions, the teacher model first breaks the trait into exactly 5 concrete sub-dimensions.
+2. **Scenario generation** (Stage 1): For each facet, the teacher model generates diverse scenarios. These are country-independent, so we generate them once and reuse across all countries.
+3. **Fixed triplet generation** (Stage 2): For each scenario, the generator endpoint creates fixed high/low response options once, independent of country.
+3. **Profile-based (sign) selection** (Stage 2b): For each country, the chosen fixed response is assigned by the **sign of the target-dimension z-score** (`chosen = A if z >= 0 else B`) — a deterministic rule, **no model call**. The legacy LLM selector that re-implements this sign rule is retained only as an opt-in ablation (`--labeling llm`), which does require the generator endpoint. This keeps the response options fixed across countries while preserving country-specific preferences.
+
+   > *Audit note:* the LLM selector implements a supplied sign rule stochastically. Appendix B of Paper A ([arXiv:2610.06562](https://arxiv.org/abs/2610.06562)) recommends a deterministic A/B sign rule as the primary operator, with the LLM selector retained as a sensitivity arm.
+
+### Block D — Scoring and quality control
+Each pair is scored on all 6 GPS dimensions in a single API call. For the target GPS dimension,
+`m_chosen` and `m_rejected` are the scorer's 0-1 ratings for the selected and rejected
+responses. `m_diff_signed = m_chosen - m_rejected`, and `m_diff_abs` is its absolute value. The lab export also
+carries `z_value`; the public copy does not (see the redaction note above).
+
+**Quality Control (updated v1 behavior):**
+Examples are no longer hard-dropped on QC failure. Instead, they are retained with metadata:
+- `qc_status`: "pass" | "mono_fail" | "dist_fail" | "score_fail"
+- `failure_reason`: human-readable explanation
+- `mono_pass`, `dist_pass` booleans
+
+This enables downstream filtering, down-weighting, or targeted recovery while preserving transparency.
+
+**Contamination Measurement**
+
+We quantify how cleanly a pair isolates the target dimension using a contamination ratio:
+
+```
+contamination_ratio = cross_diffs / target_diff
+```
+
+where `target_diff` is the absolute score difference on the target dimension, and `cross_diffs` is the sum of absolute differences across the other five dimensions.
+
+In practice, we observe average `target_diff` values between 0.35–0.55 and average `cross_diffs` between 0.9–1.6. We consider ratios below 1.4 reasonably healthy for identifiability, while ratios consistently above 2.0 begin to meaningfully weaken the signal on the target dimension.
+
+Note that some cross-dimensional movement is realistic — economic decisions rarely isolate a single motive. However, very high contamination creates an identifiability trade-off: the data becomes more ecologically valid but harder to attribute to specific cultural traits. We therefore treat contamination as diagnostic rather than applying it as an additional hard filter.
+
+### Block E — Export and cost summary
+Exports the filtered dataset as `.jsonl` files (one per country and sample size) and a consolidated HuggingFace Dataset. Generates `manifest_{N}.json` files with full metadata: GPS scores, hyperparameters, QC statistics, token usage, elapsed-runtime endpoint cost estimate, and git hash.
+
+### Sign-relabel panel (all GPS countries)
+
+A deterministic export lives at [`outputs/gps_sign_relabel_all/`](outputs/gps_sign_relabel_all/README.md): the 658 shared A/B triplets from the June 23 USA/MEX bank, labeled for all 76 GPS countries by `chosen = A if z >= 0 else B` (50,008 rows). No Hugging Face calls. Rebuild with `python -m sca2_datagen.relabel`.
+
+---
+
+## Getting started
+
+### Prerequisites
+- Python 3.10+
+- A personal Hugging Face token in `HF_TOKEN` with permission to call the configured Inference Endpoints.
+- Hugging Face Inference Endpoint URLs. The repository includes lab defaults, but you can override them in `.env` or with CLI flags.
+- Endpoint hourly-rate defaults are configured for the current lab Hugging Face endpoints:
+  teacher `llama-3-3-70b-instruct-gguf-fnk` on Nvidia A100 at `$2.50/hr`,
+  generator `qwen3-32b-chm` on 1x Nvidia H200 at `$5.00/hr`, and scorer
+  `phi-4-uid` on Nvidia L40S at `$1.80/hr`.
+- Optional endpoint hourly-rate env vars override those defaults when endpoints change:
+  `HF_TEACHER_HOURLY_USD`, `HF_GENERATOR_HOURLY_USD`, and `HF_SCORER_HOURLY_USD`.
+- The GPS dataset (`country_gps.dta`)
+
+### Setup
+
+```bash
+# From the monorepo root
+cd synthetic_generation
+
+# Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies, including test dependencies
+python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
+
+# Copy the environment template and add your personal HF token
+cp .env.example .env
+# Edit .env with HF_TOKEN and, optionally, endpoint URL/rate overrides
+```
+
+Place `country_gps.dta` in one of the default locations listed in `sca2_datagen/config.py`, or pass it explicitly:
+
+```bash
+python run.py --estimate-only --gps-path /path/to/country_gps.dta --countries MEX USA
+```
+
+### Before you run anything expensive
+
+Always do these in order:
+
+1. Run `--estimate-only` first.
+2. Run a tiny pilot (for example `--scenarios-per-dim 2` and one or two countries).
+3. Only then run larger sample sizes such as `100,350,500`.
+
+### Running a pilot
+
+```bash
+# Small pilot run (20 scenarios per dimension, 2 countries)
+python run.py --scenarios-per-dim 20 --countries MEX USA
+
+# Incremental sample sizes for comparison
+python run.py --sample-sizes 100,350,500 --countries MEX USA
+
+# Full production run (use with caution — costs real money)
+python run.py --scenarios-per-dim 170 --countries MEX USA ARG SWE
+```
+
+### Cost estimation
+
+Before committing to a large run, always estimate costs first:
+
+```bash
+python run.py --estimate-only --scenarios-per-dim 170 --countries MEX USA ARG SWE
+```
+
+Cost estimates are run-scoped: the manifest multiplies the pipeline wall-clock runtime by
+the configured endpoint hourly rates. Historical provider-console spend is also included
+as calibration metadata, but it is not added to every run. Provider-console totals can be
+higher than manifest totals when endpoints remain active before or after the CLI run.
+
+### Using the CLI
+
+The CLI has grown enough that it now deserves its own guide:
+
+- Read [CLI_GUIDE.md](./CLI_GUIDE.md) for the full command reference
+- Use `--resume` if generation already finished and you want to restart from scoring
+- Model override flags were removed after the Hugging Face cutover. Endpoint roles are configured in `sca2_datagen/config.py`.
+
+The most common commands are:
+
+```bash
+# Estimate money and runtime only (no API calls)
+python run.py --estimate-only --scenarios-per-dim 130 --countries MEX USA --sample-sizes 100,350,500
+
+# Run a small real pilot
+python run.py --scenarios-per-dim 5 --countries MEX ARG --sample-sizes 10 --output-dir ./outputs
+
+# Resume from a saved raw-pair checkpoint and skip generation
+python run.py --resume ./outputs/checkpoint_raw_pairs.jsonl --countries MEX ARG --sample-sizes 10 --output-dir ./outputs
+```
+
+### Long-running runs and GitHub Codespaces
+
+If your laptop is unreliable for multi-hour generations, GitHub Codespaces is a reasonable fallback.
+
+- Codespaces stop after inactivity. GitHub’s current default idle timeout is 30 minutes, and personal settings can raise it up to 240 minutes for new codespaces.
+- Codespaces also auto-delete stopped environments after a retention period, so keep outputs you care about inside the repository workspace and push them or download them when needed.
+- The safest pattern is: estimate first, run a tiny pilot second, then launch the large run in a Codespace terminal.
+- If you expect to disconnect from the browser, use a terminal multiplexer such as `tmux` inside the Codespace so you can reconnect cleanly.
+- This pipeline now writes `checkpoint_raw_pairs.jsonl` and `checkpoint_scenario_bank.json` after generation. If scoring fails later, you can restart from `--resume` instead of paying to regenerate the raw pairs.
+
+---
+
+## Key concepts you should understand
+
+### GPS dimensions
+| Symbol | Dimension | What it measures |
+|--------|-----------|------------------|
+| τ | Trust | Belief that others have good intentions |
+| γ | Risk-taking | Willingness to take risks |
+| δ | Patience | Willingness to defer gratification |
+| α | Altruism | Willingness to give to good causes |
+| ξ+ | Positive reciprocity | Willingness to return a favor |
+| ξ- | Negative reciprocity | Willingness to punish unfair behavior |
+
+### DPO (Direct Preference Optimization)
+The fine-tuning method we use. It takes pairs of (preferred, dispreferred) responses and adjusts model weights so the preferred response becomes more likely, while a KL penalty keeps the policy close to the reference model. DPO is a pairwise-preference estimator; in this project it fits the *synthetic* preferences generated by the anchor-based protocol. It is not a constrained estimator that mechanically enforces the GPS anchor moments.
+
+### Falsification design
+After fine-tuning, the protocol is evaluated on predeclared tests rather than assumed valid: (i) *anchor transmission* — do the declared anchors change labels and retained pairs in the expected direction? (ii) *policy encoding* — does DPO retain the synthetic contrast? (iii) *anchor relevance* — do real-anchor adapters beat permuted-anchor placebos? (iv) *external transport* — do induced option probabilities improve alignment with independent human response distributions (e.g., WVS Wave 7)? (v) *operator robustness* — do conclusions survive changes to scenario banks, selection, QC, and training seeds? See Paper A ([arXiv:2610.06562](https://arxiv.org/abs/2610.06562), §5).
+
+---
+
+## Repository structure
+
+```
+synthetic_generation/
+├── README.md                    ← You are here
+├── CLI_GUIDE.md                 ← Operational guide for the command-line interface
+├── run.py                       ← CLI entrypoint
+├── pyproject.toml               ← Package metadata
+├── requirements.txt             ← Python dependencies
+├── .env.example                 ← API key template
+├── sca2_datagen/
+│   ├── config.py                ← Block A: constants and runtime config
+│   ├── profiles.py              ← Block B: GPS ingestion and profiles
+│   ├── generate.py              ← Block C: scenarios, fixed triplets, selection
+│   ├── score.py                 ← Block D: scoring and QC
+│   ├── export.py                ← Block E: export + manifest
+│   └── utils.py                 ← Shared utilities
+├── tests/                       ← Unit and integration tests (mocked APIs)
+└── outputs/                     ← Runtime outputs and checkpoints (not hand-edited)
+```
+
+---
+
+## Contributing
+
+### For undergraduates joining the project
+
+1. **Read the project overview** (`../README.md`) — understand the two papers and where your work fits.
+2. **Run a small pilot** (20 scenarios/dim, 2 countries) to see how the pipeline works end-to-end.
+3. **Look at the output** — open the `.jsonl` files and examine the generated pairs. Do the "chosen" responses feel culturally aligned? Do the "rejected" responses feel like genuine alternatives?
+4. **Check the QC report** — what are the monotonicity pass rates? Which dimensions have the highest contamination ratios?
+
+### Development workflow
+- Create a branch for your changes
+- Test with a small pilot run before pushing
+- Document any prompt changes in the commit message — prompt wording matters significantly for output quality
+- If using a coding agent, provide it with this README and the relevant module file
+- If you are editing CLI behavior, also update `CLI_GUIDE.md`
+
+### What NOT to do
+- Do not modify the WVS item map (`WVS_ITEM_MAP` in config.py) after a training run has started — this is a pre-registration decision
+- Do not commit API keys to the repository
+- Do not run production-scale generation without first running `--estimate-only`
+
+---
+
+## Design decisions and known limitations
+
+These are documented here so new members understand *why* things are the way they are:
+
+1. **English-only generation:** Confirmed that cross-language behavior shifts are minimal for our purposes. Keeps the pipeline simpler and cheaper.
+2. **Facet-first scenario generation:** Each GPS dimension is first decomposed into 4–6 facets before scenario generation. This raises scenario diversity compared with the original notebook.
+3. **Fixed triplet generation:** The high/low response options are generated once per scenario, independent of country, then reused across countries. This removes the old country-specific pair generation flow and makes cross-country comparisons cleaner.
+4. **Separate scoring endpoint:** QC scoring runs on a dedicated scorer endpoint, reducing generator self-preference bias relative to a single-endpoint pipeline. Country selection is the deterministic sign rule (no model call) by default; the legacy LLM selector is an opt-in ablation (`--labeling llm`). See the audit in Appendix B of the working paper for why this stage was re-examined.
+5. **No nationality references:** Responses should not contain phrases like "As a Mexican..." or "As an American...". We express cultural dispositions through behavioral choices, not identity labels.
+6. **Monotonicity filter on target dimension only:** QC filters check only the target GPS dimension, not all six. Cross-dimensional contamination is tracked diagnostically but not filtered on.
+7. **Checkpoint after generation:** The pipeline writes raw pairs and a scenario bank checkpoint before scoring so long runs can be resumed without paying for generation twice.
+8. **Policy-based sample-size export:** When requested sample sizes exceed QC-passed rows, behavior is policy-controlled (`fail_fast`, `skip_unavailable`, `degrade_to_feasible`).
+9. **Early-stop reliability guard:** Stage 2 can stop early on sustained generation failure rates to avoid wasting long runs under heavy provider throttling.
+
+**Known limitations:**
+- Positive reciprocity has only 3 WVS proxy items — external-transport precision will be low on this dimension
+- No human validation yet (Krippendorff's α ≥ 0.7 target is a planned follow-up)
+- Patience and risk-taking WVS proxies have questionable face validity (flagged for review)
+- The pipeline retries transient API failures and can stop early when failure rates remain too high, but it does **not** fall back to closed-provider models or alternate endpoints. See [CLI_GUIDE.md](./CLI_GUIDE.md) for exact behavior.
+
+---
+
+## References
+
+- Falk, A., Becker, A., Dohmen, T., Enke, B., Huffman, D., & Sunde, U. (2018). [Global Evidence on Economic Preferences](https://doi.org/10.1093/qje/qjy013). *The Quarterly Journal of Economics*, 133(4), 1645–1692.
+- Rafailov, R., Sharma, A., Mitchell, E., Manning, C. D., Ermon, S., & Finn, C. (2023). [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://openreview.net/forum?id=HPuSIXJaa9). *Advances in Neural Information Processing Systems 36*.
+- Capra, C. M., Gonzalez-Bonorino, A., & Pantoja, E. (2025). [LLMs Model Non-WEIRD Populations: Experiments with Synthetic Cultural Agents](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5082714). *SSRN Working Paper No. 5082714*.
+- Gonzalez-Bonorino, A., Biriukova, K., & Capra, M. (2026). [Synthetic Cultural Agents from Aggregate Anchors](https://arxiv.org/abs/2610.06562). arXiv:2610.06562.

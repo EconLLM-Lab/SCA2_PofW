@@ -1,0 +1,12 @@
+{
+  "unit_id": "iso3",
+  "measures": [
+    "m_patience_child_qualities",
+    "m_patience_work_values",
+    "m_patience_financial"
+  ],
+  "aux": [
+    "gps_patience"
+  ],
+  "outcome": null
+}
